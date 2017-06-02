@@ -1,6 +1,6 @@
 # slothie
 
-Slothie is a bot built with Node and Rivescript.
+Slothie is a bot built with [Node](https://nodejs.org/en/) and [Rivescript](https://www.rivescript.com/).
 
 ## Getting started
 
