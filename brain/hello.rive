@@ -1,9 +1,34 @@
 ! version = 2.0
 
-+ hello bot
-- Hello human!
++ hi
+- hello{weight=20}
+- hello!
+- hai
+- hay
+- sup?
+- hy
+- howdy
+- greetings
+- hey{weight=20}
+
++ what is up
+- Not much, you?
+- nm, you?
+- Not a lot, you?
+
++ you are a bot
+- how did you know
+
++ where is *
+- where ever it lives
+- where ever i may roam 
+- where is my mind
+- where the home is
 
 + michael bolton
 - When a man loves a woman
 - Time love and tenderness (TLT)
 - How am i supposed to live without u
+
++ git *
+- I'm not going to git <star1> anything for u

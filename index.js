@@ -19,7 +19,7 @@ function loadBot() {
 }
 loadBot();
 
-console.log('Send a message to Slothie B\n\n');
+console.log('Send a message to Slothie B\n');
 
 rl.setPrompt("You> ");
 rl.prompt();
