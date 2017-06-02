@@ -1,6 +1,6 @@
 ! version = 2.0
 
-+ hi
++ hello
 - hello{weight=20}
 - hello!
 - hai
@@ -10,6 +10,11 @@
 - howdy
 - greetings
 - hey{weight=20}
+
++ hey
+@ hello
++ hi
+@ hello
 
 + what is up
 - Not much, you?
