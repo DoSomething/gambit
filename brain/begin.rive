@@ -5,13 +5,16 @@
 ! var age  = 5
 
 // Substitutions
+! sub dont   =  do not
+! sub don't   = do not
 ! sub i'm     = i am
 ! sub i'd     = i would
 ! sub i've    = i have
 ! sub i'll    = i will
-! sub don't   = do not
+! sub im      = i am
 ! sub isn't   = is not
 ! sub ur      = you are
+! sub ur      = urself
 ! sub you'd   = you would
 ! sub you're  = you are
 ! sub you've  = you have
