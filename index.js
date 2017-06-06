@@ -18,7 +18,7 @@ function loadBot() {
     concat:  'newline',
   });
   bot.ready = false;
-  bot.loadDirectory('brain', loadingDone, loadingError);
+  bot.loadDirectory('brain/rivescript', loadingDone, loadingError);
 }
 loadBot();
 

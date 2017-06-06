@@ -1,0 +1,12 @@
+> object support javascript
+
+// TODO: Set user to DND.
+return 'Let me find someone to help you.';
+  
+< object
+ 
++ [*] (help|halp) me [*]
+- <call>support</call>
+
++ [*] someone (abused|abuses|is abusing|will abuse) me [*]
+- <call>support</call>

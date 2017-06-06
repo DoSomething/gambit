@@ -1,5 +1,3 @@
-! version = 2.0
-
 + hello
 - hello{weight=20}
 - hello!
