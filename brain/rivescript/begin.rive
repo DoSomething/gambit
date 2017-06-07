@@ -5,9 +5,15 @@
 ! var age  = 5
 
 // Substitutions
-! sub dont   =  do not
+! sub bf      = someone
+! sub bff     = someone
+! sub dont    = do not
+! sub dad     = someone
 ! sub don't   = do not
+! sub friend  = someone
+! sub gf      = someone
 ! sub he      = someone
+! sub he's    = someone is
 ! sub i'm     = i am
 ! sub i'd     = i would
 ! sub i've    = i have
@@ -30,6 +36,15 @@
 ! sub wheres  = where is
 ! sub who's   = who is
 ! sub won't   = will not
+! sub wont    = will not
 
 // Arrays
-! array is hurting = hurt|hurts|harmed|harms|is harming|hit|hits|is hitting
+! array is      = is|will not stop|keeps|was|was being|gets|am|am being|have been
+! array hurting = hurt|hurting|hurting
+  ^ harmed|harming|harms
+  ^ hit|hits|hitting
+  ^ abuse|abused|abuses|abusing
+  ^ bullied|bullies|bully|bullying
+  ^ rape|raped|rapes|raping
+  ^ is violent|gets violent
+  ^ suicidal|suicidial|suicide
