@@ -22,6 +22,36 @@ function loadBot() {
 }
 loadBot();
 
+const triggerConfig = {
+  test: {
+    weight: 100,
+    replyMessage: process.env.REPLY_MSG_CTL,
+  },
+  // inbox: {
+  //   replyMessage: process.env.REPLY_MSG_INBOX,
+  // },
+};
+
+function loadTriggerList(listName, config = {}) {
+  fs.readFile(`brain/triggers/${listName}.txt`, 'utf8', (err, data) => {
+    if (err) {
+      console.log(err);
+    }
+
+    data.split('\n').forEach((trigger) => {
+      // Define a Rivescript trigger that calls our lastName as a macro.
+      // @see https://github.com/aichaos/rivescript-js/blob/v1.17.2/eg/router/router.js
+      // TODO: Add weight if property exists in config:
+       // @see https://www.rivescript.com/docs/tutorial#priority-triggers
+      const code = `+ ${trigger}\n- <call>${listName}</call>\n`;
+      bot.stream(code);
+    });
+    // Add our listName as a macro that retuurns its replyMessage.
+    bot.setSubroutine(listName, () => config.replyMessage);
+  });
+};
+loadTriggerList('test', triggerConfig.test);
+
 console.log('Send a message to Slothie B\n');
 
 rl.setPrompt('You> ');

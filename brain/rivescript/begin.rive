@@ -21,6 +21,7 @@
 ! sub you're  = you are
 ! sub you've  = you have
 ! sub you'll  = you will
+! sub wanna   = want to
 ! sub what's  = what is
 ! sub whats   = what is
 ! sub what're = what are
@@ -28,3 +29,7 @@
 ! sub what'll = what will
 ! sub wheres  = where is
 ! sub who's   = who is
+! sub won't   = will not
+
+// Arrays
+! array is hurting = hurt|hurts|harmed|harms|is harming|hit|hits|is hitting
