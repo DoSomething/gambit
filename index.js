@@ -4,24 +4,14 @@ require('dotenv').config();
 
 const readline = require('readline');
 const fs = require('fs');
-const RiveScript = require('rivescript');
+const bot = require('./lib/rivescript');
 
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
 
-let bot = null;
-function loadBot() {
-  bot = new RiveScript({
-    debug:   process.env.DEBUG,
-    concat:  'newline',
-  });
-  bot.ready = false;
-  bot.loadDirectory('brain/rivescript', loadingDone, loadingError);
-}
-loadBot();
-
+/*
 const triggerConfig = {
   test: {
     weight: 100,
@@ -51,7 +41,7 @@ function loadTriggerList(listName, config = {}) {
   });
 };
 loadTriggerList('test', triggerConfig.test);
-
+*/
 console.log('Send a message to Slothie B\n');
 
 rl.setPrompt('You> ');
@@ -69,10 +59,7 @@ rl.on('line', (cmd) => {
   } else if (cmd === '/quit') {
     process.exit(0);
   } else {
-    // Get a reply from the bot.
-    const reply = (bot && bot.ready)
-      ? bot.reply('localuser', cmd)
-      : 'ERR: Bot Not Ready Yet';
+    const reply = bot.getReplyForUserMessage('localuser', cmd);
     console.log('Bot>', reply);
   }
   
@@ -81,16 +68,6 @@ rl.on('line', (cmd) => {
   console.log('');
   process.exit(0);
 });
-
-
-function loadingDone(batchNumber) {
-  bot.sortReplies();
-  bot.ready = true;
-}
-
-function loadingError(error, batchNumber) {
-  console.error('Loading error: ' + error);
-}
 
 function help() {
   console.log('Supported commands:');
