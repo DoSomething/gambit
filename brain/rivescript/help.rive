@@ -5,5 +5,8 @@ return 'Let me find someone to help you.';
   
 < object
  
++ [*] i am [feeling] (depressed|bipolar|freaking out) [*]
+- <call>support</call>
+
 + [*] (help|halp) me [*]
 - <call>support</call>
