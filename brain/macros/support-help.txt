@@ -1,0 +1,2 @@
+[*] (help|halp) me [*]
+[*] i am [feeling] (depressed|bipolar|freaking out) [*]
