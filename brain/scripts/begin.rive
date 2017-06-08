@@ -12,6 +12,7 @@
 ! sub don't   = do not
 ! sub friend  = someone
 ! sub gf      = someone
+! sub gonna   = going to
 ! sub he      = someone
 ! sub he's    = someone is
 ! sub i'm     = i am
@@ -39,6 +40,8 @@
 ! sub wont    = will not
 
 // Arrays
+! array die     = die|kill myself|killing myself
+  ^ commit suicide|committing suicide|commiting suicide
 ! array is      = is|will not stop|keeps|was|was being|gets|am|am being|have been
 ! array hurting = hurt|hurting|hurting|hurts
   ^ harmed|harming|harms
@@ -48,3 +51,4 @@
   ^ rape|raped|rapes|raping
   ^ is violent|gets violent
   ^ suicidal|suicidial|suicide
+! array want  = want|am going|am thinking about
