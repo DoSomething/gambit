@@ -1,0 +1,8 @@
++ (what is your name|who are you|who [is] this)
+- I am <bot name>, a DoSomething.org bot.
+- You can call me <bot name>. I'm a bot at DoSomething.org.
+
++ how old are you [*]
+- I'm <bot age> years old.
+- I'm <bot age>.
+- Just turned <bot age>.
