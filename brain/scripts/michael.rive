@@ -1,18 +1,24 @@
 + michael
-- michael who?
+- michael who?{topic=michael}
 
-+ michael *
-* <star1> == bolton => {@bolton}
-* <star1> == jackson => {@jackson}
-- only michaels i know are jackson and bolton
+> topic michael
 
-+ bolton
++ (bolton|boltin)
 - When a man loves a woman
 - Time love and tenderness (TLT)
 - How am i supposed to live without u
 
-+ jackson
++ (j|jackson)
 - beat it
 - black or white
 - do you remember the time
 - the way you make me feel
+
++ stop
+- Ok, let's talk about something else. {topic=random}
+
++ *
+- Only Michaels I know are Jackson and Bolton.\n
+^ If you'd like to talk about something else, say "stop".
+
+< topic
