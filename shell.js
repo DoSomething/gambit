@@ -27,8 +27,9 @@ rl.on('line', (cmd) => {
   } else if (cmd === '/quit') {
     process.exit(0);
   } else {
-    const reply = bot.getReplyForUserMessage('localuser', cmd);
-    console.log('Bot>', reply);
+    bot.getReplyForUserMessage('localuser', cmd).then((reply) => {
+      console.log('Bot>', reply);
+    })
   }
   
   rl.prompt();
