@@ -32,8 +32,11 @@ rtm.start();
 
 rtm.on(RTM_EVENTS.MESSAGE, (message) => {
   // Only respond to private messages.
-  if (message.channel[0] === "D") {
-    const reply = bot.getReplyForUserMessage('localuser', message.text);
-    rtm.sendMessage(reply, message.channel);  
-  }
+  if (message.channel[0] !== "D") return;
+
+  bot.getReplyForUserMessage('localuser', message.text)
+    .then((reply) => {
+      rtm.sendMessage(reply, message.channel); 
+    })
+    .catch(err => console.log(err));
 });
