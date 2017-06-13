@@ -34,7 +34,9 @@ rtm.on(RTM_EVENTS.MESSAGE, (message) => {
   // Only respond to private messages.
   if (message.channel[0] !== "D") return;
 
-  bot.getReplyForUserMessage('localuser', message.text)
+  console.log(message);
+
+  bot.getReplyForUserMessage(`slack_${message.user}`, message.text)
     .then((reply) => {
       rtm.sendMessage(reply, message.channel); 
     })
