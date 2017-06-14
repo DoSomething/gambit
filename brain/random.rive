@@ -1,3 +1,6 @@
+// random.rive
+// Define triggers that all topics should include for the default Rivescript topic, 'random'.
+
 > topic random 
 
 + topic_support_help
