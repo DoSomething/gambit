@@ -20,20 +20,20 @@ userSchema.methods.getGambitReplyToIncomingMessage = function (message) {
   };
 
   if (this.topic.indexOf('campaign') < 0) {
-    this.topic = 'campaign-select';
+    this.topic = 'campaign_select';
     this.save();
     return `Want to signup for ${campaign.title}?`;
   }
 
-  if (this.topic === 'campaign-select') {
+  if (this.topic === 'campaign_select') {
     if (message === 'yes') {
-      this.topic = `campaign-${campaign.id}`;
+      this.topic = `campaign_${campaign.id}`;
       this.save();
       return `You're signed up for ${campaign.title}!`;
     }
   }
 
-  if (this.topic === `campaign-${campaign.id}`) {
+  if (this.topic === `campaign_${campaign.id}`) {
     return `Thanks for signing up for ${campaign.title}. #blessed`;
   }
 
