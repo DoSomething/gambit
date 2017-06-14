@@ -1,18 +1,9 @@
-+ topic_support_help
-- Let me find someone to help you.{topic=topic_support_help}
-
-+ [*] @help me [*]
-@ topic_support_help
-
-+ [*] i am [feeling] (depressed|bipolar|freaking out) [*]
-@ topic_support_help
-
 > topic topic_support_help
 
 + cancel
 - Hi, you're chatting with <bot name> again. I'm a bot!{topic=random}
 
 + *
-- <noreply>
+- Still waiting for a human. If you'd like to pick up where we left off, say "cancel"
 
 < topic

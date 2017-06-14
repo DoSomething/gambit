@@ -1,0 +1,21 @@
+> topic random 
+
++ topic_support_help
+- Let me find someone to help you.{topic=topic_support_help}
+
++ [*] @help me [*]
+@ topic_support_help
+
++ [*] i am [feeling] (depressed|bipolar|freaking out) [*]
+@ topic_support_help
+
++ topic_support_crisis
+- Thanks for being brave and sharing that. If you want to talk to someone, our friends at CTL are here for you 24/7. Just send a text to 741741. They’ll listen!{topic=topic_support_crisis}
+
++ [*] (i|someone|who) [@is] @hurting [me] [*]
+@ topic_support_crisis
+
++ [*] i @want [to] @die [*]
+@ topic_support_crisis
+
+< topic
