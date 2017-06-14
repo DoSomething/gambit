@@ -1,0 +1,4 @@
+// If no triggers have been matched, send this message to the Gambs.
+
++ *
+- gambit

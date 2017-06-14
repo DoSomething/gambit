@@ -1,0 +1,9 @@
+> topic topic_support_help
+
++ cancel
+- Hi, you're chatting with <bot name> again. I'm a bot!{topic=random}
+
++ *
+- Still waiting for a human. If you'd like to pick up where we left off, say "cancel"
+
+< topic
