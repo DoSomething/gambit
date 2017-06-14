@@ -7,6 +7,8 @@
 // Substitutions
 ! sub bf      = someone
 ! sub bff     = someone
+! sub cant    = can not
+! sub can't   = can not
 ! sub dont    = do not
 ! sub dad     = someone
 ! sub don't   = do not
@@ -52,4 +54,6 @@
   ^ rape|raped|rapes|raping
   ^ is violent|gets violent
   ^ suicidal|suicidial|suicide
+! array photo = photo|photos|mms|pic|pics|pix|image|images|img
+! array send  = send|submit|text
 ! array want  = want|am going|am thinking about
