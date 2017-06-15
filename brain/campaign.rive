@@ -1,5 +1,13 @@
 > topic campaign includes random
 
+// TODO: Yes/No triggers should only match when User's signupStatus is set to 'prompt'. 
++ @yes [*]
+- post_signup
+
++ @no [*]
+- Ok, hit me up if you change your mind.
+- That's cool! I'll check in with you later.
+
 + [*] can not @send [a] @photo [*]
 - If you can't send photos from your phone, login at www.dosomething.org to upload them!
 
