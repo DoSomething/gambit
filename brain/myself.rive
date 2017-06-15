@@ -1,6 +1,17 @@
-+ (what is your name|who are you|who [is] this)
++ intro
 - I am <bot name>, a DoSomething.org bot.
 - You can call me <bot name>. I'm a bot at DoSomething.org.
+- Itsa me, <bot name> Boy! I'm just a bot.
+
+
++ (what is your name|who are you|who [is] this)
+@ intro
+
++ are you [a] @human [*]
+@ intro
+
++ are you a @bot
+@ intro
 
 + how old are you [*]
 - I'm <bot age> years old.

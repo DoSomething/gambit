@@ -43,8 +43,10 @@
 ! sub wont    = will not
 
 // Arrays
+! array bot     = bot robot machine
 ! array die     = die|kill myself|killing myself
   ^ commit suicide|committing suicide|commiting suicide
+! array human   = human person real
 ! array is      = is|will not stop|keeps|was|was being|gets|am|am being|have been
 ! array hurting = hurt|hurting|hurting|hurts
   ^ harmed|harming|harms
