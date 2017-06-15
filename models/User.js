@@ -1,6 +1,7 @@
 'use strict';
 
 const mongoose = require('mongoose');
+const helpers = require('../lib/helpers');
 
 /**
  * Schema.
@@ -8,39 +9,36 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema({
   _id: String,
   topic: String,
+  campaignId: Number,
 });
 
 /**
- * Returns reply message to this User for their given incoming message.
+ * Prompt user to signup for given campaign ID.
  */
-userSchema.methods.getGambitReplyToIncomingMessage = function (message) {
-  const campaign = {
-    id: 2070,
-    title: 'Bumble Bands',
-  };
+userSchema.methods.promptSignupForCampaignId = function (campaignId) {
+  this.topic = 'campaign_select';
+  this.campaignId = campaignId;
 
-  if (this.topic.indexOf('campaign') < 0) {
-    this.topic = 'campaign_select';
-    this.save();
-    return `Want to signup for ${campaign.title}?`;
-  }
+  return this.save();
+};
 
-  if (this.topic === 'campaign_select') {
-    if (message === 'yes') {
-      this.topic = `campaign_${campaign.id}`;
-      this.save();
-      return `You're signed up for ${campaign.title}!`;
-    }
-  }
+/**
+ * Post signup for current campaign and set it as the topic.
+ */
+userSchema.methods.postSignup = function () {
+  // TODO: Post to DS API
+  this.topic = `campaign_${this.campaignId}`;
 
-  if (this.topic === `campaign_${campaign.id}`) {
-    return `Thanks for signing up for ${campaign.title}. #blessed`;
-  }
+  return this.save();
+};
 
+/**
+ * Unset current campaign and reset topic to random.
+ */
+userSchema.methods.declineSignup = function () {
+  this.campaignId = null;
   this.topic = 'random';
-  this.save();
-
-  return 'Ok, hit me up if you change your mind.';
+  return this.save();
 };
 
 module.exports = mongoose.model('users', userSchema);

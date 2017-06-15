@@ -2,7 +2,7 @@
 
 require('dotenv').config();
 
-const bot = require('./lib/rivescript');
+const bot = require('./lib/bot');
 const Slack = require('@slack/client');  
 var RtmClient = Slack.RtmClient;
 var CLIENT_EVENTS = require('@slack/client').CLIENT_EVENTS;
