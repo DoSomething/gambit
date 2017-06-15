@@ -5,14 +5,12 @@ const Gambit = require('../lib/gambit');
 
 const gambit = new Gambit();
 
-
 /**
  * Schema.
  */
 const campaignSchema = new mongoose.Schema({
   _id: Number,
   title: String,
-  gambitSignupMenuMessage: String,
   gambitSignupMenuMessage: String,
   externalSignupMenuMessage: String,
   invalidSignupMenuCommandMessage: String,
@@ -47,19 +45,19 @@ function parseGambitCampaign(campaign) {
 /**
  * Get array of current Gambit campaigns from API and upsert models.
  */
-campaignSchema.statics.getIndex = function () {
-  console.log('Campaign.getIndex');
+campaignSchema.statics.fetchIndex = function () {
+  console.log('Campaign.fetchIndex');
 
   return gambit.get('campaigns')
-    .then(campaigns => campaigns.map(campaign => this.getCampaign(campaign.id)))
+    .then(campaigns => campaigns.map(campaign => this.fetchCampaign(campaign.id)))
     .catch(err => console.log(err));
 };
 
 /**
  * Get campaign from Gambit API and upsert models.
  */
-campaignSchema.statics.getCampaign = function (campaignId) {
-  console.log('Campaign.getCampaign');
+campaignSchema.statics.fetchCampaign = function (campaignId) {
+  console.log('Campaign.fetchCampaign');
 
   return gambit.get(`campaigns/${campaignId}`)
     .then((response) => {
@@ -70,5 +68,34 @@ campaignSchema.statics.getCampaign = function (campaignId) {
     })
     .catch(err => console.log(err));
 };
+
+/**
+ * Get array of current Gambit campaigns from API and upsert models.
+ */
+campaignSchema.statics.getRandomCampaign = function () {
+  console.log('Campaign.getRandomCampaign');
+
+  return this
+    .aggregate([ { $sample: { size: 1 } } ])
+    .exec()
+    .then((campaigns) => {
+      return this.findById(campaigns[0]._id);
+    });
+};
+
+/**
+ * Get Gambit messages that don't exist yet.
+ */
+campaignSchema.methods.getSignupConfirmedMessage = function () {
+  return `You're signed up for ${this.title}. #blessed`;
+}
+
+campaignSchema.methods.getSignupDeclinedMessage = function () {
+  return `Got it - we'll hold on ${this.title}. Check back with you later!`;
+}
+
+campaignSchema.methods.getSignupPromptMessage = function () {
+  return `Want to sign up for ${this.title}? Yes or No`;
+}
 
 module.exports = mongoose.model('campaigns', campaignSchema);

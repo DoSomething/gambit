@@ -5,8 +5,7 @@
 - post_signup
 
 + @no [*]
-- Ok, hit me up if you change your mind.
-- That's cool! I'll check in with you later.
+- decline_signup
 
 + [*] can not @send [a] @photo [*]
 - If you can't send photos from your phone, login at www.dosomething.org to upload them!

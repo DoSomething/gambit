@@ -4,8 +4,6 @@ require('dotenv').config();
 
 const readline = require('readline');
 const bot = require('./lib/bot');
-const Campaigns = require('./models/Campaign');
-Campaigns.getIndex();
 
 const rl = readline.createInterface({
   input: process.stdin,
