@@ -43,12 +43,12 @@
 ! sub wont    = will not
 
 // Arrays
-! array bot     = bot robot machine
-! array die     = die|kill myself|killing myself
+! array bot       = bot robot machine
+! array die       = die|kill myself|killing myself
   ^ commit suicide|committing suicide|commiting suicide
-! array human   = human person real
-! array is      = is|will not stop|keeps|was|was being|gets|am|am being|have been
-! array hurting = hurt|hurting|hurting|hurts
+! array human     = human person real
+! array is        = is|will not stop|keeps|was|was being|gets|am|am being|have been
+! array hurting   = hurt|hurting|hurting|hurts
   ^ harmed|harming|harms
   ^ hit|hits|hitting
   ^ abuse|abused|abuses|abusing
@@ -56,9 +56,11 @@
   ^ rape|raped|rapes|raping
   ^ is violent|gets violent
   ^ suicidal|suicidial|suicide
-! array no    = n no nah nope nay
-! array photo = photo|photos|mms|pic|pics|pix|image|images|img
-! array send  = send|submit|text
-! array want  = want|am going|am thinking about
-! array yes   = y yas yes yeah yep yup ya yea
+! array no        = n no nah nope nay
+! array photo     = photo photos mms pic pics pix image image img
+! array question  = is there|who|what|when|why|how
+! array send      = send submit text
+! array social    = social media|facebook|twitter|instagram|social
+! array want      = want|am going|am thinking about
+! array yes       = y yas yes yeah yep yup ya yea
  ^ fine ok sure

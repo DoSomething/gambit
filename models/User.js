@@ -14,11 +14,15 @@ const userSchema = new mongoose.Schema({
 });
 
 /**
- * Prompt user to signup for given campaign ID.
+ * Prompt User to signup for given Campaign model.
+ * @param {Campaign} campaign
+ * @return {Promise}
  */
-userSchema.methods.promptSignupForCampaignId = function (campaignId) {
-  this.topic = `campaign_${this.campaignId}`;
-  this.campaignId = campaignId;
+userSchema.methods.promptSignupForCampaign = function (campaign) {
+  console.log(`user.promptSignupForCampaign campaignId=${campaign._id}`);
+
+  this.topic = campaign.topic;
+  this.campaignId = campaign._id;
   this.signupStatus = 'prompt';
 
   return this.save();
