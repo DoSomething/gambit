@@ -1,7 +1,6 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const helpers = require('../lib/helpers');
 
 /**
  * Schema.
