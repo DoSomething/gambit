@@ -1,5 +1,5 @@
-// random.rive
-// Define triggers that all topics should include for the default Rivescript topic, 'random'.
+// default.rive
+// Define a topic that all other topics should include for the default Rivescript topic, 'random'.
 
 > topic random 
 

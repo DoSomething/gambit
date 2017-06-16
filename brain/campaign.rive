@@ -1,3 +1,6 @@
+// default.rive
+// Define a topic for general Campaign FAQ that all other Campaign specific topics should include.
+
 > topic campaign includes random
 
 // TODO: Yes/No triggers should only match when User's signupStatus is set to 'prompt'. 

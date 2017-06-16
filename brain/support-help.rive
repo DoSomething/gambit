@@ -1,3 +1,15 @@
+// support-help.rive
+
+> topic topic_support_crisis
+
++ cancel
+- Hi, you're chatting with <bot name> again. I'm a bot!{topic=random}
+
++ *
+- <noreply>
+
+< topic
+
 > topic topic_support_help
 
 + cancel

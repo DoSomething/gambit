@@ -1,3 +1,6 @@
+// hello.rive
+// Basic greetings, chit chat, and about the bot.
+
 + hello
 - hello{weight=20}
 - hello!
