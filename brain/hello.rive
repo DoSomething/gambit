@@ -12,10 +12,9 @@
 - greetings
 - hey{weight=20}
 
-+ hey
++ (hey|hi|yo|whatup)
 @ hello
-+ hi
-@ hello
+
 
 + what is up
 - Not much, you?
