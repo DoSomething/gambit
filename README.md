@@ -1,11 +1,13 @@
 # slothie
 
-Slothie is a bot built with [Node](https://nodejs.org/en/) and [Rivescript](https://www.rivescript.com/).
+Slothie is a bot built with [Node](https://nodejs.org/en/), [MongoDB](https://www.mongodb.com/), and [Rivescript](https://www.rivescript.com/).
 
 ## Getting started
 
+* Install Node and Mongo
 * Clone this repo
 * `npm install`
+* `sudo mongodb`
 
 ### Running in Console
 
