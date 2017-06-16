@@ -4,13 +4,16 @@ require('dotenv').config();
 
 const bot = require('./lib/bot');
 const Slack = require('@slack/client');  
-var RtmClient = Slack.RtmClient;
-var CLIENT_EVENTS = require('@slack/client').CLIENT_EVENTS;
-var RTM_EVENTS = Slack.RTM_EVENTS;
 
-var bot_token = process.env.SLACK_BOT_TOKEN || '';
+bot.getBot();
+
+const RtmClient = Slack.RtmClient;
+const CLIENT_EVENTS = require('@slack/client').CLIENT_EVENTS;
+const RTM_EVENTS = Slack.RTM_EVENTS;
+
+const bot_token = process.env.SLACK_BOT_TOKEN || '';
  
-var rtm = new RtmClient(bot_token);
+const rtm = new RtmClient(bot_token);
  
 let channel;
  
