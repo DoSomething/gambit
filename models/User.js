@@ -14,15 +14,15 @@ const userSchema = new mongoose.Schema({
 });
 
 /**
- * Prompt user to signup for given campaign ID.
+ * Prompt User to signup for given Campaign model.
+ * @param {Campaign} campaign
+ * @return {Promise}
  */
-userSchema.methods.promptSignupForCampaignId = function (campaignId) {
-  console.log(`user.promptSignupForCampaignId campaignId=${campaignId}`);
+userSchema.methods.promptSignupForCampaign = function (campaign) {
+  console.log(`user.promptSignupForCampaign campaignId=${campaign._id}`);
 
-  // TODO: Set topic to child topic if file for this Campaign ID exists in /brain/campaigns.
-  // this.topic = `campaign_${campaignId}`;
-  this.topic = 'campaign';
-  this.campaignId = campaignId;
+  this.topic = campaign.topic;
+  this.campaignId = campaign._id;
   this.signupStatus = 'prompt';
 
   return this.save();

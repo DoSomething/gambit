@@ -1,5 +1,6 @@
 'use strict';
 
+const fs = require('fs');
 const mongoose = require('mongoose');
 const Gambit = require('../lib/gambit');
 
@@ -11,6 +12,7 @@ const gambit = new Gambit();
 const campaignSchema = new mongoose.Schema({
   _id: Number,
   title: String,
+  topic: String,
   gambitSignupMenuMessage: String,
   externalSignupMenuMessage: String,
   invalidSignupMenuCommandMessage: String,
@@ -30,7 +32,23 @@ const campaignSchema = new mongoose.Schema({
 });
 
 /**
+ * @param {Number} campaignId
+ * @return {String}
+ */
+function getTopicForCampaignId(campaignId) {
+  // Check for triggers specific to this Campaign.
+  if (fs.existsSync(`brain/campaigns/${campaignId}.rive`)) {
+    console.log('override exists');
+    return `campaign_${campaignId}`;
+  }
+
+  return 'campaign';
+}
+
+/**
  * Parses Gambit API response for a Campaign model.
+ * @param {Object} campaign
+ * @return {Object}
  */
 function parseGambitCampaign(campaign) {
   const result = {
@@ -44,6 +62,7 @@ function parseGambitCampaign(campaign) {
 
 /**
  * Get array of current Gambit campaigns from API and upsert models.
+ * @return {Promise}
  */
 campaignSchema.statics.fetchIndex = function () {
   console.log('Campaign.fetchIndex');
@@ -55,6 +74,7 @@ campaignSchema.statics.fetchIndex = function () {
 
 /**
  * Get campaign from Gambit API and upsert models.
+ * @return {Promise}
  */
 campaignSchema.statics.fetchCampaign = function (campaignId) {
   console.log('Campaign.fetchCampaign');
@@ -62,6 +82,7 @@ campaignSchema.statics.fetchCampaign = function (campaignId) {
   return gambit.get(`campaigns/${campaignId}`)
     .then((response) => {
       const campaign = parseGambitCampaign(response);
+      campaign.topic = getTopicForCampaignId(campaignId);
 
       return this.findOneAndUpdate({ _id: campaignId }, campaign, { upsert: true })
         .then(() => console.log(`Updated Campaign ${campaignId}: ${campaign.title}`));
@@ -71,6 +92,7 @@ campaignSchema.statics.fetchCampaign = function (campaignId) {
 
 /**
  * Get array of current Gambit campaigns from API and upsert models.
+ * @return {Promise}
  */
 campaignSchema.statics.getRandomCampaign = function () {
   console.log('Campaign.getRandomCampaign');
