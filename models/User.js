@@ -14,6 +14,17 @@ const userSchema = new mongoose.Schema({
 });
 
 /**
+ * Returns whether current user is in a topic for a Campaign.
+ * @return {boolean}
+ */
+userSchema.methods.hasCampaignTopic = function () {
+  const topic = this.topic;
+  const nonCampaignTopic = (!topic || topic.indexOf('campaign') < 0);
+
+  return !nonCampaignTopic;
+};
+
+/**
  * Returns save of User for updating given Campaign (and its topic) with Signup Status.
  * @param {Campaign} campaign
  * @param {string} signupStatus
