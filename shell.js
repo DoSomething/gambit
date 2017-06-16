@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const readline = require('readline');
 const bot = require('./lib/bot');
+bot.getBot();
 
 const rl = readline.createInterface({
   input: process.stdin,

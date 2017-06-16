@@ -12,6 +12,8 @@ const gambit = new Gambit();
 const campaignSchema = new mongoose.Schema({
   _id: Number,
   title: String,
+  status: String,
+  keywords: [String],
   topic: String,
   gambitSignupMenuMessage: String,
   externalSignupMenuMessage: String,
@@ -50,12 +52,14 @@ function getTopicForCampaignId(campaignId) {
  * @param {Object} campaign
  * @return {Object}
  */
-function parseGambitCampaign(campaign) {
+function parseGambitCampaign(gambitCampaign) {
   const result = {
-    title: campaign.title,
+    title: gambitCampaign.title,
+    status: gambitCampaign.status,
   };
-  const messageTypes = Object.keys(campaign.messages);
-  messageTypes.map(messageType => result[messageType] = campaign.messages[messageType].rendered);
+  const messageTypes = Object.keys(gambitCampaign.messages);
+  messageTypes.map(type => result[type] = gambitCampaign.messages[type].rendered);
+  result.keywords = gambitCampaign.keywords.map(keywordObject => keywordObject.keyword);
 
   return result;
 }
