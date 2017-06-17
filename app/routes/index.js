@@ -1,7 +1,7 @@
 'use strict';
 
+const homeRoute = require('./home');
+
 module.exports = function init(app) {
-  app.get('/', function (req, res) {
-    res.send('hello world');
-  });
+  app.get('/', homeRoute);
 };
