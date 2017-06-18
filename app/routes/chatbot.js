@@ -7,13 +7,15 @@ const router = express.Router();
 bot.getBot();
 
 const lookUpUserMiddleware = require('../../lib/middleware/user-get');
-/**
- * Find or create User for given userId.
- */
+const setBotUservarsMiddleware = require('../../lib/middleware/bot-set-uservars');
+const getBotReplyMiddleware = require('../../lib/middleware/bot-get-reply');
+
 router.use(lookUpUserMiddleware());
+router.use(setBotUservarsMiddleware());
+router.use(getBotReplyMiddleware());
 
 router.post('/', (req, res) => {
-  bot.getReplyForUserMessage(req.user._id, req.body.message)
+  bot.getReplyForUserMessage(req.user, req.body.message)
     .then((reply) => {
       return res.send({
         message: reply,
