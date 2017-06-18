@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
  */
 const userSchema = new mongoose.Schema({
   _id: String,
+  dateLastMessageSent: Date,
   topic: String,
   campaignId: Number,
   signupStatus: String,
