@@ -6,18 +6,19 @@ const bot = require('../../lib/bot');
 const router = express.Router();
 bot.getBot();
 
-const lookUpUserMiddleware = require('../../lib/middleware/user-get');
-const setBotUservarsMiddleware = require('../../lib/middleware/bot-set-uservars');
+const getUserMiddleware = require('../../lib/middleware/user-get');
 const getBotReplyMiddleware = require('../../lib/middleware/bot-get-reply');
 const botReplyRivescriptMiddleware = require('../../lib/middleware/bot-reply-rivescript');
 const botReplyMichaelMiddleware = require('../../lib/middleware/bot-reply-michael');
+const botReplySignupKeywordMiddleware = require('../../lib/middleware/bot-reply-signup-keyword');
+const botReplySignupMenuMiddleware = require('../../lib/middleware/bot-reply-signup-menu');
 
-router.use(lookUpUserMiddleware());
-router.use(setBotUservarsMiddleware());
-router.use(getBotReplyMiddleware());
+router.use(getUserMiddleware());
 router.use(getBotReplyMiddleware());
 router.use(botReplyRivescriptMiddleware());
 router.use(botReplyMichaelMiddleware());
+router.use(botReplySignupKeywordMiddleware());
+router.use(botReplySignupMenuMiddleware());
 
 router.post('/', (req, res) => {
   return res.send({
