@@ -9,19 +9,19 @@ bot.getBot();
 const lookUpUserMiddleware = require('../../lib/middleware/user-get');
 const setBotUservarsMiddleware = require('../../lib/middleware/bot-set-uservars');
 const getBotReplyMiddleware = require('../../lib/middleware/bot-get-reply');
+const botRivescriptReplyMiddleware = require('../../lib/middleware/bot-reply-rivescript');
 
 router.use(lookUpUserMiddleware());
 router.use(setBotUservarsMiddleware());
 router.use(getBotReplyMiddleware());
+router.use(getBotReplyMiddleware());
+router.use(botRivescriptReplyMiddleware());
 
 router.post('/', (req, res) => {
-  bot.getReplyForUserMessage(req.user, req.body.message)
-    .then((reply) => {
-      return res.send({
-        message: reply,
-      });
-    })
-    .catch(err => console.log(err));
+  return res.send({
+    message: req.renderedReplyMessage,
+    user: req.user,
+  });
 });
 
 module.exports = router;
