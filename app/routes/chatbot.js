@@ -12,6 +12,7 @@ const botReplyRivescriptMiddleware = require('../../lib/middleware/bot-reply-riv
 const botReplyMichaelMiddleware = require('../../lib/middleware/bot-reply-michael');
 const botReplySignupKeywordMiddleware = require('../../lib/middleware/bot-reply-signup-keyword');
 const botReplySignupMenuMiddleware = require('../../lib/middleware/bot-reply-signup-menu');
+const botReplySignupContinueMiddleware = require('../../lib/middleware/bot-reply-signup-continue');
 
 router.use(getUserMiddleware());
 router.use(getBotReplyMiddleware());
@@ -19,6 +20,7 @@ router.use(botReplyRivescriptMiddleware());
 router.use(botReplyMichaelMiddleware());
 router.use(botReplySignupKeywordMiddleware());
 router.use(botReplySignupMenuMiddleware());
+router.use(botReplySignupContinueMiddleware());
 
 router.post('/', (req, res) => {
   return res.send({
