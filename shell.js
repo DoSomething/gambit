@@ -3,8 +3,7 @@
 require('dotenv').config();
 
 const readline = require('readline');
-const bot = require('./lib/bot');
-bot.getBot();
+const superagent = require('superagent');
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -19,18 +18,17 @@ rl.on('line', (cmd) => {
   // Handle commands.
   if (cmd === '/help') {
     help();
-  } else if (cmd.indexOf('/data') === 0) {
-    console.log(bot.getUservars('localuser'));
-  } else if (cmd.indexOf('/eval ') === 0) {
-    console.log(eval(cmd.replace('/eval ', '')));
-  } else if (cmd.indexOf('/log ') === 0) {
-    console.log(eval(cmd.replace('/log ', '')));
   } else if (cmd === '/quit') {
     process.exit(0);
   } else {
-    bot.getReplyForUserMessage('localuser', cmd).then((reply) => {
-      console.log('Bot>', reply);
-    })
+    return superagent
+      .post('http://localhost:5000/v1/chatbot')
+      .send({
+        userId: 'localuser',
+        message: cmd,
+      })
+      .then(response => console.log('Bot>', response.body.message))
+      .catch(err => console.log(`error:${err.message}`));
   }
   
   rl.prompt();
@@ -42,7 +40,5 @@ rl.on('line', (cmd) => {
 function help() {
   console.log('Supported commands:');
   console.log('/help        : Show this text.');
-  console.log('/eval <code> : Evaluate JavaScript code.');
-  console.log('/log <code>  : Shortcut to /eval console.log(code).');
   console.log('/quit        : Exit the program.');
 }
