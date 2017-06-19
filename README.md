@@ -1,6 +1,6 @@
 # slothie
 
-Slothie is a bot built with [Node](https://nodejs.org/en/), [MongoDB](https://www.mongodb.com/), and [Rivescript](https://www.rivescript.com/).
+Slothie is a chatbot API built with [Express](https://expressjs.com/), [MongoDB](https://www.mongodb.com/), and [Rivescript](https://www.rivescript.com/).
 
 ## Getting started
 
@@ -8,13 +8,9 @@ Slothie is a bot built with [Node](https://nodejs.org/en/), [MongoDB](https://ww
 * Clone this repo
 * `npm install`
 * `sudo mongodb`
+* `npm start`
+* Post to `http://localhost:5000/v1/chatbot`
 
 ### Running in Console
 
-* `node shell`
-* Send a message to Slothie in the terminal
-
-### Running on Slack
-
-* Set local `SLACK_BOT_TOKEN` config variable
-* `npm start`
+While Slothie is running locally, open a second terminal shell and run `node shell` to post to the /chatbot endpoint from the console.
