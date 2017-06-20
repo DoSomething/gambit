@@ -24,8 +24,13 @@ router.use(botReplySignupContinueMiddleware());
 
 router.post('/', (req, res) => {
   return res.send({
-    message: req.renderedReplyMessage,
-    user: req.user,
+    request: {
+      message: req.body.message,
+    },
+    response: {
+      message: req.renderedReplyMessage,
+      user: req.user,
+    },
   });
 });
 
