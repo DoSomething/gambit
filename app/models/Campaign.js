@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const mongoose = require('mongoose');
-const Gambit = require('../lib/gambit');
+const Gambit = require('../../lib/gambit');
 
 const gambit = new Gambit();
 

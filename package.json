@@ -4,14 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index",
+    "start": "node server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@slack/client": "^3.10.0",
+    "body-parser": "^1.17.2",
     "dotenv": "^4.0.0",
+    "express": "^4.15.3",
     "mongoose": "^4.10.6",
     "readline": "^1.3.0",
     "rivescript": "^1.17.2",

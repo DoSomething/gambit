@@ -1,13 +1,13 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const helpers = require('../lib/helpers');
 
 /**
  * Schema.
  */
 const userSchema = new mongoose.Schema({
   _id: String,
+  dateLastMessageSent: Date,
   topic: String,
   campaignId: Number,
   signupStatus: String,
