@@ -1,6 +1,8 @@
 'use strict';
 
-const defaultConfig = {
-  port: process.env.PORT || 5000,
-  dbUri: process.env.DB_URI || 'mongodb://localhost/slothie',
+const configVars = {
+  port: process.env.PORT || 5100,
+  dbUri: process.env.MONGODB_URI || 'mongodb://localhost/slothie',
 };
+
+module.exports = configVars;
