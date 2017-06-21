@@ -19,9 +19,9 @@ const userSchema = new mongoose.Schema({
  */
 userSchema.methods.hasCampaignTopic = function () {
   const topic = this.topic;
-  const nonCampaignTopic = (!topic || topic.indexOf('campaign') < 0);
+  const nonCampaignTopic = (! topic || topic.indexOf('campaign') < 0);
 
-  return !nonCampaignTopic;
+  return ! nonCampaignTopic;
 };
 
 /**
@@ -38,7 +38,7 @@ userSchema.methods.setCurrentCampaignWithSignupStatus = function (campaign, sign
   this.signupStatus = signupStatus;
 
   return this.save();
-}
+};
 
 /**
  * Prompt User to signup for given Campaign model.
