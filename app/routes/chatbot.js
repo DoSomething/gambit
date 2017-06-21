@@ -23,7 +23,7 @@ router.use(botReplySignupMenuMiddleware());
 router.use(botReplySignupContinueMiddleware());
 
 router.post('/', (req, res) => {
-  return res.send({
+  res.send({
     request: {
       message: req.body.message,
     },
