@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const readline = require('readline');
 const superagent = require('superagent');
+const config = require('./config');
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -22,12 +23,12 @@ rl.on('line', (cmd) => {
     process.exit(0);
   } else {
     return superagent
-      .post('http://localhost:5000/v1/chatbot')
+      .post(`http://localhost:${config.port}/v1/chatbot`)
       .send({
         userId: 'localuser',
         message: cmd,
       })
-      .then(response => console.log('Bot>', response.body.message))
+      .then(response => console.log('Bot>', response.body.response.message))
       .catch(err => console.log(`error:${err.message}`));
   }
   
