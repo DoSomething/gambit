@@ -95,18 +95,16 @@ campaignSchema.statics.fetchCampaign = function (campaignId) {
 };
 
 /**
- * Get array of current Gambit campaigns from API and upsert models.
+ * Returns a random Campaign model.
  * @return {Promise}
  */
 campaignSchema.statics.getRandomCampaign = function () {
   console.log('Campaign.getRandomCampaign');
 
   return this
-    .aggregate([ { $sample: { size: 1 } } ])
+    .aggregate([{ $sample: { size: 1 } }])
     .exec()
-    .then((campaigns) => {
-      return this.findById(campaigns[0]._id);
-    });
+    .then(campaigns => this.findById(campaigns[0]._id));
 };
 
 /**
@@ -114,14 +112,14 @@ campaignSchema.statics.getRandomCampaign = function () {
  */
 campaignSchema.methods.getSignupConfirmedMessage = function () {
   return `You're signed up for ${this.title}. #blessed`;
-}
+};
 
 campaignSchema.methods.getSignupDeclinedMessage = function () {
   return `Got it - we'll hold on ${this.title}. Check back with you later!`;
-}
+};
 
 campaignSchema.methods.getSignupPromptMessage = function () {
   return `Want to sign up for ${this.title}? Yes or No`;
-}
+};
 
 module.exports = mongoose.model('campaigns', campaignSchema);

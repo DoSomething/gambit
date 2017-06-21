@@ -8,6 +8,7 @@
   rules:
     # We don't use babel here, so require 'use strict'.
     # See https://git.io/vr6I0.
+    no-underscore-dangle: 'off'
     strict:
       - 2
       - "global"
