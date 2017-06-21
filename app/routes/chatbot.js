@@ -2,6 +2,7 @@
 
 const express = require('express');
 const bot = require('../../lib/bot');
+const helpers = require('../../lib/helpers');
 
 const router = express.Router();
 bot.getBot();
@@ -22,16 +23,6 @@ router.use(botReplySignupKeywordMiddleware());
 router.use(botReplySignupMenuMiddleware());
 router.use(botReplySignupContinueMiddleware());
 
-router.post('/', (req, res) => {
-  res.send({
-    request: {
-      message: req.body.message,
-    },
-    response: {
-      message: req.renderedReplyMessage,
-      user: req.user,
-    },
-  });
-});
+router.post('/', (req, res) => helpers.sendChatbotResponse(req, res));
 
 module.exports = router;
