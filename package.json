@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "eslint --ext=.js server.js shell.js app config lib"
   },
   "author": "",
   "license": "MIT",
@@ -17,5 +17,8 @@
     "readline": "^1.3.0",
     "rivescript": "^1.17.2",
     "superagent": "^3.5.2"
+  },
+  "devDependencies": {
+    "@dosomething/eslint-config": "^3.0.0"
   }
 }
