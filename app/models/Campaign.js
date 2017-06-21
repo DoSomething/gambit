@@ -71,7 +71,7 @@ function parseGambitCampaign(gambitCampaign) {
 campaignSchema.statics.fetchIndex = function () {
   console.log('Campaign.fetchIndex');
 
-  return gambit.get('campaigns')
+  return gambit.executeGet('campaigns')
     .then(campaigns => campaigns.map(campaign => this.fetchCampaign(campaign.id)))
     .catch(err => console.log(err));
 };
@@ -83,7 +83,7 @@ campaignSchema.statics.fetchIndex = function () {
 campaignSchema.statics.fetchCampaign = function (campaignId) {
   console.log('Campaign.fetchCampaign');
 
-  return gambit.get(`campaigns/${campaignId}`)
+  return gambit.executeGet(`campaigns/${campaignId}`)
     .then((response) => {
       const campaign = parseGambitCampaign(response);
       campaign.topic = getTopicForCampaignId(campaignId);
