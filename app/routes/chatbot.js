@@ -9,8 +9,8 @@ bot.getBot();
 
 const getUserMiddleware = require('../../lib/middleware/user-get');
 const createUserMiddleware = require('../../lib/middleware/user-create');
-const createInboundMessageMiddleware = require('../../lib/middleware/message-inbound');
-const createOutboundMessageMiddleware = require('../../lib/middleware/message-outbound');
+const createInboundMessageMiddleware = require('../../lib/middleware/message-inbound-create');
+const createOutboundMessageMiddleware = require('../../lib/middleware/message-outbound-create');
 const getBotReplyMiddleware = require('../../lib/middleware/bot-get-reply');
 const botReplyRivescriptMiddleware = require('../../lib/middleware/bot-reply-rivescript');
 const botReplyMichaelMiddleware = require('../../lib/middleware/bot-reply-michael');
