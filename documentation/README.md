@@ -20,7 +20,7 @@ Name | Type | Description
 curl -X "POST" "http://localhost:5000/v1/chatbot" \
      -H "Content-Type: application/x-www-form-urlencoded; charset=utf-8" \
      --data-urlencode "userId=123" \
-     --data-urlencode "message=Hi" \
+     --data-urlencode "message=I can haz thumb socks?" \
 ```
 
 </p></details>
@@ -29,19 +29,8 @@ curl -X "POST" "http://localhost:5000/v1/chatbot" \
 
 ```
 {
-  "request": {
-    "message": "hi"
-  },
-  "response": {
-    "message": "hello",
-    "user": {
-      "_id": "12",
-      "__v": 0,
-      "dateLastMessageSent": "2017-06-20T04:45:00.861Z",
-      "topic": "campaign",
-      "campaignId": 1508,
-      "signupStatus": "doing"
-    }
+  "reply": {
+    "body": "You're signed up for Thumb Wars. #blessed"
   }
 }
 ```
