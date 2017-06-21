@@ -1,0 +1,13 @@
+---
+  extends: "@dosomething/eslint-config"
+  parserOptions:
+    # Node requires 'use strict' to use built-in ES6 compatibility.
+    # Use script source type, so lint doesn't throw error:
+    # 'use strict' is unnecessary inside of modules.
+    sourceType: "script"
+  rules:
+    # We don't use babel here, so require 'use strict'.
+    # See https://git.io/vr6I0.
+    strict:
+      - 2
+      - "global"
