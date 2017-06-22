@@ -35,10 +35,11 @@ rl.on('line', (cmd) => {
     .post(`http://localhost:${config.port}/v1/chatbot`)
     .send({
       userId: 'localuser',
-      message: cmd,
+      text: cmd,
+      platform: 'consolebot',
     })
     .then((response) => {
-      console.log('Bot>', response.body.response.message);
+      console.log('Bot>', response.body.reply.text);
       return rl.prompt();
     })
     .catch((err) => {
