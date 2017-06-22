@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
  */
 const eventSchema = new mongoose.Schema({
   userId: String,
+  date: { type: Date, default: Date.now },
   type: String,
   data: Object,
 });
