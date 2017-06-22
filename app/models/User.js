@@ -1,6 +1,7 @@
 'use strict';
 
 const mongoose = require('mongoose');
+const Events = require('./Event');
 
 /**
  * Schema.
@@ -66,5 +67,31 @@ userSchema.methods.declineSignup = function () {
 
   return this.save();
 };
+
+/**
+ * Creates an Event model with given type and data.
+ */
+userSchema.methods.createEvent = function (type, data) {
+  const eventData = {
+    userId: this._id,
+    type,
+    data,
+  };
+
+  Events.create(eventData)
+    .then(event => console.log(`created eventId=${event._id}`))
+    .catch(err => console.log(err.message));
+};
+
+/**
+ * Pre save hooks.
+ */
+userSchema.pre('save', function (next) {
+  if (this.isModified('topic')) {
+    this.createEvent('updateTopic', this.topic);
+  }
+
+  next();
+});
 
 module.exports = mongoose.model('users', userSchema);
