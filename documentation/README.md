@@ -1,5 +1,3 @@
-# API
-
 ## Chatbot
 
 ```
@@ -16,7 +14,7 @@ Name | Type | Description
 `text` | `string` | Incoming message sent from User.
 `platform` | `string` | e.g. `twilio`, `slack`
 
-## Example
+## Examples
 
 ### Request
 
@@ -33,28 +31,52 @@ curl -X "POST" "http://localhost:5100/v1/chatbot" \
 ```
 {
   "reply": {
-    "text": "You're signed up for Thumb Wars. #blessed"
+    "type": "brain",
+    "text": "Hi, you're chatting with Slothie again. I'm a bot!"
   }
 }
 ```
+```
+{
+  "reply": {
+    "type": "noReply",
+    "text": ""
+  }
+}
+```
+```
+{
+  "reply": {
+    "type": "error",
+    "text": "Cannot read property '_id' of null"
+  }
+}
 
-### Users
+
+```
+
+## Users
+
 
 ```
 GET /api/v1/users
 ```
 
 
-### Messages
+## Messages
 
 ```
 GET /api/v1/messages
 ```
 
 
-
-### Actions
+## Actions
 
 ```
 GET /api/v1/actions
 ```
+
+## Usage
+
+See https://florianholzapfel.github.io/express-restify-mongoose/ for docs on how to query the Users, Messages, and Actions endpoints.
+
