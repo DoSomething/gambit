@@ -9,30 +9,54 @@ const Events = require('./Event');
 const userSchema = new mongoose.Schema({
   _id: String,
   platform: String,
+  paused: Boolean,
   topic: String,
   campaignId: Number,
   signupStatus: String,
 });
 
 /**
- * Returns whether current user is in a topic for a Campaign.
- * @return {boolean}
+ * @param {Object} req - Express request
+ * @return {Promise}
  */
-userSchema.methods.hasCampaignTopic = function () {
-  const topic = this.topic;
-  const nonCampaignTopic = (! topic || topic.indexOf('campaign') < 0);
+userSchema.statics.createFromReq = function (req) {
+  const data = {
+    _id: req.userId,
+    platform: req.body.platform,
+    paused: false,
+    // TODO: Move value to config.
+    topic: 'random',
+  };
 
-  return ! nonCampaignTopic;
+  return this.create(data);
 };
 
 /**
- * Returns whether current user is in a topic for a Campaign.
+ * Update User topic and check whether to toggle paused.
  * @return {boolean}
  */
-userSchema.methods.updateUserTopic = function (topic) {
-  const currentTopic = this.topic;
-  // TODO: Create event when we're leaving a Support Topic.
-  this.topic = topic;
+userSchema.methods.updateUserTopic = function (newTopic) {
+  if (this.topic === newTopic) {
+    return this.save();
+  }
+
+  let updatePaused = false;
+
+  if (this.topic.includes('support') && ! newTopic.includes('support')) {
+    updatePaused = true;
+    this.paused = false;
+  }
+
+  if (! this.topic.includes('support') && newTopic.includes('support')) {
+    updatePaused = true;
+    this.paused = true;
+  }
+
+  this.topic = newTopic;
+
+  if (updatePaused) {
+    this.createEvent('updatePaused', { user: this });
+  }
 
   return this.save();
 };
@@ -95,16 +119,5 @@ userSchema.methods.createEvent = function (type, data) {
     .then(event => console.log(`created eventId=${event._id}`))
     .catch(err => console.log(err.message));
 };
-
-/**
- * Pre save hooks.
- */
-userSchema.pre('save', function (next) {
-  if (this.isModified('topic')) {
-    this.createEvent('updateTopic', this.topic);
-  }
-
-  next();
-});
 
 module.exports = mongoose.model('users', userSchema);
