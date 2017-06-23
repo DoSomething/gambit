@@ -38,8 +38,12 @@ rl.on('line', (cmd) => {
       text: cmd,
       platform: 'consolebot',
     })
-    .then((response) => {
-      console.log('Bot>', response.body.reply.text);
+    .then((res) => {
+      const reply = res.body.reply.text;
+      if (reply) {
+        console.log('Bot>', reply);
+      }
+      
       return rl.prompt();
     })
     .catch((err) => {
