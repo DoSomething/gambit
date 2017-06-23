@@ -1,7 +1,8 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const Events = require('./Event');
+const logger = require('heroku-logger');
+const Actions = require('./Action');
 
 /**
  * Schema.
@@ -55,7 +56,7 @@ userSchema.methods.updateUserTopic = function (newTopic) {
   this.topic = newTopic;
 
   if (updatePaused) {
-    this.createEvent('updatePaused', { user: this });
+    this.createAction('updateUserPaused', { user: this });
   }
 
   return this.save();
@@ -106,18 +107,18 @@ userSchema.methods.declineSignup = function () {
 };
 
 /**
- * Creates an Event model with given type and data.
+ * Creates an Action model with given type and data.
  */
-userSchema.methods.createEvent = function (type, data) {
-  const eventData = {
+userSchema.methods.createAction = function (type, data) {
+  const actionData = {
     userId: this._id,
     type,
     data,
   };
 
-  Events.create(eventData)
-    .then(event => console.log(`created eventId=${event._id}`))
-    .catch(err => console.log(err.message));
+  Actions.create(actionData)
+    .then(action => logger.debug(`created actionId:${action._id}`))
+    .catch(err => logger.error(err));
 };
 
 module.exports = mongoose.model('users', userSchema);
