@@ -1,9 +1,10 @@
 'use strict';
 
 const chatbotRoute = require('./chatbot');
-const homeRoute = require('./home');
 
 module.exports = function init(app) {
-  app.get('/', homeRoute);
+  app.get('/', (req, res) => {
+    res.send('hi');
+  });
   app.use('/v1/chatbot', chatbotRoute);
 };
