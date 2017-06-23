@@ -6,6 +6,7 @@ const config = require('./config');
 const restify = require('express-restify-mongoose');
 
 mongoose.connect(config.dbUri);
+mongoose.Promise = global.Promise;
 
 const EventModel = require('./app/models/Event');
 const MessageModel = require('./app/models/Message');
