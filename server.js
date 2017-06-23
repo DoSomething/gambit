@@ -10,9 +10,11 @@ mongoose.Promise = global.Promise;
 
 const ActionModel = require('./app/models/Action');
 const MessageModel = require('./app/models/Message');
+const UserModel = require('./app/models/User');
 
 restify.serve(app, ActionModel);
 restify.serve(app, MessageModel);
+restify.serve(app, UserModel);
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));

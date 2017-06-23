@@ -1,8 +1,9 @@
 # API
 
+## Chatbot
 
 ```
-POST /v1/chatbot
+POST /api/v1/chatbot
 ```
 
 
@@ -35,4 +36,25 @@ curl -X "POST" "http://localhost:5100/v1/chatbot" \
     "text": "You're signed up for Thumb Wars. #blessed"
   }
 }
+```
+
+### Users
+
+```
+GET /api/v1/users
+```
+
+
+### Messages
+
+```
+GET /api/v1/messages
+```
+
+
+
+### Actions
+
+```
+GET /api/v1/actions
 ```
