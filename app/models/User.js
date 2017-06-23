@@ -8,6 +8,7 @@ const Events = require('./Event');
  */
 const userSchema = new mongoose.Schema({
   _id: String,
+  platform: String,
   topic: String,
   campaignId: Number,
   signupStatus: String,
