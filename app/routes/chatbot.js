@@ -15,12 +15,12 @@ const createOutboundMessageMiddleware = require('../../lib/middleware/message-ou
 
 const getBotReplyMiddleware = require('../../lib/middleware/bot-get-reply');
 const brainReplyMiddleware = require('../../lib/middleware/reply-brain');
-const defaultReplyMiddleware = require('../../lib/middleware/reply-default')
+const defaultReplyMiddleware = require('../../lib/middleware/reply-default');
 const noReplyMiddleware = require('../../lib/middleware/reply-noreply');
 const michaelTopicMiddleware = require('../../lib/middleware/reply-michael');
-const botReplySignupKeywordMiddleware = require('../../lib/middleware/bot-reply-signup-keyword');
-const botReplySignupMenuMiddleware = require('../../lib/middleware/bot-reply-signup-menu');
-const botReplySignupContinueMiddleware = require('../../lib/middleware/bot-reply-signup-continue');
+// const signupKeywordMiddleware = require('../../lib/middleware/bot-reply-signup-keyword');
+// const signupMenuMiddleware = require('../../lib/middleware/bot-reply-signup-menu');
+// const signupContinueMiddleware = require('../../lib/middleware/bot-reply-signup-continue');
 
 router.use(paramsMiddleware());
 // Load user.
@@ -33,9 +33,9 @@ router.use(getBotReplyMiddleware());
 router.use(brainReplyMiddleware());
 router.use(noReplyMiddleware());
 router.use(michaelTopicMiddleware());
-// router.use(botReplySignupKeywordMiddleware());
-// router.use(botReplySignupMenuMiddleware());
-// router.use(botReplySignupContinueMiddleware());
+// router.use(signupKeywordMiddleware());
+// router.use(signupMenuMiddleware());
+// router.use(signupContinueMiddleware());
 router.use(defaultReplyMiddleware());
 router.use(createOutboundMessageMiddleware());
 
