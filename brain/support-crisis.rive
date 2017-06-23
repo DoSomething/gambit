@@ -6,6 +6,6 @@
 - Hi, you're chatting with <bot name> again. I'm a bot!{topic=random}
 
 + *
-- <noreply>
+- noReply
 
 < topic
