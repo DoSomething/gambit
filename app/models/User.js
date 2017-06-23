@@ -25,6 +25,18 @@ userSchema.methods.hasCampaignTopic = function () {
 };
 
 /**
+ * Returns whether current user is in a topic for a Campaign.
+ * @return {boolean}
+ */
+userSchema.methods.updateUserTopic = function (topic) {
+  const currentTopic = this.topic;
+  // TODO: Create event when we're leaving a Support Topic.
+  this.topic = topic;
+
+  return this.save();
+};
+
+/**
  * Returns save of User for updating given Campaign (and its topic) with Signup Status.
  * @param {Campaign} campaign
  * @param {string} signupStatus
