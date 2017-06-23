@@ -1,5 +1,8 @@
 'use strict';
 
 module.exports = {
-  macroNames: ['post_signup', 'decline_signup', 'gambit'],
+  debug: process.env.RIVESCRIPT_DEBUG,
+  directory: 'brain',
+  concat: 'newline',
+  macroNames: ['post_signup', 'decline_signup', 'gambit', 'noReply'],
 };

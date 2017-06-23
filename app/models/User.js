@@ -1,27 +1,65 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const Events = require('./Event');
+const logger = require('heroku-logger');
+const Actions = require('./Action');
 
 /**
  * Schema.
  */
 const userSchema = new mongoose.Schema({
   _id: String,
+  platform: String,
+  paused: Boolean,
   topic: String,
   campaignId: Number,
   signupStatus: String,
 });
 
 /**
- * Returns whether current user is in a topic for a Campaign.
+ * @param {Object} req - Express request
+ * @return {Promise}
+ */
+userSchema.statics.createFromReq = function (req) {
+  const data = {
+    _id: req.userId,
+    platform: req.body.platform,
+    paused: false,
+    // TODO: Move value to config.
+    topic: 'random',
+  };
+
+  return this.create(data);
+};
+
+/**
+ * Update User topic and check whether to toggle paused.
  * @return {boolean}
  */
-userSchema.methods.hasCampaignTopic = function () {
-  const topic = this.topic;
-  const nonCampaignTopic = (! topic || topic.indexOf('campaign') < 0);
+userSchema.methods.updateUserTopic = function (newTopic) {
+  if (this.topic === newTopic) {
+    return this.save();
+  }
 
-  return ! nonCampaignTopic;
+  let updatePaused = false;
+
+  if (this.topic.includes('support') && ! newTopic.includes('support')) {
+    updatePaused = true;
+    this.paused = false;
+  }
+
+  if (! this.topic.includes('support') && newTopic.includes('support')) {
+    updatePaused = true;
+    this.paused = true;
+  }
+
+  this.topic = newTopic;
+
+  if (updatePaused) {
+    this.createAction('updateUserPaused', { user: this });
+  }
+
+  return this.save();
 };
 
 /**
@@ -69,29 +107,18 @@ userSchema.methods.declineSignup = function () {
 };
 
 /**
- * Creates an Event model with given type and data.
+ * Creates an Action model with given type and data.
  */
-userSchema.methods.createEvent = function (type, data) {
-  const eventData = {
+userSchema.methods.createAction = function (type, data) {
+  const actionData = {
     userId: this._id,
     type,
     data,
   };
 
-  Events.create(eventData)
-    .then(event => console.log(`created eventId=${event._id}`))
-    .catch(err => console.log(err.message));
+  Actions.create(actionData)
+    .then(action => logger.debug(`created actionId:${action._id}`))
+    .catch(err => logger.error(err));
 };
-
-/**
- * Pre save hooks.
- */
-userSchema.pre('save', function (next) {
-  if (this.isModified('topic')) {
-    this.createEvent('updateTopic', this.topic);
-  }
-
-  next();
-});
 
 module.exports = mongoose.model('users', userSchema);

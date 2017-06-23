@@ -14,6 +14,7 @@ const messageSchema = new mongoose.Schema({
   text: String,
   topic: String,
   platform: String,
+  template: String,
 });
 
 /**
@@ -22,18 +23,22 @@ const messageSchema = new mongoose.Schema({
  * @param {string} body
  * @return {Promise}
  */
-messageSchema.statics.createForRequestWithDirection = function (req, direction, text) {
-  const user = req.user;
-
-  const messageData = {
-    userId: user._id,
+messageSchema.statics.createForRequest = function (req, direction) {
+  const message = {
+    userId: req.userId,
     direction,
-    text,
-    topic: user.topic,
+    topic: req.user.topic,
     platform: req.body.platform,
   };
 
-  return this.create(messageData);
+  if (direction === 'outbound') {
+    message.text = req.reply.text;
+    message.template = req.reply.type;
+  } else {
+    message.text = req.body.text;
+  }
+
+  return this.create(message);
 };
 
 /**
@@ -42,7 +47,7 @@ messageSchema.statics.createForRequestWithDirection = function (req, direction, 
  * @return {Promise}
  */
 messageSchema.statics.createInboundMessage = function (req) {
-  return this.createForRequestWithDirection(req, 'inbound', req.body.text);
+  return this.createForRequest(req, 'inbound');
 };
 
 /**
@@ -51,7 +56,7 @@ messageSchema.statics.createInboundMessage = function (req) {
  * @return {Promise}
  */
 messageSchema.statics.createOutboundMessage = function (req) {
-  return this.createForRequestWithDirection(req, 'outbound', req.renderedReplyMessage);
+  return this.createForRequest(req, 'outbound');
 };
 
 module.exports = mongoose.model('messages', messageSchema);
