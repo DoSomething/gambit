@@ -43,7 +43,7 @@ rl.on('line', (cmd) => {
       if (reply) {
         console.log('Bot>', reply);
       }
-      
+
       return rl.prompt();
     })
     .catch((err) => {

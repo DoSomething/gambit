@@ -7,6 +7,7 @@ const helpers = require('../../lib/helpers');
 const router = express.Router();
 bot.getBot();
 
+const paramsMiddleware = require('../../lib/middleware/params');
 const getUserMiddleware = require('../../lib/middleware/user-get');
 const createUserMiddleware = require('../../lib/middleware/user-create');
 const createInboundMessageMiddleware = require('../../lib/middleware/message-inbound-create');
@@ -21,6 +22,7 @@ const botReplySignupKeywordMiddleware = require('../../lib/middleware/bot-reply-
 const botReplySignupMenuMiddleware = require('../../lib/middleware/bot-reply-signup-menu');
 const botReplySignupContinueMiddleware = require('../../lib/middleware/bot-reply-signup-continue');
 
+router.use(paramsMiddleware());
 // Load user.
 router.use(getUserMiddleware());
 router.use(createUserMiddleware());

@@ -26,7 +26,7 @@ const messageSchema = new mongoose.Schema({
 messageSchema.statics.createForRequest = function (req, direction) {
   const message = {
     userId: req.userId,
-    direction: direction,
+    direction,
     topic: req.user.topic,
     platform: req.body.platform,
   };
