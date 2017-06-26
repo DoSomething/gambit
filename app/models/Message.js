@@ -10,6 +10,7 @@ const messageSchema = new mongoose.Schema({
     type: String,
     index: true,
   },
+  date: { type: Date, default: Date.now },
   direction: String,
   text: String,
   topic: String,

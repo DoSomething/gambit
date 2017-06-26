@@ -32,7 +32,7 @@ rl.on('line', (cmd) => {
 
   // Post to our local chatbot endpoint to chat.
   return superagent
-    .post(`http://localhost:${config.port}/v1/chatbot`)
+    .post(`http://localhost:${config.port}/api/v1/chatbot`)
     .send({
       userId: 'localuser',
       text: cmd,
