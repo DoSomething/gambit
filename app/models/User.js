@@ -3,6 +3,7 @@
 const mongoose = require('mongoose');
 const logger = require('heroku-logger');
 const Actions = require('./Action');
+const Signups = require('./Signup');
 
 /**
  * Schema.
@@ -89,10 +90,21 @@ userSchema.methods.promptSignupForCampaign = function (campaign) {
 
 /**
  * Post signup for current campaign and set it as the topic.
+ * @param {Campaign} campaign
+ * @param {string} source
+ * @param {string} keyword
  */
-userSchema.methods.postSignupForCampaign = function (campaign) {
+userSchema.methods.signupForCampaign = function (campaign, source, keyword) {
   // TODO: Post Signup to DS API.
-  return this.setCurrentCampaignWithSignupStatus(campaign, 'doing');
+  this.setCurrentCampaignWithSignupStatus(campaign, 'doing');
+
+  return Signups.create({
+    userId: this._id,
+    campaignId: campaign._id,
+    campaignRunId: campaign.currentCampaignRunId,
+    source,
+    keyword,
+  });
 };
 
 /**
