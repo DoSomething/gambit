@@ -21,8 +21,13 @@
 - nm, you?
 - Not a lot, you?
 
-+ you are a bot
++ bot
 - how did you know
+- aren't you one, too?
+- we're all bots, aren't we.
+
++ [*] you are a @bot [*]
+@ bot
 
 + where is *
 - where ever it lives
@@ -46,7 +51,7 @@
 @ intro
 
 + are you a @bot
-@ intro
+@ bot
 
 + how old are you [*]
 - I'm <bot age> years old.
