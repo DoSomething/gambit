@@ -2,9 +2,7 @@
 
 const fs = require('fs');
 const mongoose = require('mongoose');
-const Gambit = require('../../lib/gambit');
-
-const gambit = new Gambit();
+const gambitCampaigns = require('../../lib/gambit');
 
 /**
  * Schema.
@@ -13,6 +11,7 @@ const campaignSchema = new mongoose.Schema({
   _id: Number,
   title: String,
   status: String,
+  currentCampaignRunId: Number,
   keywords: [String],
   topic: String,
   gambitSignupMenuMessage: String,
@@ -56,7 +55,9 @@ function parseGambitCampaign(gambitCampaign) {
   const result = {
     title: gambitCampaign.title,
     status: gambitCampaign.status,
+    currentCampaignRunId: gambitCampaign.current_run,
   };
+
   const messageTypes = Object.keys(gambitCampaign.messages);
   messageTypes.map(type => result[type] = gambitCampaign.messages[type].rendered);
   result.keywords = gambitCampaign.keywords.map(keywordObject => keywordObject.keyword);
@@ -71,7 +72,7 @@ function parseGambitCampaign(gambitCampaign) {
 campaignSchema.statics.fetchIndex = function () {
   console.log('Campaign.fetchIndex');
 
-  return gambit.executeGet('campaigns')
+  return gambitCampaigns.get('campaigns')
     .then(campaigns => campaigns.map(campaign => this.fetchCampaign(campaign.id)))
     .catch(err => console.log(err));
 };
@@ -83,7 +84,7 @@ campaignSchema.statics.fetchIndex = function () {
 campaignSchema.statics.fetchCampaign = function (campaignId) {
   console.log('Campaign.fetchCampaign');
 
-  return gambit.executeGet(`campaigns/${campaignId}`)
+  return gambitCampaigns.get(`campaigns/${campaignId}`)
     .then((response) => {
       const campaign = parseGambitCampaign(response);
       campaign.topic = getTopicForCampaignId(campaignId);
