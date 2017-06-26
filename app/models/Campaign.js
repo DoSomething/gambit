@@ -122,4 +122,13 @@ campaignSchema.methods.getSignupPromptMessage = function () {
   return `Want to sign up for ${this.title}? Yes or No`;
 };
 
+/**
+ * @param {string} messageType
+ * @return {string}
+ */
+campaignSchema.methods.getMessageForMessageType = function (messageType) {
+  // TODO: If this.status === 'closed', return closedMessage.
+  return this[messageType];
+};
+
 module.exports = mongoose.model('campaigns', campaignSchema);
