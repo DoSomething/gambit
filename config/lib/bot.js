@@ -5,4 +5,5 @@ module.exports = {
   directory: 'brain',
   concat: 'newline',
   macroNames: ['post_signup', 'decline_signup', 'gambit', 'noReply'],
+  menuCommand: 'menu',
 };

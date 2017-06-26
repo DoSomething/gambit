@@ -40,7 +40,6 @@ const campaignSchema = new mongoose.Schema({
 function getTopicForCampaignId(campaignId) {
   // Check for triggers specific to this Campaign.
   if (fs.existsSync(`brain/campaigns/${campaignId}.rive`)) {
-    console.log('override exists');
     return `campaign_${campaignId}`;
   }
 
@@ -71,11 +70,9 @@ function parseGambitCampaign(gambitCampaign) {
  * @return {Promise}
  */
 campaignSchema.statics.fetchIndex = function () {
-  console.log('Campaign.fetchIndex');
-
   return gambitCampaigns.get('campaigns')
     .then(campaigns => campaigns.map(campaign => this.fetchCampaign(campaign.id)))
-    .catch(err => console.log(err));
+    .catch(err => logger.error('Campaign.fetchIndex', err));
 };
 
 /**
@@ -83,17 +80,15 @@ campaignSchema.statics.fetchIndex = function () {
  * @return {Promise}
  */
 campaignSchema.statics.fetchCampaign = function (campaignId) {
-  console.log('Campaign.fetchCampaign');
-
   return gambitCampaigns.get(`campaigns/${campaignId}`)
     .then((response) => {
       const campaign = parseGambitCampaign(response);
       campaign.topic = getTopicForCampaignId(campaignId);
 
       return this.findOneAndUpdate({ _id: campaignId }, campaign, { upsert: true })
-        .then(() => console.log(`Updated Campaign ${campaignId}: ${campaign.title}`));
+        .then(() => logger.debug('Campaign.fetchCampaign', campaign));
     })
-    .catch(err => console.log(err));
+    .catch(err => logger.error('Campaign.fetchCampaign', err));
 };
 
 /**
@@ -101,7 +96,7 @@ campaignSchema.statics.fetchCampaign = function (campaignId) {
  * @return {Promise}
  */
 campaignSchema.statics.getRandomCampaign = function () {
-  console.log('Campaign.getRandomCampaign');
+  logger.debug('Campaign.getRandomCampaign');
 
   return this
     .aggregate([{ $sample: { size: 1 } }])
