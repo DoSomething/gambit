@@ -10,17 +10,17 @@ bot.getBot();
 const paramsMiddleware = require('../../lib/middleware/params');
 const getUserMiddleware = require('../../lib/middleware/user-get');
 const createUserMiddleware = require('../../lib/middleware/user-create');
+
 const createInboundMessageMiddleware = require('../../lib/middleware/message-inbound-create');
 const createOutboundMessageMiddleware = require('../../lib/middleware/message-outbound-create');
 
 const getBotReplyBrainMiddleware = require('../../lib/middleware/bot-reply-brain');
 const brainReplyMiddleware = require('../../lib/middleware/reply-brain');
-const defaultReplyMiddleware = require('../../lib/middleware/reply-default');
 const noReplyMiddleware = require('../../lib/middleware/reply-noreply');
 const michaelTopicMiddleware = require('../../lib/middleware/reply-michael');
-const signupKeywordMiddleware = require('../../lib/middleware/reply-signup-keyword');
-// const signupMenuMiddleware = require('../../lib/middleware/bot-reply-signup-menu');
-// const signupContinueMiddleware = require('../../lib/middleware/bot-reply-signup-continue');
+const campaignKeywordMiddleware = require('../../lib/middleware/reply-campaign-keyword');
+const campaignMenuMiddleware = require('../../lib/middleware/reply-campaign-menu');
+const campaignContinueMiddleware = require('../../lib/middleware/reply-campaign');
 const getBotReplyTextMiddleware = require('../../lib/middleware/bot-reply-text');
 
 router.use(paramsMiddleware());
@@ -34,10 +34,10 @@ router.use(getBotReplyBrainMiddleware());
 router.use(brainReplyMiddleware());
 router.use(noReplyMiddleware());
 router.use(michaelTopicMiddleware());
-router.use(signupKeywordMiddleware());
-// router.use(signupMenuMiddleware());
-// router.use(signupContinueMiddleware());
-router.use(defaultReplyMiddleware());
+router.use(campaignKeywordMiddleware());
+router.use(campaignMenuMiddleware());
+router.use(campaignContinueMiddleware());
+// Render response.
 router.use(getBotReplyTextMiddleware());
 router.use(createOutboundMessageMiddleware());
 

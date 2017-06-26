@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const mongoose = require('mongoose');
+const logger = require('heroku-logger');
 const gambitCampaigns = require('../../lib/gambit');
 
 /**
@@ -128,8 +129,21 @@ campaignSchema.methods.getSignupPromptMessage = function () {
  * @return {string}
  */
 campaignSchema.methods.getMessageForMessageType = function (messageType) {
+  logger.debug(`Campaign.getMessageForMessageType:${messageType}`);
+
+  let messageText;
   // TODO: If this.status === 'closed', return closedMessage.
-  return this[messageType];
+  if (messageType === 'signupDeclinedMessage') {
+    messageText = this.getSignupDeclinedMessage();
+  } else if (messageType === 'signupPromptMessage') {
+    messageText = this.getSignupPromptMessage();
+  } else if (messageType === 'signupConfirmedMessage') {
+    messageText = this.getSignupConfirmedMessage();
+  } else {
+    messageText = this[messageType];
+  }
+
+  return messageText;
 };
 
 module.exports = mongoose.model('campaigns', campaignSchema);
