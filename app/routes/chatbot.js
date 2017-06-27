@@ -12,8 +12,8 @@ const getUserMiddleware = require('../../lib/middleware/user-get');
 const createUserMiddleware = require('../../lib/middleware/user-create');
 const updateUserMiddleware = require('../../lib/middleware/user-update');
 
-const createInboundMessageMiddleware = require('../../lib/middleware/message-inbound-create');
-const createOutboundMessageMiddleware = require('../../lib/middleware/message-outbound-create');
+const inboundMessageMiddleware = require('../../lib/middleware/user-inbound-message');
+const outboundMessageMiddleware = require('../../lib/middleware/user-outbound-message');
 
 const getBotReplyBrainMiddleware = require('../../lib/middleware/bot-reply-brain');
 const brainReplyMiddleware = require('../../lib/middleware/reply-brain');
@@ -28,7 +28,7 @@ router.use(paramsMiddleware());
 // Load user.
 router.use(getUserMiddleware());
 router.use(createUserMiddleware());
-router.use(createInboundMessageMiddleware());
+router.use(inboundMessageMiddleware());
 // Get bot response to user message.
 router.use(getBotReplyBrainMiddleware());
 // Parse response.
@@ -41,7 +41,7 @@ router.use(campaignContinueMiddleware());
 // Render response.
 router.use(getBotReplyTextMiddleware());
 router.use(updateUserMiddleware());
-router.use(createOutboundMessageMiddleware());
+router.use(outboundMessageMiddleware());
 
 router.post('/', (req, res) => helpers.sendChatbotResponse(req, res));
 
