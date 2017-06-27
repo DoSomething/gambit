@@ -62,6 +62,13 @@ curl -X "POST" "http://localhost:5100/v1/chatbot" \
 GET /api/v1/users
 ```
 
+## Signups
+
+
+```
+GET /api/v1/signups
+```
+
 
 ## Messages
 
@@ -78,7 +85,7 @@ GET /api/v1/actions
 
 ## Usage
 
-See https://florianholzapfel.github.io/express-restify-mongoose/ for docs on how to query the Users, Messages, and Actions endpoints.
+See https://florianholzapfel.github.io/express-restify-mongoose/ for docs on how to query the Users, Signups, Messages, and Actions endpoints.
 
 ### Examples
 
