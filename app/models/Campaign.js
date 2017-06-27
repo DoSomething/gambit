@@ -105,6 +105,17 @@ campaignSchema.statics.getRandomCampaign = function () {
 };
 
 /**
+ * Returns Campaign with given keyword if exists.
+ * @return {Promise}
+ */
+campaignSchema.statics.findByKeyword = function (keyword) {
+  logger.debug(`Campaign.findByKeyword:${keyword}`);
+  const match = keyword.toUpperCase();
+
+  return this.findOne({ keywords: match });
+};
+
+/**
  * Get Gambit messages that don't exist yet.
  */
 campaignSchema.methods.getSignupConfirmedMessage = function () {
