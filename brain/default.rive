@@ -4,7 +4,7 @@
 > topic random 
 
 + topic_support_help
-- Let me find someone to help you.{topic=topic_support_help}
+- I'll try to find a human to help you. If you have a question, leave it here and we'll try to respond within 24 hours.{topic=topic_support_help}
 
 + [*] @help me [*]
 @ topic_support_help
