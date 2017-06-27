@@ -3,6 +3,7 @@
 const mongoose = require('mongoose');
 const logger = require('heroku-logger');
 const Actions = require('./Action');
+const Signups = require('./Signup');
 
 /**
  * Schema.
@@ -13,7 +14,7 @@ const userSchema = new mongoose.Schema({
   paused: Boolean,
   topic: String,
   campaignId: Number,
-  signupStatus: String,
+  lastReplyType: String,
 });
 
 /**
@@ -63,47 +64,34 @@ userSchema.methods.updateUserTopic = function (newTopic) {
 };
 
 /**
- * Returns save of User for updating given Campaign (and its topic) with Signup Status.
+ * Returns save of User for updating given Campaign and its topic.
  * @param {Campaign} campaign
- * @param {string} signupStatus
  * @return {Promise}
  */
-userSchema.methods.setCurrentCampaignWithSignupStatus = function (campaign, signupStatus) {
-  console.log(`userId=${this._id} set campaignId=${campaign._id} signupStatus=${signupStatus}`);
-
+userSchema.methods.setCampaign = function (campaign) {
   this.topic = campaign.topic;
   this.campaignId = campaign._id;
-  this.signupStatus = signupStatus;
 
   return this.save();
-};
-
-/**
- * Prompt User to signup for given Campaign model.
- * @param {Campaign} campaign
- * @return {Promise}
- */
-userSchema.methods.promptSignupForCampaign = function (campaign) {
-  return this.setCurrentCampaignWithSignupStatus(campaign, 'prompt');
 };
 
 /**
  * Post signup for current campaign and set it as the topic.
+ * @param {Campaign} campaign
+ * @param {string} source
+ * @param {string} keyword
  */
-userSchema.methods.postSignupForCampaign = function (campaign) {
+userSchema.methods.signupForCampaign = function (campaign, source, keyword) {
   // TODO: Post Signup to DS API.
-  return this.setCurrentCampaignWithSignupStatus(campaign, 'doing');
-};
+  this.setCampaign(campaign);
 
-/**
- * Unset current campaign and reset topic to random.
- */
-userSchema.methods.declineSignup = function () {
-  this.campaignId = null;
-  this.signupStatus = null;
-  this.topic = 'random';
-
-  return this.save();
+  return Signups.create({
+    userId: this._id,
+    campaignId: campaign._id,
+    campaignRunId: campaign.currentCampaignRunId,
+    source,
+    keyword,
+  });
 };
 
 /**
