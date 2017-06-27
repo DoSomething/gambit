@@ -108,6 +108,18 @@ userSchema.methods.promptSignupForCampaign = function (campaign) {
 };
 
 /**
+ * Decline signup for current campaign.
+ * @param {Campaign} campaign
+ * @param {string} source
+ * @param {string} keyword
+ */
+userSchema.methods.declineSignup = function () {
+  // TODO: Decline Signup event.
+  this.signupStatus = 'declined';
+  this.save();
+};
+
+/**
  * Creates an Action model with given type and data.
  */
 userSchema.methods.createAction = function (type, data) {
