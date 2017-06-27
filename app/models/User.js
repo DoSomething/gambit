@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({
   paused: Boolean,
   topic: String,
   campaignId: Number,
+  signupStatus: String,
   lastReplyType: String,
 });
 
@@ -68,9 +69,10 @@ userSchema.methods.updateUserTopic = function (newTopic) {
  * @param {Campaign} campaign
  * @return {Promise}
  */
-userSchema.methods.setCampaign = function (campaign) {
+userSchema.methods.setCampaign = function (campaign, signupStatus) {
   this.topic = campaign.topic;
   this.campaignId = campaign._id;
+  this.signupStatus = signupStatus;
 
   return this.save();
 };
@@ -83,7 +85,7 @@ userSchema.methods.setCampaign = function (campaign) {
  */
 userSchema.methods.signupForCampaign = function (campaign, source, keyword) {
   // TODO: Post Signup to DS API.
-  this.setCampaign(campaign);
+  this.setCampaign(campaign, 'doing');
 
   return Signups.create({
     userId: this._id,
@@ -92,6 +94,17 @@ userSchema.methods.signupForCampaign = function (campaign, source, keyword) {
     source,
     keyword,
   });
+};
+
+/**
+ * Prompt signup for current campaign.
+ * @param {Campaign} campaign
+ * @param {string} source
+ * @param {string} keyword
+ */
+userSchema.methods.promptSignupForCampaign = function (campaign) {
+  // TODO: Post Signup to DS API.
+  this.setCampaign(campaign, 'prompt');
 };
 
 /**
