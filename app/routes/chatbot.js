@@ -10,6 +10,7 @@ bot.getBot();
 const paramsMiddleware = require('../../lib/middleware/params');
 const getUserMiddleware = require('../../lib/middleware/user-get');
 const createUserMiddleware = require('../../lib/middleware/user-create');
+const updateUserMiddleware = require('../../lib/middleware/user-update');
 
 const createInboundMessageMiddleware = require('../../lib/middleware/message-inbound-create');
 const createOutboundMessageMiddleware = require('../../lib/middleware/message-outbound-create');
@@ -39,6 +40,7 @@ router.use(campaignMenuMiddleware());
 router.use(campaignContinueMiddleware());
 // Render response.
 router.use(getBotReplyTextMiddleware());
+router.use(updateUserMiddleware());
 router.use(createOutboundMessageMiddleware());
 
 router.post('/', (req, res) => helpers.sendChatbotResponse(req, res));
