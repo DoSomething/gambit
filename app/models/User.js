@@ -11,6 +11,7 @@ const Signups = require('./Signup');
 const userSchema = new mongoose.Schema({
   _id: String,
   platform: String,
+  platformId: String,
   paused: Boolean,
   topic: String,
   campaignId: Number,
@@ -24,7 +25,8 @@ const userSchema = new mongoose.Schema({
  */
 userSchema.statics.createFromReq = function (req) {
   const data = {
-    _id: req.userId,
+    _id: new Date().getTime(),
+    platformId: req.userId,
     platform: req.body.platform,
     paused: false,
     // TODO: Move value to config.
@@ -32,6 +34,18 @@ userSchema.statics.createFromReq = function (req) {
   };
 
   return this.create(data);
+};
+
+/**
+ * @param {string} platform
+ * @param {string} platformId
+ * @return {Promise}
+ */
+userSchema.statics.findByPlatformId = function (platform, platformId) {
+  const query = { platform, platformId };
+  logger.debug('User.findByPlatformId', query);
+
+  return this.findOne();
 };
 
 /**
@@ -114,7 +128,7 @@ userSchema.methods.promptSignupForCampaign = function (campaign) {
  * @param {string} keyword
  */
 userSchema.methods.declineSignup = function () {
-  // TODO: Decline Signup event.
+  // TODO: Decline Signup Action.
   this.signupStatus = 'declined';
   this.save();
 };
