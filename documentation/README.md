@@ -13,6 +13,7 @@ Name | Type | Description
 `userId` | `string` | User ID
 `text` | `string` | Incoming message sent from User.
 `platform` | `string` | e.g. `twilio`, `slack`
+`mediaUrl` | `string` | Media attachment URL (currently only supports 1 attachment).
 
 ## Examples
 
