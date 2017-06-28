@@ -11,9 +11,11 @@ const Signups = require('./Signup');
 const userSchema = new mongoose.Schema({
   _id: String,
   platform: String,
+  platformId: String,
   paused: Boolean,
   topic: String,
   campaignId: Number,
+  signupStatus: String,
   lastReplyType: String,
 });
 
@@ -23,7 +25,8 @@ const userSchema = new mongoose.Schema({
  */
 userSchema.statics.createFromReq = function (req) {
   const data = {
-    _id: req.userId,
+    _id: new Date().getTime(),
+    platformId: req.userId,
     platform: req.body.platform,
     paused: false,
     // TODO: Move value to config.
@@ -31,6 +34,18 @@ userSchema.statics.createFromReq = function (req) {
   };
 
   return this.create(data);
+};
+
+/**
+ * @param {string} platform
+ * @param {string} platformId
+ * @return {Promise}
+ */
+userSchema.statics.findByPlatformId = function (platform, platformId) {
+  const query = { platform, platformId };
+  logger.debug('User.findByPlatformId', query);
+
+  return this.findOne();
 };
 
 /**
@@ -68,9 +83,10 @@ userSchema.methods.updateUserTopic = function (newTopic) {
  * @param {Campaign} campaign
  * @return {Promise}
  */
-userSchema.methods.setCampaign = function (campaign) {
+userSchema.methods.setCampaign = function (campaign, signupStatus) {
   this.topic = campaign.topic;
   this.campaignId = campaign._id;
+  this.signupStatus = signupStatus;
 
   return this.save();
 };
@@ -83,7 +99,7 @@ userSchema.methods.setCampaign = function (campaign) {
  */
 userSchema.methods.signupForCampaign = function (campaign, source, keyword) {
   // TODO: Post Signup to DS API.
-  this.setCampaign(campaign);
+  this.setCampaign(campaign, 'doing');
 
   return Signups.create({
     userId: this._id,
@@ -92,6 +108,29 @@ userSchema.methods.signupForCampaign = function (campaign, source, keyword) {
     source,
     keyword,
   });
+};
+
+/**
+ * Prompt signup for current campaign.
+ * @param {Campaign} campaign
+ * @param {string} source
+ * @param {string} keyword
+ */
+userSchema.methods.promptSignupForCampaign = function (campaign) {
+  // TODO: Post Signup to DS API.
+  this.setCampaign(campaign, 'prompt');
+};
+
+/**
+ * Decline signup for current campaign.
+ * @param {Campaign} campaign
+ * @param {string} source
+ * @param {string} keyword
+ */
+userSchema.methods.declineSignup = function () {
+  // TODO: Decline Signup Action.
+  this.signupStatus = 'declined';
+  this.save();
 };
 
 /**

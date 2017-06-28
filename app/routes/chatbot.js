@@ -19,8 +19,9 @@ const getBotReplyBrainMiddleware = require('../../lib/middleware/bot-reply-brain
 const brainReplyMiddleware = require('../../lib/middleware/reply-brain');
 const noReplyMiddleware = require('../../lib/middleware/reply-noreply');
 const michaelTopicMiddleware = require('../../lib/middleware/reply-michael');
-const campaignKeywordMiddleware = require('../../lib/middleware/reply-campaign-keyword');
 const campaignMenuMiddleware = require('../../lib/middleware/reply-campaign-menu');
+const getCampaignFromKeywordMiddleware = require('../../lib/middleware/campaign-keyword');
+const getCampaignFromUserMiddleware = require('../../lib/middleware/campaign-current');
 const campaignContinueMiddleware = require('../../lib/middleware/reply-campaign');
 const getBotReplyTextMiddleware = require('../../lib/middleware/bot-reply-text');
 
@@ -35,8 +36,9 @@ router.use(getBotReplyBrainMiddleware());
 router.use(brainReplyMiddleware());
 router.use(noReplyMiddleware());
 router.use(michaelTopicMiddleware());
-router.use(campaignKeywordMiddleware());
 router.use(campaignMenuMiddleware());
+router.use(getCampaignFromKeywordMiddleware());
+router.use(getCampaignFromUserMiddleware());
 router.use(campaignContinueMiddleware());
 // Render response.
 router.use(getBotReplyTextMiddleware());
