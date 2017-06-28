@@ -45,7 +45,9 @@ userSchema.statics.findByPlatformId = function (platform, platformId) {
   const query = { platform, platformId };
   logger.debug('User.findByPlatformId', query);
 
-  return this.findOne();
+  return this.findOne(query)
+    .then(user => user)
+    .catch(err => err);
 };
 
 /**
