@@ -55,6 +55,8 @@ userSchema.statics.findByPlatformId = function (platform, platformId) {
  * @return {boolean}
  */
 userSchema.methods.updateUserTopic = function (newTopic) {
+  logger.debug('User.updateUserTopic', { newTopic });
+
   if (this.topic === newTopic) {
     return this.save();
   }
@@ -74,6 +76,7 @@ userSchema.methods.updateUserTopic = function (newTopic) {
   this.topic = newTopic;
 
   if (updatePaused) {
+    logger.debug('User.updatePaused', { paused: this.paused });
     this.createAction('updateUserPaused', { user: this });
   }
 
@@ -146,7 +149,7 @@ userSchema.methods.createAction = function (type, data) {
   };
 
   Actions.create(actionData)
-    .then(action => logger.debug(`created actionId:${action._id}`))
+    .then(action => logger.debug('User.createAction', { actionId: action._id.toString() }))
     .catch(err => logger.error(err));
 };
 
