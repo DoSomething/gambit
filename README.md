@@ -13,4 +13,4 @@ Slothie is a chatbot API built with [Express](https://expressjs.com/), [MongoDB]
 
 ### Running in Console
 
-While Slothie is running locally, open a second terminal shell and run `node shell` to post to the /chatbot endpoint from the console.
+While Slothie is running locally, open a second terminal shell and run `node consolebot` to post to the `/chatbot` endpoint via console.
