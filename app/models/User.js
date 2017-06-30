@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
   topic: String,
   campaignId: Number,
   signupStatus: String,
-  lastReplyType: String,
+  lastReplyTemplate: String,
 });
 
 /**
@@ -43,7 +43,7 @@ userSchema.statics.createFromReq = function (req) {
  */
 userSchema.statics.findByPlatformId = function (platform, platformId) {
   const query = { platform, platformId };
-  logger.debug('User.findByPlatformId', query);
+  logger.trace('User.findByPlatformId', query);
 
   return this.findOne(query)
     .then(user => user)
@@ -55,7 +55,7 @@ userSchema.statics.findByPlatformId = function (platform, platformId) {
  * @return {boolean}
  */
 userSchema.methods.updateUserTopic = function (newTopic) {
-  logger.debug('User.updateUserTopic', { newTopic });
+  logger.trace('User.updateUserTopic', { newTopic });
 
   if (this.topic === newTopic) {
     return this.save();

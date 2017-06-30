@@ -127,8 +127,16 @@ campaignSchema.methods.getSignupDeclinedMessage = function () {
 };
 
 campaignSchema.methods.getSignupPromptMessage = function () {
-  return `Want to sign up for ${this.title}? Yes or No`;
+  const strings = ['Wanna', 'Down to', 'Want to'];
+  const randomPrompt = strings[Math.floor(Math.random() * strings.length)];
+
+  return `${randomPrompt} sign up for ${this.title}?`;
 };
+
+campaignSchema.methods.getContinuePromptMessage = function () {
+  return `Ready to get back to ${this.title}?`;
+};
+
 
 /**
  * @param {string} messageType
@@ -145,6 +153,8 @@ campaignSchema.methods.getMessageForMessageType = function (messageType) {
     messageText = this.getSignupPromptMessage();
   } else if (messageType === 'signupConfirmedMessage') {
     messageText = this.getSignupConfirmedMessage();
+  } else if (messageType === 'continuePromptMessage') {
+    messageText = this.getContinuePromptMessage();
   } else {
     messageText = this[messageType];
   }
