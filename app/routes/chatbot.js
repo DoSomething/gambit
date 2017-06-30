@@ -15,15 +15,15 @@ const updateUserMiddleware = require('../../lib/middleware/user-update');
 const inboundMessageMiddleware = require('../../lib/middleware/user-inbound-message');
 const outboundMessageMiddleware = require('../../lib/middleware/user-outbound-message');
 
-const getBotReplyBrainMiddleware = require('../../lib/middleware/bot-reply-brain');
-const brainReplyMiddleware = require('../../lib/middleware/reply-brain');
+const getBotReplyBrainMiddleware = require('../../lib/middleware/bot-reply-get');
+const brainTemplateMiddleware = require('../../lib/middleware/template-brain');
 const noReplyMiddleware = require('../../lib/middleware/reply-noreply');
 const michaelTopicMiddleware = require('../../lib/middleware/reply-michael');
 const campaignMenuMiddleware = require('../../lib/middleware/reply-campaign-menu');
 const getCampaignFromKeywordMiddleware = require('../../lib/middleware/campaign-keyword');
 const getCampaignFromUserMiddleware = require('../../lib/middleware/campaign-current');
 const gambitReplyMiddleware = require('../../lib/middleware/reply-gambit');
-const getBotReplyTextMiddleware = require('../../lib/middleware/bot-reply-text');
+const defaultTemplateMiddleware = require('../../lib/middleware/template-default');
 
 router.use(paramsMiddleware());
 // Load user.
@@ -33,7 +33,7 @@ router.use(inboundMessageMiddleware());
 // Get bot response to user message.
 router.use(getBotReplyBrainMiddleware());
 // Parse response.
-router.use(brainReplyMiddleware());
+router.use(brainTemplateMiddleware());
 router.use(noReplyMiddleware());
 router.use(michaelTopicMiddleware());
 router.use(campaignMenuMiddleware());
@@ -41,7 +41,7 @@ router.use(getCampaignFromKeywordMiddleware());
 router.use(getCampaignFromUserMiddleware());
 router.use(gambitReplyMiddleware());
 // Render response.
-router.use(getBotReplyTextMiddleware());
+router.use(defaultTemplateMiddleware());
 router.use(updateUserMiddleware());
 router.use(outboundMessageMiddleware());
 
