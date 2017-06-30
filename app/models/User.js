@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
   topic: String,
   campaignId: Number,
   signupStatus: String,
-  lastReplyType: String,
+  lastReplyTemplate: String,
 });
 
 /**
