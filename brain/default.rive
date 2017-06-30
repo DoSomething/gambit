@@ -3,18 +3,6 @@
 
 > topic random 
 
-// HELP:
-
-+ topic_support_flagged
-- I'll try to find a human to help you. If you have a question, leave it here and we'll try to\s
-^ respond within 24 hours.{topic=support_flagged}
-
-+ [*] @help me [*]
-@ topic_support_help
-
-+ [*] i am [feeling] (depressed|bipolar|freaking out) [*]
-@ topic_support_help
-
 // CRISIS:
 
 + topic_support_crisis
@@ -26,6 +14,22 @@
 
 + [*] i @want [to] @die [*]
 @ topic_support_crisis
+
+// HELP:
+
++ topic_support_flagged
+- I'll try to find a human to help you. If you have a question, leave it here and we'll try to\s
+^ respond within 24 hours.{topic=support_flagged}
+
++ help me [*]
+@ topic_support_flagged
+
++ [*] you help me [*]
+@ topic_support_flagged
+
++ [*] i am [feeling] (depressed|bipolar|freaking out) [*]
+@ topic_support_flagged
+
 
 // General:
 
