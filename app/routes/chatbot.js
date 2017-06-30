@@ -22,7 +22,7 @@ const michaelTopicMiddleware = require('../../lib/middleware/reply-michael');
 const campaignMenuMiddleware = require('../../lib/middleware/reply-campaign-menu');
 const getCampaignFromKeywordMiddleware = require('../../lib/middleware/campaign-keyword');
 const getCampaignFromUserMiddleware = require('../../lib/middleware/campaign-current');
-const campaignContinueMiddleware = require('../../lib/middleware/reply-campaign');
+const gambitReplyMiddleware = require('../../lib/middleware/reply-gambit');
 const getBotReplyTextMiddleware = require('../../lib/middleware/bot-reply-text');
 
 router.use(paramsMiddleware());
@@ -39,7 +39,7 @@ router.use(michaelTopicMiddleware());
 router.use(campaignMenuMiddleware());
 router.use(getCampaignFromKeywordMiddleware());
 router.use(getCampaignFromUserMiddleware());
-router.use(campaignContinueMiddleware());
+router.use(gambitReplyMiddleware());
 // Render response.
 router.use(getBotReplyTextMiddleware());
 router.use(updateUserMiddleware());
