@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const readline = require('readline');
 const superagent = require('superagent');
+const colors = require('colors'); // eslint-disable-line no-unused-vars
 const config = require('./config');
 
 const rl = readline.createInterface({
@@ -19,7 +20,7 @@ function help() {
 
 console.log('Send a message to Slothie B\n');
 
-rl.setPrompt('You> ');
+rl.setPrompt('You> '.bold);
 rl.prompt();
 
 rl.on('line', (cmd) => {
@@ -41,7 +42,9 @@ rl.on('line', (cmd) => {
     .then((res) => {
       const reply = res.body.reply.text;
       if (reply) {
-        console.log('Bot>', reply);
+        console.log('');
+        console.log('Bot>'.bold.magenta, `${reply}`.yellow);
+        console.log('');
       }
 
       return rl.prompt();

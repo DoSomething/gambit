@@ -11,6 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.17.2",
+    "colors": "^1.1.2",
     "dotenv": "^4.0.0",
     "express": "^4.15.3",
     "express-restify-mongoose": "^4.1.3",
