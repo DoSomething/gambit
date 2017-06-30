@@ -34,7 +34,7 @@ messageSchema.statics.createForRequest = function (req, direction) {
 
   if (direction === 'outbound') {
     message.text = req.reply.text;
-    message.template = req.reply.type;
+    message.template = req.reply.template;
   } else {
     message.text = req.body.text;
   }
