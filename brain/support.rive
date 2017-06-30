@@ -1,0 +1,33 @@
+// support.rive
+// The only reason we define separate topics is to segment the different triggers that cause
+// a user to end up in this topic.
+
+> topic support_crisis
+
++ nevermind
+- Hi, you're chatting with <bot name> again. I'm a bot!{topic=random}
+
++ *
+- noReply
+
+< topic
+
+> topic support_help
+
++ nevermind
+- Hi, you're chatting with <bot name> again. I'm a bot!{topic=random}
+
++ *
+- noReply
+
+< topic
+
+> topic support_inbox
+
++ *
+- noReply
+
++ nevermind
+- Hi, you're chatting with <bot name> again. I'm a bot!{topic=random}
+
+<
