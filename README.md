@@ -4,11 +4,11 @@ Slothie is a chatbot API built with [Express](https://expressjs.com/), [MongoDB]
 
 ## Getting started
 
-* Install Node and Mongo
-* Clone this repo
+* Install Node, Mongo, and the Heroku toolbelt
+* Clone this repo, and create a `.env` file with required variables
 * `npm install`
 * `sudo mongodb`
-* `npm start`
+* `heroku local`
 * Post to `http://localhost:5000/v1/chatbot`
 
 ### Running in Console
