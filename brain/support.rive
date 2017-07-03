@@ -1,17 +1,17 @@
 // support.rive
 
-// We define support as a topic which DOESN'T inherit our random topic, so no default/random
-// triggers will be fired.
+// We define support as a topic which DOESN'T inherit our random topic, so no triggers will catch.
 > topic support
 
-// Because we don't inherient the random topic, we need to define a catchall.
+// And because we don't inherit the random topic here, we need to define a catchall - otherwise
+// we'll receive an 'ERR: No Reply Matched' response from Rivescript.
 // @see https://github.com/aichaos/rivescript-js/issues/90#issuecomment-202500877.
 + *
 - gambit
 
 < topic
 
-// Defined as separate topics to group support requests, and to return different "exit"
+// Defined as separate topics to group support requests, and to potentially return different "exit"
 // messages.
 
 > topic supportCrisis includes support
