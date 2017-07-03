@@ -1,31 +1,34 @@
 // support.rive
-// The only reason we define separate topics is to segment the different triggers that cause
-// a user to end up in this topic.
 
-> topic support_crisis
+// We define support as a topic which DOESN'T inherit our random topic, so no triggers will catch.
+> topic support
+
+// And because we don't inherit the random topic here, we need to define a catchall - otherwise
+// we'll receive an 'ERR: No Reply Matched' response from Rivescript.
+// @see https://github.com/aichaos/rivescript-js/issues/90#issuecomment-202500877.
++ *
+- gambit
+
+< topic
+
+// Defined as separate topics to group support requests, and to potentially return different "exit"
+// messages.
+
+> topic supportCrisis includes support
 
 + nevermind
 - Hi, you're chatting with <bot name> again. I'm a bot!{topic=random}
 
-+ *
-- noReply
-
 < topic
 
-> topic support_flagged
+> topic supportFlagged includes support
 
 + nevermind
 - Hi, you're chatting with <bot name> again. I'm a bot!{topic=random}
 
-+ *
-- noReply
-
 < topic
 
-> topic support_question
-
-+ *
-- noReply
+> topic supportQuestion includes support
 
 + nevermind
 - Hi, you're chatting with <bot name> again. I'm a bot!{topic=random}
