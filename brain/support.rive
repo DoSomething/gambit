@@ -14,21 +14,21 @@
 // Defined as separate topics to group support requests, and to return different "exit"
 // messages.
 
-> topic support_crisis includes support
+> topic supportCrisis includes support
 
 + nevermind
 - Hi, you're chatting with <bot name> again. I'm a bot!{topic=random}
 
 < topic
 
-> topic support_flagged includes support
+> topic supportFlagged includes support
 
 + nevermind
 - Hi, you're chatting with <bot name> again. I'm a bot!{topic=random}
 
 < topic
 
-> topic support_question includes support
+> topic supportQuestion includes support
 
 + nevermind
 - Hi, you're chatting with <bot name> again. I'm a bot!{topic=random}
