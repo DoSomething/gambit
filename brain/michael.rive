@@ -2,22 +2,34 @@
 // Non-sensical conversation about Michael Bolton and Michael Jackson.
 
 + michael
-- michael who?{topic=michael}
+- Welcome to the Michael Game. Michael who?{topic=michael}
 
 > topic michael includes random
 
-+ (bolton|boltin)
++ (b|bo|bolton|boltin|boltan|btown|b-town)
 - When a man loves a woman
 - Time love and tenderness (TLT)
 - How am i supposed to live without u
 
-+ (j|jackson)
++ (j|ja|jackson|jack|jacko|jacky|jax|jaxson|jacksen|jacksin|jbomb|jdog|jdawg)
 - beat it
 - black or white
 - do you remember the time
 - the way you make me feel
+- billie jean is not my lover
+- you know i'm bad, i'm bad, shmon
+- heal the world, make it a better place
+- take a look at yourself and then make that.. change (na na na naaa na na na na)
+- i've been a victim of a selfish kind of love
+- who am i to be blind pretending not to see their need
 
-+ cancel
++ fantini
+- You win!{topic=random}
+
++ [*]
+- Sorry, the only Michaels I know are Jackson and Bolton. Say "end" if you want to end the game.
+
++ end
 - Ok, let's talk about something else.{topic=random}
 
 < topic

@@ -4,6 +4,6 @@ module.exports = {
   debug: process.env.RIVESCRIPT_DEBUG,
   directory: 'brain',
   concat: 'newline',
-  macroNames: ['post_signup', 'decline_signup', 'gambit'],
+  macroNames: ['confirmedCampaign', 'declinedCampaign', 'gambit'],
   menuCommand: 'menu',
 };
