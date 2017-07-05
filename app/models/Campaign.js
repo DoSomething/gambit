@@ -116,55 +116,26 @@ campaignSchema.statics.findByKeyword = function (keyword) {
 };
 
 /**
- * Get Gambit messages that don't exist yet.
+ * Virtual properties.
+ * @TODO: Define these as fields on Gambit Campaigns upon signoff.
  */
-campaignSchema.methods.getSignupDeclinedMessage = function () {
+campaignSchema.virtual('declinedSignupMessage').get(function () {
   return 'OK. Text MENU if you\'d like to find a different Campaign to join.';
-};
+});
 
-campaignSchema.methods.getAskSignupMessage = function () {
+campaignSchema.virtual('askSignupMessage').get(function () {
   const strings = ['Wanna', 'Down to', 'Want to'];
   const randomPrompt = strings[Math.floor(Math.random() * strings.length)];
 
   return `${randomPrompt} sign up for ${this.title}?`;
-};
+});
 
-campaignSchema.methods.getContinueDeclinedMessage = function () {
+campaignSchema.virtual('declinedContinueMessage').get(function () {
   return `Ok, we'll check in with you about ${this.title} later.`;
-};
+});
 
-campaignSchema.methods.getAskContinueMessage = function () {
+campaignSchema.virtual('askContinueMessage').get(function () {
   return `Ready to get back to ${this.title}?`;
-};
-
-
-/**
- * @param {string} messageType
- * @return {string}
- */
-campaignSchema.methods.getMessageForMessageType = function (messageType) {
-  logger.debug(`Campaign.getMessageForMessageType:${messageType}`);
-
-  let messageText;
-  // TODO: If this.status === 'closed', return closedMessage.
-  switch (messageType) {
-    case 'continueDeclinedMessage':
-      messageText = this.getContinueDeclinedMessage();
-      break;
-    case 'askContinueMessage':
-      messageText = this.getAskContinueMessage();
-      break;
-    case 'signupDeclinedMessage':
-      messageText = this.getSignupDeclinedMessage();
-      break;
-    case 'askSignupMessage':
-      messageText = this.getAskSignupMessage();
-      break;
-    default:
-      messageText = this[messageType];
-  }
-
-  return messageText;
-};
+});
 
 module.exports = mongoose.model('campaigns', campaignSchema);
