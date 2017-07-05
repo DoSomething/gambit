@@ -10,12 +10,12 @@ bot.getBot();
 const paramsMiddleware = require('../../lib/middleware/params');
 const getUserMiddleware = require('../../lib/middleware/user-get');
 const createUserMiddleware = require('../../lib/middleware/user-create');
-const updateUserMiddleware = require('../../lib/middleware/user-update');
+const setLastReplyTemplateMiddleware = require('../../lib/middleware/user-set-last-reply-template');
 
 const inboundMessageMiddleware = require('../../lib/middleware/user-inbound-message');
 const outboundMessageMiddleware = require('../../lib/middleware/user-outbound-message');
 
-const getBotReplyBrainMiddleware = require('../../lib/middleware/bot-reply-get');
+const getBotReplyMiddleware = require('../../lib/middleware/reply-brain');
 const brainTemplateMiddleware = require('../../lib/middleware/template-brain');
 const noReplyMiddleware = require('../../lib/middleware/template-paused');
 const askSignupMiddleware = require('../../lib/middleware/template-ask-signup');
@@ -26,7 +26,7 @@ const declinedContinueMiddleware = require('../../lib/middleware/template-declin
 const askContinueMiddleware = require('../../lib/middleware/template-ask-continue');
 const setUserCampaignMiddleware = require('../../lib/middleware/user-set-campaign');
 const gambitReplyMiddleware = require('../../lib/middleware/template-gambit');
-const defaultTemplateMiddleware = require('../../lib/middleware/template-default');
+const renderReplyTextMiddleware = require('../../lib/middleware/reply-render');
 
 router.use(paramsMiddleware());
 
@@ -36,18 +36,17 @@ router.use(createUserMiddleware());
 router.use(inboundMessageMiddleware());
 
 // Get bot response to user message.
-router.use(getBotReplyBrainMiddleware());
+router.use(getBotReplyMiddleware());
 
-// Parse response.
+// Check for non-Campaign replies.
 router.use(brainTemplateMiddleware());
 router.use(noReplyMiddleware());
 
-// Load Campaign.
 router.use(askSignupMiddleware());
 router.use(getCampaignFromKeywordMiddleware());
 router.use(getCampaignFromUserMiddleware());
 
-// Did User say no to joining/continuing the Campaign?
+// Check for no responses to Ask Signup/Continue:
 router.use(declinedSignupMiddleware());
 router.use(declinedContinueMiddleware());
 
@@ -56,12 +55,15 @@ router.use(askContinueMiddleware());
 
 // Check if User Campaign has been updated.
 router.use(setUserCampaignMiddleware());
-// Post User Message to Gambit chatbot to get the reply to send.
+
+// Post User Message to Gambit chatbot to get the reply to send back.
 router.use(gambitReplyMiddleware());
-router.use(defaultTemplateMiddleware());
+
+// Set reply.text if hasn't been set yet.
+router.use(renderReplyTextMiddleware());
 
 // Update user and create outbound message.
-router.use(updateUserMiddleware());
+router.use(setLastReplyTemplateMiddleware());
 router.use(outboundMessageMiddleware());
 
 router.post('/', (req, res) => helpers.sendChatbotResponse(req, res));
