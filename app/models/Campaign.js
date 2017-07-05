@@ -170,7 +170,6 @@ campaignSchema.methods.getMessageForMessageType = function (messageType) {
     default:
       messageText = this[messageType];
   }
-  console.log(`messageText=${messageText}`);
 
   return messageText;
 };
