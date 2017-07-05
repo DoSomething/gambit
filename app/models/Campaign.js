@@ -12,25 +12,8 @@ const campaignSchema = new mongoose.Schema({
   _id: Number,
   title: String,
   status: String,
-  currentCampaignRunId: Number,
   keywords: [String],
   topic: String,
-  gambitSignupMenuMessage: String,
-  externalSignupMenuMessage: String,
-  invalidSignupMenuCommandMessage: String,
-  askQuantityMessage: String,
-  invalidQuantityMessage: String,
-  askPhotoMessage: String,
-  invalidPhotoMessage: String,
-  askCaptionMessage: String,
-  askWhyParticipatedMessage: String,
-  completedMenuMessage: String,
-  invalidCompletedMenuCommandMessage: String,
-  scheduledRelativeToSignupDateMessage: String,
-  scheduledRelativeToReportbackDateMessage: String,
-  memberSupportMessage: String,
-  campaignClosedMessage: String,
-  errorOccurredMessage: String,
 });
 
 /**
@@ -55,11 +38,8 @@ function parseGambitCampaign(gambitCampaign) {
   const result = {
     title: gambitCampaign.title,
     status: gambitCampaign.status,
-    currentCampaignRunId: gambitCampaign.current_run,
   };
 
-  const messageTypes = Object.keys(gambitCampaign.messages);
-  messageTypes.map(type => result[type] = gambitCampaign.messages[type].rendered);
   result.keywords = gambitCampaign.keywords.map(keywordObject => keywordObject.keyword);
 
   return result;
@@ -70,6 +50,8 @@ function parseGambitCampaign(gambitCampaign) {
  * @return {Promise}
  */
 campaignSchema.statics.fetchIndex = function () {
+  logger.info('Campaign.fetchIndex');
+
   return gambitCampaigns.get('campaigns')
     .then(campaigns => campaigns.map(campaign => this.fetchCampaign(campaign.id)))
     .catch(err => logger.error('Campaign.fetchIndex', err));
@@ -116,62 +98,26 @@ campaignSchema.statics.findByKeyword = function (keyword) {
 };
 
 /**
- * Get Gambit messages that don't exist yet.
+ * Virtual properties.
+ * @TODO: Define these as fields on Gambit Campaigns upon signoff.
  */
-campaignSchema.methods.getSignupConfirmedMessage = function () {
-  return `You're signed up for ${this.title}. #blessed`;
-};
-
-campaignSchema.methods.getSignupDeclinedMessage = function () {
+campaignSchema.virtual('declinedSignupMessage').get(function () {
   return 'OK. Text MENU if you\'d like to find a different Campaign to join.';
-};
+});
 
-campaignSchema.methods.getAskSignupMessage = function () {
+campaignSchema.virtual('askSignupMessage').get(function () {
   const strings = ['Wanna', 'Down to', 'Want to'];
   const randomPrompt = strings[Math.floor(Math.random() * strings.length)];
 
   return `${randomPrompt} sign up for ${this.title}?`;
-};
+});
 
-campaignSchema.methods.getContinueDeclinedMessage = function () {
+campaignSchema.virtual('declinedContinueMessage').get(function () {
   return `Ok, we'll check in with you about ${this.title} later.`;
-};
+});
 
-campaignSchema.methods.getAskContinueMessage = function () {
+campaignSchema.virtual('askContinueMessage').get(function () {
   return `Ready to get back to ${this.title}?`;
-};
-
-
-/**
- * @param {string} messageType
- * @return {string}
- */
-campaignSchema.methods.getMessageForMessageType = function (messageType) {
-  logger.debug(`Campaign.getMessageForMessageType:${messageType}`);
-
-  let messageText;
-  // TODO: If this.status === 'closed', return closedMessage.
-  switch (messageType) {
-    case 'continueDeclinedMessage':
-      messageText = this.getContinueDeclinedMessage();
-      break;
-    case 'askContinueMessage':
-      messageText = this.getAskContinueMessage();
-      break;
-    case 'signupConfirmedMessage':
-      messageText = this.getSignupConfirmedMessage();
-      break;
-    case 'signupDeclinedMessage':
-      messageText = this.getSignupDeclinedMessage();
-      break;
-    case 'askSignupMessage':
-      messageText = this.getAskSignupMessage();
-      break;
-    default:
-      messageText = this[messageType];
-  }
-
-  return messageText;
-};
+});
 
 module.exports = mongoose.model('campaigns', campaignSchema);

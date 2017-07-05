@@ -3,7 +3,6 @@
 const mongoose = require('mongoose');
 const logger = require('heroku-logger');
 const Actions = require('./Action');
-const Signups = require('./Signup');
 
 /**
  * Schema.
@@ -106,13 +105,7 @@ userSchema.methods.signupForCampaign = function (campaign, source, keyword) {
   // TODO: Post Signup to DS API.
   this.setCampaign(campaign, 'doing');
 
-  return Signups.create({
-    userId: this._id,
-    campaignId: campaign._id,
-    campaignRunId: campaign.currentCampaignRunId,
-    source,
-    keyword,
-  });
+  // TODO: Create Action.
 };
 
 /**

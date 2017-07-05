@@ -10,12 +10,10 @@ mongoose.Promise = global.Promise;
 
 const ActionModel = require('./app/models/Action');
 const MessageModel = require('./app/models/Message');
-const SignupModel = require('./app/models/Signup');
 const UserModel = require('./app/models/User');
 
 restify.serve(app, ActionModel);
 restify.serve(app, MessageModel);
-restify.serve(app, SignupModel);
 restify.serve(app, UserModel);
 
 const db = mongoose.connection;
