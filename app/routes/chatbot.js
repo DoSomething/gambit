@@ -54,7 +54,9 @@ router.use(declinedContinueMiddleware());
 // If our last reply was non-Gambit, prompt to chat Gambit again.
 router.use(promptCampaignContinueMiddleware());
 
-// Post User Message to Gambit chatbot to get the reply to send. 
+// Check if User Campaign has been updated.
+router.use(setUserCampaignMiddleware());
+// Post User Message to Gambit chatbot to get the reply to send.
 router.use(gambitReplyMiddleware());
 router.use(defaultTemplateMiddleware());
 
