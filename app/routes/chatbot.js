@@ -21,7 +21,7 @@ const noReplyMiddleware = require('../../lib/middleware/template-paused');
 const campaignMenuMiddleware = require('../../lib/middleware/campaign-menu');
 const campaignKeywordMiddleware = require('../../lib/middleware/campaign-keyword');
 const currentCampaignMiddleware = require('../../lib/middleware/campaign-current');
-const declinedSignupMiddleware = require('../../lib/middleware/template-declined-signup');
+const parseAskSignupMiddleware = require('../../lib/middleware/parse-ask-signup-response');
 const declinedContinueMiddleware = require('../../lib/middleware/template-declined-continue');
 const askContinueMiddleware = require('../../lib/middleware/template-ask-continue');
 const setUserCampaignMiddleware = require('../../lib/middleware/user-set-campaign');
@@ -47,8 +47,8 @@ router.use(campaignMenuMiddleware());
 router.use(campaignKeywordMiddleware());
 router.use(currentCampaignMiddleware());
 
-// Check for no responses to Ask Signup/Continue:
-router.use(declinedSignupMiddleware());
+// Parse user responses to Ask Signup/Continue messages:
+router.use(parseAskSignupMiddleware());
 router.use(declinedContinueMiddleware());
 
 // If our last reply was non-Gambit, prompt to chat Gambit again.

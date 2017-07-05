@@ -120,4 +120,11 @@ campaignSchema.virtual('askContinueMessage').get(function () {
   return `Ready to get back to ${this.title}?`;
 });
 
+campaignSchema.virtual('invalidSignupResponseMessage').get(function () {
+  let text = `Sorry, I didn't get that. Did you want to signup for ${this.title}?\n\nYes or No`;
+  text = `${text}\n\nIf you have a question, text Q.`;
+
+  return text;
+})
+
 module.exports = mongoose.model('campaigns', campaignSchema);
