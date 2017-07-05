@@ -126,7 +126,7 @@ campaignSchema.methods.getSignupDeclinedMessage = function () {
   return 'OK. Text MENU if you\'d like to find a different Campaign to join.';
 };
 
-campaignSchema.methods.getSignupPromptMessage = function () {
+campaignSchema.methods.getAskSignupMessage = function () {
   const strings = ['Wanna', 'Down to', 'Want to'];
   const randomPrompt = strings[Math.floor(Math.random() * strings.length)];
 
@@ -164,8 +164,8 @@ campaignSchema.methods.getMessageForMessageType = function (messageType) {
     case 'signupDeclinedMessage':
       messageText = this.getSignupDeclinedMessage();
       break;
-    case 'signupPromptMessage':
-      messageText = this.getSignupPromptMessage();
+    case 'askSignupMessage':
+      messageText = this.getAskSignupMessage();
       break;
     default:
       messageText = this[messageType];
