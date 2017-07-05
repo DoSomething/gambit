@@ -12,25 +12,8 @@ const campaignSchema = new mongoose.Schema({
   _id: Number,
   title: String,
   status: String,
-  currentCampaignRunId: Number,
   keywords: [String],
   topic: String,
-  gambitSignupMenuMessage: String,
-  externalSignupMenuMessage: String,
-  invalidSignupMenuCommandMessage: String,
-  askQuantityMessage: String,
-  invalidQuantityMessage: String,
-  askPhotoMessage: String,
-  invalidPhotoMessage: String,
-  askCaptionMessage: String,
-  askWhyParticipatedMessage: String,
-  completedMenuMessage: String,
-  invalidCompletedMenuCommandMessage: String,
-  scheduledRelativeToSignupDateMessage: String,
-  scheduledRelativeToReportbackDateMessage: String,
-  memberSupportMessage: String,
-  campaignClosedMessage: String,
-  errorOccurredMessage: String,
 });
 
 /**
@@ -55,11 +38,8 @@ function parseGambitCampaign(gambitCampaign) {
   const result = {
     title: gambitCampaign.title,
     status: gambitCampaign.status,
-    currentCampaignRunId: gambitCampaign.current_run,
   };
 
-  const messageTypes = Object.keys(gambitCampaign.messages);
-  messageTypes.map(type => result[type] = gambitCampaign.messages[type].rendered);
   result.keywords = gambitCampaign.keywords.map(keywordObject => keywordObject.keyword);
 
   return result;
@@ -70,6 +50,8 @@ function parseGambitCampaign(gambitCampaign) {
  * @return {Promise}
  */
 campaignSchema.statics.fetchIndex = function () {
+  logger.info('Campaign.fetchIndex');
+
   return gambitCampaigns.get('campaigns')
     .then(campaigns => campaigns.map(campaign => this.fetchCampaign(campaign.id)))
     .catch(err => logger.error('Campaign.fetchIndex', err));
