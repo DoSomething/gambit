@@ -118,10 +118,6 @@ campaignSchema.statics.findByKeyword = function (keyword) {
 /**
  * Get Gambit messages that don't exist yet.
  */
-campaignSchema.methods.getSignupConfirmedMessage = function () {
-  return `You're signed up for ${this.title}. #blessed`;
-};
-
 campaignSchema.methods.getSignupDeclinedMessage = function () {
   return 'OK. Text MENU if you\'d like to find a different Campaign to join.';
 };
@@ -157,9 +153,6 @@ campaignSchema.methods.getMessageForMessageType = function (messageType) {
       break;
     case 'askContinueMessage':
       messageText = this.getAskContinueMessage();
-      break;
-    case 'signupConfirmedMessage':
-      messageText = this.getSignupConfirmedMessage();
       break;
     case 'signupDeclinedMessage':
       messageText = this.getSignupDeclinedMessage();
