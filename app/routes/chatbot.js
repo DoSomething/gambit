@@ -10,7 +10,6 @@ bot.getBot();
 const paramsMiddleware = require('../../lib/middleware/params');
 const getUserMiddleware = require('../../lib/middleware/user-get');
 const createUserMiddleware = require('../../lib/middleware/user-create');
-const setLastReplyTemplateMiddleware = require('../../lib/middleware/user-set-last-reply-template');
 
 const inboundMessageMiddleware = require('../../lib/middleware/user-inbound-message');
 const outboundMessageMiddleware = require('../../lib/middleware/user-outbound-message');
@@ -22,9 +21,10 @@ const campaignMenuMiddleware = require('../../lib/middleware/campaign-menu');
 const campaignKeywordMiddleware = require('../../lib/middleware/campaign-keyword');
 const currentCampaignMiddleware = require('../../lib/middleware/campaign-current');
 const parseAskSignupMiddleware = require('../../lib/middleware/parse-ask-signup-response');
-const declinedContinueMiddleware = require('../../lib/middleware/template-declined-continue');
+const parseAskContinueMiddleware = require('../../lib/middleware/parse-ask-continue-response');
 const askContinueMiddleware = require('../../lib/middleware/template-ask-continue');
 const setUserCampaignMiddleware = require('../../lib/middleware/user-set-campaign');
+const setLastReplyTemplateMiddleware = require('../../lib/middleware/user-set-last-reply-template');
 const gambitReplyMiddleware = require('../../lib/middleware/template-gambit');
 const renderReplyTextMiddleware = require('../../lib/middleware/reply-render');
 
@@ -47,9 +47,9 @@ router.use(campaignMenuMiddleware());
 router.use(campaignKeywordMiddleware());
 router.use(currentCampaignMiddleware());
 
-// Parse user responses to Ask Signup/Continue messages:
+// Parse user responses to sent Ask Signup/Continue messages:
 router.use(parseAskSignupMiddleware());
-router.use(declinedContinueMiddleware());
+router.use(parseAskContinueMiddleware());
 
 // If our last reply was non-Gambit, prompt to chat Gambit again.
 router.use(askContinueMiddleware());
