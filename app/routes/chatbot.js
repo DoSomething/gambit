@@ -21,9 +21,10 @@ const noReplyMiddleware = require('../../lib/middleware/template-noreply');
 const campaignMenuTemplateMiddleware = require('../../lib/middleware/template-prompt-signup');
 const getCampaignFromKeywordMiddleware = require('../../lib/middleware/campaign-keyword');
 const getCampaignFromUserMiddleware = require('../../lib/middleware/campaign-current');
-
+const declinedSignupMiddleware = require('../../lib/middleware/template-declined-signup');
 const declinedContinueMiddleware = require('../../lib/middleware/template-declined-continue');
 const promptCampaignContinueMiddleware = require('../../lib/middleware/template-prompt-continue');
+const setUserCampaignMiddleware = require('../../lib/middleware/user-set-campaign');
 const gambitReplyMiddleware = require('../../lib/middleware/template-gambit');
 const defaultTemplateMiddleware = require('../../lib/middleware/template-default');
 
@@ -40,12 +41,20 @@ router.use(getBotReplyBrainMiddleware());
 // Parse response.
 router.use(brainTemplateMiddleware());
 router.use(noReplyMiddleware());
+
+// Load Campaign.
 router.use(campaignMenuTemplateMiddleware());
 router.use(getCampaignFromKeywordMiddleware());
 router.use(getCampaignFromUserMiddleware());
 
+// Did User say no to joining/continuing the Campaign?
+router.use(declinedSignupMiddleware());
 router.use(declinedContinueMiddleware());
+
+// If our last reply was non-Gambit, prompt to chat Gambit again.
 router.use(promptCampaignContinueMiddleware());
+
+// Post User Message to Gambit chatbot to get the reply to send. 
 router.use(gambitReplyMiddleware());
 router.use(defaultTemplateMiddleware());
 

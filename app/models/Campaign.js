@@ -123,7 +123,7 @@ campaignSchema.methods.getSignupConfirmedMessage = function () {
 };
 
 campaignSchema.methods.getSignupDeclinedMessage = function () {
-  return `Got it - we'll hold on ${this.title}. Check back with you later!`;
+  return 'OK. Text MENU if you\'d like to find a different Campaign to join.';
 };
 
 campaignSchema.methods.getSignupPromptMessage = function () {
@@ -131,6 +131,10 @@ campaignSchema.methods.getSignupPromptMessage = function () {
   const randomPrompt = strings[Math.floor(Math.random() * strings.length)];
 
   return `${randomPrompt} sign up for ${this.title}?`;
+};
+
+campaignSchema.methods.getContinueDeclinedMessage = function () {
+  return `Ok, we'll check in with you about ${this.title} later.`;
 };
 
 campaignSchema.methods.getContinuePromptMessage = function () {
@@ -147,17 +151,26 @@ campaignSchema.methods.getMessageForMessageType = function (messageType) {
 
   let messageText;
   // TODO: If this.status === 'closed', return closedMessage.
-  if (messageType === 'signupDeclinedMessage') {
-    messageText = this.getSignupDeclinedMessage();
-  } else if (messageType === 'signupPromptMessage') {
-    messageText = this.getSignupPromptMessage();
-  } else if (messageType === 'signupConfirmedMessage') {
-    messageText = this.getSignupConfirmedMessage();
-  } else if (messageType === 'continuePromptMessage') {
-    messageText = this.getContinuePromptMessage();
-  } else {
-    messageText = this[messageType];
+  switch (messageType) {
+    case 'continueDeclinedMessage':
+      messageText = this.getContinueDeclinedMessage();
+      break;
+    case 'continuePromptMessage':
+      messageText = this.getContinuePromptMessage();
+      break;
+    case 'signupConfirmedMessage':
+      messageText = this.getSignupConfirmedMessage();
+      break;
+    case 'signupDeclinedMessage':
+      messageText = this.getSignupDeclinedMessage();
+      break;
+    case 'signupPromptMessage':
+      messageText = this.getSignupPromptMessage();
+      break;
+    default:
+      messageText = this[messageType];
   }
+  console.log(`messageText=${messageText}`);
 
   return messageText;
 };

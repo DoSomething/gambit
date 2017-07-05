@@ -5,10 +5,10 @@
 
 // TODO: Yes/No triggers should only match when User's signupStatus is set to 'prompt'. 
 + @yes [*]
-- post_signup
+- confirmedCampaign
 
 + @no [*]
-- decline_signup
+- declinedCampaign
 
 + [*] can not @send [a] @photo [*]
 - If you can't send photos from your phone, login at www.dosomething.org to upload them!
