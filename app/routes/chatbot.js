@@ -17,7 +17,7 @@ const outboundMessageMiddleware = require('../../lib/middleware/user-outbound-me
 
 const getBotReplyBrainMiddleware = require('../../lib/middleware/bot-reply-get');
 const brainTemplateMiddleware = require('../../lib/middleware/template-brain');
-const noReplyMiddleware = require('../../lib/middleware/template-noreply');
+const noReplyMiddleware = require('../../lib/middleware/template-paused');
 const askSignupMiddleware = require('../../lib/middleware/template-ask-signup');
 const getCampaignFromKeywordMiddleware = require('../../lib/middleware/campaign-keyword');
 const getCampaignFromUserMiddleware = require('../../lib/middleware/campaign-current');
