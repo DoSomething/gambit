@@ -21,6 +21,7 @@ const noReplyMiddleware = require('../../lib/middleware/template-noreply');
 const campaignMenuTemplateMiddleware = require('../../lib/middleware/template-campaign-menu');
 const getCampaignFromKeywordMiddleware = require('../../lib/middleware/campaign-keyword');
 const getCampaignFromUserMiddleware = require('../../lib/middleware/campaign-current');
+const promptCampaignContinueMiddleware = require('../../lib/middleware/template-prompt-continue');
 const gambitReplyMiddleware = require('../../lib/middleware/template-gambit');
 const defaultTemplateMiddleware = require('../../lib/middleware/template-default');
 
@@ -40,6 +41,7 @@ router.use(noReplyMiddleware());
 router.use(campaignMenuTemplateMiddleware());
 router.use(getCampaignFromKeywordMiddleware());
 router.use(getCampaignFromUserMiddleware());
+router.use(promptCampaignContinueMiddleware());
 router.use(gambitReplyMiddleware());
 router.use(defaultTemplateMiddleware());
 
