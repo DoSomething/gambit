@@ -18,9 +18,9 @@ const outboundMessageMiddleware = require('../../lib/middleware/user-outbound-me
 const getBotReplyMiddleware = require('../../lib/middleware/reply-brain');
 const brainTemplateMiddleware = require('../../lib/middleware/template-brain');
 const noReplyMiddleware = require('../../lib/middleware/template-paused');
-const askSignupMiddleware = require('../../lib/middleware/template-ask-signup');
-const getCampaignFromKeywordMiddleware = require('../../lib/middleware/campaign-keyword');
-const getCampaignFromUserMiddleware = require('../../lib/middleware/campaign-current');
+const campaignMenuMiddleware = require('../../lib/middleware/campaign-menu');
+const campaignKeywordMiddleware = require('../../lib/middleware/campaign-keyword');
+const currentCampaignMiddleware = require('../../lib/middleware/campaign-current');
 const declinedSignupMiddleware = require('../../lib/middleware/template-declined-signup');
 const declinedContinueMiddleware = require('../../lib/middleware/template-declined-continue');
 const askContinueMiddleware = require('../../lib/middleware/template-ask-continue');
@@ -42,9 +42,10 @@ router.use(getBotReplyMiddleware());
 router.use(brainTemplateMiddleware());
 router.use(noReplyMiddleware());
 
-router.use(askSignupMiddleware());
-router.use(getCampaignFromKeywordMiddleware());
-router.use(getCampaignFromUserMiddleware());
+// Load appropriate Campaign.
+router.use(campaignMenuMiddleware());
+router.use(campaignKeywordMiddleware());
+router.use(currentCampaignMiddleware());
 
 // Check for no responses to Ask Signup/Continue:
 router.use(declinedSignupMiddleware());
