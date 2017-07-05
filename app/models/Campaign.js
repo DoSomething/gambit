@@ -137,7 +137,7 @@ campaignSchema.methods.getContinueDeclinedMessage = function () {
   return `Ok, we'll check in with you about ${this.title} later.`;
 };
 
-campaignSchema.methods.getContinuePromptMessage = function () {
+campaignSchema.methods.getAskContinueMessage = function () {
   return `Ready to get back to ${this.title}?`;
 };
 
@@ -155,8 +155,8 @@ campaignSchema.methods.getMessageForMessageType = function (messageType) {
     case 'continueDeclinedMessage':
       messageText = this.getContinueDeclinedMessage();
       break;
-    case 'continuePromptMessage':
-      messageText = this.getContinuePromptMessage();
+    case 'askContinueMessage':
+      messageText = this.getAskContinueMessage();
       break;
     case 'signupConfirmedMessage':
       messageText = this.getSignupConfirmedMessage();
