@@ -82,7 +82,7 @@ See https://florianholzapfel.github.io/express-restify-mongoose/ for docs on how
 ### Examples
 
 Filter
-* https://gambit-conversations-prod.herokuapp.com/api/v1/messages?query={%22platform%22:%22slack%22}
+* https://gambit-conversations-prod.herokuapp.com/api/v1/messages?query={"platform":"slack"}
 * https://gambit-conversations-prod.herokuapp.com/api/v1/messages?query={"date":{"$gt":"2017-06-24T00:34:11.114Z"}}
 Sort
 * https://gambit-conversations-prod.herokuapp.com/api/v1/actions?sort=-date
