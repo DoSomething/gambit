@@ -105,7 +105,7 @@ campaignSchema.statics.findByKeyword = function (keyword) {
 /* eslint-disable prefer-arrow-callback */
 // Disabling for these virtual properties because arrow functions are not a shortcut for function().
 // @see https://github.com/Automattic/mongoose/issues/4143
- 
+
 // Even though this field exists on a Gambit Campaign, we're overriding it here because the copy
 // should prompt the User to text MENU back to find a new Campaign to do (doesn't exist on prod)
 campaignSchema.virtual('declinedSignupMessage').get(function () {

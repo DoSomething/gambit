@@ -14,6 +14,7 @@ const messageSchema = new mongoose.Schema({
   direction: String,
   text: String,
   topic: String,
+  campaignId: Number,
   platform: String,
   template: String,
 });
@@ -35,8 +36,10 @@ messageSchema.statics.createForRequest = function (req, direction) {
   if (direction === 'outbound') {
     message.text = req.reply.text;
     message.template = req.reply.template;
+    message.campaignId = req.campaign._id;
   } else {
     message.text = req.body.text;
+    message.campaignId = req.user.campaignId;
   }
 
   return this.create(message);
