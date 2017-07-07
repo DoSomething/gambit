@@ -24,9 +24,9 @@ const parseAskSignupMiddleware = require('../../lib/middleware/parse-ask-signup-
 const parseAskContinueMiddleware = require('../../lib/middleware/parse-ask-continue-response');
 const askContinueMiddleware = require('../../lib/middleware/template-ask-continue');
 const setUserCampaignMiddleware = require('../../lib/middleware/user-set-campaign');
-const setLastReplyTemplateMiddleware = require('../../lib/middleware/user-set-last-reply-template');
 const gambitReplyMiddleware = require('../../lib/middleware/template-gambit');
-const renderReplyTextMiddleware = require('../../lib/middleware/reply-render');
+const campaignMessageMiddleware = require('../../lib/middleware/template-campaign');
+const setLastReplyTemplateMiddleware = require('../../lib/middleware/user-set-last-reply-template');
 
 router.use(paramsMiddleware());
 
@@ -56,12 +56,8 @@ router.use(askContinueMiddleware());
 
 // Check if User Campaign has been updated.
 router.use(setUserCampaignMiddleware());
-
-// Post User Message to Gambit chatbot to get the reply to send back.
 router.use(gambitReplyMiddleware());
-
-// Set reply.text if hasn't been set yet.
-router.use(renderReplyTextMiddleware());
+router.use(campaignMessageMiddleware());
 
 // Update user and create outbound message.
 router.use(setLastReplyTemplateMiddleware());
