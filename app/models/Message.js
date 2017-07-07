@@ -36,7 +36,9 @@ messageSchema.statics.createForRequest = function (req, direction) {
   if (direction === 'outbound') {
     message.text = req.reply.text;
     message.template = req.reply.template;
-    message.campaignId = req.campaign._id;
+    if (req.campaign) {
+      message.campaignId = req.campaign._id;
+    }
   } else {
     message.text = req.body.text;
     message.campaignId = req.user.campaignId;
