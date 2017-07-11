@@ -7,7 +7,7 @@
 
 + topic_support_crisis
 - Thanks for being brave and sharing that. If you want to talk to someone, our friends at CTL are\s
-^ here for you 24/7. Just send a text to 741741. They’ll listen!{topic=supportCrisis}
+^ here for you 24/7. Just send a text to 741741. They’ll listen!{topic=support_crisis}
 
 + [*] (i|someone|who) [@is] @hurting [me] [*]
 @ topic_support_crisis
@@ -19,7 +19,7 @@
 
 + topic_support_flagged
 - I'll try to find a human to help you. If you have a question, leave it here and we'll try to\s
-^ respond within 24 hours.{topic=supportFlagged}
+^ respond within 24 hours.{topic=support_flagged}
 
 + help me [*]
 @ topic_support_flagged
@@ -35,7 +35,7 @@
 
 + question
 - Text back your question and I'll try to get back to you within 24 hrs.\n\nIf you want to cancel\s
-^ your request without waiting for a response, reply with "nevermind".{topic=supportQuestion}
+^ your request without waiting for a response, reply with "nevermind".{topic=support_question}
 
 + q
 @ question
