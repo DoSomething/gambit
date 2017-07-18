@@ -3,6 +3,7 @@
 const mongoose = require('mongoose');
 const logger = require('heroku-logger');
 const Actions = require('./Action');
+const slack = require('../../lib/slack');
 
 /**
  * Schema.
@@ -16,6 +17,7 @@ const userSchema = new mongoose.Schema({
   campaignId: Number,
   signupStatus: String,
   lastReplyTemplate: String,
+  slackChannel: String,
 });
 
 /**
@@ -26,11 +28,15 @@ userSchema.statics.createFromReq = function (req) {
   const data = {
     _id: new Date().getTime(),
     platformId: req.userId,
-    platform: req.body.platform,
+    platform: req.platform,
     paused: false,
     // TODO: Move value to config.
     topic: 'random',
   };
+
+  if (req.slackChannel) {
+    data.slackChannel = req.slackChannel;
+  }
 
   return this.create(data);
 };
@@ -145,5 +151,13 @@ userSchema.methods.createAction = function (type, data) {
     .then(action => logger.debug('User.createAction', { actionId: action._id.toString() }))
     .catch(err => logger.error(err));
 };
+
+userSchema.methods.sendMessage = function (messageText, args) {
+  if (this.platform !== 'slack') {
+    return;
+  }
+
+  slack.postMessage(this.slackChannel, messageText, args)
+}
 
 module.exports = mongoose.model('users', userSchema);

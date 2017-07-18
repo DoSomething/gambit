@@ -10,6 +10,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@slack/client": "^3.10.0",
     "body-parser": "^1.17.2",
     "colors": "^1.1.2",
     "dotenv": "^4.0.0",

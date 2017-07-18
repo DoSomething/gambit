@@ -7,7 +7,9 @@ const helpers = require('../../lib/helpers');
 const router = express.Router();
 bot.getBot();
 
-const paramsMiddleware = require('../../lib/middleware/params');
+const slackMiddleware = require('../../lib/middleware/receive-slack');
+const apiMiddleware = require('../../lib/middleware/receive-api');
+
 const getUserMiddleware = require('../../lib/middleware/user-get');
 const createUserMiddleware = require('../../lib/middleware/user-create');
 
@@ -28,7 +30,8 @@ const gambitReplyMiddleware = require('../../lib/middleware/template-gambit');
 const campaignMessageMiddleware = require('../../lib/middleware/template-campaign');
 const setLastReplyTemplateMiddleware = require('../../lib/middleware/user-set-last-reply-template');
 
-router.use(paramsMiddleware());
+router.use(slackMiddleware());
+router.use(apiMiddleware());
 
 // Load user and create inbound message.
 router.use(getUserMiddleware());
