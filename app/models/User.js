@@ -67,24 +67,17 @@ userSchema.methods.updateUserTopic = function (newTopic) {
   }
 
   let updatePaused = false;
+  const supportTopic = 'support';
 
-  if (this.topic.includes('support') && ! newTopic.includes('support')) {
-    updatePaused = true;
+  if (this.topic === supportTopic && newTopic !== supportTopic) {
     this.paused = false;
-    // TODO: We'll want to forward the incoming message to Front.
   }
 
-  if (! this.topic.includes('support') && newTopic.includes('support')) {
-    updatePaused = true;
+  if (this.topic !== supportTopic  && newTopic === supportTopic) {
     this.paused = true;
   }
 
   this.topic = newTopic;
-
-  if (updatePaused) {
-    logger.debug('User.updatePaused', { paused: this.paused });
-    this.createAction('updateUserPaused', { user: this });
-  }
 
   return this.save();
 };
