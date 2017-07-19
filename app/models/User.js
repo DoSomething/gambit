@@ -6,6 +6,8 @@ const Actions = require('./Action');
 const Messages = require('./Message');
 const slack = require('../../lib/slack');
 
+const defaultTopic = 'random';
+
 /**
  * Schema.
  */
@@ -31,8 +33,7 @@ userSchema.statics.createFromReq = function (req) {
     platformId: req.platformUserId,
     platform: req.platform,
     paused: false,
-    // TODO: Move value to config.
-    topic: 'random',
+    topic: defaultTopic,
   };
 
   if (req.slackChannel) {
@@ -82,6 +83,15 @@ userSchema.methods.updateUserTopic = function (newTopic) {
 
   return this.save();
 };
+
+/**
+ * Set topic to random to upause User.
+ */
+userSchema.methods.supportResolved = function () {
+  this.lastReplyTemplate = 'front';
+
+  return this.updateUserTopic(defaultTopic);
+}; 
 
 /**
  * Returns save of User for updating given Campaign and its topic.
