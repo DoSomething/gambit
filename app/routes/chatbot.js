@@ -16,18 +16,18 @@ const createUserMiddleware = require('../../lib/middleware/user-create');
 const inboundMessageMiddleware = require('../../lib/middleware/user-inbound-message');
 const outboundMessageMiddleware = require('../../lib/middleware/user-outbound-message');
 
-const getBotReplyMiddleware = require('../../lib/middleware/reply-brain');
-const brainTemplateMiddleware = require('../../lib/middleware/template-brain');
-const noReplyMiddleware = require('../../lib/middleware/template-paused');
+const getBotReplyMiddleware = require('../../lib/middleware/chatbot/reply-brain');
+const brainTemplateMiddleware = require('../../lib/middleware/chatbot/template-brain');
+const noReplyMiddleware = require('../../lib/middleware/chatbot/template-paused');
 const campaignMenuMiddleware = require('../../lib/middleware/campaign-menu');
 const campaignKeywordMiddleware = require('../../lib/middleware/campaign-keyword');
 const currentCampaignMiddleware = require('../../lib/middleware/campaign-current');
-const parseAskSignupMiddleware = require('../../lib/middleware/parse-ask-signup-response');
-const parseAskContinueMiddleware = require('../../lib/middleware/parse-ask-continue-response');
-const askContinueMiddleware = require('../../lib/middleware/template-ask-continue');
+const parseAskSignupMiddleware = require('../../lib/middleware/chatbot/parse-ask-signup-response');
+const parseAskContinueMiddleware = require('../../lib/middleware/chatbot/parse-ask-continue-response');
+const askContinueMiddleware = require('../../lib/middleware/chatbot/template-ask-continue');
 const setUserCampaignMiddleware = require('../../lib/middleware/user-set-campaign');
-const gambitReplyMiddleware = require('../../lib/middleware/template-gambit');
-const campaignMessageMiddleware = require('../../lib/middleware/template-campaign');
+const gambitReplyMiddleware = require('../../lib/middleware/chatbot/template-gambit');
+const campaignMessageMiddleware = require('../../lib/middleware/chatbot/template-campaign');
 const setLastReplyTemplateMiddleware = require('../../lib/middleware/user-set-last-reply-template');
 
 router.use(slackMiddleware());
