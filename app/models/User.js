@@ -3,6 +3,10 @@
 const mongoose = require('mongoose');
 const logger = require('heroku-logger');
 const Actions = require('./Action');
+const Messages = require('./Message');
+const slack = require('../../lib/slack');
+
+const defaultTopic = 'random';
 
 /**
  * Schema.
@@ -16,6 +20,7 @@ const userSchema = new mongoose.Schema({
   campaignId: Number,
   signupStatus: String,
   lastReplyTemplate: String,
+  slackDirectMessageChannel: String,
 });
 
 /**
@@ -25,12 +30,15 @@ const userSchema = new mongoose.Schema({
 userSchema.statics.createFromReq = function (req) {
   const data = {
     _id: new Date().getTime(),
-    platformId: req.userId,
-    platform: req.body.platform,
+    platformId: req.platformUserId,
+    platform: req.platform,
     paused: false,
-    // TODO: Move value to config.
-    topic: 'random',
+    topic: defaultTopic,
   };
+
+  if (req.slackChannel) {
+    data.slackDirectMessageChannel = req.slackChannel;
+  }
 
   return this.create(data);
 };
@@ -61,26 +69,29 @@ userSchema.methods.updateUserTopic = function (newTopic) {
   }
 
   let updatePaused = false;
+  const supportTopic = 'support';
 
-  if (this.topic.includes('support') && ! newTopic.includes('support')) {
-    updatePaused = true;
+  if (this.topic === supportTopic && newTopic !== supportTopic) {
     this.paused = false;
   }
 
-  if (! this.topic.includes('support') && newTopic.includes('support')) {
-    updatePaused = true;
+  if (this.topic !== supportTopic  && newTopic === supportTopic) {
     this.paused = true;
   }
 
   this.topic = newTopic;
 
-  if (updatePaused) {
-    logger.debug('User.updatePaused', { paused: this.paused });
-    this.createAction('updateUserPaused', { user: this });
-  }
-
   return this.save();
 };
+
+/**
+ * Set topic to random to upause User.
+ */
+userSchema.methods.supportResolved = function () {
+  this.lastReplyTemplate = 'front';
+
+  return this.updateUserTopic(defaultTopic);
+}; 
 
 /**
  * Returns save of User for updating given Campaign and its topic.
@@ -144,6 +155,54 @@ userSchema.methods.createAction = function (type, data) {
   Actions.create(actionData)
     .then(action => logger.debug('User.createAction', { actionId: action._id.toString() }))
     .catch(err => logger.error(err));
+};
+
+userSchema.methods.getMessagePayload = function () {
+  return {
+    userId: this._id,
+    campaignId: this.campaignId,
+    topic: this.topic,
+  };
+};
+
+userSchema.methods.createInboundMessage = function (messageText) {
+  const message = this.getMessagePayload();
+  message.text = messageText;
+  message.direction = 'inbound';
+
+  return Messages.create(message);
+};
+
+userSchema.methods.createOutboundReplyMessage = function (messageText, messageTemplate) {
+  const message = this.getMessagePayload();
+  message.text = messageText;
+  message.template = messageTemplate;
+  message.direction = 'outbound-reply';
+
+  return Messages.create(message);
+};
+
+userSchema.methods.createOutboundSendMessage = function (messageText, messageTemplate) {
+  const message = this.getMessagePayload();
+  message.text = messageText;
+  message.template = messageTemplate;
+  message.direction = 'outbound-api-send';
+
+  return Messages.create(message);
+};
+
+
+/**
+ * Sends the given messageText to the User via posting to their platform.
+ * @param {string} messageText
+ * @args {object} args
+ */
+userSchema.methods.sendMessage = function (messageText, args) {
+  if (this.platform !== 'slack') {
+    return;
+  }
+
+  slack.postMessage(this.slackDirectMessageChannel, messageText, args);
 };
 
 module.exports = mongoose.model('users', userSchema);

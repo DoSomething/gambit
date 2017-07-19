@@ -7,28 +7,31 @@ const helpers = require('../../lib/helpers');
 const router = express.Router();
 bot.getBot();
 
-const paramsMiddleware = require('../../lib/middleware/params');
-const getUserMiddleware = require('../../lib/middleware/user-get');
+const slackMiddleware = require('../../lib/middleware/chatbot/receive-slack');
+const apiMiddleware = require('../../lib/middleware/chatbot/receive-api');
+
+const getUserMiddleware = require('../../lib/middleware/user-get-by-platform');
 const createUserMiddleware = require('../../lib/middleware/user-create');
 
-const inboundMessageMiddleware = require('../../lib/middleware/user-inbound-message');
-const outboundMessageMiddleware = require('../../lib/middleware/user-outbound-message');
+const inboundMessageMiddleware = require('../../lib/middleware/chatbot/message-inbound');
+const outboundMessageMiddleware = require('../../lib/middleware/chatbot/message-outbound');
 
-const getBotReplyMiddleware = require('../../lib/middleware/reply-brain');
-const brainTemplateMiddleware = require('../../lib/middleware/template-brain');
-const noReplyMiddleware = require('../../lib/middleware/template-paused');
+const getBotReplyMiddleware = require('../../lib/middleware/chatbot/reply-brain');
+const brainTemplateMiddleware = require('../../lib/middleware/chatbot/template-brain');
+const noReplyMiddleware = require('../../lib/middleware/chatbot/template-paused');
 const campaignMenuMiddleware = require('../../lib/middleware/campaign-menu');
 const campaignKeywordMiddleware = require('../../lib/middleware/campaign-keyword');
 const currentCampaignMiddleware = require('../../lib/middleware/campaign-current');
-const parseAskSignupMiddleware = require('../../lib/middleware/parse-ask-signup-response');
-const parseAskContinueMiddleware = require('../../lib/middleware/parse-ask-continue-response');
-const askContinueMiddleware = require('../../lib/middleware/template-ask-continue');
+const parseAskSignupMiddleware = require('../../lib/middleware/chatbot/parse-ask-signup-response');
+const parseAskContinueMiddleware = require('../../lib/middleware/chatbot/parse-ask-continue-response');
+const askContinueMiddleware = require('../../lib/middleware/chatbot/template-ask-continue');
 const setUserCampaignMiddleware = require('../../lib/middleware/user-set-campaign');
-const gambitReplyMiddleware = require('../../lib/middleware/template-gambit');
-const campaignMessageMiddleware = require('../../lib/middleware/template-campaign');
+const gambitReplyMiddleware = require('../../lib/middleware/chatbot/template-gambit');
+const campaignMessageMiddleware = require('../../lib/middleware/chatbot/template-campaign');
 const setLastReplyTemplateMiddleware = require('../../lib/middleware/user-set-last-reply-template');
 
-router.use(paramsMiddleware());
+router.use(slackMiddleware());
+router.use(apiMiddleware());
 
 // Load user and create inbound message.
 router.use(getUserMiddleware());
