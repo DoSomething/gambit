@@ -3,11 +3,9 @@
 
 > topic random 
 
-// CRISIS:
-
 + topic_support_crisis
 - Thanks for being brave and sharing that. If you want to talk to someone, our friends at CTL are\s
-^ here for you 24/7. Just send a text to 741741. They’ll listen!{topic=support_crisis}
+^ here for you 24/7. Just send a text to 741741. They’ll listen!
 
 + [*] (i|someone|who) [@is] @hurting [me] [*]
 @ topic_support_crisis
@@ -15,29 +13,22 @@
 + [*] i @want [to] @die [*]
 @ topic_support_crisis
 
-// HELP:
-
-+ topic_support_flagged
-- I'll try to find a human to help you. If you have a question, leave it here and we'll try to\s
-^ respond within 24 hours.{topic=support_flagged}
-
-+ help me [*]
-@ topic_support_flagged
-
-+ [*] you help me [*]
-@ topic_support_flagged
-
-+ [*] i am [feeling] (depressed|bipolar|freaking out) [*]
-@ topic_support_flagged
-
-
 // General:
 
 + question
 - Text back your question and I'll try to get back to you within 24 hrs.\n\nIf you want to cancel\s
-^ your request without waiting for a response, reply with "nevermind".{topic=support_question}
+^ your request without waiting for a response, reply with "nevermind".{topic=support}
 
 + q
+@ question
+
++ help me [*]
+@ question
+
++ [*] you help me [*]
+@ question
+
++ [*] i am [feeling] (depressed|bipolar|freaking out) [*]
 @ question
 
 < topic
