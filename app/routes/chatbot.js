@@ -13,8 +13,8 @@ const apiMiddleware = require('../../lib/middleware/chatbot/receive-api');
 const getUserMiddleware = require('../../lib/middleware/user-get-by-platform');
 const createUserMiddleware = require('../../lib/middleware/user-create');
 
-const inboundMessageMiddleware = require('../../lib/middleware/user-inbound-message');
-const outboundMessageMiddleware = require('../../lib/middleware/user-outbound-message');
+const inboundMessageMiddleware = require('../../lib/middleware/chatbot/message-inbound');
+const outboundMessageMiddleware = require('../../lib/middleware/chatbot/message-outbound');
 
 const getBotReplyMiddleware = require('../../lib/middleware/chatbot/reply-brain');
 const brainTemplateMiddleware = require('../../lib/middleware/chatbot/template-brain');

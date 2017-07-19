@@ -3,6 +3,7 @@
 const mongoose = require('mongoose');
 const logger = require('heroku-logger');
 const Actions = require('./Action');
+const Messages = require('./Message');
 const slack = require('../../lib/slack');
 
 /**
@@ -145,6 +146,41 @@ userSchema.methods.createAction = function (type, data) {
     .then(action => logger.debug('User.createAction', { actionId: action._id.toString() }))
     .catch(err => logger.error(err));
 };
+
+userSchema.methods.getMessagePayload = function () {
+  return {
+    userId: this._id,
+    campaignId: this.campaignId,
+    topic: this.topic,
+  };
+};
+
+userSchema.methods.createInboundMessage = function (messageText) {
+  const message = this.getMessagePayload();
+  message.text = messageText;
+  message.direction = 'inbound';
+
+  return Messages.create(message);
+};
+
+userSchema.methods.createOutboundReplyMessage = function (messageText, messageTemplate) {
+  const message = this.getMessagePayload();
+  message.text = messageText;
+  message.template = messageTemplate;
+  message.direction = 'outbound-reply';
+
+  return Messages.create(message);
+};
+
+userSchema.methods.createOutboundSendMessage = function (messageText, messageTemplate) {
+  const message = this.getMessagePayload();
+  message.text = messageText;
+  message.template = messageTemplate;
+  message.direction = 'outbound-api-send';
+
+  return Messages.create(message);
+};
+
 
 /**
  * Sends the given messageText to the User via posting to their platform.
