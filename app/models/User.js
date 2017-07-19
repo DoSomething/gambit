@@ -152,12 +152,17 @@ userSchema.methods.createAction = function (type, data) {
     .catch(err => logger.error(err));
 };
 
+/**
+ * Sends the given messageText to the User via posting to their platform.
+ * @param {string} messageText
+ * @args {object} args
+ */
 userSchema.methods.sendMessage = function (messageText, args) {
   if (this.platform !== 'slack') {
     return;
   }
 
-  slack.postMessage(this.slackChannel, messageText, args)
-}
+  slack.postMessage(this.slackChannel, messageText, args);
+};
 
 module.exports = mongoose.model('users', userSchema);
