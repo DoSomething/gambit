@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
   campaignId: Number,
   signupStatus: String,
   lastReplyTemplate: String,
-  slackChannel: String,
+  slackDirectMessageChannel: String,
 });
 
 /**
@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
 userSchema.statics.createFromReq = function (req) {
   const data = {
     _id: new Date().getTime(),
-    platformId: req.userId,
+    platformId: req.platformUserId,
     platform: req.platform,
     paused: false,
     // TODO: Move value to config.
@@ -35,7 +35,7 @@ userSchema.statics.createFromReq = function (req) {
   };
 
   if (req.slackChannel) {
-    data.slackChannel = req.slackChannel;
+    data.slackDirectMessageChannel = req.slackChannel;
   }
 
   return this.create(data);
@@ -71,6 +71,7 @@ userSchema.methods.updateUserTopic = function (newTopic) {
   if (this.topic.includes('support') && ! newTopic.includes('support')) {
     updatePaused = true;
     this.paused = false;
+    // TODO: We'll want to forward the incoming message to Front.
   }
 
   if (! this.topic.includes('support') && newTopic.includes('support')) {
@@ -162,7 +163,7 @@ userSchema.methods.sendMessage = function (messageText, args) {
     return;
   }
 
-  slack.postMessage(this.slackChannel, messageText, args);
+  slack.postMessage(this.slackDirectMessageChannel, messageText, args);
 };
 
 module.exports = mongoose.model('users', userSchema);

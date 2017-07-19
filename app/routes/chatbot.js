@@ -7,10 +7,10 @@ const helpers = require('../../lib/helpers');
 const router = express.Router();
 bot.getBot();
 
-const slackMiddleware = require('../../lib/middleware/receive-slack');
-const apiMiddleware = require('../../lib/middleware/receive-api');
+const slackMiddleware = require('../../lib/middleware/chatbot/receive-slack');
+const apiMiddleware = require('../../lib/middleware/chatbot/receive-api');
 
-const getUserMiddleware = require('../../lib/middleware/user-get');
+const getUserMiddleware = require('../../lib/middleware/user-get-by-platform');
 const createUserMiddleware = require('../../lib/middleware/user-create');
 
 const inboundMessageMiddleware = require('../../lib/middleware/user-inbound-message');

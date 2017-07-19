@@ -1,16 +1,17 @@
 'use strict';
 
 const express = require('express');
-const logger = require('heroku-logger');
-const front = require('../../lib/front');
 
 const router = express.Router();
 
-router.post('/', (req, res) => {
-  logger.debug('send-message request.body', req.body);
-  const frontMessage = front.parseOutgoingMessage(req);
+const frontMiddleware = require('../../lib/middleware/send-message/receive-front');
+const getUserMiddleware = require('../../lib/middleware/user-get-by-id');
 
-  req.user.sendMessage(frontMessage.text);
+router.use(frontMiddleware());
+router.use(getUserMiddleware());
+
+router.post('/', (req, res) => {
+  req.user.sendMessage(req.sendMessageText);
 
   res.send(req.body);
 });
