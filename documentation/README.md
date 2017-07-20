@@ -3,7 +3,11 @@
 ```
 POST /api/v1/chatbot
 ```
+## Query Parameters
 
+Name | Type | Description
+--- | --- | ---
+`platform` | `string` | e.g. `twilio`, `slack`
 
 ## Input
 
@@ -12,7 +16,6 @@ Name | Type | Description
 --- | --- | ---
 `userId` | `string` | User ID
 `text` | `string` | Incoming message sent from User.
-`platform` | `string` | e.g. `twilio`, `slack`
 `mediaUrl` | `string` | Media attachment URL (currently only supports 1 attachment).
 
 ## Examples
@@ -55,6 +58,11 @@ curl -X "POST" "http://localhost:5100/v1/chatbot" \
 
 
 ```
+## Send Message
+
+```
+POST /api/v1/send-message
+```
 
 ## Users
 
@@ -69,15 +77,10 @@ GET /api/v1/users
 GET /api/v1/messages
 ```
 
-## Actions
-
-```
-GET /api/v1/actions
-```
 
 ## Usage
 
-See https://florianholzapfel.github.io/express-restify-mongoose/ for docs on how to query the Users,  Messages, and Actions endpoints.
+See https://florianholzapfel.github.io/express-restify-mongoose/ for docs on how to query the Users,  and Messages endpoints.
 
 ### Examples
 
@@ -85,6 +88,6 @@ Filter
 * https://gambit-conversations-prod.herokuapp.com/api/v1/messages?query={"platform":"slack"}
 * https://gambit-conversations-prod.herokuapp.com/api/v1/messages?query={"date":{"$gt":"2017-06-24T00:34:11.114Z"}}
 Sort
-* https://gambit-conversations-prod.herokuapp.com/api/v1/actions?sort=-date
+* https://gambit-conversations-prod.herokuapp.com/api/v1/messages?sort=-date
 
 

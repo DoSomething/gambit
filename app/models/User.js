@@ -2,7 +2,6 @@
 
 const mongoose = require('mongoose');
 const logger = require('heroku-logger');
-const Actions = require('./Action');
 const Messages = require('./Message');
 const slack = require('../../lib/slack');
 
@@ -68,14 +67,13 @@ userSchema.methods.updateUserTopic = function (newTopic) {
     return this.save();
   }
 
-  let updatePaused = false;
   const supportTopic = 'support';
 
   if (this.topic === supportTopic && newTopic !== supportTopic) {
     this.paused = false;
   }
 
-  if (this.topic !== supportTopic  && newTopic === supportTopic) {
+  if (this.topic !== supportTopic && newTopic === supportTopic) {
     this.paused = true;
   }
 
@@ -91,7 +89,7 @@ userSchema.methods.supportResolved = function () {
   this.lastReplyTemplate = 'front';
 
   return this.updateUserTopic(defaultTopic);
-}; 
+};
 
 /**
  * Returns save of User for updating given Campaign and its topic.
@@ -112,11 +110,8 @@ userSchema.methods.setCampaign = function (campaign, signupStatus) {
  * @param {string} source
  * @param {string} keyword
  */
-userSchema.methods.signupForCampaign = function (campaign, source, keyword) {
-  // TODO: Post Signup to DS API.
+userSchema.methods.signupForCampaign = function (campaign) {
   this.setCampaign(campaign, 'doing');
-
-  // TODO: Create Action.
 };
 
 /**
@@ -126,7 +121,6 @@ userSchema.methods.signupForCampaign = function (campaign, source, keyword) {
  * @param {string} keyword
  */
 userSchema.methods.promptSignupForCampaign = function (campaign) {
-  // TODO: Post Signup to DS API.
   this.setCampaign(campaign, 'prompt');
 };
 
@@ -137,24 +131,8 @@ userSchema.methods.promptSignupForCampaign = function (campaign) {
  * @param {string} keyword
  */
 userSchema.methods.declineSignup = function () {
-  // TODO: Decline Signup Action.
   this.signupStatus = 'declined';
   this.save();
-};
-
-/**
- * Creates an Action model with given type and data.
- */
-userSchema.methods.createAction = function (type, data) {
-  const actionData = {
-    userId: this._id,
-    type,
-    data,
-  };
-
-  Actions.create(actionData)
-    .then(action => logger.debug('User.createAction', { actionId: action._id.toString() }))
-    .catch(err => logger.error(err));
 };
 
 userSchema.methods.getMessagePayload = function () {
@@ -190,7 +168,6 @@ userSchema.methods.createOutboundSendMessage = function (messageText, messageTem
 
   return Messages.create(message);
 };
-
 
 /**
  * Sends the given messageText to the User via posting to their platform.
