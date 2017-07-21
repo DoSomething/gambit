@@ -183,7 +183,6 @@ userSchema.methods.sendMessage = function (messageText) {
   if (this.platform === 'twilio') {
     twilio.postMessage(this.platformId, messageText);
   }
-  
 };
 
 module.exports = mongoose.model('users', userSchema);
