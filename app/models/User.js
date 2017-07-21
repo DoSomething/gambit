@@ -3,7 +3,9 @@
 const mongoose = require('mongoose');
 const logger = require('heroku-logger');
 const Messages = require('./Message');
+
 const slack = require('../../lib/slack');
+const twilio = require('../../lib/twilio');
 
 const defaultTopic = 'random';
 
@@ -174,12 +176,14 @@ userSchema.methods.createOutboundSendMessage = function (messageText, messageTem
  * @param {string} messageText
  * @args {object} args
  */
-userSchema.methods.sendMessage = function (messageText, args) {
-  if (this.platform !== 'slack') {
-    return;
+userSchema.methods.sendMessage = function (messageText) {
+  if (this.platform === 'slack') {
+    slack.postMessage(this.slackChannel, messageText);
   }
-
-  slack.postMessage(this.slackChannel, messageText, args);
+  if (this.platform === 'twilio') {
+    twilio.postMessage(this.platformId, messageText);
+  }
+  
 };
 
 module.exports = mongoose.model('users', userSchema);
