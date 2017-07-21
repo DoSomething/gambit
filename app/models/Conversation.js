@@ -20,7 +20,7 @@ const conversationSchema = new mongoose.Schema({
   topic: String,
   campaignId: Number,
   signupStatus: String,
-  lastReplyTemplate: String,
+  lastOutboundTemplate: String,
   slackChannel: String,
 });
 
@@ -87,7 +87,7 @@ conversationSchema.methods.setTopic = function (newTopic) {
  * Set topic to random to upause User.
  */
 conversationSchema.methods.supportResolved = function () {
-  this.lastReplyTemplate = 'front';
+  this.lastOutboundTemplate = 'front';
 
   return this.setTopic(defaultTopic);
 };
