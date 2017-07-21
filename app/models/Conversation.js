@@ -61,8 +61,8 @@ conversationSchema.statics.findByUserId = function (userId) {
  * Update topic and check whether to toggle paused.
  * @return {boolean}
  */
-conversationSchema.methods.updateUserTopic = function (newTopic) {
-  logger.trace('Conversation.updateUserTopic', { newTopic });
+conversationSchema.methods.setTopic = function (newTopic) {
+  logger.trace('Conversation.setTopic', { newTopic });
 
   if (this.topic === newTopic) {
     return this.save();
@@ -89,7 +89,7 @@ conversationSchema.methods.updateUserTopic = function (newTopic) {
 conversationSchema.methods.supportResolved = function () {
   this.lastReplyTemplate = 'front';
 
-  return this.updateUserTopic(defaultTopic);
+  return this.setTopic(defaultTopic);
 };
 
 /**
