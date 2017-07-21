@@ -6,10 +6,11 @@ const mongoose = require('mongoose');
  * Schema.
  */
 const messageSchema = new mongoose.Schema({
-  userId: {
-    type: String,
-    index: true,
+  conversation: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Conversation'
   },
+  userId: String,
   date: { type: Date, default: Date.now },
   direction: {
     type: String,

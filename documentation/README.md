@@ -68,11 +68,11 @@ Sends a message to User.
 POST /api/v1/send-message
 ```
 
-## Users
+## Conversations
 
 
 ```
-GET /api/v1/users
+GET /api/v1/conversations
 ```
 
 ## Messages
@@ -82,16 +82,15 @@ GET /api/v1/messages
 ```
 
 
-## Usage
+## Query paramters
 
-See https://florianholzapfel.github.io/express-restify-mongoose/ for docs on how to query the Users,  and Messages endpoints.
+See https://florianholzapfel.github.io/express-restify-mongoose/ for the GET endpoints:
 
-### Examples
-
-Filter
+### Filtering
 * https://gambit-conversations-prod.herokuapp.com/api/v1/messages?query={"platform":"slack"}
 * https://gambit-conversations-prod.herokuapp.com/api/v1/messages?query={"date":{"$gt":"2017-06-24T00:34:11.114Z"}}
-Sort
+
+### Sort
 * https://gambit-conversations-prod.herokuapp.com/api/v1/messages?sort=-date
 
 
