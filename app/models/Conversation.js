@@ -13,15 +13,14 @@ const defaultTopic = 'random';
 /**
  * Schema.
  */
-const userSchema = new mongoose.Schema({
-  _id: String,
-  platform: String,
-  platformId: String,
+const conversationSchema = new mongoose.Schema({
+  medium: String,
+  userId: String,
   paused: Boolean,
   topic: String,
   campaignId: Number,
   signupStatus: String,
-  lastReplyTemplate: String,
+  lastOutboundTemplate: String,
   slackChannel: String,
 });
 
@@ -29,11 +28,10 @@ const userSchema = new mongoose.Schema({
  * @param {Object} req - Express request
  * @return {Promise}
  */
-userSchema.statics.createFromReq = function (req) {
+conversationSchema.statics.createFromReq = function (req) {
   const data = {
-    _id: new Date().getTime(),
-    platformId: req.platformUserId,
-    platform: req.platform,
+    userId: req.userId,
+    medium: req.platform,
     paused: false,
     topic: defaultTopic,
   };
@@ -46,25 +44,25 @@ userSchema.statics.createFromReq = function (req) {
 };
 
 /**
- * @param {string} platform
- * @param {string} platformId
+ * @param {string} userId
+ * TODO: Query by medium + userId. For now, we know we won't overlap phone + slackId + facebookId
  * @return {Promise}
  */
-userSchema.statics.findByPlatformId = function (platform, platformId) {
-  const query = { platform, platformId };
-  logger.trace('User.findByPlatformId', query);
+conversationSchema.statics.findByUserId = function (userId) {
+  const query = { userId };
+  logger.trace('Conversation.findByUserId', query);
 
   return this.findOne(query)
-    .then(user => user)
+    .then(convo => convo)
     .catch(err => err);
 };
 
 /**
- * Update User topic and check whether to toggle paused.
+ * Update topic and check whether to toggle paused.
  * @return {boolean}
  */
-userSchema.methods.updateUserTopic = function (newTopic) {
-  logger.trace('User.updateUserTopic', { newTopic });
+conversationSchema.methods.setTopic = function (newTopic) {
+  logger.trace('Conversation.setTopic', { newTopic });
 
   if (this.topic === newTopic) {
     return this.save();
@@ -88,10 +86,10 @@ userSchema.methods.updateUserTopic = function (newTopic) {
 /**
  * Set topic to random to upause User.
  */
-userSchema.methods.supportResolved = function () {
-  this.lastReplyTemplate = 'front';
+conversationSchema.methods.supportResolved = function () {
+  this.lastOutboundTemplate = 'front';
 
-  return this.updateUserTopic(defaultTopic);
+  return this.setTopic(defaultTopic);
 };
 
 /**
@@ -99,7 +97,7 @@ userSchema.methods.supportResolved = function () {
  * @param {Campaign} campaign
  * @return {Promise}
  */
-userSchema.methods.setCampaign = function (campaign, signupStatus) {
+conversationSchema.methods.setCampaignWithSignupStatus = function (campaign, signupStatus) {
   this.topic = campaign.topic;
   this.campaignId = campaign._id;
   this.signupStatus = signupStatus;
@@ -113,8 +111,8 @@ userSchema.methods.setCampaign = function (campaign, signupStatus) {
  * @param {string} source
  * @param {string} keyword
  */
-userSchema.methods.signupForCampaign = function (campaign) {
-  this.setCampaign(campaign, 'doing');
+conversationSchema.methods.setCampaign = function (campaign) {
+  this.setCampaignWithSignupStatus(campaign, 'doing');
 };
 
 /**
@@ -123,8 +121,8 @@ userSchema.methods.signupForCampaign = function (campaign) {
  * @param {string} source
  * @param {string} keyword
  */
-userSchema.methods.promptSignupForCampaign = function (campaign) {
-  this.setCampaign(campaign, 'prompt');
+conversationSchema.methods.promptSignupForCampaign = function (campaign) {
+  this.setCampaignWithSignupStatus(campaign, 'prompt');
 };
 
 /**
@@ -133,20 +131,21 @@ userSchema.methods.promptSignupForCampaign = function (campaign) {
  * @param {string} source
  * @param {string} keyword
  */
-userSchema.methods.declineSignup = function () {
+conversationSchema.methods.declineSignup = function () {
   this.signupStatus = 'declined';
   this.save();
 };
 
-userSchema.methods.getMessagePayload = function () {
+conversationSchema.methods.getMessagePayload = function () {
   return {
-    userId: this._id,
+    userId: this.userId,
     campaignId: this.campaignId,
     topic: this.topic,
+    conversation: this,
   };
 };
 
-userSchema.methods.createInboundMessage = function (messageText) {
+conversationSchema.methods.createInboundMessage = function (messageText) {
   const message = this.getMessagePayload();
   message.text = messageText;
   message.direction = 'inbound';
@@ -154,39 +153,45 @@ userSchema.methods.createInboundMessage = function (messageText) {
   return Messages.create(message);
 };
 
-userSchema.methods.createOutboundReplyMessage = function (messageText, messageTemplate) {
+conversationSchema.methods.createOutboundReplyMessage = function (messageText, messageTemplate) {
   const message = this.getMessagePayload();
   message.text = messageText;
   message.template = messageTemplate;
   message.direction = 'outbound-reply';
 
-  return Messages.create(message);
+  this.lastOutboundTemplate = messageTemplate;
+  return this.save().then(() => Messages.create(message));
 };
 
-userSchema.methods.createOutboundSendMessage = function (messageText, messageTemplate) {
+conversationSchema.methods.createOutboundSendMessage = function (messageText, messageTemplate) {
   const message = this.getMessagePayload();
   message.text = messageText;
   message.template = messageTemplate;
   message.direction = 'outbound-api-send';
 
-  return Messages.create(message);
+  this.lastOutboundTemplate = messageTemplate;
+  return this.save().then(() => Messages.create(message));
 };
 
 /**
  * Sends the given messageText to the User via posting to their platform.
- * @param {string} messageText
+ * @param {Message} message
  * @args {object} args
  */
-userSchema.methods.sendMessage = function (messageText) {
-  if (this.platform === 'slack') {
+conversationSchema.methods.sendMessage = function (message) {
+  logger.debug('conversation.sendMessage');
+
+  const messageText = message.text;
+
+  if (this.medium === 'slack') {
     slack.postMessage(this.slackChannel, messageText);
   }
-  if (this.platform === 'twilio') {
-    twilio.postMessage(this.platformId, messageText);
+  if (this.medium === 'twilio') {
+    twilio.postMessage(this.userId, messageText);
   }
-  if (this.platform === 'facebook') {
-    facebook.postMessage(this.platformId, messageText);
+  if (this.medium === 'facebook') {
+    facebook.postMessage(this.userId, messageText);
   }
 };
 
-module.exports = mongoose.model('users', userSchema);
+module.exports = mongoose.model('conversations', conversationSchema);

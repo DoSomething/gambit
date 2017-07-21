@@ -19,11 +19,11 @@ app.use((req, res, next) => {
 mongoose.connect(config.dbUri);
 mongoose.Promise = global.Promise;
 
+const ConversationModel = require('./app/models/Conversation');
 const MessageModel = require('./app/models/Message');
-const UserModel = require('./app/models/User');
 
+restify.serve(app, ConversationModel);
 restify.serve(app, MessageModel);
-restify.serve(app, UserModel);
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));

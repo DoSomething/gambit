@@ -6,14 +6,15 @@ const mongoose = require('mongoose');
  * Schema.
  */
 const messageSchema = new mongoose.Schema({
-  userId: {
-    type: String,
-    index: true,
+  conversation: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Conversation',
   },
+  userId: String,
   date: { type: Date, default: Date.now },
   direction: {
     type: String,
-    enum: ['inbound', 'outbound-reply', 'outbound-api-send', 'outbound-api-cc'],
+    enum: ['inbound', 'outbound-reply', 'outbound-api-send', 'outbound-api-import'],
   },
   campaignId: Number,
   template: String,
