@@ -15,7 +15,7 @@ const inboundMessageMiddleware = require('../../lib/middleware/receive-message/m
 
 const getBotReplyMiddleware = require('../../lib/middleware/receive-message/reply-brain');
 const brainTemplateMiddleware = require('../../lib/middleware/receive-message/template-brain');
-const pausedMiddleware = require('../../lib/middleware/receive-message/template-paused');
+const pausedMiddleware = require('../../lib/middleware/receive-message/conversation-paused');
 const campaignMenuMiddleware = require('../../lib/middleware/receive-message/campaign-menu');
 const campaignKeywordMiddleware = require('../../lib/middleware/receive-message/campaign-keyword');
 const currentCampaignMiddleware = require('../../lib/middleware/receive-message/campaign-current');
