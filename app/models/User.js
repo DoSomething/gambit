@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
   campaignId: Number,
   signupStatus: String,
   lastReplyTemplate: String,
-  slackDirectMessageChannel: String,
+  slackChannel: String,
 });
 
 /**
@@ -36,7 +36,7 @@ userSchema.statics.createFromReq = function (req) {
   };
 
   if (req.slackChannel) {
-    data.slackDirectMessageChannel = req.slackChannel;
+    data.slackChannel = req.slackChannel;
   }
 
   return this.create(data);
@@ -179,7 +179,7 @@ userSchema.methods.sendMessage = function (messageText, args) {
     return;
   }
 
-  slack.postMessage(this.slackDirectMessageChannel, messageText, args);
+  slack.postMessage(this.slackChannel, messageText, args);
 };
 
 module.exports = mongoose.model('users', userSchema);

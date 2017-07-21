@@ -7,14 +7,11 @@ const helpers = require('../../lib/helpers');
 const router = express.Router();
 bot.getBot();
 
-const slackMiddleware = require('../../lib/middleware/chatbot/receive-slack');
-const apiMiddleware = require('../../lib/middleware/chatbot/receive-api');
-
+const paramsMiddleware = require('../../lib/middleware/chatbot/params');
 const getUserMiddleware = require('../../lib/middleware/user-get-by-platform');
 const createUserMiddleware = require('../../lib/middleware/user-create');
 
 const inboundMessageMiddleware = require('../../lib/middleware/chatbot/message-inbound');
-const outboundMessageMiddleware = require('../../lib/middleware/chatbot/message-outbound');
 
 const getBotReplyMiddleware = require('../../lib/middleware/chatbot/reply-brain');
 const brainTemplateMiddleware = require('../../lib/middleware/chatbot/template-brain');
@@ -30,8 +27,9 @@ const gambitReplyMiddleware = require('../../lib/middleware/chatbot/template-gam
 const campaignMessageMiddleware = require('../../lib/middleware/chatbot/template-campaign');
 const setLastReplyTemplateMiddleware = require('../../lib/middleware/user-set-last-reply-template');
 
-router.use(slackMiddleware());
-router.use(apiMiddleware());
+const outboundMessageMiddleware = require('../../lib/middleware/chatbot/message-outbound');
+
+router.use(paramsMiddleware());
 
 // Load user and create inbound message.
 router.use(getUserMiddleware());
