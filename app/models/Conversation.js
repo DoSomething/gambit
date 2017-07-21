@@ -97,7 +97,7 @@ conversationSchema.methods.supportResolved = function () {
  * @param {Campaign} campaign
  * @return {Promise}
  */
-conversationSchema.methods.setCampaign = function (campaign, signupStatus) {
+conversationSchema.methods.setCampaignWithSignupStatus = function (campaign, signupStatus) {
   this.topic = campaign.topic;
   this.campaignId = campaign._id;
   this.signupStatus = signupStatus;
@@ -111,8 +111,8 @@ conversationSchema.methods.setCampaign = function (campaign, signupStatus) {
  * @param {string} source
  * @param {string} keyword
  */
-conversationSchema.methods.signupForCampaign = function (campaign) {
-  this.setCampaign(campaign, 'doing');
+conversationSchema.methods.setCampaign = function (campaign) {
+  this.setCampaignWithSignupStatus(campaign, 'doing');
 };
 
 /**
@@ -122,7 +122,7 @@ conversationSchema.methods.signupForCampaign = function (campaign) {
  * @param {string} keyword
  */
 conversationSchema.methods.promptSignupForCampaign = function (campaign) {
-  this.setCampaign(campaign, 'prompt');
+  this.setCampaignWithSignupStatus(campaign, 'prompt');
 };
 
 /**

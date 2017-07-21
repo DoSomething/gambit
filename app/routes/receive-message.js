@@ -22,7 +22,7 @@ const currentCampaignMiddleware = require('../../lib/middleware/receive-message/
 const parseAskSignupMiddleware = require('../../lib/middleware/receive-message/parse-ask-signup-response');
 const parseAskContinueMiddleware = require('../../lib/middleware/receive-message/parse-ask-continue-response');
 const askContinueMiddleware = require('../../lib/middleware/receive-message/template-ask-continue');
-const setConvoCampaignMiddleware = require('../../lib/middleware/convo-set-campaign');
+const setCampaignMiddleware = require('../../lib/middleware/receive-message/conversation-set-campaign');
 const gambitReplyMiddleware = require('../../lib/middleware/receive-message/template-gambit');
 const campaignMessageMiddleware = require('../../lib/middleware/receive-message/template-campaign');
 const setLastReplyTemplateMiddleware = require('../../lib/middleware/convo-set-last-reply-template');
@@ -56,7 +56,7 @@ router.use(parseAskContinueMiddleware());
 router.use(askContinueMiddleware());
 
 // Check if Convo Campaign has been updated.
-router.use(setConvoCampaignMiddleware());
+router.use(setCampaignMiddleware());
 router.use(gambitReplyMiddleware());
 router.use(campaignMessageMiddleware());
 
