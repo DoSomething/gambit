@@ -25,8 +25,6 @@ const askContinueMiddleware = require('../../lib/middleware/receive-message/temp
 const setCampaignMiddleware = require('../../lib/middleware/receive-message/conversation-set-campaign');
 const gambitReplyMiddleware = require('../../lib/middleware/receive-message/template-gambit');
 const campaignMessageMiddleware = require('../../lib/middleware/receive-message/template-campaign');
-const setLastReplyTemplateMiddleware = require('../../lib/middleware/convo-set-last-reply-template');
-
 const outboundMessageMiddleware = require('../../lib/middleware/receive-message/message-outbound');
 
 router.use(paramsMiddleware());
@@ -60,10 +58,7 @@ router.use(setCampaignMiddleware());
 router.use(gambitReplyMiddleware());
 router.use(campaignMessageMiddleware());
 
-// Update convo and create outbound message.
-router.use(setLastReplyTemplateMiddleware());
 router.use(outboundMessageMiddleware());
-
-router.post('/', (req, res) => helpers.sendChatbotResponse(req, res));
+router.post('/', (req, res) => helpers.sendResponse(req, res));
 
 module.exports = router;

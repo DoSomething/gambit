@@ -159,7 +159,8 @@ conversationSchema.methods.createOutboundReplyMessage = function (messageText, m
   message.template = messageTemplate;
   message.direction = 'outbound-reply';
 
-  return Messages.create(message);
+  this.lastOutboundTemplate = messageTemplate;
+  return this.save().then(() => Messages.create(message));
 };
 
 conversationSchema.methods.createOutboundSendMessage = function (messageText, messageTemplate) {
@@ -168,15 +169,20 @@ conversationSchema.methods.createOutboundSendMessage = function (messageText, me
   message.template = messageTemplate;
   message.direction = 'outbound-api-send';
 
-  return Messages.create(message);
+  this.lastOutboundTemplate = messageTemplate;
+  return this.save().then(() => Messages.create(message));
 };
 
 /**
  * Sends the given messageText to the User via posting to their platform.
- * @param {string} messageText
+ * @param {Message} message
  * @args {object} args
  */
-conversationSchema.methods.sendMessage = function (messageText) {
+conversationSchema.methods.sendMessage = function (message) {
+  logger.debug('conversation.sendMessage');
+
+  const messageText = message.text;
+
   if (this.medium === 'slack') {
     slack.postMessage(this.slackChannel, messageText);
   }
