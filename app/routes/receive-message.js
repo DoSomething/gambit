@@ -1,7 +1,7 @@
 'use strict';
 
 const express = require('express');
-const bot = require('../../lib/bot');
+const bot = require('../../lib/rivescript');
 const helpers = require('../../lib/helpers');
 
 const router = express.Router();
