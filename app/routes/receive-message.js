@@ -13,18 +13,18 @@ const createConvoMiddleware = require('../../lib/middleware/conversation-create'
 
 const inboundMessageMiddleware = require('../../lib/middleware/receive-message/message-inbound');
 
-const getBotReplyMiddleware = require('../../lib/middleware/receive-message/reply-brain');
-const brainTemplateMiddleware = require('../../lib/middleware/receive-message/template-brain');
+const rivescriptReplyMiddleware = require('../../lib/middleware/receive-message/rivescript-reply');
+const sendRivescriptReplyMiddleware = require('../../lib/middleware/receive-message/send-rivescript-reply');
 const pausedMiddleware = require('../../lib/middleware/receive-message/conversation-paused');
-const campaignMenuMiddleware = require('../../lib/middleware/receive-message/campaign-menu');
+const sendAskSignupMiddleware = require('../../lib/middleware/receive-message/send-ask-signup');
 const campaignKeywordMiddleware = require('../../lib/middleware/receive-message/campaign-keyword');
 const currentCampaignMiddleware = require('../../lib/middleware/receive-message/campaign-current');
 const parseAskSignupMiddleware = require('../../lib/middleware/receive-message/parse-ask-signup-answer');
 const parseAskContinueMiddleware = require('../../lib/middleware/receive-message/parse-ask-continue-answer');
-const askContinueMiddleware = require('../../lib/middleware/receive-message/template-ask-continue');
+const sendAskContinueMiddleware = require('../../lib/middleware/receive-message/send-ask-continue');
 const setCampaignMiddleware = require('../../lib/middleware/receive-message/conversation-set-campaign');
-const gambitReplyMiddleware = require('../../lib/middleware/receive-message/template-gambit');
-const campaignMessageMiddleware = require('../../lib/middleware/receive-message/template-campaign');
+const sendGambitReplyMiddleware = require('../../lib/middleware/receive-message/send-gambit-reply');
+const sendCampaignMessageMiddleware = require('../../lib/middleware/receive-message/send-campaign-message');
 const outboundMessageMiddleware = require('../../lib/middleware/receive-message/message-outbound');
 
 router.use(paramsMiddleware());
@@ -34,30 +34,35 @@ router.use(getConvoMiddleware());
 router.use(createConvoMiddleware());
 router.use(inboundMessageMiddleware());
 
-// Get bot response to convo message.
-router.use(getBotReplyMiddleware());
+// Send our inbound message to Rivescript bot for a reply.
+router.use(rivescriptReplyMiddleware());
 
 // Check for non-Campaign replies.
-router.use(brainTemplateMiddleware());
+router.use(sendRivescriptReplyMiddleware());
 router.use(pausedMiddleware());
 
-// Load appropriate Campaign.
-router.use(campaignMenuMiddleware());
+// If MENU command, set random Campaign and ask for Signup.
+router.use(sendAskSignupMiddleware());
+
+// If Campaign keyword, set keyword Campaign.
 router.use(campaignKeywordMiddleware());
 router.use(currentCampaignMiddleware());
 
-// Parse convo responses to sent Ask Signup/Continue messages:
+// Check for yes/no/invalid responses to sent Ask Signup/Continue messages:
 router.use(parseAskSignupMiddleware());
 router.use(parseAskContinueMiddleware());
 
-// If our last reply was non-Gambit, prompt to chat Gambit again.
-router.use(askContinueMiddleware());
+// If our last outbound template was non-Gambit, prompt to continue back with the Campaign.
+router.use(sendAskContinueMiddleware());
 
-// Check if Convo Campaign has been updated.
+// Check if we need to update the Campaign.
 router.use(setCampaignMiddleware());
-router.use(gambitReplyMiddleware());
-router.use(campaignMessageMiddleware());
+router.use(sendGambitReplyMiddleware());
 
+// Includes catchall for when no Campaign has been set, and no Rivescript reply matched.
+router.use(sendCampaignMessageMiddleware());
+
+// Create our outbound message and send the reply back to sender (if conversation isn't paused).
 router.use(outboundMessageMiddleware());
 router.post('/', (req, res) => helpers.sendResponse(req, res));
 
