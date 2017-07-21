@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const logger = require('heroku-logger');
 const Messages = require('./Message');
 
+const facebook = require('../../lib/facebook');
 const slack = require('../../lib/slack');
 const twilio = require('../../lib/twilio');
 
@@ -182,6 +183,9 @@ userSchema.methods.sendMessage = function (messageText) {
   }
   if (this.platform === 'twilio') {
     twilio.postMessage(this.platformId, messageText);
+  }
+  if (this.platform === 'facebook') {
+    facebook.postMessage(this.platformId, messageText);
   }
 };
 
