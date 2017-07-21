@@ -1,20 +1,22 @@
 ## Chatbot
 
 ```
-POST /api/v1/chatbot
+POST /api/v1/receive-message
 ```
-## Query Parameters
 
-Name | Type | Description
---- | --- | ---
-`platform` | `string` | e.g. `twilio`, `slack`
+Receives a message and sends a reply (or forwards it, when appropriate). 
+
 
 ## Input
 
 
 Name | Type | Description
 --- | --- | ---
-`userId` | `string` | User ID
+`phone` | `string` | 
+`slackId` | `string` | 
+`slackChannel` | `string` | 
+`facebookId` | `string` | 
+`userId` | `string` | Northstar ID
 `text` | `string` | Incoming message sent from User.
 `mediaUrl` | `string` | Media attachment URL (currently only supports 1 attachment).
 
@@ -23,11 +25,10 @@ Name | Type | Description
 ### Request
 
 ```
-curl -X "POST" "http://localhost:5100/v1/chatbot" \
+curl -X "POST" "http://localhost:5100/api/v1/retrieve-message" \
      -H "Content-Type: application/x-www-form-urlencoded; charset=utf-8" \
      --data-urlencode "userId=123" \
      --data-urlencode "text=I can haz thumb socks?" \
-     --data-urlencode "platform=curl" 
 ```
 
 ### Response
@@ -35,7 +36,7 @@ curl -X "POST" "http://localhost:5100/v1/chatbot" \
 ```
 {
   "reply": {
-    "type": "brain",
+    "template": "brain",
     "text": "Hi, you're chatting with Slothie again. I'm a bot!"
   }
 }
@@ -43,7 +44,7 @@ curl -X "POST" "http://localhost:5100/v1/chatbot" \
 ```
 {
   "reply": {
-    "type": "noReply",
+    "template": "noReply",
     "text": ""
   }
 }
@@ -51,7 +52,7 @@ curl -X "POST" "http://localhost:5100/v1/chatbot" \
 ```
 {
   "reply": {
-    "type": "error",
+    "template": "error",
     "text": "Cannot read property '_id' of null"
   }
 }
@@ -59,6 +60,9 @@ curl -X "POST" "http://localhost:5100/v1/chatbot" \
 
 ```
 ## Send Message
+
+Sends a message to User.
+
 
 ```
 POST /api/v1/send-message

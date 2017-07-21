@@ -3,7 +3,10 @@
 const mongoose = require('mongoose');
 const logger = require('heroku-logger');
 const Messages = require('./Message');
+
+const facebook = require('../../lib/facebook');
 const slack = require('../../lib/slack');
+const twilio = require('../../lib/twilio');
 
 const defaultTopic = 'random';
 
@@ -19,7 +22,7 @@ const userSchema = new mongoose.Schema({
   campaignId: Number,
   signupStatus: String,
   lastReplyTemplate: String,
-  slackDirectMessageChannel: String,
+  slackChannel: String,
 });
 
 /**
@@ -36,7 +39,7 @@ userSchema.statics.createFromReq = function (req) {
   };
 
   if (req.slackChannel) {
-    data.slackDirectMessageChannel = req.slackChannel;
+    data.slackChannel = req.slackChannel;
   }
 
   return this.create(data);
@@ -174,12 +177,16 @@ userSchema.methods.createOutboundSendMessage = function (messageText, messageTem
  * @param {string} messageText
  * @args {object} args
  */
-userSchema.methods.sendMessage = function (messageText, args) {
-  if (this.platform !== 'slack') {
-    return;
+userSchema.methods.sendMessage = function (messageText) {
+  if (this.platform === 'slack') {
+    slack.postMessage(this.slackChannel, messageText);
   }
-
-  slack.postMessage(this.slackDirectMessageChannel, messageText, args);
+  if (this.platform === 'twilio') {
+    twilio.postMessage(this.platformId, messageText);
+  }
+  if (this.platform === 'facebook') {
+    facebook.postMessage(this.platformId, messageText);
+  }
 };
 
 module.exports = mongoose.model('users', userSchema);
