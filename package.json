@@ -9,7 +9,6 @@
     "test": "ava --serial"
   },
   "ava": {
-    "concurrency": 5,
     "powerAssert": false,
     "failWithoutAssertions": false,
     "files": [
