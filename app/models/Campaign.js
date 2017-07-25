@@ -3,7 +3,7 @@
 const fs = require('fs');
 const mongoose = require('mongoose');
 const logger = require('heroku-logger');
-const gambitCampaigns = require('../../lib/gambit');
+const gambitCampaigns = require('../../lib/gambit-campaigns');
 
 /**
  * Schema.
