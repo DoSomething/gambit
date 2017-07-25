@@ -91,7 +91,7 @@ test('post should call reply on success', async () => {
     .post('', {})
     .query(true)
     .reply(200, {
-      message: {
+      reply: {
         text: 'Howdy.',
       },
     });
@@ -110,7 +110,7 @@ test('consolebot post should call reply on error', async () => {
     .post('', {})
     .query(true)
     .reply(500, {
-      message: {
+      reply: {
         text: 'Epic Fail :<',
       },
     });
