@@ -33,32 +33,25 @@ curl -X "POST" "http://localhost:5100/api/v1/retrieve-message" \
 
 ### Response
 
-```
-{
-  "reply": {
-    "template": "brain",
-    "text": "Hi, you're chatting with Slothie again. I'm a bot!"
-  }
-}
-```
-```
-{
-  "reply": {
-    "template": "noReply",
-    "text": ""
-  }
-}
-```
-```
-{
-  "reply": {
-    "template": "error",
-    "text": "Cannot read property '_id' of null"
-  }
-}
+Returns an Outbound Reply Message (when Conversation is not paused).
 
 
 ```
+{
+  "reply": {
+    "__v": 0,
+    "userId": "U1BBD0D4G",
+    "topic": "random",
+    "conversation": "5977aed9bb17210a72aad245",
+    "text": "Sorry, I'm not sure how to respond to that.\n\nSay MENU to find a Campaign to join.",
+    "template": "noCampaignMessage",
+    "direction": "outbound-reply",
+    "_id": "59776272230c54001125ef7c",
+    "date": "2017-07-25T20:49:29.895Z"
+  }
+}
+```
+
 ## Send Message
 
 Sends a message to User.
