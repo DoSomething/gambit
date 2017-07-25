@@ -1,0 +1,51 @@
+---
+  plugins:
+    - ava
+  rules:
+    # Allow local requires for tests
+    global-require: 'off'
+    # t variable is used for tests
+    id-length:
+      - error
+      - exceptions:
+        - t
+    # Allow for rewire to work properly
+    no-underscore-dangle:
+      - error
+      - allow:
+        - __set__
+        - __get__
+    # need fot AVA test contetext support
+    no-param-reassign: off
+    # Support should constructs like result.should.be.true;
+    no-unused-expressions: 'off'
+    ava/assertion-arguments: error
+    ava/max-asserts:
+      - off
+      - 5
+    ava/no-async-fn-without-await: error
+    ava/no-cb-test: off
+    ava/no-duplicate-modifiers: error
+    ava/no-identical-title: error
+    ava/no-ignored-test-files: error
+    ava/no-invalid-end: error
+    ava/no-nested-tests: error
+    ava/no-only-test: error
+    ava/no-skip-assert: error
+    # Allow skipping tests
+    ava/no-skip-test: off
+    ava/no-statement-after-end: error
+    ava/no-todo-implementation: error
+    # Allow for setting up TODO tests
+    ava/no-todo-test: off
+    ava/no-unknown-modifiers: error
+    ava/prefer-async-await: error
+    ava/prefer-power-assert: off
+    ava/test-ended: error
+    ava/test-title:
+      - error
+      - if-multiple
+    ava/use-t-well: error
+    ava/use-t: error
+    ava/use-test: error
+    ava/use-true-false: error
