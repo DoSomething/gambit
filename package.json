@@ -1,14 +1,29 @@
 {
   "name": "gambit-conversations",
   "version": "0.2.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A DoSomething.org chatbot",
   "scripts": {
+    "all-tests": "npm run lint && npm test",
+    "lint": "eslint --ext=.js .",
     "start": "node server",
-    "test": "eslint --ext=.js server.js shell.js app config lib"
+    "test": "ava --serial"
   },
-  "author": "",
+  "ava": {
+    "powerAssert": false,
+    "failWithoutAssertions": false,
+    "files": [
+      "test/**/*.test.js"
+    ]
+  },
+  "author": "DoSomething.org",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DoSomething/gambit-conversations.git"
+  },
+  "engines": {
+    "node": "6.11.1"
+  },
   "dependencies": {
     "@slack/client": "^3.10.0",
     "body-parser": "^1.17.2",
@@ -19,12 +34,19 @@
     "fb": "^2.0.0",
     "heroku-logger": "^0.1.1",
     "mongoose": "^4.10.6",
-    "readline": "^1.3.0",
     "rivescript": "^1.17.2",
     "superagent": "^3.5.2",
-    "twilio": "^3.5.0"
+    "twilio": "^3.5.0",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
-    "@dosomething/eslint-config": "^3.0.0"
+    "@dosomething/eslint-config": "^3.0.0",
+    "ava": "^0.21.0",
+    "chai": "^4.1.0",
+    "eslint-plugin-ava": "^4.2.1",
+    "nock": "^9.0.14",
+    "readline": "^1.3.0",
+    "sinon": "^2.3.8",
+    "sinon-chai": "^2.12.0"
   }
 }
