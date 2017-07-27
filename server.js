@@ -29,6 +29,6 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', () => {
   app.listen(config.port, () => {
-    console.log(`Slothie is running on port=${config.port}.`);
+    console.log(`Conversations API is running on port=${config.port}.`);
   });
 });
