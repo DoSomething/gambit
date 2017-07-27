@@ -13,5 +13,7 @@ module.exports = function init(app) {
   app.use('/api/v1/receive-message',
     authenticateMiddleware(),
     receiveMessageRoute);
-  app.use('/api/v1/send-message', sendMessageRoute);
+  app.use('/api/v1/send-message',
+    authenticateMiddleware(),
+    sendMessageRoute);
 };
