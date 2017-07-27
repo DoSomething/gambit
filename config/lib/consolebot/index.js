@@ -5,7 +5,7 @@ const path = require('path');
 require('dotenv').config();
 const appConfig = require('../../');
 
-const basicAuthString = `${process.env.BASIC_AUTH_NAME || 'puppet'}:${process.env.BASIC_AUTH_PASS || 'totallysecret'}`;
+const basicAuthString = `${process.env.DS_GAMBIT_CONVERSATIONS_API_BASIC_AUTH_NAME || 'puppet'}:${process.env.DS_GAMBIT_CONVERSATIONS_API_BASIC_AUTH_PASS || 'totallysecret'}`;
 
 const configVars = {
   apiKey: appConfig.apiKey,
