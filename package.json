@@ -1,6 +1,6 @@
 {
   "name": "gambit-conversations",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A DoSomething.org chatbot",
   "scripts": {
     "all-tests": "npm run lint && npm test",
