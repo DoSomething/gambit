@@ -6,7 +6,7 @@ const restify = require('express-restify-mongoose');
 const config = require('./config');
 
 app.use((req, res, next) => {
-  if (! config.corsEnabled) {
+  if (!config.corsEnabled) {
     return next();
   }
 
@@ -26,9 +26,13 @@ restify.serve(app, ConversationModel);
 restify.serve(app, MessageModel);
 
 const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
+db.on('error', () => {
+  // TODO console.log has to be replaced by other development logging library: Winston?
+  // console.error.bind(console, 'connection error:')
+});
 db.once('open', () => {
   app.listen(config.port, () => {
-    console.log(`Conversations API is running on port=${config.port}.`);
+    // TODO console.log has to be replaced by other development logging library: Winston?
+    // console.log(`Conversations API is running on port=${config.port}.`);
   });
 });

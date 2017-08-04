@@ -11,7 +11,10 @@ module.exports = {
     'no-underscore-dangle': [
       'error', {
         "allow": [
-          "_id"
+          // MongoDB ids
+          "_id",
+          // Front's payload includes this pattern
+          "_links"
         ]
       }
     ]
