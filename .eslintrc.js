@@ -3,11 +3,7 @@ module.exports = {
   globals: {
     app: true
   },
-  parserOptions: {
-    sourceType: 'script'
-  },
   rules: {
-    strict: [2, 'global'],
     'no-underscore-dangle': [
       'error', {
         "allow": [
