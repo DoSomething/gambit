@@ -15,9 +15,12 @@ app.use((req, res, next) => {
 
   return next();
 });
-
-mongoose.connect(config.dbUri);
 mongoose.Promise = global.Promise;
+// http://mongoosejs.com/docs/connections.html#use-mongo-client
+// TODO: what happens if database doesnt connect?
+mongoose.connect(config.dbUri, {
+  useMongoClient: true,
+});
 
 const ConversationModel = require('./app/models/Conversation');
 const MessageModel = require('./app/models/Message');
