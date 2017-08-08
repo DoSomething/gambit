@@ -1,5 +1,11 @@
 'use strict';
 
+// Load enviroment vars.
+require('dotenv').config();
+
+// @see https://docs.newrelic.com/docs/agents/nodejs-agent/installation-configuration
+require('newrelic');
+
 const app = require('./app');
 const mongoose = require('mongoose');
 const restify = require('express-restify-mongoose');
@@ -31,7 +37,7 @@ restify.serve(app, MessageModel);
 const db = mongoose.connection;
 db.on('error', () => {
   // TODO console.log has to be replaced by other development logging library: Winston?
-  // console.error.bind(console, 'connection error:')
+  // console.error.bind(console, 'connection error:');
 });
 db.once('open', () => {
   app.listen(config.port, () => {
