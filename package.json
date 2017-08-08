@@ -1,6 +1,6 @@
 {
   "name": "gambit-conversations",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A DoSomething.org chatbot",
   "scripts": {
     "all-tests": "npm run lint && npm test",
@@ -37,6 +37,7 @@
     "fb": "^2.0.0",
     "heroku-logger": "^0.1.1",
     "mongoose": "^4.10.6",
+    "newrelic": "^2.0.2",
     "rivescript": "^1.17.2",
     "superagent": "^3.5.2",
     "twilio": "^3.5.0",
