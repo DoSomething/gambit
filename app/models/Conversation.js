@@ -22,6 +22,7 @@ const conversationSchema = new mongoose.Schema({
   signupStatus: String,
   lastOutboundTemplate: String,
   slackChannel: String,
+  broadcastId: String,
 });
 
 /**
@@ -126,6 +127,17 @@ conversationSchema.methods.promptSignupForCampaign = function (campaign) {
 };
 
 /**
+ * Prompt signup for current campaign and broadcast
+ * @param {Campaign} campaign
+ * @param {string} source
+ * @param {string} keyword
+ */
+conversationSchema.methods.promptSignupForBroadcast = function (campaign, broadcastId) {
+  this.broadcastId = broadcastId;
+  this.setCampaignWithSignupStatus(campaign, 'prompt');
+};
+
+/**
  * Decline signup for current campaign.
  * @param {Campaign} campaign
  * @param {string} source
@@ -168,6 +180,16 @@ conversationSchema.methods.createOutboundSendMessage = function (messageText, me
   message.text = messageText;
   message.template = messageTemplate;
   message.direction = 'outbound-api-send';
+
+  this.lastOutboundTemplate = messageTemplate;
+  return this.save().then(() => Messages.create(message));
+};
+
+conversationSchema.methods.createOutboundImportMessage = function (messageText, messageTemplate) {
+  const message = this.getMessagePayload();
+  message.text = messageText;
+  message.template = messageTemplate;
+  message.direction = 'outbound-api-import';
 
   this.lastOutboundTemplate = messageTemplate;
   return this.save().then(() => Messages.create(message));
