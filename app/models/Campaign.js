@@ -43,7 +43,9 @@ function parseGambitCampaign(gambitCampaign) {
   };
 
   const templates = Object.keys(gambitCampaign.messages);
-  templates.map(template => result[template] = gambitCampaign.messages[template].rendered);
+  templates.forEach((template) => {
+    result[template] = gambitCampaign.messages[template].rendered;
+  });
 
   result.keywords = gambitCampaign.keywords.map(keywordObject => keywordObject.keyword);
 

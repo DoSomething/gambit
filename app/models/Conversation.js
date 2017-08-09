@@ -204,16 +204,21 @@ conversationSchema.methods.createOutboundImportMessage = function (messageText, 
  * @args {object} args
  */
 conversationSchema.methods.sendMessage = function (message) {
-  logger.debug('conversation.sendMessage');
+  const loggerMessage = 'conversation.sendMessage';
+  logger.debug('conversation.sendMessage', { text: message.text });
 
   const messageText = message.text;
 
   if (this.medium === 'slack') {
     slack.postMessage(this.slackChannel, messageText);
   }
+
   if (this.medium === 'sms') {
-    twilio.postMessage(this.userId, messageText);
+    twilio.postMessage(this.userId, messageText)
+      .then(res => logger.debug(loggerMessage, res))
+      .catch(err => logger.error(loggerMessage, err));
   }
+
   if (this.medium === 'facebook') {
     facebook.postMessage(this.userId, messageText);
   }
