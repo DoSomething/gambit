@@ -186,7 +186,7 @@ conversationSchema.methods.sendMessage = function (message) {
   if (this.medium === 'slack') {
     slack.postMessage(this.slackChannel, messageText);
   }
-  if (this.medium === 'twilio') {
+  if (this.medium === 'sms') {
     twilio.postMessage(this.userId, messageText);
   }
   if (this.medium === 'facebook') {
