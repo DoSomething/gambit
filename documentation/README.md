@@ -1,4 +1,4 @@
-## Chatbot
+## Receive Message
 
 ```
 POST /api/v1/receive-message
@@ -12,7 +12,8 @@ Receives a message and sends a reply (or forwards it, when appropriate).
 
 Name | Type | Description
 --- | --- | ---
-`phone` | `string` | 
+`From` | `string` | Sender's phone number (included when we receive a Twilio message)
+`Body` | `string` | Incoming message (included when we receive a Twilio message)
 `slackId` | `string` | 
 `slackChannel` | `string` | 
 `facebookId` | `string` | 
