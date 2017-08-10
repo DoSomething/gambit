@@ -16,11 +16,13 @@ const outboundMessageMiddleware = require('../../lib/middleware/import-message/m
 router.use(paramsMiddleware());
 router.use(broadcastMiddleware());
 
-// Load convo and create inbound message.
+// Load or create conversation
 router.use(getConvoMiddleware());
 router.use(createConvoMiddleware());
 
 router.use(updateConvoMiddleware());
+
+// Create outbound message
 router.use(outboundMessageMiddleware());
 
 router.post('/', (req, res) => helpers.sendResponseWithStatusCode(res));
