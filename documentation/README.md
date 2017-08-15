@@ -13,7 +13,7 @@ To do this you need to perform the following steps:
 curl -D -X POST -H "Authorization: Basic ZnJlZDpmcmVk" -H "Content-Type: application/json" "http://localhost:5100/api/v1/import-message"
 ```
 
-##### As part of the URL (Specially helpful for webhooks)
+##### As part of the URL (Especially helpful for webhooks)
 Prepend the `name` and `pass` in the form `name:pass@` to the endpoint URL.
 ```
 http://name:pass@localhost:5100/api/v1/import-message
