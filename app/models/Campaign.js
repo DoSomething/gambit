@@ -90,7 +90,7 @@ campaignSchema.statics.getRandomCampaign = function () {
  * Returns Campaign with given keyword if exists.
  * @return {Promise}
  */
-campaignSchema.statics.findByKeyword = function (keyword) {
+campaignSchema.statics.findByKeyword = function (keyword = '') {
   logger.debug(`Campaign.findByKeyword:${keyword}`);
   const match = keyword.toUpperCase();
 
