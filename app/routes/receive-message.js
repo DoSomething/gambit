@@ -23,7 +23,7 @@ const parseAskSignupMiddleware = require('../../lib/middleware/receive-message/p
 const parseAskContinueMiddleware = require('../../lib/middleware/receive-message/parse-ask-continue-answer');
 const sendAskContinueMiddleware = require('../../lib/middleware/receive-message/send-ask-continue');
 const setCampaignMiddleware = require('../../lib/middleware/receive-message/conversation-set-campaign');
-const sendGambitReplyMiddleware = require('../../lib/middleware/receive-message/send-gambit-reply');
+const sendGambitCampaignsReplyMiddleware = require('../../lib/middleware/receive-message/send-gambit-campaigns-reply');
 const sendCampaignMessageMiddleware = require('../../lib/middleware/receive-message/send-campaign-message');
 const outboundMessageMiddleware = require('../../lib/middleware/receive-message/message-outbound');
 
@@ -57,7 +57,9 @@ router.use(sendAskContinueMiddleware());
 
 // Check if we need to update the Campaign.
 router.use(setCampaignMiddleware());
-router.use(sendGambitReplyMiddleware());
+
+// If this message is for a Campaign Signup, post to Gambit Campaigns and send the reply we get.
+router.use(sendGambitCampaignsReplyMiddleware());
 
 // Includes catchall for when no Campaign has been set, and no Rivescript reply matched.
 router.use(sendCampaignMessageMiddleware());
