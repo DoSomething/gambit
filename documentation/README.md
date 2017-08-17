@@ -68,7 +68,7 @@ Example of an inbound Twilio request.
   "NumSegments": "1",
   "MessageSid": "MM09a8f657567f807443191c1e7exxxxxx",
   "From": "+5555555555",
-  "MediaUrl0": "https://api.twilio.com/2010-04-01/Accounts/ACd3386eff2c87ebd2f00b628e02a47218/Messages/MM09a8f657567f807443191c1e7e318cb8/Media/ME0bdfda835a49390c85311e6d27d060a4",
+  "MediaUrl0": "http://bit.ly/2wkfrep",
   "ApiVersion": "2010-04-01"
 }
 ```
@@ -88,8 +88,8 @@ Example of an inbound Twilio request.
   "direction": "inbound",
   "attachments": [
     {
-      "contentType": "image/png",
-      "url": "https://s3-external-1.amazonaws.com/media.twiliocdn.com/ACd3386eff2c87ebd2f00b628e02a47218/f743e8fe72652707d12f8c79ef1c0fa8"
+      "contentType": "image/jpeg",
+      "url": "http://placekitten.com/g/800/800"
     }
   ],
   "__v": 0
