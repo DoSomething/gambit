@@ -2,7 +2,6 @@
 
 const mongoose = require('mongoose');
 const logger = require('heroku-logger');
-const underscore = require('underscore');
 
 const Messages = require('./Message');
 const facebook = require('../../lib/facebook');
@@ -158,10 +157,13 @@ conversationSchema.methods.getMessagePayload = function () {
   };
 };
 
-conversationSchema.methods.createInboundMessage = function (messageText, messageCustomProps = {}) {
-  const message = underscore.extend({}, this.getMessagePayload(), messageCustomProps);
-  message.text = messageText;
+conversationSchema.methods.createInboundMessage = function (req) {
+  const message = this.getMessagePayload();
+  message.text = req.inboundMessageText;
   message.direction = 'inbound';
+  message.attachments = req.attachments;
+
+  // TODO: Handle platform dependent message properties here
 
   return Messages.create(message);
 };
