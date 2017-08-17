@@ -2,8 +2,8 @@
 
 const mongoose = require('mongoose');
 const logger = require('heroku-logger');
-const Messages = require('./Message');
 
+const Messages = require('./Message');
 const facebook = require('../../lib/facebook');
 const slack = require('../../lib/slack');
 const twilio = require('../../lib/twilio');
@@ -22,8 +22,8 @@ const conversationSchema = new mongoose.Schema({
   signupStatus: String,
   lastOutboundTemplate: String,
   slackChannel: String,
-  broadcastId: String,
-});
+  lastBroadcastId: String,
+}, { timestamps: true });
 
 /**
  * @param {Object} req - Express request
@@ -133,7 +133,7 @@ conversationSchema.methods.promptSignupForCampaign = function (campaign) {
  * @param {string} keyword
  */
 conversationSchema.methods.promptSignupForBroadcast = function (campaign, broadcastId) {
-  this.broadcastId = broadcastId;
+  this.lastBroadcastId = broadcastId;
   this.setCampaignWithSignupStatus(campaign, 'prompt');
 };
 
@@ -157,10 +157,13 @@ conversationSchema.methods.getMessagePayload = function () {
   };
 };
 
-conversationSchema.methods.createInboundMessage = function (messageText) {
+conversationSchema.methods.createInboundMessage = function (req) {
   const message = this.getMessagePayload();
-  message.text = messageText;
+  message.text = req.inboundMessageText;
   message.direction = 'inbound';
+  message.attachments = req.attachments;
+
+  // TODO: Handle platform dependent message properties here
 
   return Messages.create(message);
 };

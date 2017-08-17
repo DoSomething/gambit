@@ -11,7 +11,6 @@ const messageSchema = new mongoose.Schema({
     ref: 'Conversation',
   },
   userId: String,
-  date: { type: Date, default: Date.now },
   direction: {
     type: String,
     enum: ['inbound', 'outbound-reply', 'outbound-api-send', 'outbound-api-import'],
@@ -20,6 +19,7 @@ const messageSchema = new mongoose.Schema({
   template: String,
   text: String,
   topic: String,
-});
+  attachments: Array,
+}, { timestamps: true });
 
 module.exports = mongoose.model('messages', messageSchema);
