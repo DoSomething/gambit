@@ -215,7 +215,7 @@ conversationSchema.methods.sendMessage = function (message) {
 
   if (this.medium === 'sms') {
     twilio.postMessage(this.userId, messageText)
-      .then(res => logger.debug(loggerMessage, res))
+      .then(res => logger.debug(loggerMessage, { status: res.status }))
       .catch(err => logger.error(loggerMessage, err));
   }
 
