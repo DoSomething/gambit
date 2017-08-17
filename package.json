@@ -38,6 +38,8 @@
     "heroku-logger": "^0.1.1",
     "mongoose": "^4.10.6",
     "newrelic": "^2.0.2",
+    "request": "^2.81.0",
+    "request-promise": "^4.2.1",
     "rivescript": "^1.17.2",
     "superagent": "^3.5.2",
     "twilio": "^3.5.0",
