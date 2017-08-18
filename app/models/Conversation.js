@@ -224,4 +224,14 @@ conversationSchema.methods.sendMessage = function (message) {
   }
 };
 
+/**
+ * Should we POST to Gambit Campaigns to determine how to reply to an inbound message? 
+ * @return {boolean}
+ */
+conversationSchema.methods.shouldPostToGambitCampaigns = function () {
+  const templates = ['gambit', 'externalSignupMenuMessage'];
+
+  return templates.includes(this.lastOutboundTemplate);
+};
+
 module.exports = mongoose.model('conversations', conversationSchema);
