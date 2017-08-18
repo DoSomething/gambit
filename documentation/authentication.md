@@ -1,8 +1,8 @@
 # Authentication
 
 The `receive-message`, `import-message`, and `send-message` routes are protected by Basic Auth, using config vars:
-* `'DS_GAMBIT_CONVERSATIONS_API_BASIC_AUTH_NAME'`
-* `'DS_GAMBIT_CONVERSATIONS_API_BASIC_AUTH_PASS'`
+* `DS_GAMBIT_CONVERSATIONS_API_BASIC_AUTH_NAME`
+* `DS_GAMBIT_CONVERSATIONS_API_BASIC_AUTH_PASS`
 
 Requests should include an Authorization header.
 
