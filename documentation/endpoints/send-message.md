@@ -3,9 +3,21 @@
 ```
 POST /api/v1/send-message
 ```
-Sends a message to User. 
+Sends either a Support or Campaign outbound message in a Conversation.
 
-## Input
+## Support
+
+Sending Support messages requires a `x-front-signature` header. See [Support wiki](https://github.com/DoSomething/gambit-conversations/wiki/Support). 
+
+## Campaign
+
+Sends an outbound Campaign message for a given `campaignId` and message `template`, and updates the Conversation accordingly.
+
+Supported templates:
+
+* `externalSignupMenuMessage` -- Used to send SMS confirmation messages for web signups.
+
+### Input
 
 Name | Type | Description
 --- | --- | ---
