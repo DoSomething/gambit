@@ -8,8 +8,8 @@ const router = express.Router();
 bot.getBot();
 
 const paramsMiddleware = require('../../lib/middleware/receive-message/params');
-const getConvoMiddleware = require('../../lib/middleware/conversation-get');
-const createConvoMiddleware = require('../../lib/middleware/conversation-create');
+const getConversationMiddleware = require('../../lib/middleware/conversation-get');
+const createConversationMiddleware = require('../../lib/middleware/conversation-create');
 
 const inboundMessageMiddleware = require('../../lib/middleware/receive-message/message-inbound');
 
@@ -29,9 +29,9 @@ const outboundMessageMiddleware = require('../../lib/middleware/receive-message/
 
 router.use(paramsMiddleware());
 
-// Load convo and create inbound message.
-router.use(getConvoMiddleware());
-router.use(createConvoMiddleware());
+// Load conversation and create inbound message.
+router.use(getConversationMiddleware());
+router.use(createConversationMiddleware());
 router.use(inboundMessageMiddleware());
 
 // Send our inbound message to Rivescript bot for a reply.

@@ -14,6 +14,8 @@ const campaignSchema = new mongoose.Schema({
   status: String,
   keywords: [String],
   topic: String,
+  externalSignupMenuMessage: String,
+  scheduledRelativeToSignupDateMessage: String,
 });
 
 /**
@@ -39,6 +41,11 @@ function parseGambitCampaign(gambitCampaign) {
     title: gambitCampaign.title,
     status: gambitCampaign.status,
   };
+
+  const templates = Object.keys(gambitCampaign.messages);
+  templates.forEach((template) => {
+    result[template] = gambitCampaign.messages[template].rendered;
+  });
 
   result.keywords = gambitCampaign.keywords.map(keywordObject => keywordObject.keyword);
 
@@ -68,7 +75,7 @@ campaignSchema.statics.fetchCampaign = function (campaignId) {
       campaign.topic = getTopicForCampaignId(campaignId);
 
       return this.findOneAndUpdate({ _id: campaignId }, campaign, { upsert: true })
-        .then(() => logger.debug('Campaign.fetchCampaign', campaign));
+        .then(() => logger.trace('Campaign.fetchCampaign', campaign));
     })
     .catch(err => logger.error('Campaign.fetchCampaign', err));
 };
