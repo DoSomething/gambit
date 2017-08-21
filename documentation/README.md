@@ -1,6 +1,6 @@
 # Gambit Conversations
 
-This is __Gambit Conversations__, the DoSomething.org multi-platform chatbot service. 
+This is __Gambit Conversations__, the DoSomething.org multi-platform chatbot service.
 
 ## Authentication
 See [Authentication](authentication.md) for details on authorizing your requests.
@@ -12,7 +12,7 @@ Endpoint | Functionality
 -------- | -------------
 `POST /api/v1/receive-message` | [Receive inbound Message](endpoints/receive-message.md)
 `POST /api/v1/send-message` | [Send outbound Message](endpoints/send-message.md)
-`POST /api/v1/import-message` | Import outbound Message
+`POST /api/v1/import-message` | [Import outbound Message](endpoints/import-message.md)
 `GET /api/v1/conversations` | Retrieve all Conversations
 `GET /api/v1/conversations/:id` | Retrieve a Conversation
 `GET /api/v1/messages` | Retrieve all Messages
