@@ -34,6 +34,7 @@ const CampaignModel = require('./app/models/Campaign');
 
 restify.serve(app, ConversationModel);
 restify.serve(app, MessageModel);
+restify.serve(app, CampaignModel);
 
 if (process.env.DS_GAMBIT_CAMPAIGNS_SYNC) {
   CampaignModel.sync();

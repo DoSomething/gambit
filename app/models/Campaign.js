@@ -14,7 +14,10 @@ const campaignSchema = new mongoose.Schema({
   status: String,
   keywords: [String],
   topic: String,
-  externalSignupMenuMessage: String,
+  messages: {
+    campaignClosedMessage: String,
+    externalSignupMenuMessage: String,
+  },
 }, { timestamps: true });
 
 /**
@@ -39,11 +42,12 @@ function parseGambitCampaign(gambitCampaign) {
   const result = {
     title: gambitCampaign.title,
     status: gambitCampaign.status,
+    messages: {},
   };
 
   const templates = Object.keys(gambitCampaign.messages);
   templates.forEach((template) => {
-    result[template] = gambitCampaign.messages[template].rendered;
+    result.messages[template] = gambitCampaign.messages[template].rendered;
   });
 
   result.keywords = gambitCampaign.keywords.map(keywordObject => keywordObject.keyword);
@@ -168,6 +172,12 @@ campaignSchema.virtual('declinedContinueMessage').get(function () {
 
 campaignSchema.virtual('askContinueMessage').get(function () {
   return `Ready to get back to ${this.title}?`;
+});
+
+campaignSchema.virtual('isClosed').get(function () {
+  const result = this.status === 'closed';
+
+  return result;
 });
 
 campaignSchema.virtual('invalidSignupResponseMessage').get(function () {
