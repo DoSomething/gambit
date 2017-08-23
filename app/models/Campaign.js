@@ -15,8 +15,7 @@ const campaignSchema = new mongoose.Schema({
   keywords: [String],
   topic: String,
   externalSignupMenuMessage: String,
-  scheduledRelativeToSignupDateMessage: String,
-});
+}, { timestamps: true });
 
 /**
  * @param {Number} campaignId
@@ -53,18 +52,6 @@ function parseGambitCampaign(gambitCampaign) {
 }
 
 /**
- * Get array of current Gambit campaigns from API and upsert models.
- * @return {Promise}
- */
-campaignSchema.statics.fetchIndex = function () {
-  logger.info('Campaign.fetchIndex');
-
-  return gambitCampaigns.get('campaigns')
-    .then(campaigns => campaigns.map(campaign => this.fetchCampaign(campaign.id)))
-    .catch(err => logger.error('Campaign.fetchIndex', err));
-};
-
-/**
  * Get campaign from Gambit API and upsert models.
  * @return {Promise}
  */
@@ -73,9 +60,10 @@ campaignSchema.statics.fetchCampaign = function (campaignId) {
     .then((response) => {
       const campaign = parseGambitCampaign(response);
       campaign.topic = getTopicForCampaignId(campaignId);
+      const query = { _id: campaignId };
 
-      return this.findOneAndUpdate({ _id: campaignId }, campaign, { upsert: true })
-        .then(() => logger.trace('Campaign.fetchCampaign', campaign));
+      return this.findOneAndUpdate(query, campaign, { upsert: true })
+        .then(() => logger.debug('campaign updated', query));
     })
     .catch(err => logger.error('Campaign.fetchCampaign', err));
 };
@@ -94,6 +82,16 @@ campaignSchema.statics.getRandomCampaign = function () {
 };
 
 /**
+ * Returns all Campaigns with active status.
+ * @return {Promise}
+ */
+campaignSchema.statics.findAllActive = function () {
+  logger.debug('Campaign.findAllActive');
+
+  return this.find({ status: 'active' });
+};
+
+/**
  * Returns Campaign with given keyword if exists.
  * @return {Promise}
  */
@@ -102,6 +100,44 @@ campaignSchema.statics.findByKeyword = function (keyword = '') {
   const match = keyword.toUpperCase();
 
   return this.findOne({ keywords: match });
+};
+
+/**
+ * Updates active Campaigns by querying Gambit Campaigns API.
+ * @return {Promise}
+ */
+campaignSchema.statics.sync = function () {
+  logger.debug('Campaign.sync');
+  const updated = {};
+
+  return gambitCampaigns.getActiveCampaigns()
+    .then((activeCampaigns) => {
+      // Update document for each active Campaign returned.
+      activeCampaigns.forEach((campaign) => {
+        const campaignId = campaign.id;
+        logger.trace('activeCampaign', { campaignId });
+
+        updated[campaignId] = true;
+        this.fetchCampaign(campaignId);
+      });
+
+      return this.findAllActive();
+    })
+    .then((activeCache) => {
+      activeCache.forEach((campaign) => {
+        const campaignId = campaign._id;
+        logger.trace('activeCache', { campaignId });
+
+        if (!updated[campaignId]) {
+          logger.debug('close campaign', { campaignId });
+          campaign.status = 'closed'; // eslint-disable-line no-param-reassign
+          campaign.save();
+        }
+      });
+    })
+    .catch((err) => {
+      logger.error('sync', { err });
+    });
 };
 
 /**
