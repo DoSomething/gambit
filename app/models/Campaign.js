@@ -76,11 +76,23 @@ campaignSchema.statics.fetchCampaign = function (campaignId) {
  * Returns a random Campaign model.
  * @return {Promise}
  */
-campaignSchema.statics.getRandomCampaign = function () {
-  logger.debug('Campaign.getRandomCampaign');
+campaignSchema.statics.findRandomCampaignNotEqualTo = function (campaignId) {
+  logger.debug('Campaign.findRandomCampaignNotEqualTo', { campaignId });
 
   return this
-    .aggregate([{ $sample: { size: 1 } }])
+    .aggregate([
+      {
+        $match: {
+          status: 'active',
+          _id: { $ne: campaignId },
+        },
+      },
+      {
+        $sample: {
+          size: 1,
+        },
+      },
+    ])
     .exec()
     .then(campaigns => this.findById(campaigns[0]._id));
 };
