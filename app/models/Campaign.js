@@ -4,6 +4,7 @@ const fs = require('fs');
 const mongoose = require('mongoose');
 const logger = require('heroku-logger');
 const gambitCampaigns = require('../../lib/gambit-campaigns');
+
 const activeStatus = 'active';
 
 /**
@@ -137,6 +138,8 @@ campaignSchema.statics.sync = function () {
 
         if (!updated[campaignId]) {
           logger.debug('close campaign', { campaignId });
+          // TODO: Fetch Campaign to get latest messages, blocked by Gambit Campaigns API bug.
+          // @see https://github.com/DoSomething/gambit/issues/951
           campaign.status = 'closed'; // eslint-disable-line no-param-reassign
           campaign.save();
         }
