@@ -66,10 +66,9 @@ campaignSchema.statics.fetchCampaign = function (campaignId) {
     .then((response) => {
       const campaign = parseGambitCampaign(response);
       campaign.topic = getTopicForCampaignId(campaignId);
-      const query = { _id: campaignId };
 
-      return this.findOneAndUpdate(query, campaign, { upsert: true })
-        .then(() => logger.debug('campaign updated', query));
+      return this.findOneAndUpdate({ _id: campaignId }, campaign, { upsert: true })
+        .then(() => logger.debug('campaign updated', { campaignId }));
     })
     .catch(err => logger.error('Campaign.fetchCampaign', err));
 };
