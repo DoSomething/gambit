@@ -4,6 +4,7 @@ const fs = require('fs');
 const mongoose = require('mongoose');
 const logger = require('heroku-logger');
 const gambitCampaigns = require('../../lib/gambit-campaigns');
+const activeStatus = 'active';
 
 /**
  * Schema.
@@ -83,7 +84,7 @@ campaignSchema.statics.findRandomCampaignNotEqualTo = function (campaignId) {
     .aggregate([
       {
         $match: {
-          status: 'active',
+          status: activeStatus,
           _id: { $ne: campaignId },
         },
       },
@@ -95,16 +96,6 @@ campaignSchema.statics.findRandomCampaignNotEqualTo = function (campaignId) {
     ])
     .exec()
     .then(campaigns => this.findById(campaigns[0]._id));
-};
-
-/**
- * Returns all Campaigns with active status.
- * @return {Promise}
- */
-campaignSchema.statics.findAllActive = function () {
-  logger.debug('Campaign.findAllActive');
-
-  return this.find({ status: 'active' });
 };
 
 /**
@@ -137,7 +128,7 @@ campaignSchema.statics.sync = function () {
         this.fetchCampaign(campaignId);
       });
 
-      return this.findAllActive();
+      return this.find({ status: activeStatus });
     })
     .then((activeCache) => {
       activeCache.forEach((campaign) => {
