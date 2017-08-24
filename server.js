@@ -30,9 +30,15 @@ mongoose.connect(config.dbUri, {
 
 const ConversationModel = require('./app/models/Conversation');
 const MessageModel = require('./app/models/Message');
+const CampaignModel = require('./app/models/Campaign');
 
 restify.serve(app, ConversationModel);
 restify.serve(app, MessageModel);
+restify.serve(app, CampaignModel);
+
+if (process.env.DS_GAMBIT_CAMPAIGNS_SYNC) {
+  CampaignModel.sync();
+}
 
 const db = mongoose.connection;
 db.on('error', () => {

@@ -19,6 +19,7 @@ const pausedMiddleware = require('../../lib/middleware/receive-message/conversat
 const sendAskSignupMiddleware = require('../../lib/middleware/receive-message/send-ask-signup');
 const campaignKeywordMiddleware = require('../../lib/middleware/receive-message/campaign-keyword');
 const currentCampaignMiddleware = require('../../lib/middleware/receive-message/campaign-current');
+const closedCampaignMiddleware = require('../../lib/middleware/receive-message/campaign-closed');
 const parseAskSignupMiddleware = require('../../lib/middleware/receive-message/parse-ask-signup-answer');
 const parseAskContinueMiddleware = require('../../lib/middleware/receive-message/parse-ask-continue-answer');
 const sendAskContinueMiddleware = require('../../lib/middleware/receive-message/send-ask-continue');
@@ -47,6 +48,7 @@ router.use(sendAskSignupMiddleware());
 // If Campaign keyword, set keyword Campaign.
 router.use(campaignKeywordMiddleware());
 router.use(currentCampaignMiddleware());
+router.use(closedCampaignMiddleware());
 
 // Check for yes/no/invalid responses to sent Ask Signup/Continue messages:
 router.use(parseAskSignupMiddleware());

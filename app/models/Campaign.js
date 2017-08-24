@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const logger = require('heroku-logger');
 const gambitCampaigns = require('../../lib/gambit-campaigns');
 
+const activeStatus = 'active';
+
 /**
  * Schema.
  */
@@ -14,9 +16,11 @@ const campaignSchema = new mongoose.Schema({
   status: String,
   keywords: [String],
   topic: String,
-  externalSignupMenuMessage: String,
-  scheduledRelativeToSignupDateMessage: String,
-});
+  templates: {
+    campaignClosedMessage: String,
+    externalSignupMenuMessage: String,
+  },
+}, { timestamps: true });
 
 /**
  * @param {Number} campaignId
@@ -40,29 +44,18 @@ function parseGambitCampaign(gambitCampaign) {
   const result = {
     title: gambitCampaign.title,
     status: gambitCampaign.status,
+    templates: {},
   };
 
   const templates = Object.keys(gambitCampaign.messages);
   templates.forEach((template) => {
-    result[template] = gambitCampaign.messages[template].rendered;
+    result.templates[template] = gambitCampaign.messages[template].rendered;
   });
 
   result.keywords = gambitCampaign.keywords.map(keywordObject => keywordObject.keyword);
 
   return result;
 }
-
-/**
- * Get array of current Gambit campaigns from API and upsert models.
- * @return {Promise}
- */
-campaignSchema.statics.fetchIndex = function () {
-  logger.info('Campaign.fetchIndex');
-
-  return gambitCampaigns.get('campaigns')
-    .then(campaigns => campaigns.map(campaign => this.fetchCampaign(campaign.id)))
-    .catch(err => logger.error('Campaign.fetchIndex', err));
-};
 
 /**
  * Get campaign from Gambit API and upsert models.
@@ -75,20 +68,32 @@ campaignSchema.statics.fetchCampaign = function (campaignId) {
       campaign.topic = getTopicForCampaignId(campaignId);
 
       return this.findOneAndUpdate({ _id: campaignId }, campaign, { upsert: true })
-        .then(() => logger.trace('Campaign.fetchCampaign', campaign));
+        .then(() => logger.debug('campaign updated', { campaignId }));
     })
-    .catch(err => logger.error('Campaign.fetchCampaign', err));
+    .catch(err => logger.error('Campaign.fetchCampaign', { err }));
 };
 
 /**
  * Returns a random Campaign model.
  * @return {Promise}
  */
-campaignSchema.statics.getRandomCampaign = function () {
-  logger.debug('Campaign.getRandomCampaign');
+campaignSchema.statics.findRandomCampaignNotEqualTo = function (campaignId) {
+  logger.debug('Campaign.findRandomCampaignNotEqualTo', { campaignId });
 
   return this
-    .aggregate([{ $sample: { size: 1 } }])
+    .aggregate([
+      {
+        $match: {
+          status: activeStatus,
+          _id: { $ne: campaignId },
+        },
+      },
+      {
+        $sample: {
+          size: 1,
+        },
+      },
+    ])
     .exec()
     .then(campaigns => this.findById(campaigns[0]._id));
 };
@@ -102,6 +107,46 @@ campaignSchema.statics.findByKeyword = function (keyword = '') {
   const match = keyword.toUpperCase();
 
   return this.findOne({ keywords: match });
+};
+
+/**
+ * Updates active Campaigns by querying Gambit Campaigns API.
+ * @return {Promise}
+ */
+campaignSchema.statics.sync = function () {
+  logger.debug('Campaign.sync');
+  const updated = {};
+
+  return gambitCampaigns.getActiveCampaigns()
+    .then((activeCampaigns) => {
+      // Update document for each active Campaign returned.
+      activeCampaigns.forEach((campaign) => {
+        const campaignId = campaign.id;
+        logger.trace('activeCampaign', { campaignId });
+
+        updated[campaignId] = true;
+        this.fetchCampaign(campaignId);
+      });
+
+      return this.find({ status: activeStatus });
+    })
+    .then((activeCache) => {
+      activeCache.forEach((campaign) => {
+        const campaignId = campaign._id;
+        logger.trace('activeCache', { campaignId });
+
+        if (!updated[campaignId]) {
+          logger.debug('close campaign', { campaignId });
+          // TODO: Fetch Campaign to get latest messages, blocked by Gambit Campaigns API bug.
+          // @see https://github.com/DoSomething/gambit/issues/951
+          campaign.status = 'closed'; // eslint-disable-line no-param-reassign
+          campaign.save();
+        }
+      });
+    })
+    .catch((err) => {
+      logger.error('sync', { err });
+    });
 };
 
 /**
@@ -132,6 +177,12 @@ campaignSchema.virtual('declinedContinueMessage').get(function () {
 
 campaignSchema.virtual('askContinueMessage').get(function () {
   return `Ready to get back to ${this.title}?`;
+});
+
+campaignSchema.virtual('isClosed').get(function () {
+  const result = this.status === 'closed';
+
+  return result;
 });
 
 campaignSchema.virtual('invalidSignupResponseMessage').get(function () {

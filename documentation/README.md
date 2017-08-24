@@ -17,7 +17,8 @@ Endpoint | Functionality
 `GET /api/v1/conversations/:id` | Retrieve a Conversation
 `GET /api/v1/messages` | Retrieve all Messages
 `GET /api/v1/messages/:id` | Retrieve a Message
-
+`GET /api/v1/campaigns` | Retrieve all cached Campaigns
+`GET /api/v1/campaigns/:id` | Retrieve a cached Campaign
 
 ### Query paramters
 
@@ -25,7 +26,7 @@ See https://florianholzapfel.github.io/express-restify-mongoose/ for querying th
 
 ### Filtering
 * https://gambit-conversations-staging.herokuapp.com/api/v1/messages?query={"platform":"slack"}
-* https://gambit-conversations-staging.herokuapp.com/api/v1/messages?query={"date":{"$gt":"2017-06-24T00:34:11.114Z"}}
+* https://gambit-conversations-staging.herokuapp.com/api/v1/messages?query={"createdAt":{"$gt":"2017-06-24T00:34:11.114Z"}}
 
 ### Sort
-* https://gambit-conversations-staging.herokuapp.com/api/v1/messages?sort=-date
+* https://gambit-conversations-staging.herokuapp.com/api/v1/messages?sort=-createdAt
