@@ -9,7 +9,7 @@ Outbound communication may happen on a different channel. This endpoint allows u
 ## Input
 
 ### Customer.io
-It's the only supported importer at this time.
+It's the only supported importer at this time. See [Broadcast Process Wiki](https://github.com/DoSomething/gambit-conversations/wiki/Broadcasts-Process)
 
 Name | Type | Description
 --- | --- | ---
