@@ -205,15 +205,14 @@ conversationSchema.methods.createOutboundImportMessage = function (messageText, 
 };
 
 /**
- * Sends the given messageText to the User via posting to their platform.
- * @param {Message} message
+ * Sends the given outboundMessage to the User via posting to their platform.
+ * @param {Message} outboundMessage
  * @args {object} args
  */
-conversationSchema.methods.sendMessage = function (message) {
-  const loggerMessage = 'conversation.sendMessage';
-  logger.debug('conversation.sendMessage', { text: message.text });
-
-  const messageText = message.text;
+conversationSchema.methods.postMessageToPlatform = function (outboundMessage) {
+  const loggerMessage = 'conversation.postMessageToPlatform';
+  const messageText = outboundMessage.text;
+  logger.debug(loggerMessage, { messageText });
 
   if (this.platform === 'slack') {
     slack.postMessage(this.slackChannel, messageText);
