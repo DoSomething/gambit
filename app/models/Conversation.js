@@ -14,7 +14,7 @@ const defaultTopic = 'random';
  * Schema.
  */
 const conversationSchema = new mongoose.Schema({
-  medium: String,
+  platform: String,
   userId: String,
   paused: Boolean,
   topic: String,
@@ -32,7 +32,7 @@ const conversationSchema = new mongoose.Schema({
 conversationSchema.statics.createFromReq = function (req) {
   const data = {
     userId: req.userId,
-    medium: req.platform,
+    platform: req.platform,
     paused: false,
     topic: defaultTopic,
   };
@@ -46,7 +46,7 @@ conversationSchema.statics.createFromReq = function (req) {
 
 /**
  * @param {string} userId
- * TODO: Query by medium + userId. For now, we know we won't overlap phone + slackId + facebookId
+ * TODO: Query by platform + userId. For now, we know we won't overlap phone + slackId + facebookId
  * @return {Promise}
  */
 conversationSchema.statics.findByUserId = function (userId) {
@@ -209,17 +209,17 @@ conversationSchema.methods.sendMessage = function (message) {
 
   const messageText = message.text;
 
-  if (this.medium === 'slack') {
+  if (this.platform === 'slack') {
     slack.postMessage(this.slackChannel, messageText);
   }
 
-  if (this.medium === 'sms') {
+  if (this.platform === 'sms') {
     twilio.postMessage(this.userId, messageText)
       .then(res => logger.debug(loggerMessage, { status: res.status }))
       .catch(err => logger.error(loggerMessage, err));
   }
 
-  if (this.medium === 'facebook') {
+  if (this.platform === 'facebook') {
     facebook.postMessage(this.userId, messageText);
   }
 };
