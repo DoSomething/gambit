@@ -18,7 +18,7 @@ const inboundMessageMiddleware = require('../../lib/middleware/receive-message/m
 const rivescriptReplyMiddleware = require('../../lib/middleware/receive-message/rivescript-reply');
 const sendRivescriptReplyMiddleware = require('../../lib/middleware/receive-message/send-rivescript-reply');
 const pausedMiddleware = require('../../lib/middleware/receive-message/conversation-paused');
-const sendAskSignupMiddleware = require('../../lib/middleware/receive-message/send-ask-signup');
+const campaignMenuMiddleware = require('../../lib/middleware/receive-message/campaign-menu');
 const campaignKeywordMiddleware = require('../../lib/middleware/receive-message/campaign-keyword');
 const currentCampaignMiddleware = require('../../lib/middleware/receive-message/campaign-current');
 const closedCampaignMiddleware = require('../../lib/middleware/receive-message/campaign-closed');
@@ -45,7 +45,7 @@ router.use(sendRivescriptReplyMiddleware());
 router.use(pausedMiddleware());
 
 // If MENU command, set random Campaign and ask for Signup.
-router.use(sendAskSignupMiddleware());
+router.use(campaignMenuMiddleware());
 
 // If Campaign keyword, set keyword Campaign.
 router.use(campaignKeywordMiddleware());
