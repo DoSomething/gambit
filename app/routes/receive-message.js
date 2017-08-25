@@ -5,6 +5,8 @@ const bot = require('../../lib/rivescript');
 const helpers = require('../../lib/helpers');
 
 const router = express.Router();
+
+// Load Rivescript triggers and replies.
 bot.getBot();
 
 const paramsMiddleware = require('../../lib/middleware/receive-message/params');
