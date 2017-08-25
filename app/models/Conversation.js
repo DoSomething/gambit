@@ -15,7 +15,7 @@ const defaultTopic = 'random';
  */
 const conversationSchema = new mongoose.Schema({
   platform: String,
-  userId: String,
+  platformUserId: String,
   paused: Boolean,
   topic: String,
   campaignId: Number,
@@ -31,7 +31,7 @@ const conversationSchema = new mongoose.Schema({
  */
 conversationSchema.statics.createFromReq = function (req) {
   const data = {
-    userId: req.userId,
+    platformUserId: req.platformUserId,
     platform: req.platform,
     paused: false,
     topic: defaultTopic,
@@ -45,13 +45,13 @@ conversationSchema.statics.createFromReq = function (req) {
 };
 
 /**
- * @param {string} userId
- * TODO: Query by platform + userId. For now, we know we won't overlap phone + slackId + facebookId
+ * @param {string} platformUserId
+ * TODO: Query by platform + platformUserId. For now, we know we won't overlap phone + slackId + facebookId
  * @return {Promise}
  */
-conversationSchema.statics.findByUserId = function (userId) {
-  const query = { userId };
-  logger.trace('Conversation.findByUserId', query);
+conversationSchema.statics.findByPlatformUserId = function (platformUserId) {
+  const query = { platformUserId };
+  logger.trace('Conversation.findByPlatformUserId', query);
 
   return this.findOne(query)
     .then(convo => convo)
@@ -150,10 +150,9 @@ conversationSchema.methods.declineSignup = function () {
 
 conversationSchema.methods.getMessagePayload = function () {
   return {
-    userId: this.userId,
+    conversationId: this,
     campaignId: this.campaignId,
     topic: this.topic,
-    conversation: this,
   };
 };
 
@@ -214,13 +213,13 @@ conversationSchema.methods.sendMessage = function (message) {
   }
 
   if (this.platform === 'sms') {
-    twilio.postMessage(this.userId, messageText)
+    twilio.postMessage(this.platformUserId, messageText)
       .then(res => logger.debug(loggerMessage, { status: res.status }))
       .catch(err => logger.error(loggerMessage, err));
   }
 
   if (this.platform === 'facebook') {
-    facebook.postMessage(this.userId, messageText);
+    facebook.postMessage(this.platformUserId, messageText);
   }
 };
 

@@ -6,11 +6,10 @@ const mongoose = require('mongoose');
  * Schema.
  */
 const messageSchema = new mongoose.Schema({
-  conversation: {
+  conversationId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Conversation',
   },
-  userId: String,
   direction: {
     type: String,
     enum: ['inbound', 'outbound-reply', 'outbound-api-send', 'outbound-api-import'],
