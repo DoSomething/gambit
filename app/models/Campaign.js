@@ -103,10 +103,7 @@ campaignSchema.statics.findRandomCampaignNotEqualTo = function (campaignId) {
  * @return {Promise}
  */
 campaignSchema.statics.findByKeyword = function (keyword = '') {
-  logger.debug(`Campaign.findByKeyword:${keyword}`);
-  const match = keyword.toUpperCase();
-
-  return this.findOne({ keywords: match });
+  return this.findOne({ keywords: keyword.toUpperCase() });
 };
 
 /**
