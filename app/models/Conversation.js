@@ -15,7 +15,10 @@ const defaultTopic = 'random';
  */
 const conversationSchema = new mongoose.Schema({
   platform: String,
-  platformUserId: String,
+  platformUserId: {
+    type: String,
+    index: true,
+  },
   paused: Boolean,
   topic: String,
   campaignId: Number,
