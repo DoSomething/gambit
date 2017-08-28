@@ -14,8 +14,11 @@ const defaultTopic = 'random';
  * Schema.
  */
 const conversationSchema = new mongoose.Schema({
-  medium: String,
-  userId: String,
+  platform: String,
+  platformUserId: {
+    type: String,
+    index: true,
+  },
   paused: Boolean,
   topic: String,
   campaignId: Number,
@@ -31,8 +34,8 @@ const conversationSchema = new mongoose.Schema({
  */
 conversationSchema.statics.createFromReq = function (req) {
   const data = {
-    userId: req.userId,
-    medium: req.platform,
+    platformUserId: req.platformUserId,
+    platform: req.platform,
     paused: false,
     topic: defaultTopic,
   };
@@ -45,13 +48,13 @@ conversationSchema.statics.createFromReq = function (req) {
 };
 
 /**
- * @param {string} userId
- * TODO: Query by medium + userId. For now, we know we won't overlap phone + slackId + facebookId
+ * @param {string} platformUserId
+ * TODO: Query by platform + platformUserId. For now, we know we won't overlap phone + slackId + facebookId
  * @return {Promise}
  */
-conversationSchema.statics.findByUserId = function (userId) {
-  const query = { userId };
-  logger.trace('Conversation.findByUserId', query);
+conversationSchema.statics.findByPlatformUserId = function (platformUserId) {
+  const query = { platformUserId };
+  logger.trace('Conversation.findByPlatformUserId', query);
 
   return this.findOne(query)
     .then(convo => convo)
@@ -150,10 +153,9 @@ conversationSchema.methods.declineSignup = function () {
 
 conversationSchema.methods.getMessagePayload = function () {
   return {
-    userId: this.userId,
+    conversationId: this,
     campaignId: this.campaignId,
     topic: this.topic,
-    conversation: this,
   };
 };
 
@@ -209,18 +211,18 @@ conversationSchema.methods.sendMessage = function (message) {
 
   const messageText = message.text;
 
-  if (this.medium === 'slack') {
+  if (this.platform === 'slack') {
     slack.postMessage(this.slackChannel, messageText);
   }
 
-  if (this.medium === 'sms') {
-    twilio.postMessage(this.userId, messageText)
+  if (this.platform === 'sms') {
+    twilio.postMessage(this.platformUserId, messageText)
       .then(res => logger.debug(loggerMessage, { status: res.status }))
       .catch(err => logger.error(loggerMessage, err));
   }
 
-  if (this.medium === 'facebook') {
-    facebook.postMessage(this.userId, messageText);
+  if (this.platform === 'facebook') {
+    facebook.postMessage(this.platformUserId, messageText);
   }
 };
 
