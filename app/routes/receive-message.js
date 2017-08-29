@@ -2,6 +2,7 @@
 
 const express = require('express');
 const bot = require('../../lib/rivescript');
+const helpers = require('../../lib/helpers');
 
 const router = express.Router();
 // Load Rivescript triggers and replies.
@@ -20,7 +21,6 @@ const closedCampaignMiddleware = require('../../lib/middleware/receive-message/c
 const parseAskSignupMiddleware = require('../../lib/middleware/receive-message/parse-ask-signup-answer');
 const parseAskContinueMiddleware = require('../../lib/middleware/receive-message/parse-ask-continue-answer');
 const sendAskContinueMiddleware = require('../../lib/middleware/receive-message/send-ask-continue');
-const sendGambitCampaignsReplyMiddleware = require('../../lib/middleware/receive-message/send-gambit-campaigns-reply');
 
 router.use(paramsMiddleware());
 
@@ -51,6 +51,6 @@ router.use(parseAskContinueMiddleware());
 router.use(sendAskContinueMiddleware());
 
 // If we haven't matched anything yet, send this message to Gambit Campaigns for a reply.
-router.use(sendGambitCampaignsReplyMiddleware());
+router.post('/', (req, res) => helpers.sendReplyForCampaignSignupMessage(req, res));
 
 module.exports = router;
