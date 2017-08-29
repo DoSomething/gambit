@@ -15,7 +15,6 @@
 + (hey|hi|yo|whatup)
 @ hello
 
-
 + what is up
 - Not much, you?
 - nm, you?
@@ -38,30 +37,6 @@
 + git *
 - I'm not going to git anything for you.
 
-+ intro
-- I am <bot name>, a DoSomething.org bot.
-- You can call me <bot name>. I'm a bot at DoSomething.org.
-- Itsa me, <bot name> Boy! I'm just a bot.
-
-
-+ (what is your name|who are you|who [is] this)
-@ intro
-
-+ are you [a] @human [*]
-@ intro
-
-+ are you a @bot
-@ bot
-
-+ how old are you [*]
-- I'm <bot age> years old.
-- I'm <bot age>.
-- Just turned <bot age>.
-
 + [*]@naughty[*]
 - Please don't use that tone with me. Can you rephrase?
 - My ears :(\n\nPlease don't use that language, I'm only <bot age> years old.
-
-+ who is @dosomething [*]
-- We are a nonprofit, check us out at dosomething.org
-
