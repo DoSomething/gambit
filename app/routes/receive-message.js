@@ -2,21 +2,16 @@
 
 const express = require('express');
 const bot = require('../../lib/rivescript');
-const helpers = require('../../lib/helpers');
 
 const router = express.Router();
-
 // Load Rivescript triggers and replies.
 bot.getBot();
 
 const paramsMiddleware = require('../../lib/middleware/receive-message/params');
 const getConversationMiddleware = require('../../lib/middleware/conversation-get');
 const createConversationMiddleware = require('../../lib/middleware/conversation-create');
-
 const inboundMessageMiddleware = require('../../lib/middleware/receive-message/message-inbound');
-
-const rivescriptReplyMiddleware = require('../../lib/middleware/receive-message/rivescript-reply');
-const sendRivescriptReplyMiddleware = require('../../lib/middleware/receive-message/send-rivescript-reply');
+const rivescriptMiddleware = require('../../lib/middleware/receive-message/rivescript');
 const pausedMiddleware = require('../../lib/middleware/receive-message/conversation-paused');
 const campaignMenuMiddleware = require('../../lib/middleware/receive-message/campaign-menu');
 const campaignKeywordMiddleware = require('../../lib/middleware/receive-message/campaign-keyword');
@@ -24,7 +19,7 @@ const currentCampaignMiddleware = require('../../lib/middleware/receive-message/
 const closedCampaignMiddleware = require('../../lib/middleware/receive-message/campaign-closed');
 const parseAskSignupMiddleware = require('../../lib/middleware/receive-message/parse-ask-signup-answer');
 const parseAskContinueMiddleware = require('../../lib/middleware/receive-message/parse-ask-continue-answer');
-const sendAskContinueMiddleware = require('../../lib/middleware/receive-message/send-ask-continue');;
+const sendAskContinueMiddleware = require('../../lib/middleware/receive-message/send-ask-continue');
 const sendGambitCampaignsReplyMiddleware = require('../../lib/middleware/receive-message/send-gambit-campaigns-reply');
 
 router.use(paramsMiddleware());
@@ -35,10 +30,9 @@ router.use(createConversationMiddleware());
 router.use(inboundMessageMiddleware());
 
 // Send our inbound message to Rivescript bot for a reply.
-router.use(rivescriptReplyMiddleware());
+router.use(rivescriptMiddleware());
 
-// Check for non-Campaign replies.
-router.use(sendRivescriptReplyMiddleware());
+// If Conversation is paused, forward inbound messages elsewhere.
 router.use(pausedMiddleware());
 
 // If MENU command, set random Campaign and ask for Signup.
@@ -58,6 +52,5 @@ router.use(sendAskContinueMiddleware());
 
 // If we haven't matched anything yet, send this message to Gambit Campaigns for a reply.
 router.use(sendGambitCampaignsReplyMiddleware());
-
 
 module.exports = router;
