@@ -11,8 +11,10 @@ Receives a message and sends a reply (or forwards it, when appropriate).
 
 Name | Type | Description
 --- | --- | ---
-`From` | `string` | Sender's phone number (included when we receive a Twilio message)
-`Body` | `string` | Incoming message (included when we receive a Twilio message)
+`From` | `string` | Sender's phone number (included in Twilio message)
+`Body` | `string` | Incoming message (included in Twilio message)
+`MediaUrl0` | `string` | Incoming message attachment URL (included in Twilio message)
+`MediaContentType0` | `string` | Incoming message attachment type (included in Twilio message)
 `slackId` | `string` |
 `slackChannel` | `string` |
 `facebookId` | `string` |
@@ -20,107 +22,59 @@ Name | Type | Description
 `text` | `string` | Incoming message sent from User.
 `mediaUrl` | `string` | Media attachment URL (currently only supports 1 attachment).
 
-## Examples
-
-### Request
-
-Example of an inbound Twilio request.
-> The user's conversation state is currently expecting a reportback picture
+<details>
+<summary><strong>Example Request</strong></summary>
 
 ```
-{
-  "ToCountry": "US",
-  "MediaContentType0": "image/png",
-  "ToState": "",
-  "SmsMessageSid": "MM09a8f657567f807443191c1e7exxxxxx",
-  "NumMedia": "1",
-  "ToCity": "",
-  "FromZip": "10010",
-  "SmsSid": "MM09a8f657567f807443191c1e7exxxxxx",
-  "FromState": "NY",
-  "SmsStatus": "received",
-  "FromCity": "NEW YORK",
-  "Body": "",
-  "FromCountry": "US",
-  "To": "38383",
-  "ToZip": "",
-  "NumSegments": "1",
+curl -X "POST" "http://localhost:5100/api/v1/receive-message" \
+     -H "Content-Type: application/json; charset=utf-8" \
+     -u puppet:totallysecret \
+     -d $'{
   "MessageSid": "MM09a8f657567f807443191c1e7exxxxxx",
-  "From": "+5555555555",
   "MediaUrl0": "http://bit.ly/2wkfrep",
-  "ApiVersion": "2010-04-01"
-}
+  "From":  "+5555555555",
+  "Body": "uhh",
+  "MediaContentType0": "image/png"
+}'
+
 ```
 
-### Created message
+</details>
+
+<details>
+<summary><strong>Example Response</strong></summary>
 
 ```
 {
-  "_id": ObjectId("5995cf29e4bca305f02e50b3"),
-  "updatedAt": ISODate("2017-08-17T17:15:21.865Z"),
-  "createdAt": ISODate("2017-08-17T17:15:21.865Z"),
-  "campaignId": 819,
-  "topic": "campaign",
-  "conversationId": ObjectId("5994caf4a92890fa8a52de72"),
-  "text": "",
-  "direction": "inbound",
-  "attachments": [
-    {
-      "contentType": "image/jpeg",
-      "url": "http://placekitten.com/g/800/800"
+  "messages": {
+    "inbound": {
+      "__v": 0,
+      "updatedAt": "2017-08-29T05:11:02.980Z",
+      "createdAt": "2017-08-29T05:11:02.980Z",
+      "conversationId": "59a4f7669ea1a81cf1ac566f",
+      "topic": "random",
+      "text": "uhh",
+      "direction": "inbound",
+      "_id": "59a4f7669ea1a81cf1ac5670",
+      "attachments": [
+        {
+          "contentType": "image/png",
+          "url": "http://placekitten.com/g/800/800"
+        }
+      ]
+    },
+    "reply": {
+      "__v": 0,
+      "updatedAt": "2017-08-29T05:11:02.993Z",
+      "createdAt": "2017-08-29T05:11:02.993Z",
+      "conversationId": "59a4f7669ea1a81cf1ac566f",
+      "topic": "random",
+      "text": "Sorry, I'm not sure how to respond to that.\n\nSay MENU to find a Campaign to join.",
+      "template": "noCampaignMessage",
+      "direction": "outbound-reply",
+      "_id": "59a4f7669ea1a81cf1ac5671",
+      "attachments": []
     }
-  ],
-  "__v": 0
-}
-```
-
-### Response
-
-```
-{
-  "reply": {
-    "__v": 0,
-    "updatedAt": "2017-08-17T17:15:22.466Z",
-    "createdAt": "2017-08-17T17:15:22.466Z",
-    "campaignId": 819,
-    "topic": "campaign",
-    "conversationId": "5994caf4a92890fa8a52de72",
-    "text": "Got it! Now text back a caption for your photo (think Instagram)! Keep it short & sweet, under 60 characters please.",
-    "template": "gambit",
-    "direction": "outbound-reply",
-    "_id": "5995cf2ae4bca305f02e50b4",
-    "attachments": []
   }
 }
 ```
-
-### Request
-
-```
-curl -X "POST" "http://localhost:5100/api/v1/retrieve-message" \
-     -H "Content-Type: application/x-www-form-urlencoded; charset=utf-8" \
-     --data-urlencode "platformUserId=123" \
-     --data-urlencode "text=I can haz thumb socks?" \
-```
-
-### Response
-
-Returns an Outbound Reply Message (when Conversation is not paused).
-
-```
-{
-  "reply": {
-    "__v": 0,
-    "updatedAt": "2017-08-17T17:15:22.466Z",
-    "createdAt": "2017-08-17T17:15:22.466Z",
-    "topic": "random",
-    "conversationId": "5977aed9bb17210a72aad245",
-    "text": "Sorry, I'm not sure how to respond to that.\n\nSay MENU to find a Campaign to join.",
-    "template": "noCampaignMessage",
-    "direction": "outbound-reply",
-    "_id": "59776272230c54001125ef7c",
-    "attachments": []
-  }
-}
-```
-
