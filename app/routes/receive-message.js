@@ -20,7 +20,7 @@ const currentCampaignMiddleware = require('../../lib/middleware/receive-message/
 const closedCampaignMiddleware = require('../../lib/middleware/receive-message/campaign-closed');
 const parseAskSignupMiddleware = require('../../lib/middleware/receive-message/parse-ask-signup-answer');
 const parseAskContinueMiddleware = require('../../lib/middleware/receive-message/parse-ask-continue-answer');
-const sendAskContinueMiddleware = require('../../lib/middleware/receive-message/send-ask-continue');
+const continueCampaignMiddelware = require('../../lib/middleware/receive-message/campaign-continue');
 
 router.use(paramsMiddleware());
 
@@ -40,15 +40,19 @@ router.use(campaignMenuMiddleware());
 
 // If Campaign keyword, set keyword Campaign.
 router.use(campaignKeywordMiddleware());
+
+// Otherwise, load the Campaign stored on the Conversation.
 router.use(currentCampaignMiddleware());
+
+// Make sure Campaign isn't closed.
 router.use(closedCampaignMiddleware());
 
 // Check for yes/no/invalid responses to sent Ask Signup/Continue messages:
 router.use(parseAskSignupMiddleware());
 router.use(parseAskContinueMiddleware());
 
-// If our last outbound template was non-Gambit, prompt to continue back with the Campaign.
-router.use(sendAskContinueMiddleware());
+// If our last outbound template was not for the Campaign, prompt to continue Campaign Completion.
+router.use(continueCampaignMiddelware());
 
 // If we haven't matched anything yet, send this message to Gambit Campaigns for a reply.
 router.post('/', (req, res) => helpers.sendReplyForCampaignSignupMessage(req, res));
