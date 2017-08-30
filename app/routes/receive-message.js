@@ -55,7 +55,7 @@ router.use(parseAskContinueMiddleware());
 router.use(continueCampaignMiddleware());
 
 // If we're still here, our inbound message is a Signup message for the Conversation Campaign.
-// We post it to the Gambit Campaigns service and send back the Gambit Campaigns response as our outbound reply.
+// We post to Gambit Campaigns service and send back the response as outbound reply.
 router.post('/', (req, res) => helpers.sendReplyForCampaignSignupMessage(req, res));
 
 module.exports = router;
