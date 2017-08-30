@@ -58,9 +58,7 @@ conversationSchema.statics.getFromReq = function (req) {
   };
   logger.trace('Conversation.getFromReq', query);
 
-  return this.findOne(query)
-    .then(conversation => conversation)
-    .catch(err => err);
+  return this.findOne(query);
 };
 
 /**
