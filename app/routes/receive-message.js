@@ -20,7 +20,7 @@ const currentCampaignMiddleware = require('../../lib/middleware/receive-message/
 const closedCampaignMiddleware = require('../../lib/middleware/receive-message/campaign-closed');
 const parseAskSignupMiddleware = require('../../lib/middleware/receive-message/parse-ask-signup-answer');
 const parseAskContinueMiddleware = require('../../lib/middleware/receive-message/parse-ask-continue-answer');
-const continueCampaignMiddelware = require('../../lib/middleware/receive-message/campaign-continue');
+const continueCampaignMiddleware = require('../../lib/middleware/receive-message/campaign-continue');
 
 router.use(paramsMiddleware());
 
@@ -52,7 +52,7 @@ router.use(parseAskSignupMiddleware());
 router.use(parseAskContinueMiddleware());
 
 // If our last outbound template was not for the Campaign, prompt to continue Campaign Completion.
-router.use(continueCampaignMiddelware());
+router.use(continueCampaignMiddleware());
 
 // If we haven't matched anything yet, send this message to Gambit Campaigns for a reply.
 router.post('/', (req, res) => helpers.sendReplyForCampaignSignupMessage(req, res));
