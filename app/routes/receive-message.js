@@ -54,7 +54,8 @@ router.use(parseAskContinueMiddleware());
 // If our last outbound template was not for the Campaign, prompt to continue Campaign Completion.
 router.use(continueCampaignMiddleware());
 
-// If we haven't matched anything yet, send this message to Gambit Campaigns for a reply.
+// If we're still here, our inbound message is a Signup message for the Conversation Campaign.
+// We post it to the Gambit Campaigns service and send back the Gambit Campaigns response as our outbound reply.
 router.post('/', (req, res) => helpers.sendReplyForCampaignSignupMessage(req, res));
 
 module.exports = router;
