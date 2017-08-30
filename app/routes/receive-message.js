@@ -5,28 +5,22 @@ const bot = require('../../lib/rivescript');
 const helpers = require('../../lib/helpers');
 
 const router = express.Router();
+// Load Rivescript triggers and replies.
 bot.getBot();
 
 const paramsMiddleware = require('../../lib/middleware/receive-message/params');
 const getConversationMiddleware = require('../../lib/middleware/conversation-get');
 const createConversationMiddleware = require('../../lib/middleware/conversation-create');
-
 const inboundMessageMiddleware = require('../../lib/middleware/receive-message/message-inbound');
-
-const rivescriptReplyMiddleware = require('../../lib/middleware/receive-message/rivescript-reply');
-const sendRivescriptReplyMiddleware = require('../../lib/middleware/receive-message/send-rivescript-reply');
+const rivescriptMiddleware = require('../../lib/middleware/receive-message/rivescript');
 const pausedMiddleware = require('../../lib/middleware/receive-message/conversation-paused');
-const sendAskSignupMiddleware = require('../../lib/middleware/receive-message/send-ask-signup');
+const campaignMenuMiddleware = require('../../lib/middleware/receive-message/campaign-menu');
 const campaignKeywordMiddleware = require('../../lib/middleware/receive-message/campaign-keyword');
 const currentCampaignMiddleware = require('../../lib/middleware/receive-message/campaign-current');
 const closedCampaignMiddleware = require('../../lib/middleware/receive-message/campaign-closed');
 const parseAskSignupMiddleware = require('../../lib/middleware/receive-message/parse-ask-signup-answer');
 const parseAskContinueMiddleware = require('../../lib/middleware/receive-message/parse-ask-continue-answer');
-const sendAskContinueMiddleware = require('../../lib/middleware/receive-message/send-ask-continue');
-const setCampaignMiddleware = require('../../lib/middleware/receive-message/conversation-set-campaign');
-const sendGambitCampaignsReplyMiddleware = require('../../lib/middleware/receive-message/send-gambit-campaigns-reply');
-const sendCampaignMessageMiddleware = require('../../lib/middleware/receive-message/send-campaign-message');
-const outboundMessageMiddleware = require('../../lib/middleware/receive-message/message-outbound');
+const continueCampaignMiddleware = require('../../lib/middleware/receive-message/campaign-continue');
 
 router.use(paramsMiddleware());
 
@@ -36,38 +30,32 @@ router.use(createConversationMiddleware());
 router.use(inboundMessageMiddleware());
 
 // Send our inbound message to Rivescript bot for a reply.
-router.use(rivescriptReplyMiddleware());
+router.use(rivescriptMiddleware());
 
-// Check for non-Campaign replies.
-router.use(sendRivescriptReplyMiddleware());
+// If Conversation is paused, forward inbound messages elsewhere.
 router.use(pausedMiddleware());
 
 // If MENU command, set random Campaign and ask for Signup.
-router.use(sendAskSignupMiddleware());
+router.use(campaignMenuMiddleware());
 
 // If Campaign keyword, set keyword Campaign.
 router.use(campaignKeywordMiddleware());
+
+// Otherwise, load the Campaign stored on the Conversation.
 router.use(currentCampaignMiddleware());
+
+// Make sure Campaign isn't closed.
 router.use(closedCampaignMiddleware());
 
 // Check for yes/no/invalid responses to sent Ask Signup/Continue messages:
 router.use(parseAskSignupMiddleware());
 router.use(parseAskContinueMiddleware());
 
-// If our last outbound template was non-Gambit, prompt to continue back with the Campaign.
-router.use(sendAskContinueMiddleware());
+// If our last outbound template was not for the Campaign, prompt to continue Campaign Completion.
+router.use(continueCampaignMiddleware());
 
-// Check if we need to update the Campaign.
-router.use(setCampaignMiddleware());
-
-// If this message is for a Campaign Signup, post to Gambit Campaigns and send the reply we get.
-router.use(sendGambitCampaignsReplyMiddleware());
-
-// Includes catchall for when no Campaign has been set, and no Rivescript reply matched.
-router.use(sendCampaignMessageMiddleware());
-
-// Create our outbound message and send the reply back to sender (if conversation isn't paused).
-router.use(outboundMessageMiddleware());
-router.post('/', (req, res) => helpers.sendResponse(req, res));
+// If we're still here, our inbound message is a Signup message for the Conversation Campaign.
+// We post it to the Gambit Campaigns service and send back the Gambit Campaigns response as our outbound reply.
+router.post('/', (req, res) => helpers.sendReplyForCampaignSignupMessage(req, res));
 
 module.exports = router;

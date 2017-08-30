@@ -48,17 +48,17 @@ conversationSchema.statics.createFromReq = function (req) {
 };
 
 /**
- * @param {string} platformUserId
- * TODO: Query by platform + platformUserId. For now, we know we won't overlap phone + slackId + facebookId
+ * @param {Object} req - Express request
  * @return {Promise}
  */
-conversationSchema.statics.findByPlatformUserId = function (platformUserId) {
-  const query = { platformUserId };
-  logger.trace('Conversation.findByPlatformUserId', query);
+conversationSchema.statics.getFromReq = function (req) {
+  const query = {
+    platformUserId: req.platformUserId,
+    platform: req.platform,
+  };
+  logger.trace('Conversation.getFromReq', query);
 
-  return this.findOne(query)
-    .then(convo => convo)
-    .catch(err => err);
+  return this.findOne(query);
 };
 
 /**
@@ -66,8 +66,6 @@ conversationSchema.statics.findByPlatformUserId = function (platformUserId) {
  * @return {boolean}
  */
 conversationSchema.methods.setTopic = function (newTopic) {
-  logger.trace('Conversation.setTopic', { newTopic });
-
   if (this.topic === newTopic) {
     return this.save();
   }
@@ -83,6 +81,7 @@ conversationSchema.methods.setTopic = function (newTopic) {
   }
 
   this.topic = newTopic;
+  logger.trace('Conversation.setTopic', { newTopic });
 
   return this.save();
 };
@@ -170,6 +169,9 @@ conversationSchema.methods.createInboundMessage = function (req) {
   return Messages.create(message);
 };
 
+/**
+ * Creates outbound-reply Message with given messageText and messageTemplate.
+ */
 conversationSchema.methods.createOutboundReplyMessage = function (messageText, messageTemplate) {
   const message = this.getMessagePayload();
   message.text = messageText;
@@ -201,15 +203,14 @@ conversationSchema.methods.createOutboundImportMessage = function (messageText, 
 };
 
 /**
- * Sends the given messageText to the User via posting to their platform.
- * @param {Message} message
+ * Sends the given outboundMessage to the User via posting to their platform.
+ * @param {Message} outboundMessage
  * @args {object} args
  */
-conversationSchema.methods.sendMessage = function (message) {
-  const loggerMessage = 'conversation.sendMessage';
-  logger.debug('conversation.sendMessage', { text: message.text });
-
-  const messageText = message.text;
+conversationSchema.methods.postMessageToPlatform = function (outboundMessage) {
+  const loggerMessage = 'conversation.postMessageToPlatform';
+  const messageText = outboundMessage.text;
+  logger.debug(loggerMessage, { messageText });
 
   if (this.platform === 'slack') {
     slack.postMessage(this.slackChannel, messageText);
