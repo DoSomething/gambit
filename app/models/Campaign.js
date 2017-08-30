@@ -17,8 +17,14 @@ const campaignSchema = new mongoose.Schema({
   keywords: [String],
   topic: String,
   templates: {
+    askContinueMessage: String,
+    askSignupMessage: String,
     campaignClosedMessage: String,
+    declinedContinueMessage: String,
+    declinedSignupMessage: String,
     externalSignupMenuMessage: String,
+    invalidContinueResponseMessage: String,
+    invalidSignupResponseMessage: String,
   },
 }, { timestamps: true });
 
@@ -148,33 +154,11 @@ campaignSchema.statics.sync = function () {
 
 /**
  * Virtual properties.
- * @TODO: Define these as fields on Gambit Campaigns upon signoff.
  */
 
 /* eslint-disable prefer-arrow-callback */
 // Disabling for these virtual properties because arrow functions are not a shortcut for function().
 // @see https://github.com/Automattic/mongoose/issues/4143
-
-// Even though this field exists on a Gambit Campaign, we're overriding it here because the copy
-// should prompt the User to text MENU back to find a new Campaign to do (doesn't exist on prod)
-campaignSchema.virtual('declinedSignupMessage').get(function () {
-  return 'OK. Text MENU if you\'d like to find a different Campaign to join.';
-});
-
-campaignSchema.virtual('askSignupMessage').get(function () {
-  const strings = ['Wanna', 'Down to', 'Want to'];
-  const randomPrompt = strings[Math.floor(Math.random() * strings.length)];
-
-  return `${randomPrompt} sign up for ${this.title}?`;
-});
-
-campaignSchema.virtual('declinedContinueMessage').get(function () {
-  return `Ok, we'll check in with you about ${this.title} later.`;
-});
-
-campaignSchema.virtual('askContinueMessage').get(function () {
-  return `Ready to get back to ${this.title}?`;
-});
 
 campaignSchema.virtual('isClosed').get(function () {
   const result = this.status === 'closed';
@@ -182,19 +166,6 @@ campaignSchema.virtual('isClosed').get(function () {
   return result;
 });
 
-campaignSchema.virtual('invalidSignupResponseMessage').get(function () {
-  let text = `Sorry, I didn't get that. Did you want to join ${this.title}?\n\nYes or No`;
-  text = `${text}\n\nIf you have a question, text Q.`;
-
-  return text;
-});
-
-campaignSchema.virtual('invalidContinueResponseMessage').get(function () {
-  let text = `Sorry, I didn't get that. Continue with ${this.title}?\n\nYes or No`;
-  text = `${text}\n\nIf you have a question, text Q.`;
-
-  return text;
-});
 /* eslint-enable prefer-arrow-callback */
 
 module.exports = mongoose.model('campaigns', campaignSchema);
