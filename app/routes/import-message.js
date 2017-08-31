@@ -25,6 +25,6 @@ router.use(updateConvoMiddleware());
 // Create outbound message
 router.use(outboundMessageMiddleware());
 
-router.post('/', (req, res) => helpers.sendResponseWithStatusCode(res));
+router.post('/', (req, res) => helpers.sendResponseWithMessage(res, req.outboundMessage));
 
 module.exports = router;
