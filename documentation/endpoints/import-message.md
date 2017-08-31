@@ -19,7 +19,10 @@ Name | Type | Description
 
 ## Examples
 
-### Request
+
+<details>
+<summary><strong>Example Request</strong></summary>
+
 Example of an inbound POST request from a Customer.io webhook.
 
 ```
@@ -28,10 +31,10 @@ curl -X "POST" "http://localhost:5100/api/v1/import-message?platform=customerio"
      -H "Content-Type: application/json" \
      -d '{ "broadcast_id" : "7zU0Mb1k9GkWWI40o06Mic", "phone": "+5555555555", "fields": [{"customer.first_name": "taco"}]}'
 ```
+</details>
 
-```
-
-### Response
+<details>
+<summary><strong>Example Response</strong></summary>
 
 ```
 
@@ -54,3 +57,5 @@ curl -X "POST" "http://localhost:5100/api/v1/import-message?platform=customerio"
   }
 }
 ```
+</details>
+
