@@ -1,6 +1,14 @@
 'use strict';
 
 module.exports = {
+  askContinueTemplates: [
+    'askContinueMessage',
+    'invalidContinueResponseMessage',
+  ],
+  askSignupTemplates: [
+    'askSignupMessage',
+    'invalidSignupResponseMessage',
+  ],
   gambitCampaignsTemplates: [
     'askCaptionMessage',
     'askPhotoMessage',
