@@ -2,7 +2,6 @@
 
 const express = require('express');
 const bot = require('../../lib/rivescript');
-const helpers = require('../../lib/helpers');
 
 const router = express.Router();
 // Load Rivescript triggers and replies.
@@ -51,11 +50,7 @@ router.use(closedCampaignMiddleware());
 router.use(parseAskSignupMiddleware());
 router.use(parseAskContinueMiddleware());
 
-// If our last outbound template was not for the Campaign, prompt to continue Campaign Completion.
+// Continue Campaign conversation, or prompt to return back to it.
 router.use(continueCampaignMiddleware());
-
-// If we're still here, our inbound message is a Signup message for the Conversation Campaign.
-// We post to Gambit Campaigns service and send back the response as outbound reply.
-router.post('/', (req, res) => helpers.sendReplyForCampaignSignupMessage(req, res));
 
 module.exports = router;
