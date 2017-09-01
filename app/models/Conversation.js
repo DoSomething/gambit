@@ -147,7 +147,7 @@ conversationSchema.methods.promptSignupForBroadcast = function (campaign, broadc
  */
 conversationSchema.methods.declineSignup = function () {
   this.signupStatus = 'declined';
-  this.save();
+  return this.save();
 };
 
 conversationSchema.methods.getMessagePayload = function () {
