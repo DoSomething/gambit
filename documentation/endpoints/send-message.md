@@ -48,18 +48,22 @@ curl -X "POST" "http://localhost:5100/api/v1/send-message" \
 
 ```
 {
-  "reply": {
-    "__v": 0,
-    "updatedAt": "2017-08-18T19:36:31.664Z",
-    "createdAt": "2017-08-18T19:36:31.664Z",
-    "campaignId": 48,
-    "topic": "campaign",
-    "conversationId": "59972fac96c01d1d6b86c73c",
-    "text": "Hey - this is Freddie from DoSomething. Thanks for joining Pride Over Prejudice!\n\nA new White House executive order denies all new refugees entry to the US for 120 days and places a 90-day travel ban on six Muslim-majority nations.\n\nThe solution is simple: Post a selfie to stand in solidarity with refugees and immigrants.\n\nMake sure to take a photo of what you did! When you have Shared some Pictures, text START to share your photo.",
-    "template": "externalSignupMenuMessage",
-    "direction": "outbound-api-send",
-    "_id": "599741bf9f03df1f2c0cb5fb",
-    "attachments": []
+  "data": {
+    "messages": [
+      {
+        "__v": 0,
+        "updatedAt": "2017-08-31T19:07:02.312Z",
+        "createdAt": "2017-08-31T19:07:02.312Z",
+        "conversationId": "59a5c175717a2f25fc628811",
+        "campaignId": 7,
+        "topic": "campaign",
+        "text": "Hey - this is Freddie from DoSomething. Thanks for joining a movement to spread positivity in school. You can do something simple to make a big impact for a stranger.\n\nLet's do this: post encouraging notes in places that can trigger low self-esteem, like school bathrooms.\n\nThen, text START to share a photo of the messages you posted (and you'll be entered to win a $1000 scholarship)!",
+        "template": "externalSignupMenuMessage",
+        "direction": "outbound-api-send",
+        "_id": "59a85e56d975b4080974ab2d",
+        "attachments": []
+      }
+    ]
   }
 }
 ```

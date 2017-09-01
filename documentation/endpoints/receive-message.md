@@ -46,35 +46,41 @@ curl -X "POST" "http://localhost:5100/api/v1/receive-message" \
 
 ```
 {
-  "messages": {
-    "inbound": {
-      "__v": 0,
-      "updatedAt": "2017-08-29T05:11:02.980Z",
-      "createdAt": "2017-08-29T05:11:02.980Z",
-      "conversationId": "59a4f7669ea1a81cf1ac566f",
-      "topic": "random",
-      "text": "uhh",
-      "direction": "inbound",
-      "_id": "59a4f7669ea1a81cf1ac5670",
-      "attachments": [
-        {
-          "contentType": "image/png",
-          "url": "http://placekitten.com/g/800/800"
-        }
-      ]
-    },
-    "reply": {
-      "__v": 0,
-      "updatedAt": "2017-08-29T05:11:02.993Z",
-      "createdAt": "2017-08-29T05:11:02.993Z",
-      "conversationId": "59a4f7669ea1a81cf1ac566f",
-      "topic": "random",
-      "text": "Sorry, I'm not sure how to respond to that.\n\nSay MENU to find a Campaign to join.",
-      "template": "noCampaignMessage",
-      "direction": "outbound-reply",
-      "_id": "59a4f7669ea1a81cf1ac5671",
-      "attachments": []
-    }
+  "data": {
+    "inbound": [
+      {
+        "__v": 0,
+        "updatedAt": "2017-08-31T19:21:47.556Z",
+        "createdAt": "2017-08-31T19:21:47.556Z",
+        "conversationId": "59a7203fc731160d31cfdad2",
+        "campaignId": 2710,
+        "topic": "campaign",
+        "text": "menu",
+        "direction": "inbound",
+        "_id": "59a861cbf64c3e0902d956e7",
+        "attachments": [
+          {
+            "contentType": "image/png",
+            "url": "http://placekitten.com/g/800/600"
+          }
+        ]
+      }
+    ],
+    "outbound": [
+      {
+        "__v": 0,
+        "updatedAt": "2017-08-31T19:21:47.597Z",
+        "createdAt": "2017-08-31T19:21:47.597Z",
+        "conversationId": "59a7203fc731160d31cfdad2",
+        "campaignId": 7656,
+        "topic": "campaign_7656",
+        "text": "Help us send letters of support to every mosque in the United States. \n\nWant to join Sincerely, Us?\n\nYes or No",
+        "template": "askSignupMessage",
+        "direction": "outbound-reply",
+        "_id": "59a861cbf64c3e0902d956e8",
+        "attachments": []
+      }
+    ]
   }
 }
 ```

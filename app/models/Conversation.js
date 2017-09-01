@@ -232,7 +232,10 @@ conversationSchema.methods.postMessageToPlatform = function (outboundMessage) {
  * @return {boolean}
  */
 conversationSchema.methods.shouldPostToGambitCampaigns = function () {
-  const templates = ['gambit', 'externalSignupMenuMessage'];
+  // TODO: gambitCampaigns will be deprecated once we start returning the message template
+  // in the response of Gambit Campaigns /POST receive-message
+  // TODO: Define these in config.
+  const templates = ['gambitCampaigns', 'externalSignupMenuMessage'];
 
   return templates.includes(this.lastOutboundTemplate);
 };

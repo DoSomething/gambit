@@ -23,6 +23,6 @@ router.use(campaignMiddleware());
 router.use(supportMiddleware());
 router.use(outboundMessageMiddleware());
 
-router.post('/', (req, res) => helpers.sendResponse(req, res));
+router.post('/', (req, res) => helpers.sendResponseWithMessage(res, req.outboundMessage));
 
 module.exports = router;

@@ -19,7 +19,10 @@ Name | Type | Description
 
 ## Examples
 
-### Request
+
+<details>
+<summary><strong>Example Request</strong></summary>
+
 Example of an inbound POST request from a Customer.io webhook.
 
 ```
@@ -28,29 +31,31 @@ curl -X "POST" "http://localhost:5100/api/v1/import-message?platform=customerio"
      -H "Content-Type: application/json" \
      -d '{ "broadcast_id" : "7zU0Mb1k9GkWWI40o06Mic", "phone": "+5555555555", "fields": [{"customer.first_name": "taco"}]}'
 ```
+</details>
 
-### Created message
+<details>
+<summary><strong>Example Response</strong></summary>
 
 ```
-{
-  "_id": ObjectId("599afa3cf446e81659550cbc"),
-  "updatedAt": ISODate("2017-08-21T15:20:28.949Z"),
-  "createdAt": ISODate("2017-08-21T15:20:28.949Z"),
-  "campaignId": 819,
-  "topic": "campaign",
-  "conversationId": ObjectId("5994caf4a92890fa8a52de72"),
-  "text": "Do you like tacos taco? Want to sign up for mirror messages?  taco is your name right?",
-  "template": "askSignupMessage",
-  "direction": "outbound-api-import",
-  "attachments": [ ],
-  "__v": 0
+
+  "data": {
+    "messages": [
+      {
+        "__v": 0,
+        "updatedAt": "2017-08-31T19:29:38.689Z",
+        "createdAt": "2017-08-31T19:29:38.689Z",
+        "conversationId": "59a863a25e5v860956ffcc45",
+        "campaignId": 7,
+        "topic": "campaign",
+        "text": "Heya, taco! Down to complete today's action?",
+        "template": "askSignupMessage",
+        "direction": "outbound-api-import",
+        "_id": "59a863a25e5d960956ffcc46",
+        "attachments": []
+      }
+    ]
+  }
 }
 ```
+</details>
 
-### Response
-
-```
-{
-    "message": "OK"
-}
-```
