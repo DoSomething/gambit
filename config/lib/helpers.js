@@ -18,9 +18,9 @@ module.exports = {
     'invalidWhyParticipatedMessage',
   ],
   menuCommand: 'menu',
-  rivescriptMacros: [
-    'confirmedCampaign',
-    'declinedCampaign',
-    'gambit',
-  ],
+  macros: {
+    confirmedCampaign: 'confirmedCampaign',
+    declinedCampaign: 'declinedCampaign',
+    gambit: 'gambit',
+  },
 };
