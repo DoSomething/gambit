@@ -17,14 +17,14 @@ const campaignSchema = new mongoose.Schema({
   keywords: [String],
   topic: String,
   templates: {
-    askContinueMessage: String,
-    askSignupMessage: String,
-    campaignClosedMessage: String,
-    declinedContinueMessage: String,
-    declinedSignupMessage: String,
-    externalSignupMenuMessage: String,
-    invalidContinueResponseMessage: String,
-    invalidSignupResponseMessage: String,
+    askContinue: String,
+    askSignup: String,
+    campaignClosed: String,
+    declinedContinue: String,
+    declinedSignup: String,
+    externalSignupMenu: String,
+    invalidContinueResponse: String,
+    invalidSignupResponse: String,
   },
 }, { timestamps: true });
 
@@ -53,9 +53,9 @@ function parseGambitCampaign(gambitCampaign) {
     templates: {},
   };
 
-  const templates = Object.keys(gambitCampaign.messages);
-  templates.forEach((template) => {
-    result.templates[template] = gambitCampaign.messages[template].rendered;
+  const templates = Object.keys(gambitCampaign.templates);
+  templates.forEach((templateName) => {
+    result.templates[templateName] = gambitCampaign.templates[templateName].rendered;
   });
 
   result.keywords = gambitCampaign.keywords.map(keywordObject => keywordObject.keyword);
