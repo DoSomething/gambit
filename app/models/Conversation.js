@@ -147,7 +147,7 @@ conversationSchema.methods.promptSignupForBroadcast = function (campaign, broadc
  */
 conversationSchema.methods.declineSignup = function () {
   this.signupStatus = 'declined';
-  this.save();
+  return this.save();
 };
 
 conversationSchema.methods.getMessagePayload = function () {
@@ -227,17 +227,5 @@ conversationSchema.methods.postMessageToPlatform = function (outboundMessage) {
   }
 };
 
-/**
- * Should we POST to Gambit Campaigns to determine how to reply to an inbound message? 
- * @return {boolean}
- */
-conversationSchema.methods.shouldPostToGambitCampaigns = function () {
-  // TODO: gambitCampaigns will be deprecated once we start returning the message template
-  // in the response of Gambit Campaigns /POST receive-message
-  // TODO: Define these in config.
-  const templates = ['gambitCampaigns', 'externalSignupMenuMessage'];
-
-  return templates.includes(this.lastOutboundTemplate);
-};
-
 module.exports = mongoose.model('conversations', conversationSchema);
+
