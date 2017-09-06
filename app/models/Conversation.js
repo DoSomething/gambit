@@ -231,7 +231,7 @@ conversationSchema.methods.outboundSend = function (text, template) {
  * @param {string} template
  * @return {Promise}
  */
-conversationSchema.methods.createOutboundImportMessage = function (text, template) {
+conversationSchema.methods.outboundImport = function (text, template) {
   return this.createOutboundMessage(text, template, 'outbound-api-import');
 };
 
@@ -265,4 +265,3 @@ conversationSchema.methods.postMessageToPlatform = function () {
 };
 
 module.exports = mongoose.model('Conversation', conversationSchema);
-
