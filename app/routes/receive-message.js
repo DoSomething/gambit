@@ -24,9 +24,11 @@ const continueCampaignMiddleware = require('../../lib/middleware/receive-message
 
 router.use(paramsMiddleware());
 
-// Load/create conversation and load/create inbound message.
+// Load/create conversation
 router.use(getConversationMiddleware());
 router.use(createConversationMiddleware());
+
+// Load/create inbound message.
 router.use(loadInboundMessageMiddleware());
 router.use(createInboundMessageMiddleware());
 
