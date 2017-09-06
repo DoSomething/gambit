@@ -8,6 +8,7 @@ const importMessageRoute = require('./import-message');
 
 // middleware
 const authenticateMiddleware = require('../../lib/middleware/authenticate');
+const parseMetadataMiddleware = require('../../lib/middleware/metadata-parse');
 
 const router = express.Router();
 
@@ -30,14 +31,19 @@ module.exports = function init(app) {
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     return next();
   });
+  // restified routes
   app.use(router);
+  // authenticate all requests after this line
+  app.use(authenticateMiddleware());
+  // parse metadata like requestId and retryCount for all requests after this line
+  app.use(parseMetadataMiddleware());
+  // receive-message route
   app.use('/api/v1/receive-message',
-    authenticateMiddleware(),
     receiveMessageRoute);
+  // send-message route
   app.use('/api/v1/send-message',
-    authenticateMiddleware(),
     sendMessageRoute);
+  // import-message route
   app.use('/api/v1/import-message',
-    authenticateMiddleware(),
     importMessageRoute);
 };
