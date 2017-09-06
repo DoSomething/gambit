@@ -162,6 +162,8 @@ conversationSchema.methods.createInboundMessage = function (req) {
   const message = this.getMessagePayload();
   message.text = req.inboundMessageText;
   message.direction = 'inbound';
+  // TODO: attachments should be default in the getMessagePayload method, because we will eventually
+  // have attachments for outbound messages too
   message.attachments = req.attachments;
 
   // TODO: Handle platform dependent message properties here
@@ -228,4 +230,3 @@ conversationSchema.methods.postMessageToPlatform = function (outboundMessage) {
 };
 
 module.exports = mongoose.model('conversations', conversationSchema);
-
