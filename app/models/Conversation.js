@@ -159,9 +159,25 @@ conversationSchema.methods.getMessagePayload = function (req = {}) {
   };
 };
 
-conversationSchema.methods.loadMessageAndUpdateMetadataByRequestId = function (requestId,
+conversationSchema.methods.loadInboundMessageAndUpdateMetadataByRequestId = function (requestId,
   metadata = {}) {
-  const query = { conversationId: this._id, 'metadata.requestId': requestId };
+  const query = {
+    conversationId: this._id,
+    'metadata.requestId': requestId,
+    direction: 'inbound',
+  };
+  const update = { metadata };
+  const options = { new: true };
+  return Messages.findOneAndUpdate(query, update, options);
+};
+
+conversationSchema.methods.loadOutboundMessageAndUpdateMetadataByRequestId = function (requestId,
+  metadata = {}) {
+  const query = {
+    conversationId: this._id,
+    'metadata.requestId': requestId,
+    direction: { $regex: /^outbound.*/i },
+  };
   const update = { metadata };
   const options = { new: true };
   return Messages.findOneAndUpdate(query, update, options);
