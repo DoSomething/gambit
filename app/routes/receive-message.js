@@ -10,7 +10,8 @@ bot.getBot();
 const paramsMiddleware = require('../../lib/middleware/receive-message/params');
 const getConversationMiddleware = require('../../lib/middleware/conversation-get');
 const createConversationMiddleware = require('../../lib/middleware/conversation-create');
-const inboundMessageMiddleware = require('../../lib/middleware/receive-message/message-inbound');
+const loadInboundMessageMiddleware = require('../../lib/middleware/receive-message/message-inbound-load');
+const createInboundMessageMiddleware = require('../../lib/middleware/receive-message/message-inbound-create');
 const rivescriptMiddleware = require('../../lib/middleware/receive-message/rivescript');
 const pausedMiddleware = require('../../lib/middleware/receive-message/conversation-paused');
 const campaignMenuMiddleware = require('../../lib/middleware/receive-message/campaign-menu');
@@ -23,10 +24,13 @@ const continueCampaignMiddleware = require('../../lib/middleware/receive-message
 
 router.use(paramsMiddleware());
 
-// Load conversation and create inbound message.
+// Load/create conversation
 router.use(getConversationMiddleware());
 router.use(createConversationMiddleware());
-router.use(inboundMessageMiddleware());
+
+// Load/create inbound message.
+router.use(loadInboundMessageMiddleware());
+router.use(createInboundMessageMiddleware());
 
 // Send our inbound message to Rivescript bot for a reply.
 router.use(rivescriptMiddleware());
