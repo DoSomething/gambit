@@ -105,6 +105,7 @@ conversationSchema.methods.setCampaignWithSignupStatus = function (campaign, sig
   this.topic = campaign.topic;
   this.campaignId = campaign._id;
   this.signupStatus = signupStatus;
+  logger.debug('setCampaignWithSignupStatus', { campaign: this.campaignId, signupStatus });
 
   return this.save();
 };
@@ -116,7 +117,7 @@ conversationSchema.methods.setCampaignWithSignupStatus = function (campaign, sig
  * @param {string} keyword
  */
 conversationSchema.methods.setCampaign = function (campaign) {
-  this.setCampaignWithSignupStatus(campaign, 'doing');
+  return this.setCampaignWithSignupStatus(campaign, 'doing');
 };
 
 /**
@@ -191,6 +192,8 @@ conversationSchema.methods.createInboundMessage = function (req) {
  * @return {Promise}
  */
 conversationSchema.methods.createOutboundMessage = function (text, template, direction) {
+  logger.debug('createOutboundMessage', { direction });
+
   const data = this.getMessagePayload(text, template);
   data.direction = direction;
 
@@ -240,7 +243,11 @@ conversationSchema.methods.createOutboundImportMessage = function (text, templat
 conversationSchema.methods.postMessageToPlatform = function () {
   const loggerMessage = 'conversation.postMessageToPlatform';
   const messageText = this.lastOutboundMessage.text;
-  logger.debug(loggerMessage, { messageText });
+  // This could be blank for noReply templates.
+  if (!messageText) {
+    return;
+  }
+  logger.debug(loggerMessage);
 
   if (this.platform === 'slack') {
     slack.postMessage(this.slackChannel, messageText);

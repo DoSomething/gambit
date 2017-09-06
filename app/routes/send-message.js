@@ -1,7 +1,6 @@
 'use strict';
 
 const express = require('express');
-const helpers = require('../../lib/helpers');
 
 const router = express.Router();
 
@@ -11,7 +10,7 @@ const getConversationMiddleware = require('../../lib/middleware/conversation-get
 const createConversationMiddleware = require('../../lib/middleware/conversation-create');
 const campaignMiddleware = require('../../lib/middleware/send-message/campaign');
 const supportMiddleware = require('../../lib/middleware/send-message/support');
-const outboundMessageMiddleware = require('../../lib/middleware/send-message/message-outbound');
+const outboundSendMiddleware = require('../../lib/middleware/send-message/message-outbound');
 
 router.use(supportParamsMiddleware());
 router.use(campaignParamsMiddleware());
@@ -21,8 +20,6 @@ router.use(createConversationMiddleware());
 
 router.use(campaignMiddleware());
 router.use(supportMiddleware());
-router.use(outboundMessageMiddleware());
-
-router.post('/', (req, res) => helpers.sendResponseWithMessage(res, req.outboundMessage));
+router.use(outboundSendMiddleware());
 
 module.exports = router;
