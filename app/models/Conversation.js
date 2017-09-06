@@ -23,7 +23,10 @@ const conversationSchema = new mongoose.Schema({
   topic: String,
   campaignId: Number,
   signupStatus: String,
-  lastOutboundTemplate: String,
+  lastOutboundMessage: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Message',
+  },
   slackChannel: String,
   lastBroadcastId: String,
 }, { timestamps: true });
@@ -58,7 +61,7 @@ conversationSchema.statics.getFromReq = function (req) {
   };
   logger.trace('Conversation.getFromReq', query);
 
-  return this.findOne(query);
+  return this.findOne(query).populate('lastOutboundMessage');
 };
 
 /**
@@ -90,8 +93,6 @@ conversationSchema.methods.setTopic = function (newTopic) {
  * Set topic to random to upause User.
  */
 conversationSchema.methods.supportResolved = function () {
-  this.lastOutboundTemplate = 'front';
-
   return this.setTopic(defaultTopic);
 };
 
@@ -150,12 +151,25 @@ conversationSchema.methods.declineSignup = function () {
   return this.save();
 };
 
-conversationSchema.methods.getMessagePayload = function () {
-  return {
+/**
+ * Gets data for a Conversation Message.
+ * @param {string} text
+ * @param {string} template
+ * @return {object}
+ */
+conversationSchema.methods.getMessagePayload = function (text, template) {
+  const data = {
     conversationId: this,
     campaignId: this.campaignId,
     topic: this.topic,
   };
+  if (text) {
+    data.text = text;
+  }
+  if (template) {
+    data.template = template;
+  }
+  return data;
 };
 
 conversationSchema.methods.createInboundMessage = function (req) {
@@ -170,46 +184,62 @@ conversationSchema.methods.createInboundMessage = function (req) {
 };
 
 /**
- * Creates outbound-reply Message with given messageText and messageTemplate.
+ * Creates Message with given text, template, direction and saves it to lastOutboundMessageId.
+ * @param {string} text
+ * @param {string} template
+ * @param {string} direction
+ * @return {Promise}
  */
-conversationSchema.methods.createOutboundReplyMessage = function (messageText, messageTemplate) {
-  const message = this.getMessagePayload();
-  message.text = messageText;
-  message.template = messageTemplate;
-  message.direction = 'outbound-reply';
+conversationSchema.methods.createOutboundMessage = function (text, template, direction) {
+  const data = this.getMessagePayload(text, template);
+  data.direction = direction;
 
-  this.lastOutboundTemplate = messageTemplate;
-  return this.save().then(() => Messages.create(message));
-};
+  return Messages.create(data)
+    .then((message) => {
+      this.lastOutboundMessage = message;
 
-conversationSchema.methods.createOutboundSendMessage = function (messageText, messageTemplate) {
-  const message = this.getMessagePayload();
-  message.text = messageText;
-  message.template = messageTemplate;
-  message.direction = 'outbound-api-send';
-
-  this.lastOutboundTemplate = messageTemplate;
-  return this.save().then(() => Messages.create(message));
-};
-
-conversationSchema.methods.createOutboundImportMessage = function (messageText, messageTemplate) {
-  const message = this.getMessagePayload();
-  message.text = messageText;
-  message.template = messageTemplate;
-  message.direction = 'outbound-api-import';
-
-  this.lastOutboundTemplate = messageTemplate;
-  return this.save().then(() => Messages.create(message));
+      return this.save();
+    })
+    .then(() => this.populate('lastOutboundMessage').execPopulate());
 };
 
 /**
- * Sends the given outboundMessage to the User via posting to their platform.
- * @param {Message} outboundMessage
+ * @param {string} text
+ * @param {string} template
+ * @return {Promise}
+ */
+conversationSchema.methods.outboundReply = function (text, template) {
+  return this.createOutboundMessage(text, template, 'outbound-reply')
+    .then(() => this.postMessageToPlatform());
+};
+
+/**
+ * @param {string} text
+ * @param {string} template
+ * @return {Promise}
+ */
+conversationSchema.methods.outboundSend = function (text, template) {
+  return this.createOutboundMessage(text, template, 'outbound-api-send')
+    .then(() => this.postMessageToPlatform());
+};
+
+/**
+ * @param {string} text
+ * @param {string} template
+ * @return {Promise}
+ */
+conversationSchema.methods.createOutboundImportMessage = function (text, template) {
+  return this.createOutboundMessage(text, template, 'outbound-api-import');
+};
+
+/**
+ * Sends the given message to the User via posting to their platform.
+ * @param {Message} message
  * @args {object} args
  */
-conversationSchema.methods.postMessageToPlatform = function (outboundMessage) {
+conversationSchema.methods.postMessageToPlatform = function () {
   const loggerMessage = 'conversation.postMessageToPlatform';
-  const messageText = outboundMessage.text;
+  const messageText = this.lastOutboundMessage.text;
   logger.debug(loggerMessage, { messageText });
 
   if (this.platform === 'slack') {
@@ -227,5 +257,5 @@ conversationSchema.methods.postMessageToPlatform = function (outboundMessage) {
   }
 };
 
-module.exports = mongoose.model('conversations', conversationSchema);
+module.exports = mongoose.model('Conversation', conversationSchema);
 

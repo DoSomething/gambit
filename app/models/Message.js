@@ -22,4 +22,4 @@ const messageSchema = new mongoose.Schema({
   attachments: Array,
 }, { timestamps: true });
 
-module.exports = mongoose.model('messages', messageSchema);
+module.exports = mongoose.model('Message', messageSchema);

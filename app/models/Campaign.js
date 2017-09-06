@@ -168,4 +168,4 @@ campaignSchema.virtual('isClosed').get(function () {
 
 /* eslint-enable prefer-arrow-callback */
 
-module.exports = mongoose.model('campaigns', campaignSchema);
+module.exports = mongoose.model('Campaign', campaignSchema);
