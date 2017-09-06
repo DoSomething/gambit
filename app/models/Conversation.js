@@ -150,16 +150,25 @@ conversationSchema.methods.declineSignup = function () {
   return this.save();
 };
 
-conversationSchema.methods.getMessagePayload = function () {
+conversationSchema.methods.getMessagePayload = function (req = {}) {
   return {
     conversationId: this,
     campaignId: this.campaignId,
     topic: this.topic,
+    metadata: req.metadata,
   };
 };
 
+conversationSchema.methods.loadMessageAndUpdateMetadataByRequestId = function (requestId,
+  metadata = {}) {
+  const query = { conversationId: this._id, 'metadata.requestId': requestId };
+  const update = { metadata };
+  const options = { new: true };
+  return Messages.findOneAndUpdate(query, update, options);
+};
+
 conversationSchema.methods.createInboundMessage = function (req) {
-  const message = this.getMessagePayload();
+  const message = this.getMessagePayload(req);
   message.text = req.inboundMessageText;
   message.direction = 'inbound';
   // TODO: attachments should be default in the getMessagePayload method, because we will eventually
@@ -174,8 +183,9 @@ conversationSchema.methods.createInboundMessage = function (req) {
 /**
  * Creates outbound-reply Message with given messageText and messageTemplate.
  */
-conversationSchema.methods.createOutboundReplyMessage = function (messageText, messageTemplate) {
-  const message = this.getMessagePayload();
+conversationSchema.methods.createOutboundReplyMessage = function (messageText, messageTemplate,
+  req) {
+  const message = this.getMessagePayload(req);
   message.text = messageText;
   message.template = messageTemplate;
   message.direction = 'outbound-reply';
@@ -184,8 +194,9 @@ conversationSchema.methods.createOutboundReplyMessage = function (messageText, m
   return this.save().then(() => Messages.create(message));
 };
 
-conversationSchema.methods.createOutboundSendMessage = function (messageText, messageTemplate) {
-  const message = this.getMessagePayload();
+conversationSchema.methods.createOutboundSendMessage = function (messageText, messageTemplate,
+  req) {
+  const message = this.getMessagePayload(req);
   message.text = messageText;
   message.template = messageTemplate;
   message.direction = 'outbound-api-send';
@@ -194,8 +205,9 @@ conversationSchema.methods.createOutboundSendMessage = function (messageText, me
   return this.save().then(() => Messages.create(message));
 };
 
-conversationSchema.methods.createOutboundImportMessage = function (messageText, messageTemplate) {
-  const message = this.getMessagePayload();
+conversationSchema.methods.createOutboundImportMessage = function (messageText, messageTemplate,
+  req) {
+  const message = this.getMessagePayload(req);
   message.text = messageText;
   message.template = messageTemplate;
   message.direction = 'outbound-api-import';
