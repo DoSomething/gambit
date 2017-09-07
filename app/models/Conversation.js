@@ -170,31 +170,39 @@ conversationSchema.methods.getMessagePayload = function (text, template) {
   return data;
 };
 
-conversationSchema.methods.createInboundMessage = function (req) {
-  const message = this.getMessagePayload();
-  message.text = req.inboundMessageText;
-  message.direction = 'inbound';
-  message.attachments = req.attachments;
+/**
+ * Creates Message for a Conversation with given params.
+ * @param {string} direction
+ * @param {string} text
+ * @param {string} template
+ * @param {array} attachments
+ * @return {Promise}
+ */
+conversationSchema.methods.createMessage = function (direction, text, template, attachments) {
+  logger.debug('createMessage', { direction });
+
+  const data = {
+    text,
+    direction,
+    template,
+    attachments,
+  };
+  Object.assign(data, this.getMessagePayload());
 
   // TODO: Handle platform dependent message properties here
 
-  return Messages.create(message);
+  return Messages.create(data);
 };
 
 /**
- * Creates Message with given text, template, direction and saves it to lastOutboundMessageId.
+ * Creates Message with given params and saves it to lastOutboundMessage.
+ * @param {string} direction
  * @param {string} text
  * @param {string} template
- * @param {string} direction
  * @return {Promise}
  */
-conversationSchema.methods.createOutboundMessage = function (text, template, direction) {
-  logger.debug('createOutboundMessage', { direction });
-
-  const data = this.getMessagePayload(text, template);
-  data.direction = direction;
-
-  return Messages.create(data)
+conversationSchema.methods.createLastOutboundMessage = function (direction, text, template) {
+  return this.createMessage(direction, text, template)
     .then((message) => {
       this.lastOutboundMessage = message;
 
@@ -209,7 +217,7 @@ conversationSchema.methods.createOutboundMessage = function (text, template, dir
  * @return {Promise}
  */
 conversationSchema.methods.outboundReply = function (text, template) {
-  return this.createOutboundMessage(text, template, 'outbound-reply')
+  return this.createLastOutboundMessage('outbound-reply', text, template)
     .then(() => this.postMessageToPlatform());
 };
 
@@ -219,7 +227,7 @@ conversationSchema.methods.outboundReply = function (text, template) {
  * @return {Promise}
  */
 conversationSchema.methods.outboundSend = function (text, template) {
-  return this.createOutboundMessage(text, template, 'outbound-api-send')
+  return this.createLastOutboundMessage('outbound-api-send', text, template)
     .then(() => this.postMessageToPlatform());
 };
 
@@ -229,7 +237,7 @@ conversationSchema.methods.outboundSend = function (text, template) {
  * @return {Promise}
  */
 conversationSchema.methods.outboundImport = function (text, template) {
-  return this.createOutboundMessage(text, template, 'outbound-api-import');
+  return this.createLastOutboundMessage('outbound-api-import', text, template);
 };
 
 /**
