@@ -20,6 +20,10 @@ const messageSchema = new mongoose.Schema({
   text: String,
   topic: String,
   attachments: Array,
+  metadata: {
+    requestId: String,
+    retryCount: Number,
+  },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Message', messageSchema);
