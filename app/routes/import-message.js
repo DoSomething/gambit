@@ -4,8 +4,6 @@ const express = require('express');
 
 const router = express.Router();
 
-const helpers = require('../../lib/helpers');
-
 const paramsMiddleware = require('../../lib/middleware/import-message/params');
 const getConvoMiddleware = require('../../lib/middleware/conversation-get');
 const createConvoMiddleware = require('../../lib/middleware/conversation-create');
@@ -24,7 +22,5 @@ router.use(updateConvoMiddleware());
 
 // Create outbound message
 router.use(outboundMessageMiddleware());
-
-router.post('/', (req, res) => helpers.sendResponseWithMessage(res, req.outboundMessage));
 
 module.exports = router;
