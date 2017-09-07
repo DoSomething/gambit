@@ -165,11 +165,10 @@ conversationSchema.methods.loadInboundMessageAndUpdateMetadataByRequestId = func
   };
   const update = { metadata };
   const options = { new: true };
-  return Messages.findOneAndUpdate(query, update, options)
-    .then(message => message.populate('conversationId').execPopulate())
-    .then(() => {
-      this.populate('lastOutboundMessage').execPopulate();
-    });
+
+  return this.populate('lastOutboundMessage').execPopulate()
+    .then(() => Messages.findOneAndUpdate(query, update, options)
+      .then(message => message.populate('conversationId').execPopulate()));
 };
 
 /**
