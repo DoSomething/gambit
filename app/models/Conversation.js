@@ -216,9 +216,9 @@ conversationSchema.methods.createLastOutboundMessage = function (direction, text
  * @param {string} template
  * @return {Promise}
  */
-conversationSchema.methods.outboundReply = function (text, template) {
+conversationSchema.methods.createAndPostOutboundReplyMessage = function (text, template) {
   return this.createLastOutboundMessage('outbound-reply', text, template)
-    .then(() => this.postMessageToPlatform());
+    .then(() => this.postLastOutboundMessageToPlatform());
 };
 
 /**
@@ -226,9 +226,9 @@ conversationSchema.methods.outboundReply = function (text, template) {
  * @param {string} template
  * @return {Promise}
  */
-conversationSchema.methods.outboundSend = function (text, template) {
+conversationSchema.methods.createAndPostOutboundSendMessage = function (text, template) {
   return this.createLastOutboundMessage('outbound-api-send', text, template)
-    .then(() => this.postMessageToPlatform());
+    .then(() => this.postLastOutboundMessageToPlatform());
 };
 
 /**
@@ -236,17 +236,15 @@ conversationSchema.methods.outboundSend = function (text, template) {
  * @param {string} template
  * @return {Promise}
  */
-conversationSchema.methods.outboundImport = function (text, template) {
+conversationSchema.methods.createOutboundImportMessage = function (text, template) {
   return this.createLastOutboundMessage('outbound-api-import', text, template);
 };
 
 /**
- * Sends the given message to the User via posting to their platform.
- * @param {Message} message
- * @args {object} args
+ * Posts the Last Outbound Message to the platform.
  */
-conversationSchema.methods.postMessageToPlatform = function () {
-  const loggerMessage = 'conversation.postMessageToPlatform';
+conversationSchema.methods.postLastOutboundMessageToPlatform = function () {
+  const loggerMessage = 'conversation.postLastOutboundMessageToPlatform';
   const messageText = this.lastOutboundMessage.text;
   // This could be blank for noReply templates.
   if (!messageText) {
