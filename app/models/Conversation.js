@@ -152,7 +152,7 @@ conversationSchema.methods.declineSignup = function () {
 /**
  * Loads the inbound message that matches this conversationId and
  * the metadata.requestId and updates its metadata with the new one.
- * @param {number} requestId
+ * @param {string} requestId
  * @param {object} metadata
  * @return {object}
  */
@@ -166,9 +166,7 @@ conversationSchema.methods.loadInboundMessageAndUpdateMetadataByRequestId = func
   const update = { metadata };
   const options = { new: true };
 
-  return this.populate('lastOutboundMessage').execPopulate()
-    .then(() => Messages.findOneAndUpdate(query, update, options)
-      .then(message => message.populate('conversationId').execPopulate()));
+  return Messages.findOneAndUpdate(query, update, options);
 };
 
 /**
