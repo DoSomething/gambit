@@ -99,12 +99,11 @@ conversationSchema.methods.supportResolved = function () {
  * @return {Promise}
  */
 conversationSchema.methods.setCampaignWithSignupStatus = function (campaign, signupStatus) {
-  this.topic = campaign.topic;
   this.campaignId = campaign._id;
   this.signupStatus = signupStatus;
   logger.debug('setCampaignWithSignupStatus', { campaign: this.campaignId, signupStatus });
 
-  return this.save();
+  return this.setTopic(campaign.topic);
 };
 
 /**
