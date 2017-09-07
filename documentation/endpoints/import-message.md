@@ -14,8 +14,8 @@ It's the only supported importer at this time. See [Broadcast Process Wiki](http
 Name | Type | Description
 --- | --- | ---
 `phone` | `string` | User's phone number
-`broadcast_id` | `string` | Broadcast Id associated to this imported message (Contentful broadcast id)
-`fields` | `Array` | Array of field objects. Each field object's value is used to interpolate placeholders in the copy of the message stored in contentful.
+`broadcastId` | `string` | Contentful Broadcast Id of this imported message
+`fields` | `Array` | Array of field objects. Each field object's value is used to interpolate placeholders in the copy of the message stored in Contentful.
 
 ## Examples
 
@@ -29,7 +29,7 @@ Example of an inbound POST request from a Customer.io webhook.
 curl -X "POST" "http://localhost:5100/api/v1/import-message?platform=customerio" \
      -H "Authorization: Basic cHVwcGV0OnRvdGFsbHlzZWNyZXQ=" \
      -H "Content-Type: application/json" \
-     -d '{ "broadcast_id" : "7zU0Mb1k9GkWWI40o06Mic", "phone": "+5555555555", "fields": [{"customer.first_name": "taco"}]}'
+     -d '{ "broadcastId" : "7zU0Mb1k9GkWWI40o06Mic", "phone": "+5555555555", "fields": [{"customer.first_name": "taco"}]}'
 ```
 </details>
 

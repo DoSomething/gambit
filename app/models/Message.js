@@ -20,6 +20,7 @@ const messageSchema = new mongoose.Schema({
   text: String,
   topic: String,
   attachments: Array,
+  broadcastId: String,
 }, { timestamps: true });
 
 module.exports = mongoose.model('Message', messageSchema);
