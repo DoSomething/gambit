@@ -36,7 +36,7 @@ curl -X "POST" "http://localhost:5100/api/v1/send-message" \
      -d $'{
   "phone": "+15555550750",
   "campaignId": "48",
-  "template": "externalSignupMenuMessage"
+  "template": "externalSignupMenu"
 }'
 ```
 
