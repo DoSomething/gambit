@@ -150,26 +150,6 @@ conversationSchema.methods.declineSignup = function () {
 };
 
 /**
- * Loads the inbound message that matches this conversationId and
- * the metadata.requestId and updates its metadata with the new one.
- * @param {string} requestId
- * @param {object} metadata
- * @return {object}
- */
-conversationSchema.methods.loadInboundMessageAndUpdateMetadataByRequestId = function (requestId,
-  metadata = {}) {
-  const query = {
-    conversationId: this._id,
-    'metadata.requestId': requestId,
-    direction: 'inbound',
-  };
-  const update = { metadata };
-  const options = { new: true };
-
-  return Messages.findOneAndUpdate(query, update, options);
-};
-
-/**
  * Gets data for a Conversation Message.
  * @param {string} text
  * @param {string} template
