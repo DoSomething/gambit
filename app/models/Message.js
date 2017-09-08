@@ -26,4 +26,34 @@ const messageSchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
+/**
+ * gets the inbound message that matches this metadata.requestId
+ * and updates it with the new properties passed in the update object.
+ * @param {string} requestId
+ * @param {object} update
+ * @return {object}
+ */
+messageSchema.statics.getAndUpdateInboundMessageByRequestId = function (requestId, update = {}) {
+  const query = {
+    'metadata.requestId': requestId,
+    direction: 'inbound',
+  };
+  const options = { new: true };
+
+  return this.findOneAndUpdate(query, update, options);
+};
+
+/**
+ * gets the inbound message that matches this metadata.requestId
+ * and updates its metadata with the new one.
+ * @param {string} requestId
+ * @param {object} metadata
+ * @return {object}
+ */
+messageSchema.statics.updateInboundMessageMetadataByRequestId = function (requestId,
+  metadata = {}) {
+  return this.getAndUpdateInboundMessageByRequestId(requestId, { metadata });
+};
+
+
 module.exports = mongoose.model('Message', messageSchema);
