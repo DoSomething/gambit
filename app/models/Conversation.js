@@ -154,7 +154,7 @@ conversationSchema.methods.declineSignup = function () {
  * @param {string} template
  * @return {object}
  */
-conversationSchema.methods.getMessagePayload = function (text, template) {
+conversationSchema.methods.getDefaultMessagePayload = function (text, template) {
   const data = {
     conversationId: this,
     campaignId: this.campaignId,
@@ -170,6 +170,22 @@ conversationSchema.methods.getMessagePayload = function (text, template) {
 };
 
 /**
+ * Gets data from a req object for a Conversation Message.
+ * @param {string} text
+ * @param {string} template
+ * @return {object}
+ */
+conversationSchema.methods.getMessagePayloadFromReq = function (req = {}) {
+  // TODO: Handle platform dependent message properties here
+  const data = {
+    metadata: req.metadata || {},
+    attachments: req.attachments || [],
+  };
+  return data;
+};
+
+
+/**
  * Creates Message for a Conversation with given params.
  * @param {string} direction
  * @param {string} text
@@ -177,18 +193,17 @@ conversationSchema.methods.getMessagePayload = function (text, template) {
  * @param {array} attachments
  * @return {Promise}
  */
-conversationSchema.methods.createMessage = function (direction, text, template, attachments) {
+conversationSchema.methods.createMessage = function (direction, text, template, req) {
   logger.debug('createMessage', { direction });
 
   const data = {
     text,
     direction,
     template,
-    attachments,
   };
-  Object.assign(data, this.getMessagePayload());
 
-  // TODO: Handle platform dependent message properties here
+  // Merge default payload and payload from req
+  Object.assign(data, this.getDefaultMessagePayload(), this.getMessagePayloadFromReq(req));
 
   return Messages.create(data);
 };
@@ -200,8 +215,8 @@ conversationSchema.methods.createMessage = function (direction, text, template, 
  * @param {string} template
  * @return {Promise}
  */
-conversationSchema.methods.createLastOutboundMessage = function (direction, text, template) {
-  return this.createMessage(direction, text, template)
+conversationSchema.methods.createLastOutboundMessage = function (direction, text, template, req) {
+  return this.createMessage(direction, text, template, req)
     .then((message) => {
       this.lastOutboundMessage = message;
 
@@ -215,8 +230,8 @@ conversationSchema.methods.createLastOutboundMessage = function (direction, text
  * @param {string} template
  * @return {Promise}
  */
-conversationSchema.methods.createAndPostOutboundReplyMessage = function (text, template) {
-  return this.createLastOutboundMessage('outbound-reply', text, template)
+conversationSchema.methods.createAndPostOutboundReplyMessage = function (text, template, req) {
+  return this.createLastOutboundMessage('outbound-reply', text, template, req)
     .then(() => this.postLastOutboundMessageToPlatform());
 };
 
@@ -225,8 +240,8 @@ conversationSchema.methods.createAndPostOutboundReplyMessage = function (text, t
  * @param {string} template
  * @return {Promise}
  */
-conversationSchema.methods.createAndPostOutboundSendMessage = function (text, template) {
-  return this.createLastOutboundMessage('outbound-api-send', text, template)
+conversationSchema.methods.createAndPostOutboundSendMessage = function (text, template, req) {
+  return this.createLastOutboundMessage('outbound-api-send', text, template, req)
     .then(() => this.postLastOutboundMessageToPlatform());
 };
 
@@ -235,8 +250,8 @@ conversationSchema.methods.createAndPostOutboundSendMessage = function (text, te
  * @param {string} template
  * @return {Promise}
  */
-conversationSchema.methods.createOutboundImportMessage = function (text, template) {
-  return this.createLastOutboundMessage('outbound-api-import', text, template);
+conversationSchema.methods.createOutboundImportMessage = function (text, template, req) {
+  return this.createLastOutboundMessage('outbound-api-import', text, template, req);
 };
 
 /**
