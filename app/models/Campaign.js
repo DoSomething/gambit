@@ -23,8 +23,8 @@ const campaignSchema = new mongoose.Schema({
     declinedContinue: String,
     declinedSignup: String,
     externalSignupMenu: String,
-    invalidContinueResponse: String,
-    invalidSignupResponse: String,
+    invalidAskContinueResponse: String,
+    invalidAskSignupResponse: String,
   },
 }, { timestamps: true });
 

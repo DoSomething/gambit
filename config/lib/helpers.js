@@ -3,11 +3,11 @@
 module.exports = {
   askContinueTemplates: [
     'askContinue',
-    'invalidContinueResponse',
+    'invalidAskContinueResponse',
   ],
   askSignupTemplates: [
     'askSignup',
-    'invalidSignupResponse',
+    'invalidAskSignupResponse',
   ],
   gambitCampaignsTemplates: [
     'askCaption',
