@@ -165,6 +165,12 @@ conversationSchema.methods.getDefaultMessagePayload = function (text, template) 
  */
 conversationSchema.methods.getMessagePayloadFromReq = function (req = {}, direction = '') {
   let broadcastId = null;
+
+  // Attachments are stored in sub objects named according to the direction of the message
+  // 'inbound' or 'outbound'
+  const isOutbound = direction.includes('outbound');
+  const attachmentDirection = isOutbound ? 'outbound' : 'inbound';
+
   if (req.broadcastId) {
     broadcastId = req.broadcastId;
   // Set broadcastId when this is an inbound message responding to an outbound broadcast:
@@ -176,7 +182,7 @@ conversationSchema.methods.getMessagePayloadFromReq = function (req = {}, direct
   const data = {
     broadcastId,
     metadata: req.metadata || {},
-    attachments: req.attachments || [],
+    attachments: req.attachments[attachmentDirection] || [],
   };
 
   return data;
