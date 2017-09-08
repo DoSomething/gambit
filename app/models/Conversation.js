@@ -28,7 +28,6 @@ const conversationSchema = new mongoose.Schema({
     ref: 'Message',
   },
   slackChannel: String,
-  lastBroadcastId: String,
 }, { timestamps: true });
 
 /**
@@ -127,17 +126,6 @@ conversationSchema.methods.promptSignupForCampaign = function (campaign) {
 };
 
 /**
- * Prompt signup for current campaign and broadcast
- * @param {Campaign} campaign
- * @param {string} source
- * @param {string} keyword
- */
-conversationSchema.methods.promptSignupForBroadcast = function (campaign, broadcastId) {
-  this.lastBroadcastId = broadcastId;
-  this.setCampaignWithSignupStatus(campaign, 'prompt');
-};
-
-/**
  * Decline signup for current campaign.
  * @param {Campaign} campaign
  * @param {string} source
@@ -175,12 +163,22 @@ conversationSchema.methods.getDefaultMessagePayload = function (text, template) 
  * @param {string} template
  * @return {object}
  */
-conversationSchema.methods.getMessagePayloadFromReq = function (req = {}) {
+conversationSchema.methods.getMessagePayloadFromReq = function (req = {}, direction = '') {
+  let broadcastId = null;
+  if (req.broadcastId) {
+    broadcastId = req.broadcastId;
+  // Set broadcastId when this is an inbound message responding to an outbound broadcast:
+  } else if (direction === 'inbound') {
+    broadcastId = req.lastOutboundBroadcastId;
+  }
+
   // TODO: Handle platform dependent message properties here
   const data = {
+    broadcastId,
     metadata: req.metadata || {},
     attachments: req.attachments || [],
   };
+
   return data;
 };
 
@@ -203,7 +201,8 @@ conversationSchema.methods.createMessage = function (direction, text, template, 
   };
 
   // Merge default payload and payload from req
-  Object.assign(data, this.getDefaultMessagePayload(), this.getMessagePayloadFromReq(req));
+  const defaultPayload = this.getDefaultMessagePayload();
+  Object.assign(data, defaultPayload, this.getMessagePayloadFromReq(req, direction));
 
   return Messages.create(data);
 };
