@@ -59,6 +59,7 @@
   ^ rape|raped|rapes|raping
   ^ is violent|gets violent
   ^ suicidal|suicidial|suicide
+! array messaging = texting|talking to|messaging
 ! array no        = n no nah nope nay
 ! array photo     = photo photos mms pic pics pix image image img
 ! array question  = is there|who|what|when|why|how

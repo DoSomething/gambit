@@ -6,3 +6,9 @@
 
 + stop
 - subscriptionStatusStop
+
++ stop @messaging [me]
+@ stop
+
++ shut up
+@ stop
