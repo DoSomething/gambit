@@ -14,7 +14,9 @@ const messageSchema = new mongoose.Schema({
   direction: {
     type: String,
     enum: ['inbound', 'outbound-reply', 'outbound-api-send', 'outbound-api-import'],
+    required: true,
   },
+  platformMessageId: { type: String, index: true },
   campaignId: Number,
   template: String,
   text: String,
@@ -22,7 +24,7 @@ const messageSchema = new mongoose.Schema({
   attachments: Array,
   broadcastId: String,
   metadata: {
-    requestId: String,
+    requestId: { type: String, index: true },
     retryCount: Number,
   },
 }, { timestamps: true });
