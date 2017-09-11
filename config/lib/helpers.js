@@ -25,10 +25,16 @@ module.exports = {
     'invalidSignupMenuCommand',
     'invalidWhyParticipated',
   ],
+  gambitConversationsTemplateText: {
+    subscriptionStatusLess: 'Sure, we\'ll only message you once a month.',
+    subscriptionStatusStop: 'You\'ve been unsubscribed.',
+  },
   menuCommand: 'menu',
   macros: {
     confirmedCampaign: 'confirmedCampaign',
     declinedCampaign: 'declinedCampaign',
     gambit: 'gambit',
+    subscriptionStatusLess: 'subscriptionStatusLess',
+    subscriptionStatusStop: 'subscriptionStatusStop',
   },
 };
