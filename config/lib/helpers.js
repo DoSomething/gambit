@@ -1,5 +1,7 @@
 'use strict';
 
+const menuCommand = 'menu';
+
 module.exports = {
   askContinueTemplates: [
     'askContinue',
@@ -26,10 +28,11 @@ module.exports = {
     'invalidWhyParticipated',
   ],
   gambitConversationsTemplateText: {
+    noCampaign: `Sorry, I'm not sure how to respond to that.\n\nSay ${menuCommand.toUpperCase()} to find a Campaign to join.`,
     subscriptionStatusLess: 'Sure, we\'ll only message you once a month.',
     subscriptionStatusStop: 'You\'ve been unsubscribed.',
   },
-  menuCommand: 'menu',
+  menuCommand,
   macros: {
     confirmedCampaign: 'confirmedCampaign',
     declinedCampaign: 'declinedCampaign',

@@ -33,7 +33,7 @@ router.use(createConversationMiddleware());
 router.use(loadInboundMessageMiddleware());
 router.use(createInboundMessageMiddleware());
 
-// If Campaign keyword was sent, set and continue conversation for the keyword Campaign.
+// If Campaign keyword was sent, update Conversation campaign and send continueCampaign reply.
 router.use(campaignKeywordMiddleware());
 
 // Send our inbound message to Rivescript bot for a reply. If reply is not a macro, send it. 
