@@ -1,0 +1,14 @@
+// profile.rive
+// Account management and macros.
+
++ less
+- subscriptionStatusLess
+
++ stop
+- subscriptionStatusStop
+
++ stop @messaging [me]
+@ stop
+
++ shut up
+@ stop
