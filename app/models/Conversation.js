@@ -185,6 +185,11 @@ conversationSchema.methods.getMessagePayloadFromReq = function (req = {}, direct
     attachments: req.attachments[attachmentDirection] || [],
   };
 
+  // add platformMessageId when present
+  if (req.platformMessageId) {
+    data.platformMessageId = req.platformMessageId;
+  }
+
   return data;
 };
 
