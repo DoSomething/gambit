@@ -22,6 +22,7 @@ router.use(createConversationMiddleware());
 router.use(campaignMiddleware());
 router.use(supportMiddleware());
 
+// Load/create outbound message
 router.use(loadOutboundSendMessageMiddleware());
 router.use(createOutboundSendMessageMiddleware());
 
