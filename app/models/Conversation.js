@@ -221,6 +221,19 @@ conversationSchema.methods.createMessage = function (direction, text, template, 
   return Messages.create(data);
 };
 
+
+/**
+ * Sets and populates lastOutboundMessage for this conversation
+ *
+ * @param  {object} outboundMessage
+ * @return {promise}
+ */
+conversationSchema.methods.setLastOutboundMessage = function (outboundMessage) {
+  this.lastOutboundMessage = outboundMessage;
+  return this.save()
+    .then(() => this.populate('lastOutboundMessage').execPopulate());
+};
+
 /**
  * Creates Message with given params and saves it to lastOutboundMessage.
  * @param {string} direction
@@ -230,12 +243,7 @@ conversationSchema.methods.createMessage = function (direction, text, template, 
  */
 conversationSchema.methods.createLastOutboundMessage = function (direction, text, template, req) {
   return this.createMessage(direction, text, template, req)
-    .then((message) => {
-      this.lastOutboundMessage = message;
-
-      return this.save();
-    })
-    .then(() => this.populate('lastOutboundMessage').execPopulate());
+    .then(message => this.setLastOutboundMessage(message));
 };
 
 /**
@@ -269,6 +277,7 @@ conversationSchema.methods.createOutboundImportMessage = function (text, templat
 
 /**
  * Posts the Last Outbound Message to the platform.
+ * TODO: Promisify, look for request success status when posting to platforms
  */
 conversationSchema.methods.postLastOutboundMessageToPlatform = function () {
   const loggerMessage = 'conversation.postLastOutboundMessageToPlatform';
@@ -277,6 +286,7 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function () {
   if (!messageText) {
     return;
   }
+
   logger.debug(loggerMessage);
 
   if (this.platform === 'slack') {

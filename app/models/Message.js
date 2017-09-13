@@ -1,6 +1,8 @@
 'use strict';
 
 const mongoose = require('mongoose');
+const logger = require('heroku-logger');
+const Promise = require('bluebird');
 
 /**
  * Schema.
@@ -31,16 +33,21 @@ const messageSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 /**
- * gets the inbound message that matches this metadata.requestId
- * and updates it with the new properties passed in the update object.
+ * Gets the message that matches this metadata.requestId and direction.
+ * Updates it with the new properties passed in the update object.
  * @param {string} requestId
  * @param {object} update
  * @return {object}
  */
-messageSchema.statics.getAndUpdateInboundMessageByRequestId = function (requestId, update = {}) {
+messageSchema.statics.updateMessageByRequestIdAndDirection = function (requestId,
+  update = {}, direction) {
+  if (!direction) {
+    logger.error('updateMessageByRequestIdAndDirection: direction argument missing.');
+    return Promise.resolve(null);
+  }
   const query = {
     'metadata.requestId': requestId,
-    direction: 'inbound',
+    direction,
   };
   const options = { new: true };
 
@@ -56,8 +63,43 @@ messageSchema.statics.getAndUpdateInboundMessageByRequestId = function (requestI
  */
 messageSchema.statics.updateInboundMessageMetadataByRequestId = function (requestId,
   metadata = {}) {
-  return this.getAndUpdateInboundMessageByRequestId(requestId, { metadata });
+  return this.updateMessageByRequestIdAndDirection(requestId, { metadata }, 'inbound');
 };
 
+/**
+ * gets the outbound-reply message that matches this metadata.requestId
+ * and updates its metadata with the new one.
+ * @param {string} requestId
+ * @param {object} metadata
+ * @return {object}
+ */
+messageSchema.statics.updateOutboundReplyMessageMetadataByRequestId = function (requestId,
+  metadata = {}) {
+  return this.updateMessageByRequestIdAndDirection(requestId, { metadata }, 'outbound-reply');
+};
+
+/**
+ * gets the outbound-api-send message that matches this metadata.requestId
+ * and updates its metadata with the new one.
+ * @param {string} requestId
+ * @param {object} metadata
+ * @return {object}
+ */
+messageSchema.statics.updateOutboundApiSendMessageMetadataByRequestId = function (requestId,
+  metadata = {}) {
+  return this.updateMessageByRequestIdAndDirection(requestId, { metadata }, 'outbound-api-send');
+};
+
+/**
+ * gets the outbound-api-import message that matches this metadata.requestId
+ * and updates its metadata with the new one.
+ * @param {string} requestId
+ * @param {object} metadata
+ * @return {object}
+ */
+messageSchema.statics.updateOutboundApiImportMessageMetadataByRequestId = function (requestId,
+  metadata = {}) {
+  return this.updateMessageByRequestIdAndDirection(requestId, { metadata }, 'outbound-api-import');
+};
 
 module.exports = mongoose.model('Message', messageSchema);
