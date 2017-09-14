@@ -18,10 +18,10 @@ mongoose.connect(config.dbUri, {
 });
 
 // Sync Campaign cache with Gambit Campaigns API.
-const CampaignModel = require('./app/models/Campaign');
+const Campaign = require('./app/models/Campaign');
 
 if (process.env.DS_GAMBIT_CAMPAIGNS_SYNC) {
-  CampaignModel.sync();
+  Campaign.sync();
 }
 
 const db = mongoose.connection;
