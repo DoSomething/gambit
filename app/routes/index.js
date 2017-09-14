@@ -12,13 +12,13 @@ const parseMetadataMiddleware = require('../../lib/middleware/metadata-parse');
 
 const router = express.Router();
 
-const ConversationModel = require('../models/Conversation');
-const MessageModel = require('../models/Message');
-const CampaignModel = require('../models/Campaign');
+const Conversation = require('../models/Conversation');
+const Message = require('../models/Message');
+const Campaign = require('../models/Campaign');
 
-restify.serve(router, ConversationModel, { name: 'conversations' });
-restify.serve(router, MessageModel, { name: 'messages' });
-restify.serve(router, CampaignModel, { name: 'campaigns' });
+restify.serve(router, Conversation, { name: 'conversations' });
+restify.serve(router, Message, { name: 'messages' });
+restify.serve(router, Campaign, { name: 'campaigns' });
 
 module.exports = function init(app) {
   app.get('/', (req, res) => {
