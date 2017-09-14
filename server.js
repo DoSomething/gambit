@@ -17,12 +17,11 @@ mongoose.connect(config.dbUri, {
   useMongoClient: true,
 });
 
-// Sync Campaign cache with Gambit Campaigns API.
 const Campaign = require('./app/models/Campaign');
 
-if (process.env.DS_GAMBIT_CAMPAIGNS_SYNC) {
-  Campaign.sync();
-}
+// Sync Campaign cache with Gambit Campaigns API.
+Campaign.sync();
+setInterval(() => { Campaign.sync(); }, config.campaignSyncInterval);
 
 const db = mongoose.connection;
 db.on('error', () => {
