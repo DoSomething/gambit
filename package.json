@@ -25,6 +25,7 @@
     "node": "6.11.1"
   },
   "dependencies": {
+    "@dosomething/northstar-js": "0.1.0-1",
     "@slack/client": "^3.10.0",
     "basic-auth": "^1.1.0",
     "bluebird": "^3.5.0",
