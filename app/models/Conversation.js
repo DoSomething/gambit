@@ -5,6 +5,7 @@ const logger = require('heroku-logger');
 
 const Messages = require('./Message');
 const facebook = require('../../lib/facebook');
+const northstar = require('../../lib/northstar');
 const slack = require('../../lib/slack');
 const twilio = require('../../lib/twilio');
 
@@ -302,6 +303,18 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function () {
   if (this.platform === 'facebook') {
     facebook.postMessage(this.platformUserId, messageText);
   }
+};
+
+/**
+ * @return {Promise}
+ */
+conversationSchema.methods.getNorthstarUser = function () {
+  // For now, we only need to store User properties for SMS conversations.
+  if (this.platform !== 'sms') {
+    return null;
+  }
+
+  return northstar.fetchUserByMobile(this.platformUserId);
 };
 
 module.exports = mongoose.model('Conversation', conversationSchema);
