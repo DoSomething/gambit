@@ -20,8 +20,9 @@ mongoose.connect(config.dbUri, {
 // Sync Campaign cache with Gambit Campaigns API.
 const CampaignModel = require('./app/models/Campaign');
 
+CampaignModel.sync();
 if (process.env.DS_GAMBIT_CAMPAIGNS_SYNC) {
-  CampaignModel.sync();
+  setInterval(() => { CampaignModel.sync() }, 50000);
 }
 
 const db = mongoose.connection;
