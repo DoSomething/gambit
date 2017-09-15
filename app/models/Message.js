@@ -66,40 +66,4 @@ messageSchema.statics.updateInboundMessageMetadataByRequestId = function (reques
   return this.updateMessageByRequestIdAndDirection(requestId, { metadata }, 'inbound');
 };
 
-/**
- * gets the outbound-reply message that matches this metadata.requestId
- * and updates its metadata with the new one.
- * @param {string} requestId
- * @param {object} metadata
- * @return {object}
- */
-messageSchema.statics.updateOutboundReplyMessageMetadataByRequestId = function (requestId,
-  metadata = {}) {
-  return this.updateMessageByRequestIdAndDirection(requestId, { metadata }, 'outbound-reply');
-};
-
-/**
- * gets the outbound-api-send message that matches this metadata.requestId
- * and updates its metadata with the new one.
- * @param {string} requestId
- * @param {object} metadata
- * @return {object}
- */
-messageSchema.statics.updateOutboundApiSendMessageMetadataByRequestId = function (requestId,
-  metadata = {}) {
-  return this.updateMessageByRequestIdAndDirection(requestId, { metadata }, 'outbound-api-send');
-};
-
-/**
- * gets the outbound-api-import message that matches this metadata.requestId
- * and updates its metadata with the new one.
- * @param {string} requestId
- * @param {object} metadata
- * @return {object}
- */
-messageSchema.statics.updateOutboundApiImportMessageMetadataByRequestId = function (requestId,
-  metadata = {}) {
-  return this.updateMessageByRequestIdAndDirection(requestId, { metadata }, 'outbound-api-import');
-};
-
 module.exports = mongoose.model('Message', messageSchema);

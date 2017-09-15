@@ -123,7 +123,7 @@ conversationSchema.methods.setCampaign = function (campaign) {
  * @param {string} keyword
  */
 conversationSchema.methods.promptSignupForCampaign = function (campaign) {
-  this.setCampaignWithSignupStatus(campaign, 'prompt');
+  return this.setCampaignWithSignupStatus(campaign, 'prompt');
 };
 
 /**
@@ -255,25 +255,6 @@ conversationSchema.methods.createLastOutboundMessage = function (direction, text
 conversationSchema.methods.createAndPostOutboundReplyMessage = function (text, template, req) {
   return this.createLastOutboundMessage('outbound-reply', text, template, req)
     .then(() => this.postLastOutboundMessageToPlatform());
-};
-
-/**
- * @param {string} text
- * @param {string} template
- * @return {Promise}
- */
-conversationSchema.methods.createAndPostOutboundSendMessage = function (text, template, req) {
-  return this.createLastOutboundMessage('outbound-api-send', text, template, req)
-    .then(() => this.postLastOutboundMessageToPlatform());
-};
-
-/**
- * @param {string} text
- * @param {string} template
- * @return {Promise}
- */
-conversationSchema.methods.createOutboundImportMessage = function (text, template, req) {
-  return this.createLastOutboundMessage('outbound-api-import', text, template, req);
 };
 
 /**
