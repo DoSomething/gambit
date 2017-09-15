@@ -10,6 +10,7 @@ bot.getBot();
 const paramsMiddleware = require('../../lib/middleware/receive-message/params');
 const getConversationMiddleware = require('../../lib/middleware/conversation-get');
 const createConversationMiddleware = require('../../lib/middleware/conversation-create');
+const getUserMiddleware = require('../../lib/middleware/receive-message/user-get');
 const loadInboundMessageMiddleware = require('../../lib/middleware/receive-message/message-inbound-load');
 const createInboundMessageMiddleware = require('../../lib/middleware/receive-message/message-inbound-create');
 const campaignKeywordMiddleware = require('../../lib/middleware/receive-message/campaign-keyword');
@@ -28,6 +29,9 @@ router.use(paramsMiddleware());
 // Load/create conversation
 router.use(getConversationMiddleware());
 router.use(createConversationMiddleware());
+
+// Fetch Conversation Northstar User.
+router.use(getUserMiddleware());
 
 // Load/create inbound message.
 router.use(loadInboundMessageMiddleware());

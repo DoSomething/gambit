@@ -74,7 +74,7 @@ campaignSchema.statics.fetchCampaign = function (campaignId) {
       campaign.topic = getTopicForCampaignId(campaignId);
 
       return this.findOneAndUpdate({ _id: campaignId }, campaign, { upsert: true })
-        .then(() => logger.debug('campaign updated', { campaignId }));
+        .then(() => logger.trace('campaign updated', { campaignId }));
     })
     .catch(err => logger.error('Campaign.fetchCampaign', { err }));
 };
