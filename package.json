@@ -44,7 +44,8 @@
     "rivescript": "^1.17.2",
     "superagent": "^3.5.2",
     "twilio": "^3.5.0",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "uuid": "^3.1.0"
   },
   "devDependencies": {
     "@dosomething/eslint-config": "^3.1.0",
