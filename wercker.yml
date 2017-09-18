@@ -1,0 +1,12 @@
+box: node:6.11
+services:
+  - id: mongo
+build:
+  steps:
+    - npm-install
+    - script:
+      name: run all tests
+      code: npm run all-tests
+    - script:
+      name: publish coverage report to codecov
+      code: npm run publish-coverage-report
