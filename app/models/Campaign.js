@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const logger = require('heroku-logger');
 const gambitCampaigns = require('../../lib/gambit-campaigns');
 
+const activeStatus = 'active';
+
 /**
  * Schema.
  */
@@ -14,7 +16,17 @@ const campaignSchema = new mongoose.Schema({
   status: String,
   keywords: [String],
   topic: String,
-});
+  templates: {
+    askContinue: String,
+    askSignup: String,
+    campaignClosed: String,
+    declinedContinue: String,
+    declinedSignup: String,
+    externalSignupMenu: String,
+    invalidAskContinueResponse: String,
+    invalidAskSignupResponse: String,
+  },
+}, { timestamps: true });
 
 /**
  * @param {Number} campaignId
@@ -38,24 +50,18 @@ function parseGambitCampaign(gambitCampaign) {
   const result = {
     title: gambitCampaign.title,
     status: gambitCampaign.status,
+    templates: {},
   };
+
+  const templates = Object.keys(gambitCampaign.templates);
+  templates.forEach((templateName) => {
+    result.templates[templateName] = gambitCampaign.templates[templateName].rendered;
+  });
 
   result.keywords = gambitCampaign.keywords.map(keywordObject => keywordObject.keyword);
 
   return result;
 }
-
-/**
- * Get array of current Gambit campaigns from API and upsert models.
- * @return {Promise}
- */
-campaignSchema.statics.fetchIndex = function () {
-  logger.info('Campaign.fetchIndex');
-
-  return gambitCampaigns.get('campaigns')
-    .then(campaigns => campaigns.map(campaign => this.fetchCampaign(campaign.id)))
-    .catch(err => logger.error('Campaign.fetchIndex', err));
-};
 
 /**
  * Get campaign from Gambit API and upsert models.
@@ -68,20 +74,32 @@ campaignSchema.statics.fetchCampaign = function (campaignId) {
       campaign.topic = getTopicForCampaignId(campaignId);
 
       return this.findOneAndUpdate({ _id: campaignId }, campaign, { upsert: true })
-        .then(() => logger.debug('Campaign.fetchCampaign', campaign));
+        .then(() => logger.trace('campaign updated', { campaignId }));
     })
-    .catch(err => logger.error('Campaign.fetchCampaign', err));
+    .catch(err => logger.error('Campaign.fetchCampaign', { err }));
 };
 
 /**
  * Returns a random Campaign model.
  * @return {Promise}
  */
-campaignSchema.statics.getRandomCampaign = function () {
-  logger.debug('Campaign.getRandomCampaign');
+campaignSchema.statics.findRandomCampaignNotEqualTo = function (campaignId) {
+  logger.debug('Campaign.findRandomCampaignNotEqualTo', { campaignId });
 
   return this
-    .aggregate([{ $sample: { size: 1 } }])
+    .aggregate([
+      {
+        $match: {
+          status: activeStatus,
+          _id: { $ne: campaignId },
+        },
+      },
+      {
+        $sample: {
+          size: 1,
+        },
+      },
+    ])
     .exec()
     .then(campaigns => this.findById(campaigns[0]._id));
 };
@@ -91,55 +109,63 @@ campaignSchema.statics.getRandomCampaign = function () {
  * @return {Promise}
  */
 campaignSchema.statics.findByKeyword = function (keyword = '') {
-  logger.debug(`Campaign.findByKeyword:${keyword}`);
-  const match = keyword.toUpperCase();
+  return this.findOne({ keywords: keyword.toUpperCase() });
+};
 
-  return this.findOne({ keywords: match });
+/**
+ * Updates active Campaigns by querying Gambit Campaigns API.
+ * @return {Promise}
+ */
+campaignSchema.statics.sync = function () {
+  logger.debug('Campaign.sync');
+  const updated = {};
+
+  return gambitCampaigns.getActiveCampaigns()
+    .then((activeCampaigns) => {
+      // Update document for each active Campaign returned.
+      activeCampaigns.forEach((campaign) => {
+        const campaignId = campaign.id;
+        logger.trace('activeCampaign', { campaignId });
+
+        updated[campaignId] = true;
+        this.fetchCampaign(campaignId);
+      });
+
+      return this.find({ status: activeStatus });
+    })
+    .then((activeCache) => {
+      activeCache.forEach((campaign) => {
+        const campaignId = campaign._id;
+        logger.trace('activeCache', { campaignId });
+
+        if (!updated[campaignId]) {
+          logger.debug('close campaign', { campaignId });
+          // TODO: Fetch Campaign to get latest messages, blocked by Gambit Campaigns API bug.
+          // @see https://github.com/DoSomething/gambit/issues/951
+          campaign.status = 'closed'; // eslint-disable-line no-param-reassign
+          campaign.save();
+        }
+      });
+    })
+    .catch((err) => {
+      logger.error('sync', { err });
+    });
 };
 
 /**
  * Virtual properties.
- * @TODO: Define these as fields on Gambit Campaigns upon signoff.
  */
 
 /* eslint-disable prefer-arrow-callback */
 // Disabling for these virtual properties because arrow functions are not a shortcut for function().
 // @see https://github.com/Automattic/mongoose/issues/4143
 
-// Even though this field exists on a Gambit Campaign, we're overriding it here because the copy
-// should prompt the User to text MENU back to find a new Campaign to do (doesn't exist on prod)
-campaignSchema.virtual('declinedSignupMessage').get(function () {
-  return 'OK. Text MENU if you\'d like to find a different Campaign to join.';
+campaignSchema.virtual('isClosed').get(function () {
+  const result = this.status === 'closed';
+
+  return result;
 });
 
-campaignSchema.virtual('askSignupMessage').get(function () {
-  const strings = ['Wanna', 'Down to', 'Want to'];
-  const randomPrompt = strings[Math.floor(Math.random() * strings.length)];
-
-  return `${randomPrompt} sign up for ${this.title}?`;
-});
-
-campaignSchema.virtual('declinedContinueMessage').get(function () {
-  return `Ok, we'll check in with you about ${this.title} later.`;
-});
-
-campaignSchema.virtual('askContinueMessage').get(function () {
-  return `Ready to get back to ${this.title}?`;
-});
-
-campaignSchema.virtual('invalidSignupResponseMessage').get(function () {
-  let text = `Sorry, I didn't get that. Did you want to join ${this.title}?\n\nYes or No`;
-  text = `${text}\n\nIf you have a question, text Q.`;
-
-  return text;
-});
-
-campaignSchema.virtual('invalidContinueResponseMessage').get(function () {
-  let text = `Sorry, I didn't get that. Continue with ${this.title}?\n\nYes or No`;
-  text = `${text}\n\nIf you have a question, text Q.`;
-
-  return text;
-});
 /* eslint-enable prefer-arrow-callback */
 
-module.exports = mongoose.model('campaigns', campaignSchema);
+module.exports = mongoose.model('Campaign', campaignSchema);

@@ -1,3 +1,23 @@
+.DS_Store
 .env
-node_modules
+
+# Logs
+logs
 *.log
+npm-debug.log*
+
+# npm
+node_modules
+
+.wercker
+
+# config
+**/config/*.json
+.pull_config.conf
+
+#code coverage directories
+.nyc_output
+coverage
+
+#local nvm configuration
+.nvmrc

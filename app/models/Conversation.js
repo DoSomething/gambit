@@ -5,6 +5,7 @@ const logger = require('heroku-logger');
 
 const Messages = require('./Message');
 const facebook = require('../../lib/facebook');
+const northstar = require('../../lib/northstar');
 const slack = require('../../lib/slack');
 const twilio = require('../../lib/twilio');
 
@@ -14,15 +15,20 @@ const defaultTopic = 'random';
  * Schema.
  */
 const conversationSchema = new mongoose.Schema({
-  medium: String,
-  userId: String,
+  platform: String,
+  platformUserId: {
+    type: String,
+    index: true,
+  },
   paused: Boolean,
   topic: String,
   campaignId: Number,
   signupStatus: String,
-  lastOutboundTemplate: String,
+  lastOutboundMessage: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Message',
+  },
   slackChannel: String,
-  lastBroadcastId: String,
 }, { timestamps: true });
 
 /**
@@ -31,8 +37,8 @@ const conversationSchema = new mongoose.Schema({
  */
 conversationSchema.statics.createFromReq = function (req) {
   const data = {
-    userId: req.userId,
-    medium: req.platform,
+    platformUserId: req.platformUserId,
+    platform: req.platform,
     paused: false,
     topic: defaultTopic,
   };
@@ -45,17 +51,14 @@ conversationSchema.statics.createFromReq = function (req) {
 };
 
 /**
- * @param {string} userId
- * TODO: Query by medium + userId. For now, we know we won't overlap phone + slackId + facebookId
+ * @param {Object} req - Express request
  * @return {Promise}
  */
-conversationSchema.statics.findByUserId = function (userId) {
-  const query = { userId };
-  logger.trace('Conversation.findByUserId', query);
+conversationSchema.statics.getFromReq = function (req) {
+  const query = { platformUserId: req.platformUserId };
+  logger.trace('Conversation.getFromReq', query);
 
-  return this.findOne(query)
-    .then(convo => convo)
-    .catch(err => err);
+  return this.findOne(query).populate('lastOutboundMessage');
 };
 
 /**
@@ -63,8 +66,6 @@ conversationSchema.statics.findByUserId = function (userId) {
  * @return {boolean}
  */
 conversationSchema.methods.setTopic = function (newTopic) {
-  logger.trace('Conversation.setTopic', { newTopic });
-
   if (this.topic === newTopic) {
     return this.save();
   }
@@ -80,6 +81,7 @@ conversationSchema.methods.setTopic = function (newTopic) {
   }
 
   this.topic = newTopic;
+  logger.trace('Conversation.setTopic', { newTopic });
 
   return this.save();
 };
@@ -88,8 +90,6 @@ conversationSchema.methods.setTopic = function (newTopic) {
  * Set topic to random to upause User.
  */
 conversationSchema.methods.supportResolved = function () {
-  this.lastOutboundTemplate = 'front';
-
   return this.setTopic(defaultTopic);
 };
 
@@ -99,11 +99,11 @@ conversationSchema.methods.supportResolved = function () {
  * @return {Promise}
  */
 conversationSchema.methods.setCampaignWithSignupStatus = function (campaign, signupStatus) {
-  this.topic = campaign.topic;
   this.campaignId = campaign._id;
   this.signupStatus = signupStatus;
+  logger.debug('setCampaignWithSignupStatus', { campaign: this.campaignId, signupStatus });
 
-  return this.save();
+  return this.setTopic(campaign.topic);
 };
 
 /**
@@ -113,7 +113,7 @@ conversationSchema.methods.setCampaignWithSignupStatus = function (campaign, sig
  * @param {string} keyword
  */
 conversationSchema.methods.setCampaign = function (campaign) {
-  this.setCampaignWithSignupStatus(campaign, 'doing');
+  return this.setCampaignWithSignupStatus(campaign, 'doing');
 };
 
 /**
@@ -123,18 +123,7 @@ conversationSchema.methods.setCampaign = function (campaign) {
  * @param {string} keyword
  */
 conversationSchema.methods.promptSignupForCampaign = function (campaign) {
-  this.setCampaignWithSignupStatus(campaign, 'prompt');
-};
-
-/**
- * Prompt signup for current campaign and broadcast
- * @param {Campaign} campaign
- * @param {string} source
- * @param {string} keyword
- */
-conversationSchema.methods.promptSignupForBroadcast = function (campaign, broadcastId) {
-  this.lastBroadcastId = broadcastId;
-  this.setCampaignWithSignupStatus(campaign, 'prompt');
+  return this.setCampaignWithSignupStatus(campaign, 'prompt');
 };
 
 /**
@@ -145,78 +134,168 @@ conversationSchema.methods.promptSignupForBroadcast = function (campaign, broadc
  */
 conversationSchema.methods.declineSignup = function () {
   this.signupStatus = 'declined';
-  this.save();
-};
-
-conversationSchema.methods.getMessagePayload = function () {
-  return {
-    userId: this.userId,
-    campaignId: this.campaignId,
-    topic: this.topic,
-    conversation: this,
-  };
-};
-
-conversationSchema.methods.createInboundMessage = function (req) {
-  const message = this.getMessagePayload();
-  message.text = req.inboundMessageText;
-  message.direction = 'inbound';
-  message.attachments = req.attachments;
-
-  // TODO: Handle platform dependent message properties here
-
-  return Messages.create(message);
-};
-
-conversationSchema.methods.createOutboundReplyMessage = function (messageText, messageTemplate) {
-  const message = this.getMessagePayload();
-  message.text = messageText;
-  message.template = messageTemplate;
-  message.direction = 'outbound-reply';
-
-  this.lastOutboundTemplate = messageTemplate;
-  return this.save().then(() => Messages.create(message));
-};
-
-conversationSchema.methods.createOutboundSendMessage = function (messageText, messageTemplate) {
-  const message = this.getMessagePayload();
-  message.text = messageText;
-  message.template = messageTemplate;
-  message.direction = 'outbound-api-send';
-
-  this.lastOutboundTemplate = messageTemplate;
-  return this.save().then(() => Messages.create(message));
-};
-
-conversationSchema.methods.createOutboundImportMessage = function (messageText, messageTemplate) {
-  const message = this.getMessagePayload();
-  message.text = messageText;
-  message.template = messageTemplate;
-  message.direction = 'outbound-api-import';
-
-  this.lastOutboundTemplate = messageTemplate;
-  return this.save().then(() => Messages.create(message));
+  return this.save();
 };
 
 /**
- * Sends the given messageText to the User via posting to their platform.
- * @param {Message} message
- * @args {object} args
+ * Gets data for a Conversation Message.
+ * @param {string} text
+ * @param {string} template
+ * @return {object}
  */
-conversationSchema.methods.sendMessage = function (message) {
-  logger.debug('conversation.sendMessage');
+conversationSchema.methods.getDefaultMessagePayload = function (text, template) {
+  const data = {
+    conversationId: this,
+    campaignId: this.campaignId,
+    topic: this.topic,
+  };
+  if (text) {
+    data.text = text;
+  }
+  if (template) {
+    data.template = template;
+  }
+  return data;
+};
 
-  const messageText = message.text;
+/**
+ * Gets data from a req object for a Conversation Message.
+ * @param {string} text
+ * @param {string} template
+ * @return {object}
+ */
+conversationSchema.methods.getMessagePayloadFromReq = function (req = {}, direction = '') {
+  let broadcastId = null;
 
-  if (this.medium === 'slack') {
+  // Attachments are stored in sub objects named according to the direction of the message
+  // 'inbound' or 'outbound'
+  const isOutbound = direction.includes('outbound');
+  const attachmentDirection = isOutbound ? 'outbound' : 'inbound';
+
+  if (req.broadcastId) {
+    broadcastId = req.broadcastId;
+  // Set broadcastId when this is an inbound message responding to an outbound broadcast:
+  } else if (direction === 'inbound') {
+    broadcastId = req.lastOutboundBroadcastId;
+  }
+
+  // TODO: Handle platform dependent message properties here
+  const data = {
+    broadcastId,
+    metadata: req.metadata || {},
+    attachments: req.attachments[attachmentDirection] || [],
+  };
+
+  // Add extras if present.
+  if (req.platformMessageId) {
+    data.platformMessageId = req.platformMessageId;
+  }
+  if (req.agentId) {
+    data.agentId = req.agentId;
+  }
+
+  return data;
+};
+
+
+/**
+ * Creates Message for a Conversation with given params.
+ * @param {string} direction
+ * @param {string} text
+ * @param {string} template
+ * @param {array} attachments
+ * @return {Promise}
+ */
+conversationSchema.methods.createMessage = function (direction, text, template, req) {
+  logger.debug('createMessage', { direction });
+
+  const data = {
+    text,
+    direction,
+    template,
+  };
+
+  // Merge default payload and payload from req
+  const defaultPayload = this.getDefaultMessagePayload();
+  Object.assign(data, defaultPayload, this.getMessagePayloadFromReq(req, direction));
+
+  return Messages.create(data);
+};
+
+
+/**
+ * Sets and populates lastOutboundMessage for this conversation
+ *
+ * @param  {object} outboundMessage
+ * @return {promise}
+ */
+conversationSchema.methods.setLastOutboundMessage = function (outboundMessage) {
+  this.lastOutboundMessage = outboundMessage;
+  return this.save()
+    .then(() => this.populate('lastOutboundMessage').execPopulate());
+};
+
+/**
+ * Creates Message with given params and saves it to lastOutboundMessage.
+ * @param {string} direction
+ * @param {string} text
+ * @param {string} template
+ * @return {Promise}
+ */
+conversationSchema.methods.createLastOutboundMessage = function (direction, text, template, req) {
+  return this.createMessage(direction, text, template, req)
+    .then(message => this.setLastOutboundMessage(message));
+};
+
+/**
+ * @param {string} text
+ * @param {string} template
+ * @return {Promise}
+ */
+conversationSchema.methods.createAndPostOutboundReplyMessage = function (text, template, req) {
+  return this.createLastOutboundMessage('outbound-reply', text, template, req)
+    .then(() => this.postLastOutboundMessageToPlatform());
+};
+
+/**
+ * Posts the Last Outbound Message to the platform.
+ * TODO: Promisify, look for request success status when posting to platforms
+ */
+conversationSchema.methods.postLastOutboundMessageToPlatform = function () {
+  const loggerMessage = 'conversation.postLastOutboundMessageToPlatform';
+  const messageText = this.lastOutboundMessage.text;
+  // This could be blank for noReply templates.
+  if (!messageText) {
+    return;
+  }
+
+  logger.debug(loggerMessage);
+
+  if (this.platform === 'slack') {
     slack.postMessage(this.slackChannel, messageText);
   }
-  if (this.medium === 'sms') {
-    twilio.postMessage(this.userId, messageText);
+
+  if (this.platform === 'sms') {
+    twilio.postMessage(this.platformUserId, messageText)
+      .then(res => logger.debug(loggerMessage, { status: res.status }))
+      .catch(err => logger.error(loggerMessage, err));
   }
-  if (this.medium === 'facebook') {
-    facebook.postMessage(this.userId, messageText);
+
+  if (this.platform === 'facebook') {
+    facebook.postMessage(this.platformUserId, messageText);
   }
 };
 
-module.exports = mongoose.model('conversations', conversationSchema);
+/**
+ * @return {Promise}
+ */
+conversationSchema.methods.getNorthstarUser = function () {
+  // For now, we only need to store User properties for SMS conversations.
+  if (this.platform !== 'sms') {
+    return null;
+  }
+
+  return northstar.fetchUserByMobile(this.platformUserId);
+};
+
+module.exports = mongoose.model('Conversation', conversationSchema);
