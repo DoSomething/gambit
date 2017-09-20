@@ -41,4 +41,9 @@ module.exports = {
     subscriptionStatusLess: 'subscriptionStatusLess',
     subscriptionStatusStop: 'subscriptionStatusStop',
   },
+  subscriptionStatusValues: {
+    active: 'active',
+    less: 'less',
+    stop: 'undeliverable',
+  },
 };
