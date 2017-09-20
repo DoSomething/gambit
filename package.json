@@ -34,7 +34,7 @@
     "node": "6.11.1"
   },
   "dependencies": {
-    "@dosomething/northstar-js": "^1.0.0",
+    "@dosomething/northstar-js": "git://github.com/DoSomething/northstar-js.git",
     "@slack/client": "^3.10.0",
     "basic-auth": "^1.1.0",
     "bluebird": "^3.5.0",

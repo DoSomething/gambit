@@ -29,6 +29,7 @@ module.exports = {
   ],
   gambitConversationsTemplateText: {
     noCampaign: `Sorry, I'm not sure how to respond to that.\n\nSay ${menuCommand.toUpperCase()} to find a Campaign to join.`,
+    noReply: '',
     subscriptionStatusLess: 'Sure, we\'ll only message you once a month.',
     subscriptionStatusStop: 'You\'ve been unsubscribed.',
   },
@@ -39,5 +40,10 @@ module.exports = {
     gambit: 'gambit',
     subscriptionStatusLess: 'subscriptionStatusLess',
     subscriptionStatusStop: 'subscriptionStatusStop',
+  },
+  subscriptionStatusValues: {
+    active: 'active',
+    less: 'less',
+    stop: 'undeliverable',
   },
 };

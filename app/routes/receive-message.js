@@ -15,8 +15,8 @@ const loadInboundMessageMiddleware = require('../../lib/middleware/receive-messa
 const createInboundMessageMiddleware = require('../../lib/middleware/receive-message/message-inbound-create');
 const campaignKeywordMiddleware = require('../../lib/middleware/receive-message/campaign-keyword');
 const rivescriptMiddleware = require('../../lib/middleware/receive-message/rivescript');
-const pausedMiddleware = require('../../lib/middleware/receive-message/conversation-paused');
-const subscriptionStatusMiddleware = require('../../lib/middleware/receive-message/subscription-status');
+const updateUserMiddleware = require('../../lib/middleware/receive-message/user-update');
+const supportMiddleware = require('../../lib/middleware/receive-message/support');
 const campaignMenuMiddleware = require('../../lib/middleware/receive-message/campaign-menu');
 const currentCampaignMiddleware = require('../../lib/middleware/receive-message/campaign-current');
 const closedCampaignMiddleware = require('../../lib/middleware/receive-message/campaign-closed');
@@ -32,6 +32,7 @@ router.use(createConversationMiddleware());
 
 // Fetch Conversation Northstar User.
 router.use(getUserMiddleware());
+// TODO: Create User if not found.
 
 // Load/create inbound message.
 router.use(loadInboundMessageMiddleware());
@@ -43,11 +44,10 @@ router.use(campaignKeywordMiddleware());
 // Send our inbound message to Rivescript bot for a reply. If reply is not a macro, send it. 
 router.use(rivescriptMiddleware());
 
-// If Conversation is paused, forward inbound messages elsewhere and send a noReply.
-router.use(pausedMiddleware());
+router.use(updateUserMiddleware());
 
-// Check for subscription status macros.
-router.use(subscriptionStatusMiddleware());
+// If Conversation is paused, forward inbound messages elsewhere and send a noReply.
+router.use(supportMiddleware());
 
 // If MENU command, set random Campaign and ask for Signup.
 router.use(campaignMenuMiddleware());
