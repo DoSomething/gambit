@@ -11,6 +11,7 @@ const paramsMiddleware = require('../../lib/middleware/receive-message/params');
 const getConversationMiddleware = require('../../lib/middleware/conversation-get');
 const createConversationMiddleware = require('../../lib/middleware/conversation-create');
 const getUserMiddleware = require('../../lib/middleware/receive-message/user-get');
+const createUserIfNotFoundMiddleware = require('../../lib/middleware/receive-message/user-create');
 const loadInboundMessageMiddleware = require('../../lib/middleware/receive-message/message-inbound-load');
 const createInboundMessageMiddleware = require('../../lib/middleware/receive-message/message-inbound-create');
 const campaignKeywordMiddleware = require('../../lib/middleware/receive-message/campaign-keyword');
@@ -26,13 +27,13 @@ const continueCampaignMiddleware = require('../../lib/middleware/receive-message
 
 router.use(paramsMiddleware());
 
-// Load/create conversation
+// Load/create conversation.
 router.use(getConversationMiddleware());
 router.use(createConversationMiddleware());
 
-// Fetch Conversation Northstar User.
+// Fetch/create Northstar User.
 router.use(getUserMiddleware());
-// TODO: Create User if not found.
+router.use(createUserIfNotFoundMiddleware());
 
 // Load/create inbound message.
 router.use(loadInboundMessageMiddleware());

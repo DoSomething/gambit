@@ -298,4 +298,16 @@ conversationSchema.methods.getNorthstarUser = function () {
   return northstar.fetchUserByMobile(this.platformUserId);
 };
 
+/**
+ * @return {Promise}
+ */
+conversationSchema.methods.createNorthstarUser = function () {
+  // For now, we only need to store User properties for SMS conversations.
+  if (this.platform !== 'sms') {
+    return null;
+  }
+
+  return northstar.createUserForMobile(this.platformUserId);
+};
+
 module.exports = mongoose.model('Conversation', conversationSchema);
