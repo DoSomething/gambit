@@ -290,11 +290,14 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function () {
  * @return {Promise}
  */
 conversationSchema.methods.getNorthstarUser = function () {
-  // For now, we only need to store User properties for SMS conversations.
-  if (this.platform !== 'sms') {
-    return null;
+  if (this.platform === 'sms') {
+    return northstar.fetchUserByMobile(this.platformUserId);
   }
-
+  if (this.platform === 'slack') {
+    return slack.fetchSlackUserBySlackId(this.platformUserId)
+      .then(slackUser => northstar.fetchUserByEmail(slackUser.profile.email))
+      .catch(err => err);
+  }
   return northstar.fetchUserByMobile(this.platformUserId);
 };
 
