@@ -12,7 +12,7 @@ const basicAuthString = `${process.env.DS_GAMBIT_CONVERSATIONS_API_BASIC_AUTH_NA
 const configVars = {
   apiKey: appConfig.apiKey,
   introFilePath: path.resolve(__dirname, 'intro.txt'),
-  platformUserId: process.env.DS_CONSOLEBOT_PLATFORM_USER_ID || 'consolebot',
+  mobile: process.env.DS_CONSOLEBOT_MOBILE || '5555555555',
   prompt: process.env.DS_CONSOLEBOT_PROMPT || 'You>',
   replyPrefix: process.env.DS_CONSOLEBOT_REPLY_PREFIX || 'Bot>',
   replyColor: process.env.DS_CONSOLEBOT_REPLY_COLOR || 'magenta',

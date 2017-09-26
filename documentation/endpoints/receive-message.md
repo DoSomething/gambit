@@ -18,7 +18,7 @@ Name | Type | Description
 `slackId` | `string` |
 `slackChannel` | `string` |
 `facebookId` | `string` |
-`platformUserId` | `string` | If passed, the Conversation.platform is set to `'api'`.
+`mobile` | `string` | Mobile number for the User (passed for general API usage, e.g. Consolebot).
 `text` | `string` | Incoming message sent from User.
 `mediaUrl` | `string` | Media attachment URL (currently only supports 1 attachment).
 
