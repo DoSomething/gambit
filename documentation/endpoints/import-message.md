@@ -8,14 +8,19 @@ Outbound communication may happen on a different channel. This endpoint allows u
 
 ## Input
 
-### Customer.io
+### Twilio's `statusCallback` webhook
 It's the only supported importer at this time. See [Broadcast Process Wiki](https://github.com/DoSomething/gambit-conversations/wiki/Broadcasts-Process)
 
 Name | Type | Description
 --- | --- | ---
-`phone` | `string` | User's phone number
-`broadcastId` | `string` | Contentful Broadcast Id of this imported message
-`fields` | `Array` | Array of field objects. Each field object's value is used to interpolate placeholders in the copy of the message stored in Contentful.
+`To` | `string` | The phone number of the recipient.
+`From` | `string` | The phone number that sent this message.
+`Body` | `string` | The text body of the message. Up to 1600 characters long.
+`MessageStatus` | `string` | The status of the message. Message delivery information is reflected in message status. The possible values are listed in the [Message resource](https://www.twilio.com/docs/api/messaging/message#message-status-values).
+`MessageSid` | `string` | A 34 character unique identifier for the message.
+`ApiVersion` | `string` | Current API version.
+
+>[Twilio standard request parameters](https://www.twilio.com/docs/api/twiml/sms/twilio_request#request-parameters).
 
 ## Examples
 
@@ -23,13 +28,13 @@ Name | Type | Description
 <details>
 <summary><strong>Example Request</strong></summary>
 
-Example of an inbound POST request from a Customer.io webhook.
+Inbound POST request from Twilio's `statusCallback` webhook.
 
 ```
-curl -X "POST" "http://localhost:5100/api/v1/import-message?platform=customerio" \
+curl -X "POST" "http://localhost:5100/api/v1/import-message?broadcastId=7zU0Mb1k9GkWWI40o06Mic" \
      -H "Authorization: Basic cHVwcGV0OnRvdGFsbHlzZWNyZXQ=" \
      -H "Content-Type: application/json" \
-     -d '{ "broadcastId" : "7zU0Mb1k9GkWWI40o06Mic", "phone": "+5555555555", "fields": [{"customer.first_name": "taco"}]}'
+     -d '{ "To" : "+5551234567", "Body": "Boost a stranger''s self-esteem with just a sticky note! \n\nWant to join Mirror Messages?\n\nYes or No", "MessageStatus": "delivered", "MessageSid": "SMXXX"}'
 ```
 </details>
 
@@ -47,10 +52,15 @@ curl -X "POST" "http://localhost:5100/api/v1/import-message?platform=customerio"
         "conversationId": "59a863a25e5v860956ffcc45",
         "campaignId": 7,
         "topic": "campaign",
-        "text": "Heya, taco! Down to complete today's action?",
-        "template": "askSignupMessage",
+        "text": "Boost a stranger's self-esteem with just a sticky note! \n\nWant to join Mirror Messages?\n\nYes or No",
+        "template": "askSignup",
         "direction": "outbound-api-import",
         "_id": "59a863a25e5d960956ffcc46",
+        "broadcastId": "7zU0Mb1k9GkWWI40o06Mic",
+        "platformMessageId": "SMXXX",
+        "metadata": {
+		        "requestId": "5a2153c4-2c96-4061-a7fc-a7459bb81d58"
+		    },
         "attachments": []
       }
     ]
@@ -58,4 +68,3 @@ curl -X "POST" "http://localhost:5100/api/v1/import-message?platform=customerio"
 }
 ```
 </details>
-
