@@ -313,6 +313,6 @@ conversationSchema.methods.createNorthstarUser = function () {
   }
 
   return null;
-};  
+};
 
 module.exports = mongoose.model('Conversation', conversationSchema);
