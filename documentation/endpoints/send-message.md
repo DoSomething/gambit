@@ -21,7 +21,7 @@ Supported templates:
 
 Name | Type | Description
 --- | --- | ---
-`phone` | `string` | Phone number of User to send outbound message to
+`mobile` | `string` | Mobile number of User to send outbound message to
 `slackId` | `string` | Slack Id of User to send outbound message to
 `campaignId` | `number` | Campaign Id of outbound message
 `template` | `string` | Campaign message template to send
