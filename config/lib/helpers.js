@@ -17,7 +17,6 @@ module.exports = {
     'askQuantity',
     'askWhyParticipated',
     'completedMenu',
-    'askWhyParticipated',
     'externalSignupMenu',
     'gambitSignupMenu',
     'invalidCaption',
