@@ -47,40 +47,42 @@ curl -X "POST" "http://localhost:5100/api/v1/receive-message" \
 ```
 {
   "data": {
-    "inbound": [
-      {
-        "__v": 0,
-        "updatedAt": "2017-08-31T19:21:47.556Z",
-        "createdAt": "2017-08-31T19:21:47.556Z",
-        "conversationId": "59a7203fc731160d31cfdad2",
-        "campaignId": 2710,
-        "topic": "campaign",
-        "text": "menu",
-        "direction": "inbound",
-        "_id": "59a861cbf64c3e0902d956e7",
-        "attachments": [
-          {
-            "contentType": "image/png",
-            "url": "http://placekitten.com/g/800/600"
-          }
-        ]
-      }
-    ],
-    "outbound": [
-      {
-        "__v": 0,
-        "updatedAt": "2017-08-31T19:21:47.597Z",
-        "createdAt": "2017-08-31T19:21:47.597Z",
-        "conversationId": "59a7203fc731160d31cfdad2",
-        "campaignId": 7656,
-        "topic": "campaign_7656",
-        "text": "Help us send letters of support to every mosque in the United States. \n\nWant to join Sincerely, Us?\n\nYes or No",
-        "template": "askSignupMessage",
-        "direction": "outbound-reply",
-        "_id": "59a861cbf64c3e0902d956e8",
-        "attachments": []
-      }
-    ]
+    "messages": {
+      "inbound": [
+        {
+          "__v": 0,
+          "updatedAt": "2017-08-31T19:21:47.556Z",
+          "createdAt": "2017-08-31T19:21:47.556Z",
+          "conversationId": "59a7203fc731160d31cfdad2",
+          "campaignId": 2710,
+          "topic": "campaign",
+          "text": "menu",
+          "direction": "inbound",
+          "_id": "59a861cbf64c3e0902d956e7",
+          "attachments": [
+            {
+              "contentType": "image/png",
+              "url": "http://placekitten.com/g/800/600"
+            }
+          ]
+        }
+      ],
+      "outbound": [
+        {
+          "__v": 0,
+          "updatedAt": "2017-08-31T19:21:47.597Z",
+          "createdAt": "2017-08-31T19:21:47.597Z",
+          "conversationId": "59a7203fc731160d31cfdad2",
+          "campaignId": 7656,
+          "topic": "campaign_7656",
+          "text": "Help us send letters of support to every mosque in the United States. \n\nWant to join Sincerely, Us?\n\nYes or No",
+          "template": "askSignupMessage",
+          "direction": "outbound-reply",
+          "_id": "59a861cbf64c3e0902d956e8",
+          "attachments": []
+        }
+      ]
+    }
   }
 }
 ```
