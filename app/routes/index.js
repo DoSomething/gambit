@@ -5,6 +5,7 @@ const restify = require('express-restify-mongoose');
 const receiveMessageRoute = require('./receive-message');
 const sendMessageRoute = require('./send-message');
 const importMessageRoute = require('./import-message');
+const broadcastSettingsRoute = require('./broadcast-settings');
 
 // middleware
 const authenticateMiddleware = require('../../lib/middleware/authenticate');
@@ -37,6 +38,7 @@ module.exports = function init(app) {
   app.use(authenticateMiddleware());
   // parse metadata like requestId and retryCount for all requests after this line
   app.use(parseMetadataMiddleware());
+
   // receive-message route
   app.use('/api/v1/receive-message',
     receiveMessageRoute);
@@ -46,4 +48,7 @@ module.exports = function init(app) {
   // import-message route
   app.use('/api/v1/import-message',
     importMessageRoute);
+  // broadcast-settings route
+  app.use('/api/v1/broadcast-settings',
+    broadcastSettingsRoute);
 };
