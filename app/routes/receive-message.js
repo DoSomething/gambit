@@ -1,11 +1,8 @@
 'use strict';
 
 const express = require('express');
-const bot = require('../../lib/rivescript');
 
 const router = express.Router();
-// Load Rivescript triggers and replies.
-bot.getBot();
 
 const paramsMiddleware = require('../../lib/middleware/receive-message/params');
 const getConversationMiddleware = require('../../lib/middleware/conversation-get');

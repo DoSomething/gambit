@@ -193,6 +193,9 @@ conversationSchema.methods.getMessagePayloadFromReq = function (req = {}, direct
   if (req.agentId) {
     data.agentId = req.agentId;
   }
+  if (req.rivescriptMatch) {
+    data.match = req.rivescriptMatch;
+  }
 
   return data;
 };
