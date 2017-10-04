@@ -310,6 +310,7 @@ conversationSchema.methods.getNorthstarUser = function () {
  * @return {Promise}
  */
 conversationSchema.methods.createNorthstarUser = function () {
+  // TODO: return promise! Or risk getting "TypeError: Cannot read property 'then' of null"
   // For now, we only need to support creating new Users by a mobile number.
   if (this.platform === 'sms' || this.platform === 'api') {
     return northstar.createUserForMobile(this.platformUserId);
