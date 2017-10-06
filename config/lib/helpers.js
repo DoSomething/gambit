@@ -45,4 +45,5 @@ module.exports = {
     less: 'less',
     stop: 'undeliverable',
   },
+  blinkSupressHeaders: 'x-blink-retry-suppress',
 };
