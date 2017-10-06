@@ -26,6 +26,7 @@ const messageSchema = new mongoose.Schema({
   attachments: Array,
   broadcastId: String,
   agentId: String,
+  match: String,
   metadata: {
     requestId: { type: String, index: true },
     retryCount: Number,

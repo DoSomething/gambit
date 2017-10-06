@@ -21,3 +21,6 @@ coverage
 
 #local nvm configuration
 .nvmrc
+
+# External Rivescript
+brain/contentful

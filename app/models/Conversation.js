@@ -2,12 +2,14 @@
 
 const mongoose = require('mongoose');
 const logger = require('heroku-logger');
+const Promise = require('bluebird');
 
 const Messages = require('./Message');
 const facebook = require('../../lib/facebook');
 const northstar = require('../../lib/northstar');
 const slack = require('../../lib/slack');
 const twilio = require('../../lib/twilio');
+const UnprocessibleEntityError = require('../../app/exceptions/UnprocessibleEntityError');
 
 const defaultTopic = 'random';
 
@@ -193,6 +195,9 @@ conversationSchema.methods.getMessagePayloadFromReq = function (req = {}, direct
   if (req.agentId) {
     data.agentId = req.agentId;
   }
+  if (req.rivescriptMatch) {
+    data.match = req.rivescriptMatch;
+  }
 
   return data;
 };
@@ -290,12 +295,33 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function () {
  * @return {Promise}
  */
 conversationSchema.methods.getNorthstarUser = function () {
-  // For now, we only need to store User properties for SMS conversations.
-  if (this.platform !== 'sms') {
-    return null;
+  if (this.platform === 'facebook') {
+    const errorMsg = `getNorthstarUser: Fetching Northstar users is not supported in ${this.platform} platform.`;
+    const error = new UnprocessibleEntityError(errorMsg);
+    return Promise.reject(error);
+  }
+
+  if (this.platform === 'slack') {
+    return slack.fetchSlackUserBySlackId(this.platformUserId)
+      .then(slackUser => northstar.fetchUserByEmail(slackUser.profile.email))
+      .catch(err => err);
   }
 
   return northstar.fetchUserByMobile(this.platformUserId);
+};
+
+/**
+ * @return {Promise}
+ */
+conversationSchema.methods.createNorthstarUser = function () {
+  // For now, we only need to support creating new Users by a mobile number.
+  if (this.platform === 'sms' || this.platform === 'api') {
+    return northstar.createUserForMobile(this.platformUserId);
+  }
+
+  const errorMsg = `createNorthstarUser: Creating Northstar users is not supported in ${this.platform} platform.`;
+  const error = new UnprocessibleEntityError(errorMsg);
+  return Promise.reject(error);
 };
 
 module.exports = mongoose.model('Conversation', conversationSchema);

@@ -23,6 +23,34 @@ const Campaign = require('./app/models/Campaign');
 Campaign.sync();
 setInterval(() => { Campaign.sync(); }, config.campaignSyncInterval);
 
+const logger = require('heroku-logger');
+const fs = require('fs');
+const contentful = require('./lib/contentful');
+const rivescript = require('./lib/rivescript');
+
+const dir = './brain/contentful';
+if (!fs.existsSync(dir)) {
+  fs.mkdirSync(dir);
+}
+
+// Fetch rivescript files from Contentful.
+contentful.fetchRivescripts()
+  .then((entries) => {
+    entries.forEach((entry) => {
+      const id = entry.sys.id;
+      const script = entry.fields.rivescript;
+      const filename = `${dir}/${id}.rive`;
+      // Write them.
+      fs.writeFile(filename, script, ((err) => {
+        if (err) logger.error('writeFile', { err });
+      }));
+    });
+    // Load the Rivescript bot.
+    rivescript.getBot();
+  })
+  .catch(err => logger.error('fetchRivescripts', { err }));
+
+
 const db = mongoose.connection;
 db.on('error', () => {
   // TODO console.log has to be replaced by other development logging library: Winston?
