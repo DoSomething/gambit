@@ -2,12 +2,14 @@
 
 const mongoose = require('mongoose');
 const logger = require('heroku-logger');
+const Promise = require('bluebird');
 
 const Messages = require('./Message');
 const facebook = require('../../lib/facebook');
 const northstar = require('../../lib/northstar');
 const slack = require('../../lib/slack');
 const twilio = require('../../lib/twilio');
+const UnprocessibleEntityError = require('../../app/exceptions/UnprocessibleEntityError');
 
 const defaultTopic = 'random';
 
@@ -294,7 +296,9 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function () {
  */
 conversationSchema.methods.getNorthstarUser = function () {
   if (this.platform === 'facebook') {
-    return null;
+    const errorMsg = `getNorthstarUser: Fetching Northstar users is not supported in ${this.platform} platform.`;
+    const error = new UnprocessibleEntityError(errorMsg);
+    return Promise.reject(error);
   }
 
   if (this.platform === 'slack') {
@@ -315,7 +319,9 @@ conversationSchema.methods.createNorthstarUser = function () {
     return northstar.createUserForMobile(this.platformUserId);
   }
 
-  return null;
+  const errorMsg = `createNorthstarUser: Creating Northstar users is not supported in ${this.platform} platform.`;
+  const error = new UnprocessibleEntityError(errorMsg);
+  return Promise.reject(error);
 };
 
 module.exports = mongoose.model('Conversation', conversationSchema);
