@@ -1,7 +1,7 @@
 'use strict';
 
 const httpMocks = require('node-mocks-http');
-const URL = require('url').URL;
+const url = require('url');
 
 module.exports = {
   stubLogger: function stubLogger(sandbox, logger) {
@@ -25,7 +25,7 @@ module.exports = {
      * @see https://expressjs.com/en/4x/api.html#req.baseUrl
      * @see https://nodejs.org/api/url.html#url_url_pathname
      */
-    const myUrl = new URL(opts.url);
+    const myUrl = url.parse(opts.url, true);
     req.baseUrl = myUrl.pathname;
 
     return req;
