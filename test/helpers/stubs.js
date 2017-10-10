@@ -16,7 +16,7 @@ module.exports = {
       url: 'http://localhost:5100/testpath',
     };
     const opts = Object.assign({}, defaults, options);
-    const req = httpMocks.createRequest(options);
+    const req = httpMocks.createRequest(opts);
 
     // Some needed functions that Express requests are assumed to have
 
