@@ -17,19 +17,35 @@ const Conversation = require('../models/Conversation');
 const Message = require('../models/Message');
 const Campaign = require('../models/Campaign');
 
-restify.serve(router, Conversation, { name: 'conversations' });
-restify.serve(router, Message, { name: 'messages' });
-restify.serve(router, Campaign, { name: 'campaigns' });
+const resultsHeader = 'X-Gambit-Results-Count';
+const resultsLimit = 50;
+restify.serve(router, Conversation, {
+  limit: resultsLimit,
+  name: 'conversations',
+  totalCountHeader: resultsHeader,
+});
+restify.serve(router, Message, {
+  limit: resultsLimit,
+  name: 'messages',
+  totalCountHeader: resultsHeader,
+});
+restify.serve(router, Campaign, {
+  limit: resultsLimit,
+  name: 'campaigns',
+  totalCountHeader: resultsHeader,
+});
 
 module.exports = function init(app) {
   app.get('/', (req, res) => res.send('hi'));
   app.get('/favicon.ico', (req, res) => res.sendStatus(204));
 
-  // TODO: Eventually remove this.
-  // @see https://github.com/DoSomething/gambit-conversations/issues/55
   app.use((req, res, next) => {
+    res.header('Access-Control-Expose-Headers', resultsHeader);
+    // TODO: Eventually remove this.
+    // @see https://github.com/DoSomething/gambit-conversations/issues/55
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+
     return next();
   });
   // restified routes
