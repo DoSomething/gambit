@@ -2,12 +2,14 @@
 
 const express = require('express');
 const restify = require('express-restify-mongoose');
+const config = require('../../config/app/routes/mongoose');
+
 const Conversation = require('../models/Conversation');
 const Message = require('../models/Message');
 const Campaign = require('../models/Campaign');
 
 const router = express.Router();
-const countHeader = 'X-Gambit-Results-Count';
+const countHeader = config.countHeaderName;
 
 router.use((req, res, next) => {
   res.header('Access-Control-Expose-Headers', countHeader);
@@ -23,7 +25,7 @@ const checkReqMethod = function checkReqMethod(req, res, next) {
 
 function getRestifyOptionsWithName(name) {
   return {
-    limit: 50,
+    limit: config.defaultLimit,
     name,
     totalCountHeader: countHeader,
     preMiddleware: checkReqMethod,
