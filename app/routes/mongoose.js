@@ -7,6 +7,12 @@ const Message = require('../models/Message');
 const Campaign = require('../models/Campaign');
 
 const router = express.Router();
+const countHeader = 'X-Gambit-Results-Count';
+
+router.use((req, res, next) => {
+  res.header('Access-Control-Expose-Headers', countHeader);
+  return next();
+});
 
 const checkReqMethod = function checkReqMethod(req, res, next) {
   if (req.method !== 'GET') {
@@ -15,26 +21,17 @@ const checkReqMethod = function checkReqMethod(req, res, next) {
   return next();
 };
 
-const resultsHeader = 'X-Gambit-Results-Count';
-const resultsLimit = 50;
+function getRestifyOptionsWithName(name) {
+  return {
+    limit: 50,
+    name,
+    totalCountHeader: countHeader,
+    preMiddleware: checkReqMethod,
+  };
+}
 
-restify.serve(router, Conversation, {
-  limit: resultsLimit,
-  name: 'conversations',
-  totalCountHeader: resultsHeader,
-  preMiddleware: checkReqMethod,
-});
-restify.serve(router, Message, {
-  limit: resultsLimit,
-  name: 'messages',
-  totalCountHeader: resultsHeader,
-  preMiddleware: checkReqMethod,
-});
-restify.serve(router, Campaign, {
-  limit: resultsLimit,
-  name: 'campaigns',
-  totalCountHeader: resultsHeader,
-  preMiddleware: checkReqMethod,
-});
+restify.serve(router, Conversation, getRestifyOptionsWithName('conversations'));
+restify.serve(router, Message, getRestifyOptionsWithName('messages'));
+restify.serve(router, Campaign, getRestifyOptionsWithName('campaigns'));
 
 module.exports = router;
