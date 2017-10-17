@@ -11,6 +11,7 @@
 ! sub can't   = can not
 ! sub dont    = do not
 ! sub dad     = someone
+! sub dis     = this
 ! sub don't   = do not
 ! sub friend  = someone
 ! sub gf      = someone
@@ -26,6 +27,7 @@
 ! sub re      = are
 ! sub ru      = are you
 ! sub she     = someone
+! sub tf      = the fuck
 ! sub u       = you
 ! sub ur      = you are
 ! sub urself  = yourself
@@ -49,6 +51,7 @@
 
 // Arrays
 ! array bot       = bot robot machine computer
+! array botname   = freddie freddi alicia alysa alysha
 ! array die       = die|kill myself|killing myself
   ^ commit suicide|committing suicide|commiting suicide
 ! array dosomething = dosomething|dosomethingorg|do something
