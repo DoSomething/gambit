@@ -46,7 +46,7 @@
 ! sub wut     = what
 
 // Arrays
-! array bot       = bot robot machine
+! array bot       = bot robot machine computer
 ! array die       = die|kill myself|killing myself
   ^ commit suicide|committing suicide|commiting suicide
 ! array dosomething = dosomething|dosomethingorg|do something
