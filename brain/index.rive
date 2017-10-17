@@ -43,6 +43,7 @@
 ! sub whos    = who is
 ! sub won't   = will not
 ! sub wont    = will not
+! sub wut     = what
 
 // Arrays
 ! array bot       = bot robot machine
