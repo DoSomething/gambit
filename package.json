@@ -39,6 +39,7 @@
     "basic-auth": "^1.1.0",
     "bluebird": "^3.5.0",
     "body-parser": "^1.17.2",
+    "cacheman": "^2.2.1",
     "colors": "^1.1.2",
     "contentful": "^4.5.0",
     "dotenv": "^4.0.0",
