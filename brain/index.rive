@@ -3,6 +3,7 @@
 // Bot variables
 ! var name = Freddie
 ! var url  = DoSomething.org
+! var cmd_support = Q
 
 // Substitutions
 ! sub bf      = someone
@@ -11,6 +12,7 @@
 ! sub can't   = can not
 ! sub dont    = do not
 ! sub dad     = someone
+! sub dis     = this
 ! sub don't   = do not
 ! sub friend  = someone
 ! sub gf      = someone
@@ -23,8 +25,10 @@
 ! sub i'll    = i will
 ! sub im      = i am
 ! sub isn't   = is not
+! sub re      = are
 ! sub ru      = are you
 ! sub she     = someone
+! sub tf      = the fuck
 ! sub u       = you
 ! sub ur      = you are
 ! sub urself  = yourself
@@ -43,12 +47,19 @@
 ! sub whos    = who is
 ! sub won't   = will not
 ! sub wont    = will not
+! sub wut     = what
+! sub wuts    = what is
 
 // Arrays
-! array bot       = bot robot machine
+! array bot       = bot robot machine computer
+! array botname   = freddie freddi alicia alysa alysha
 ! array die       = die|kill myself|killing myself
   ^ commit suicide|committing suicide|commiting suicide
 ! array dosomething = dosomething|dosomethingorg|do something
+! array hello     = hello | howdy | hola
+  ^ hi|hii|hiii|hiiii|hiiiii|hiiiiii
+  ^ helloo|hellooo|hellloooo
+  ^ hey|heyy|heyyy|heyyyy|heyyyy|heyyyyyy 
 ! array human     = human person real
 ! array is        = is|will not stop|keeps|was|was being|gets|am|am being|have been
 ! array hurting   = hurt|hurting|hurting|hurts
