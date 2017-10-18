@@ -9,6 +9,7 @@
 // Substitutions
 ! sub bf      = someone
 ! sub bff     = someone
+! sub brother = someone
 ! sub boyfriend  = someone
 ! sub can't   = can not
 ! sub cant    = can not
@@ -16,6 +17,7 @@
 ! sub dis     = this
 ! sub don't   = do not
 ! sub dont    = do not
+! sub father  = someone
 ! sub friend  = someone
 ! sub girlfriend = someone
 ! sub gf      = someone
