@@ -1,33 +1,41 @@
 ! version = 2.0
 
 // Bot variables
+! var cmd_support = Q
+! var member_count = 5.5 MILLION+
 ! var name = Freddie
 ! var url  = DoSomething.org
-! var cmd_support = Q
 
 // Substitutions
 ! sub bf      = someone
 ! sub bff     = someone
-! sub cant    = can not
+! sub boyfriend  = someone
 ! sub can't   = can not
-! sub dont    = do not
+! sub cant    = can not
 ! sub dad     = someone
 ! sub dis     = this
 ! sub don't   = do not
+! sub dont    = do not
 ! sub friend  = someone
+! sub girlfriend = someone
 ! sub gf      = someone
 ! sub gonna   = going to
 ! sub he      = someone
 ! sub he's    = someone is
+! sub hes     = someone is
 ! sub i'm     = i am
 ! sub i'd     = i would
 ! sub i've    = i have
 ! sub i'll    = i will
+! sub idk     = i do not know
 ! sub im      = i am
 ! sub isn't   = is not
+! sub ive     = i have
 ! sub re      = are
 ! sub ru      = are you
 ! sub she     = someone
+! sub she's   = someone is
+! sub shes    = someone is
 ! sub tf      = the fuck
 ! sub u       = you
 ! sub ur      = you are
