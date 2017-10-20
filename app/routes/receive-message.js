@@ -13,6 +13,7 @@ const loadInboundMessageMiddleware = require('../../lib/middleware/receive-messa
 const createInboundMessageMiddleware = require('../../lib/middleware/receive-message/message-inbound-create');
 const campaignKeywordMiddleware = require('../../lib/middleware/receive-message/campaign-keyword');
 const rivescriptMiddleware = require('../../lib/middleware/receive-message/rivescript');
+const infoTemplateMiddleware = require('../../lib/middleware/receive-message/template-info');
 const updateUserMiddleware = require('../../lib/middleware/receive-message/user-update');
 const supportMiddleware = require('../../lib/middleware/receive-message/support');
 const campaignMenuMiddleware = require('../../lib/middleware/receive-message/campaign-menu');
@@ -36,13 +37,17 @@ router.use(createUserIfNotFoundMiddleware());
 router.use(loadInboundMessageMiddleware());
 router.use(createInboundMessageMiddleware());
 
-// If Campaign keyword was sent, update Conversation campaign and send continueCampaign reply.
+// Updates Last Messaged At, Subscription Status, Paused.
+router.use(updateUserMiddleware());
+
+// If Campaign keyword was sent, update Conversation campaign and send continueCampaign.
 router.use(campaignKeywordMiddleware());
 
 // Send our inbound message to Rivescript bot for a reply. If reply is not a macro, send it. 
 router.use(rivescriptMiddleware());
 
-router.use(updateUserMiddleware());
+// Checks for INFO or HELP keywords.
+router.use(infoTemplateMiddleware());
 
 // If Conversation is paused, forward inbound messages elsewhere and send a noReply.
 router.use(supportMiddleware());

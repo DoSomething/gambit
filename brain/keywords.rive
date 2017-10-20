@@ -1,5 +1,10 @@
-// profile.rive
-// Account management and macros.
+// keywords.rive
+
++ info
+- sendInfoMessage
+
++ help
+@ info
 
 + less
 - subscriptionStatusLess
