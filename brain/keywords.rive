@@ -18,7 +18,10 @@
 + stop
 - subscriptionStatusStop
 
-+ stop @messaging [me]
++ @unsubscribe
+@ stop
+
++ @unsubscribe @messaging [to] [me]
 @ stop
 
 + shut up
