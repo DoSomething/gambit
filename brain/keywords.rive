@@ -1,5 +1,8 @@
 // keywords.rive
 
++ crisis
+- sendCrisisMessage
+
 + info
 - sendInfoMessage
 
