@@ -3,6 +3,9 @@
 
 > topic random 
 
+// TODO: Refactor as a macro in keywords.rive 
+// @see sendInfoMessage
+
 + crisis
 - Thanks for being brave and sharing that. If you want to talk to someone, our friends at CTL are\s
 ^ here for you 24/7. Just send a text to 741741. They’ll listen!
@@ -15,20 +18,5 @@
 
 + [*] i am [feeling] (depressed|bipolar|freaking out) [*]
 @ crisis
-
-// General:
-
-+ question
-- Text back your question and I'll try to get back to you within 24 hrs.\n\nIf you want to cancel\s
-^ your request without waiting for a response, reply with "nevermind".{topic=support}
-
-+ q
-@ question
-
-+ help me [*]
-@ question
-
-+ [*] you help me [*]
-@ question
 
 < topic

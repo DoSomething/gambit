@@ -12,6 +12,7 @@ const twilio = require('../../lib/twilio');
 const UnprocessibleEntityError = require('../../app/exceptions/UnprocessibleEntityError');
 
 const defaultTopic = 'random';
+const supportTopic = 'support';
 
 /**
  * Schema.
@@ -72,8 +73,6 @@ conversationSchema.methods.setTopic = function (newTopic) {
     return this.save();
   }
 
-  const supportTopic = 'support';
-
   if (this.topic === supportTopic && newTopic !== supportTopic) {
     this.paused = false;
   }
@@ -86,6 +85,13 @@ conversationSchema.methods.setTopic = function (newTopic) {
   logger.trace('Conversation.setTopic', { newTopic });
 
   return this.save();
+};
+
+/**
+ * Set topic to support to pause User.
+ */
+conversationSchema.methods.supportRequested = function () {
+  return this.setTopic(supportTopic);
 };
 
 /**

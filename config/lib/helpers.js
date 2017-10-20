@@ -33,6 +33,7 @@ module.exports = {
     noReply: '',
     subscriptionStatusLess: 'Sure, we\'ll only message you once a month.',
     subscriptionStatusStop: 'You\'ve been unsubscribed.',
+    supportRequested: 'What\'s your question? I\'ll try my best to answer it.',
   },
   menuCommand,
   macros: {
@@ -42,6 +43,7 @@ module.exports = {
     sendInfoMessage: 'sendInfoMessage',
     subscriptionStatusLess: 'subscriptionStatusLess',
     subscriptionStatusStop: 'subscriptionStatusStop',
+    supportRequested: 'supportRequested',
   },
   subscriptionStatusValues: {
     active: 'active',
