@@ -1,0 +1,28 @@
+// keywords.rive
+
++ info
+- sendInfoMessage
+
++ help
+@ info
+
++ q
+- supportRequested
+
++ question
+@ q
+
++ less
+- subscriptionStatusLess
+
++ stop
+- subscriptionStatusStop
+
++ @unsubscribe
+@ stop
+
++ @unsubscribe @messaging [to] [me]
+@ stop
+
++ shut up
+@ stop

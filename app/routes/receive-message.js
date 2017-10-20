@@ -12,9 +12,12 @@ const createUserIfNotFoundMiddleware = require('../../lib/middleware/receive-mes
 const loadInboundMessageMiddleware = require('../../lib/middleware/receive-message/message-inbound-load');
 const createInboundMessageMiddleware = require('../../lib/middleware/receive-message/message-inbound-create');
 const campaignKeywordMiddleware = require('../../lib/middleware/receive-message/campaign-keyword');
-const rivescriptMiddleware = require('../../lib/middleware/receive-message/rivescript');
+const getRivescriptReplyMiddleware = require('../../lib/middleware/receive-message/rivescript-reply-get');
+const rivescriptTemplateMiddleware = require('../../lib/middleware/receive-message/template-rivescript');
+const infoTemplateMiddleware = require('../../lib/middleware/receive-message/template-info');
 const updateUserMiddleware = require('../../lib/middleware/receive-message/user-update');
-const supportMiddleware = require('../../lib/middleware/receive-message/support');
+const supportRequestedMiddleware = require('../../lib/middleware/receive-message/support-requested');
+const forwardSupportMessageMiddleware = require('../../lib/middleware/receive-message/support-message');
 const campaignMenuMiddleware = require('../../lib/middleware/receive-message/campaign-menu');
 const currentCampaignMiddleware = require('../../lib/middleware/receive-message/campaign-current');
 const closedCampaignMiddleware = require('../../lib/middleware/receive-message/campaign-closed');
@@ -36,19 +39,30 @@ router.use(createUserIfNotFoundMiddleware());
 router.use(loadInboundMessageMiddleware());
 router.use(createInboundMessageMiddleware());
 
-// If Campaign keyword was sent, update Conversation campaign and send continueCampaign reply.
-router.use(campaignKeywordMiddleware());
+// Send our inbound message to Rivescript bot for a reply.
+router.use(getRivescriptReplyMiddleware());
 
-// Send our inbound message to Rivescript bot for a reply. If reply is not a macro, send it. 
-router.use(rivescriptMiddleware());
-
+// Updates Last Messaged At, Subscription Status, Paused.
 router.use(updateUserMiddleware());
 
-// If Conversation is paused, forward inbound messages elsewhere and send a noReply.
-router.use(supportMiddleware());
+// Checks for INFO or HELP keywords.
+router.use(infoTemplateMiddleware());
 
-// If MENU command, set random Campaign and ask for Signup.
+// If Campaign keyword was sent, update Conversation campaign and send continueCampaign.
+router.use(campaignKeywordMiddleware());
+
+// If MENU keyword, set random Campaign and ask for Signup.
 router.use(campaignMenuMiddleware());
+
+// If QUESTION keyword, pause Conversation and prompt User to send their support question.
+router.use(supportRequestedMiddleware());
+
+// If Conversation is paused, forward inbound messages to Front, for agents to respond to.
+// Sends an empty reply message back.
+router.use(forwardSupportMessageMiddleware());
+
+// Sends the reply text returned by Rivescript.
+router.use(rivescriptTemplateMiddleware());
 
 // Otherwise, load the Campaign stored on the Conversation.
 router.use(currentCampaignMiddleware());
