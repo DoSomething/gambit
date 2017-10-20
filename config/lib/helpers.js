@@ -28,6 +28,7 @@ module.exports = {
     'invalidWhyParticipated',
   ],
   gambitConversationsTemplateText: {
+    crisis: 'Thanks for being brave and sharing that. If you want to talk to someone, our friends at CTL are here for you 24/7. Just send a text to 741741. Theyll listen!',
     info: `These are Do Something Alerts - 4 messages/mo. Info help@dosomething.org or ${helpCenterUrl}. Txt STOP to quit. Msg&Data Rates May Apply.`,
     noCampaign: `Sorry, I'm not sure how to respond to that.\n\nSay ${menuCommand.toUpperCase()} to find a Campaign to join.`,
     noReply: '',
@@ -40,6 +41,7 @@ module.exports = {
     confirmedCampaign: 'confirmedCampaign',
     declinedCampaign: 'declinedCampaign',
     gambit: 'gambit',
+    sendCrisisMessage: 'sendCrisisMessage',
     sendInfoMessage: 'sendInfoMessage',
     subscriptionStatusLess: 'subscriptionStatusLess',
     subscriptionStatusStop: 'subscriptionStatusStop',

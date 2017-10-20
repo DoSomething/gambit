@@ -14,6 +14,7 @@ const createInboundMessageMiddleware = require('../../lib/middleware/receive-mes
 const campaignKeywordMiddleware = require('../../lib/middleware/receive-message/campaign-keyword');
 const getRivescriptReplyMiddleware = require('../../lib/middleware/receive-message/rivescript-reply-get');
 const rivescriptTemplateMiddleware = require('../../lib/middleware/receive-message/template-rivescript');
+const crisisTemplateMiddleware = require('../../lib/middleware/receive-message/template-crisis');
 const infoTemplateMiddleware = require('../../lib/middleware/receive-message/template-info');
 const updateUserMiddleware = require('../../lib/middleware/receive-message/user-update');
 const supportRequestedMiddleware = require('../../lib/middleware/receive-message/support-requested');
@@ -56,6 +57,9 @@ router.use(campaignMenuMiddleware());
 
 // If QUESTION keyword, pause Conversation and prompt User to send their support question.
 router.use(supportRequestedMiddleware());
+
+// Sends CTL info for any crisis triggers.
+router.use(crisisTemplateMiddleware());
 
 // If Conversation is paused, forward inbound messages to Front, for agents to respond to.
 // Sends an empty reply message back.
