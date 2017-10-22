@@ -69,6 +69,8 @@ conversationSchema.statics.getFromReq = function (req) {
  * @return {boolean}
  */
 conversationSchema.methods.setTopic = function (newTopic) {
+  logger.debug('setTopic', { newTopic });
+
   if (this.topic === newTopic) {
     return this.save();
   }
@@ -111,7 +113,7 @@ conversationSchema.methods.setCampaignWithSignupStatus = function (campaign, sig
   this.signupStatus = signupStatus;
   logger.debug('setCampaignWithSignupStatus', { campaign: this.campaignId, signupStatus });
 
-  return this.setTopic(campaign.topic);
+  return this.setTopic('campaign');
 };
 
 /**
