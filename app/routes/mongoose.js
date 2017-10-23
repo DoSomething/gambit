@@ -6,7 +6,6 @@ const config = require('../../config/app/routes/mongoose');
 
 const Conversation = require('../models/Conversation');
 const Message = require('../models/Message');
-const Campaign = require('../models/Campaign');
 
 const router = express.Router();
 const countHeader = config.countHeaderName;
@@ -34,6 +33,5 @@ function getRestifyOptionsWithName(name) {
 
 restify.serve(router, Conversation, getRestifyOptionsWithName('conversations'));
 restify.serve(router, Message, getRestifyOptionsWithName('messages'));
-restify.serve(router, Campaign, getRestifyOptionsWithName('campaigns'));
 
 module.exports = router;
