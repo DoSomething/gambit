@@ -53,14 +53,14 @@ router.use(badWordsMiddleware());
 // Checks for INFO or HELP keywords.
 router.use(infoTemplateMiddleware());
 
-// If Campaign keyword was sent, update Conversation campaign and send continueCampaign.
-router.use(campaignKeywordMiddleware());
-
 // If MENU keyword, set random Campaign and ask for Signup.
 router.use(campaignMenuMiddleware());
 
 // If QUESTION keyword, pause Conversation and prompt User to send their support question.
 router.use(supportRequestedMiddleware());
+
+// If Campaign keyword was sent, update Conversation campaign and send continueCampaign.
+router.use(campaignKeywordMiddleware());
 
 // Sends CTL info for any crisis triggers.
 router.use(crisisTemplateMiddleware());
