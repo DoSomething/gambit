@@ -1,9 +1,8 @@
-// default.rive
-// Define a topic for general Campaign FAQ that all other Campaign specific topics should include.
+// campaign.rive
+// Interpret yes or no as response to a sent Ask Signup or Continue message for Current Campaign.
 
-> topic campaign includes random
+> topic campaign
 
-// TODO: Yes/No triggers should only match when User's signupStatus is set to 'prompt'. 
 + @yes [*]
 - confirmedCampaign
 

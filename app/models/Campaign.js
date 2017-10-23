@@ -1,6 +1,5 @@
 'use strict';
 
-const fs = require('fs');
 const mongoose = require('mongoose');
 const logger = require('heroku-logger');
 const gambitCampaigns = require('../../lib/gambit-campaigns');
@@ -48,19 +47,6 @@ const campaignSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 /**
- * @param {Number} campaignId
- * @return {String}
- */
-function getTopicForCampaignId(campaignId) {
-  // Check for triggers specific to this Campaign.
-  if (fs.existsSync(`brain/campaigns/${campaignId}.rive`)) {
-    return `campaign_${campaignId}`;
-  }
-
-  return 'campaign';
-}
-
-/**
  * Parses Gambit API response for a Campaign model.
  * @param {Object} campaign
  * @return {Object}
@@ -71,6 +57,7 @@ function parseGambitCampaign(gambitCampaign) {
     title: gambitCampaign.title,
     status: gambitCampaign.status,
     templates: gambitCampaign.templates,
+    topic: 'campaign',
   };
   result.keywords = gambitCampaign.keywords.map(keywordObject => keywordObject.keyword);
 
@@ -85,7 +72,6 @@ campaignSchema.statics.fetchCampaign = function (campaignId) {
   return gambitCampaigns.get(`campaigns/${campaignId}`)
     .then((response) => {
       const campaign = parseGambitCampaign(response);
-      campaign.topic = getTopicForCampaignId(campaignId);
 
       return this.findOneAndUpdate({ _id: campaignId }, campaign, { upsert: true })
         .then(() => logger.trace('campaign updated', { campaignId }));
