@@ -1,15 +1,13 @@
 // campaign.rive
 // Interpret yes or no as response to a sent Ask Signup or Continue message for Current Campaign.
 
-> topic campaign
+// We need to include random to catch all triggers defined in our random topic.
+> topic campaign includes random
 
 + @yes [*]
 - confirmedCampaign
 
 + @no [*]
 - declinedCampaign
-
-+ *
-- gambit
 
 < topic
