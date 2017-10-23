@@ -17,11 +17,6 @@ mongoose.connect(config.dbUri, {
   useMongoClient: true,
 });
 
-const Campaign = require('./app/models/Campaign');
-
-// Query Gambit Campaigns API to update Campaign keywords/status.
-Campaign.sync();
-
 const logger = require('heroku-logger');
 const fs = require('fs');
 const contentful = require('./lib/contentful');
