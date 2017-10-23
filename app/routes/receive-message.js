@@ -11,6 +11,7 @@ const getUserMiddleware = require('../../lib/middleware/receive-message/user-get
 const createUserIfNotFoundMiddleware = require('../../lib/middleware/receive-message/user-create');
 const loadInboundMessageMiddleware = require('../../lib/middleware/receive-message/message-inbound-load');
 const createInboundMessageMiddleware = require('../../lib/middleware/receive-message/message-inbound-create');
+const badWordsMiddleware = require('../../lib/middleware/receive-message/bad-words');
 const campaignKeywordMiddleware = require('../../lib/middleware/receive-message/campaign-keyword');
 const getRivescriptReplyMiddleware = require('../../lib/middleware/receive-message/rivescript-reply-get');
 const rivescriptTemplateMiddleware = require('../../lib/middleware/receive-message/template-rivescript');
@@ -45,6 +46,9 @@ router.use(getRivescriptReplyMiddleware());
 
 // Updates Last Messaged At, Subscription Status, Paused.
 router.use(updateUserMiddleware());
+
+// Scolds User if inbound message contains bad words.
+router.use(badWordsMiddleware());
 
 // Checks for INFO or HELP keywords.
 router.use(infoTemplateMiddleware());
