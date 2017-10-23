@@ -1,6 +1,5 @@
 'use strict';
 
-const fs = require('fs');
 const mongoose = require('mongoose');
 const logger = require('heroku-logger');
 const gambitCampaigns = require('../../lib/gambit-campaigns');
@@ -10,48 +9,42 @@ const activeStatus = 'active';
 /**
  * Schema.
  */
+const templateObject = {
+  raw: String,
+  rendered: String,
+  override: Boolean,
+};
 const campaignSchema = new mongoose.Schema({
   _id: Number,
+  // To be deprecated once this Model is deprecated.
+  id: Number,
   title: String,
   status: String,
   keywords: [String],
   topic: String,
   templates: {
-    askCaption: String,
-    askContinue: String,
-    askPhoto: String,
-    askSignup: String,
-    askQuantity: String,
-    askWhyParticipated: String,
-    campaignClosed: String,
-    completedMenu: String,
-    declinedContinue: String,
-    declinedSignup: String,
-    externalSignupMenu: String,
-    gambitSignupMenu: String,
-    invalidAskContinueResponse: String,
-    invalidAskSignupResponse: String,
-    invalidCaption: String,
-    invalidCompletedMenuCommand: String,
-    invalidPhoto: String,
-    invalidQuantity: String,
-    invalidSignupMenuCommand: String,
-    invalidWhyParticipated: String,
+    askCaption: templateObject,
+    askContinue: templateObject,
+    askPhoto: templateObject,
+    askSignup: templateObject,
+    askQuantity: templateObject,
+    askWhyParticipated: templateObject,
+    campaignClosed: templateObject,
+    completedMenu: templateObject,
+    declinedContinue: templateObject,
+    declinedSignup: templateObject,
+    externalSignupMenu: templateObject,
+    gambitSignupMenu: templateObject,
+    invalidAskContinueResponse: templateObject,
+    invalidAskSignupResponse: templateObject,
+    invalidCaption: templateObject,
+    invalidCompletedMenuCommand: templateObject,
+    invalidPhoto: templateObject,
+    invalidQuantity: templateObject,
+    invalidSignupMenuCommand: templateObject,
+    invalidWhyParticipated: templateObject,
   },
 }, { timestamps: true });
-
-/**
- * @param {Number} campaignId
- * @return {String}
- */
-function getTopicForCampaignId(campaignId) {
-  // Check for triggers specific to this Campaign.
-  if (fs.existsSync(`brain/campaigns/${campaignId}.rive`)) {
-    return `campaign_${campaignId}`;
-  }
-
-  return 'campaign';
-}
 
 /**
  * Parses Gambit API response for a Campaign model.
@@ -60,16 +53,12 @@ function getTopicForCampaignId(campaignId) {
  */
 function parseGambitCampaign(gambitCampaign) {
   const result = {
+    id: gambitCampaign.id,
     title: gambitCampaign.title,
     status: gambitCampaign.status,
-    templates: {},
+    templates: gambitCampaign.templates,
+    topic: 'campaign',
   };
-
-  const templates = Object.keys(gambitCampaign.templates);
-  templates.forEach((templateName) => {
-    result.templates[templateName] = gambitCampaign.templates[templateName].rendered;
-  });
-
   result.keywords = gambitCampaign.keywords.map(keywordObject => keywordObject.keyword);
 
   return result;
@@ -83,7 +72,6 @@ campaignSchema.statics.fetchCampaign = function (campaignId) {
   return gambitCampaigns.get(`campaigns/${campaignId}`)
     .then((response) => {
       const campaign = parseGambitCampaign(response);
-      campaign.topic = getTopicForCampaignId(campaignId);
 
       return this.findOneAndUpdate({ _id: campaignId }, campaign, { upsert: true })
         .then(() => logger.trace('campaign updated', { campaignId }));

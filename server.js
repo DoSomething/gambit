@@ -19,12 +19,8 @@ mongoose.connect(config.dbUri, {
 
 const Campaign = require('./app/models/Campaign');
 
-// Sync Campaign cache with Gambit Campaigns API.
+// Query Gambit Campaigns API to update Campaign keywords/status.
 Campaign.sync();
-// We might need to turn this off temporarily. Example: Load testing.
-if (config.enableCampaignSyncInterval === 'true') {
-  setInterval(() => { Campaign.sync(); }, config.campaignSyncInterval);
-}
 
 const logger = require('heroku-logger');
 const fs = require('fs');
