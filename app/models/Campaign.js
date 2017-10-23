@@ -122,7 +122,7 @@ campaignSchema.statics.sync = function () {
 
   return gambitCampaigns.getActiveCampaigns()
     .then((activeCampaigns) => {
-      logger.debug('keywords', { keywords: activeCampaigns.keywords });
+      logger.debug('activeCampaigns', { activeCampaigns });
       // Update document for each active Campaign returned.
       activeCampaigns.campaigns.forEach((campaign) => {
         const campaignId = campaign.id;
