@@ -10,33 +10,40 @@ const activeStatus = 'active';
 /**
  * Schema.
  */
+const templateObject = {
+  raw: String,
+  rendered: String,
+  override: Boolean,
+};
 const campaignSchema = new mongoose.Schema({
   _id: Number,
+  // To be deprecated once this Model is deprecated.
+  id: Number,
   title: String,
   status: String,
   keywords: [String],
   topic: String,
   templates: {
-    askCaption: String,
-    askContinue: String,
-    askPhoto: String,
-    askSignup: String,
-    askQuantity: String,
-    askWhyParticipated: String,
-    campaignClosed: String,
-    completedMenu: String,
-    declinedContinue: String,
-    declinedSignup: String,
-    externalSignupMenu: String,
-    gambitSignupMenu: String,
-    invalidAskContinueResponse: String,
-    invalidAskSignupResponse: String,
-    invalidCaption: String,
-    invalidCompletedMenuCommand: String,
-    invalidPhoto: String,
-    invalidQuantity: String,
-    invalidSignupMenuCommand: String,
-    invalidWhyParticipated: String,
+    askCaption: templateObject,
+    askContinue: templateObject,
+    askPhoto: templateObject,
+    askSignup: templateObject,
+    askQuantity: templateObject,
+    askWhyParticipated: templateObject,
+    campaignClosed: templateObject,
+    completedMenu: templateObject,
+    declinedContinue: templateObject,
+    declinedSignup: templateObject,
+    externalSignupMenu: templateObject,
+    gambitSignupMenu: templateObject,
+    invalidAskContinueResponse: templateObject,
+    invalidAskSignupResponse: templateObject,
+    invalidCaption: templateObject,
+    invalidCompletedMenuCommand: templateObject,
+    invalidPhoto: templateObject,
+    invalidQuantity: templateObject,
+    invalidSignupMenuCommand: templateObject,
+    invalidWhyParticipated: templateObject,
   },
 }, { timestamps: true });
 
@@ -60,16 +67,11 @@ function getTopicForCampaignId(campaignId) {
  */
 function parseGambitCampaign(gambitCampaign) {
   const result = {
+    id: gambitCampaign.id,
     title: gambitCampaign.title,
     status: gambitCampaign.status,
-    templates: {},
+    templates: gambitCampaign.templates,
   };
-
-  const templates = Object.keys(gambitCampaign.templates);
-  templates.forEach((templateName) => {
-    result.templates[templateName] = gambitCampaign.templates[templateName].rendered;
-  });
-
   result.keywords = gambitCampaign.keywords.map(keywordObject => keywordObject.keyword);
 
   return result;
