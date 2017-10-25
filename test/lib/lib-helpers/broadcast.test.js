@@ -6,7 +6,6 @@ const test = require('ava');
 const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
-const httpMocks = require('node-mocks-http');
 const logger = require('heroku-logger');
 const stubs = require('../../helpers/stubs');
 
@@ -33,20 +32,17 @@ test.afterEach(() => {
 
 test('the broadcastId should be parsed out of the query params and injected in the req object', () => {
   const broadcastId = 'test';
-  const req = httpMocks.createRequest({
-    method: 'POST',
-    url: '/test',
+  const req = stubs.getMockRequest({
     query: { broadcastId },
   });
+
   broadcastHelper.parseBody(req);
   req.broadcastId.should.be.equal(broadcastId);
 });
 
 test('the broadcastId should be parsed out of the body params and injected in the req object', () => {
   const broadcastId = 'test';
-  const req = httpMocks.createRequest({
-    method: 'POST',
-    url: '/test',
+  const req = stubs.getMockRequest({
     body: { broadcastId },
   });
   broadcastHelper.parseBody(req);

@@ -15,7 +15,7 @@ Sends an outbound Campaign message for a given `campaignId` and message `templat
 
 Supported templates:
 
-* `externalSignupMenuMessage` -- Used to send SMS confirmation messages for web signups.
+* `externalSignupMenu` -- Sends the External Signup Menu, meant for Users who have signed up via web.
 
 ### Input
 

@@ -9,6 +9,14 @@ Returns the settings necessary to setup a Customer.io Triggered Campaign **after
 
 The endpoint expects you to use [Basic Auth](../authentication.md). Example url using the browser: `http://protectedName:protectedPass@localhost:5100/api/v1/broadcast-settings/100`
 
+
+## Inputs
+
+Param | Description
+--- | ---
+`useTwilioTestCredentials=true` | Returns broadcast settings that use Twilio's [test credentials](https://www.twilio.com/docs/api/rest/test-credentials).
+`userPhoneField=<any valid US number>` | Overrides the `To=` field with the passed `userPhoneField` in the `webhook.body` settings property.  
+
 ## Examples
 
 

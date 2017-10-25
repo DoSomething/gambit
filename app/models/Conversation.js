@@ -11,7 +11,9 @@ const slack = require('../../lib/slack');
 const twilio = require('../../lib/twilio');
 const UnprocessibleEntityError = require('../../app/exceptions/UnprocessibleEntityError');
 
+const campaignTopic = 'campaign';
 const defaultTopic = 'random';
+const supportTopic = 'support';
 
 /**
  * Schema.
@@ -72,8 +74,6 @@ conversationSchema.methods.setTopic = function (newTopic) {
     return this.save();
   }
 
-  const supportTopic = 'support';
-
   if (this.topic === supportTopic && newTopic !== supportTopic) {
     this.paused = false;
   }
@@ -89,6 +89,13 @@ conversationSchema.methods.setTopic = function (newTopic) {
 };
 
 /**
+ * Set topic to support to pause User.
+ */
+conversationSchema.methods.supportRequested = function () {
+  return this.setTopic(supportTopic);
+};
+
+/**
  * Set topic to random to upause User.
  */
 conversationSchema.methods.supportResolved = function () {
@@ -97,15 +104,18 @@ conversationSchema.methods.supportResolved = function () {
 
 /**
  * Returns save of User for updating given Campaign and its topic.
+ * TODO: We may want to refactor to just pass a campaignId. We were initially passing a campaign
+ * model to set Conversation.topic (if Campaign had its own Rivescript topic defined).
+ *
  * @param {Campaign} campaign
  * @return {Promise}
  */
 conversationSchema.methods.setCampaignWithSignupStatus = function (campaign, signupStatus) {
-  this.campaignId = campaign._id;
+  this.campaignId = campaign.id;
   this.signupStatus = signupStatus;
   logger.debug('setCampaignWithSignupStatus', { campaign: this.campaignId, signupStatus });
 
-  return this.setTopic(campaign.topic);
+  return this.setCampaignTopic();
 };
 
 /**
@@ -116,6 +126,13 @@ conversationSchema.methods.setCampaignWithSignupStatus = function (campaign, sig
  */
 conversationSchema.methods.setCampaign = function (campaign) {
   return this.setCampaignWithSignupStatus(campaign, 'doing');
+};
+
+/**
+ * Sets the Conversation topic to campaignTopic to enable Campaign Rivescript triggers.
+ */
+conversationSchema.methods.setCampaignTopic = function () {
+  return this.setTopic(campaignTopic);
 };
 
 /**

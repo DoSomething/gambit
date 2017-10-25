@@ -1,30 +1,45 @@
 ! version = 2.0
 
 // Bot variables
+! var cmd_support = Q
+! var member_count = 5.5 MILLION+
 ! var name = Freddie
 ! var url  = DoSomething.org
 
 // Substitutions
 ! sub bf      = someone
 ! sub bff     = someone
-! sub cant    = can not
+! sub brother = someone
+! sub boyfriend  = someone
 ! sub can't   = can not
-! sub dont    = do not
+! sub cant    = can not
 ! sub dad     = someone
+! sub dis     = this
 ! sub don't   = do not
+! sub dont    = do not
+! sub father  = someone
 ! sub friend  = someone
+! sub girlfriend = someone
 ! sub gf      = someone
 ! sub gonna   = going to
 ! sub he      = someone
 ! sub he's    = someone is
+! sub hes     = someone is
+! sub howd    = how did
 ! sub i'm     = i am
 ! sub i'd     = i would
 ! sub i've    = i have
 ! sub i'll    = i will
+! sub idk     = i do not know
 ! sub im      = i am
 ! sub isn't   = is not
+! sub ive     = i have
+! sub re      = are
 ! sub ru      = are you
 ! sub she     = someone
+! sub she's   = someone is
+! sub shes    = someone is
+! sub tf      = the fuck
 ! sub u       = you
 ! sub ur      = you are
 ! sub urself  = yourself
@@ -43,12 +58,19 @@
 ! sub whos    = who is
 ! sub won't   = will not
 ! sub wont    = will not
+! sub wut     = what
+! sub wuts    = what is
 
 // Arrays
-! array bot       = bot robot machine
+! array bot       = bot robot machine computer
+! array botname   = freddie freddi alicia alysa alysha
 ! array die       = die|kill myself|killing myself
   ^ commit suicide|committing suicide|commiting suicide
 ! array dosomething = dosomething|dosomethingorg|do something
+! array hello     = hello | howdy | hola
+  ^ hi|hii|hiii|hiiii|hiiiii|hiiiiii
+  ^ helloo|hellooo|hellloooo
+  ^ hey|heyy|heyyy|heyyyy|heyyyy|heyyyyyy 
 ! array human     = human person real
 ! array is        = is|will not stop|keeps|was|was being|gets|am|am being|have been
 ! array hurting   = hurt|hurting|hurting|hurts
@@ -59,12 +81,15 @@
   ^ rape|raped|rapes|raping
   ^ is violent|gets violent
   ^ suicidal|suicidial|suicide
-! array messaging = texting|talking to|messaging
+! array messaging = text|txt|texting|txting|talking|talkign|messaging|contacting
+! array my        = my this
 ! array no        = n no nah nope nay
 ! array photo     = photo photos mms pic pics pix image image img
 ! array question  = is there|who|what|when|why|how
 ! array send      = send submit text
 ! array social    = social media|facebook|twitter|instagram|social
+! array unsubscribe = stop|quit|end|unsubscribe|cancel|do not
 ! array want      = want|am going|am thinking about
+! array why       = why y how
 ! array yes       = y yas yes yeah yep yup ya yea
  ^ fine ok sure
