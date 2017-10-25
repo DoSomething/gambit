@@ -43,7 +43,6 @@
 ! sub u       = you
 ! sub ur      = you are
 ! sub urself  = yourself
-! sub y       = why
 ! sub you'd   = you would
 ! sub you're  = you are
 ! sub you've  = you have
@@ -83,6 +82,7 @@
   ^ is violent|gets violent
   ^ suicidal|suicidial|suicide
 ! array messaging = text|txt|texting|txting|talking|talkign|messaging|contacting
+! array my        = my this
 ! array no        = n no nah nope nay
 ! array photo     = photo photos mms pic pics pix image image img
 ! array question  = is there|who|what|when|why|how
@@ -90,5 +90,6 @@
 ! array social    = social media|facebook|twitter|instagram|social
 ! array unsubscribe = stop|quit|end|unsubscribe|cancel|do not
 ! array want      = want|am going|am thinking about
+! array why       = why y how
 ! array yes       = y yas yes yeah yep yup ya yea
  ^ fine ok sure
