@@ -14,10 +14,12 @@ module.exports = function init(app) {
   app.get('/', (req, res) => res.send('hi'));
   app.get('/favicon.ico', (req, res) => res.sendStatus(204));
 
+  // authenticate all requests
+  app.use(authenticateMiddleware());
+
   // restified routes
   app.use(mongooseRoutes);
-  // authenticate all requests after this line
-  app.use(authenticateMiddleware());
+
   // parse metadata like requestId and retryCount for all requests after this line
   app.use(parseMetadataMiddleware());
 
