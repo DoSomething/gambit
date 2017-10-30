@@ -23,6 +23,7 @@ const forwardSupportMessageMiddleware = require('../../lib/middleware/receive-me
 const campaignMenuMiddleware = require('../../lib/middleware/receive-message/campaign-menu');
 const currentCampaignMiddleware = require('../../lib/middleware/receive-message/campaign-current');
 const closedCampaignMiddleware = require('../../lib/middleware/receive-message/campaign-closed');
+const noCampaignTemplateMiddleware = require('../../lib/middleware/receive-message/template-no-campaign');
 const parseAskSignupMiddleware = require('../../lib/middleware/receive-message/parse-ask-signup-answer');
 const parseAskContinueMiddleware = require('../../lib/middleware/receive-message/parse-ask-continue-answer');
 const continueCampaignMiddleware = require('../../lib/middleware/receive-message/campaign-continue');
@@ -75,7 +76,10 @@ router.use(currentCampaignMiddleware());
 // If QUESTION keyword, pause Conversation and prompt User to send their support question.
 router.use(supportRequestedMiddleware());
 
-// Make sure Campaign isn't closed.
+// Checks if a Campaign has been set.
+router.use(noCampaignTemplateMiddleware());
+
+// Checks that Campaign isn't closed.
 router.use(closedCampaignMiddleware());
 
 // Check for yes/no/invalid responses to sent Ask Signup/Continue messages:
