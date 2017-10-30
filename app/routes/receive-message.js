@@ -56,9 +56,6 @@ router.use(infoTemplateMiddleware());
 // If MENU keyword, set random Campaign and ask for Signup.
 router.use(campaignMenuMiddleware());
 
-// If QUESTION keyword, pause Conversation and prompt User to send their support question.
-router.use(supportRequestedMiddleware());
-
 // If Campaign keyword was sent, update Conversation campaign and send continueCampaign.
 router.use(campaignKeywordMiddleware());
 
@@ -74,6 +71,9 @@ router.use(rivescriptTemplateMiddleware());
 
 // Otherwise, load the Campaign stored on the Conversation.
 router.use(currentCampaignMiddleware());
+
+// If QUESTION keyword, pause Conversation and prompt User to send their support question.
+router.use(supportRequestedMiddleware());
 
 // Make sure Campaign isn't closed.
 router.use(closedCampaignMiddleware());
