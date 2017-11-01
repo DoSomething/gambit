@@ -11,6 +11,7 @@ const outboundMessageConfig = require('../../config/lib/middleware/send-message/
 const supportParamsMiddleware = require('../../lib/middleware/send-message/params-support');
 const campaignParamsMiddleware = require('../../lib/middleware/send-message/params-campaign');
 const getUserMiddleware = require('../../lib/middleware/send-message/user-get');
+const validateUserMiddleware = require('../../lib/middleware/send-message/user-validate');
 const getConversationMiddleware = require('../../lib/middleware/conversation-get');
 const createConversationMiddleware = require('../../lib/middleware/conversation-create');
 const campaignMiddleware = require('../../lib/middleware/send-message/campaign');
@@ -23,6 +24,7 @@ router.use(campaignParamsMiddleware());
 
 // Fetch Northstar User.
 router.use(getUserMiddleware());
+router.use(validateUserMiddleware());
 
 router.use(getConversationMiddleware());
 router.use(createConversationMiddleware());
