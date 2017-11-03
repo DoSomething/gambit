@@ -28,9 +28,8 @@ const sandbox = sinon.sandbox.create();
 const sendErrorResponseStub = underscore.noop;
 const mockConversation = stubs.middleware.getConversation.getConversationFromLookup();
 const conversationLookupStub = Promise.resolve(mockConversation);
-const conversationLookupFailStub = Promise.reject({ status: 500 });
+const conversationLookupFailStub = Promise.reject({ message: 'Epic fail' });
 const conversationLookupNotFoundStub = Promise.resolve(null);
-const properties = ['_id', 'topic', 'createdAt', 'updatedAt'];
 
 // Setup!
 test.beforeEach((t) => {
@@ -62,13 +61,14 @@ test('getConversation should inject a conversation into the req object when foun
   const conversation = t.context.req.conversation;
   // We can't test object equality with middleware.createConversation.getConversationFromCreate())
   // because we currently can't pass the createdAt and updatedAt fields that get auto-set.
+  const properties = ['_id', 'topic', 'createdAt', 'updatedAt'];
   properties.forEach(property => conversation.should.have.property(property));
   conversation.platform.should.be.equal(t.context.req.platform);
   conversation.platformUserId.should.be.equal(t.context.req.platformUserId);
   next.should.have.been.called;
 });
 
-test('getConversation should call next if User.lookup response is falsy', async (t) => {
+test('getConversation should call next if Conversation.getFromReq response is null', async (t) => {
   // setup
   const next = sinon.stub();
   const mobile = '+15559939292';
@@ -82,7 +82,7 @@ test('getConversation should call next if User.lookup response is falsy', async 
   next.should.have.been.called;
 });
 
-test('getConversation should call sendErrorResponse when lookup fails', async (t) => {
+test('getConversation should call sendErrorResponse if Conversation.getFromReq fails', async (t) => {
   // setup
   const next = sinon.stub();
   sandbox.stub(Conversation, 'getFromReq').returns(conversationLookupFailStub);
