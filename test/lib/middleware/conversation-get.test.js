@@ -28,7 +28,7 @@ const sandbox = sinon.sandbox.create();
 const sendErrorResponseStub = underscore.noop;
 const mockConversation = stubs.middleware.getConversation.getConversationFromLookup();
 const conversationLookupStub = Promise.resolve(mockConversation);
-const conversationLookupFailStub = Promise.reject(new Error('epic fail'));
+const conversationLookupFailStub = Promise.reject({ status: 500 });
 const conversationLookupNotFoundStub = Promise.resolve(null);
 const properties = ['_id', 'topic', 'createdAt', 'updatedAt'];
 
@@ -91,7 +91,7 @@ test('getConversation should call sendErrorResponse when lookup fails', async (t
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  // TODO: This doesn't get called, but I'm expecting it to:
+  // TODO: This doesn't get called in the test, but we're expecting it to :(
   // helpers.sendErrorResponse.should.have.been.called;
   next.should.not.have.been.called;
 });
