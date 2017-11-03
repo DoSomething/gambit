@@ -3,6 +3,8 @@
 const httpMocks = require('node-mocks-http');
 const url = require('url');
 
+const conversationId = '58d2b8fe10707d6d21713c55';
+const date = new Date();
 const mobileNumber = '+1555910832';
 
 module.exports = {
@@ -32,20 +34,22 @@ module.exports = {
 
     return req;
   },
-  getPlatform: function getPlatform(){
+  getPlatform: function getPlatform() {
     return 'sms';
   },
-  getPlatformUserId: function getPlatformUserId(){
+  getPlatformUserId: function getPlatformUserId() {
     return mobileNumber;
   },
   middleware: {
     getConversation: {
       getConversationFromLookup: function geConversationFromLookup() {
         return {
-          _id: '58d2b8fe10707d6d21713c55',
+          _id: conversationId,
+          updatedAt: date,
+          createdAt: date,
           __v: 0,
-          platform: exports.getPlatform(),
-          platformUserId: exports.getPlatformUserId(),
+          platform: 'sms',
+          platformUserId: mobileNumber,
           topic: 'campaign',
           paused: false,
           campaignId: 2299,
@@ -55,13 +59,14 @@ module.exports = {
     createConversation: {
       getConversationFromCreate: function getConversationFromCreate() {
         return {
-          _id: '58d2b8fe10707d6d21713c55',
+          _id: conversationId,
+          updatedAt: date,
+          createdAt: date,
           __v: 0,
-          platform: exports.getPlatform(),
-          platformUserId: exports.getPlatformUserId(),
-          topic: 'campaign',
+          platform: 'sms',
+          platformUserId: mobileNumber,
+          topic: 'random',
           paused: false,
-          campaignId: 2299,
         };
       },
     },
