@@ -45,6 +45,8 @@ module.exports = {
       getConversationFromLookup: function geConversationFromLookup() {
         return {
           _id: conversationId,
+          // Mongoose provides an id shorthand.
+          id: conversationId,
           updatedAt: date,
           createdAt: date,
           __v: 0,
@@ -60,6 +62,7 @@ module.exports = {
       getConversationFromCreate: function getConversationFromCreate() {
         return {
           _id: conversationId,
+          id: conversationId,
           updatedAt: date,
           createdAt: date,
           __v: 0,
