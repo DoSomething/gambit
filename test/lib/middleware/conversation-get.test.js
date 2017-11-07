@@ -27,12 +27,22 @@ const sandbox = sinon.sandbox.create();
 // stubs
 const sendErrorResponseStub = underscore.noop;
 const mockConversation = stubs.middleware.getConversation.getConversationFromLookup();
-const conversationLookupStub = Promise.resolve(mockConversation);
-const conversationLookupFailStub = Promise.reject({ message: 'Epic fail' });
-const conversationLookupNotFoundStub = Promise.resolve(null);
+const conversationLookupStub = () => Promise.resolve(mockConversation);
+const conversationLookupFailStub = () => Promise.reject({ message: 'Epic fail' });
+const conversationLookupNotFoundStub = () => Promise.resolve(null);
 
 // Setup!
 test.beforeEach((t) => {
+  sandbox.stub(Conversation, 'getFromReq')
+    .callsFake(conversationLookupStub)
+    .withArgs('fail')
+    .callsFake(conversationLookupFailStub)
+    .withArgs('notFound')
+    .callsFake(conversationLookupNotFoundStub);
+
+  sandbox.stub(helpers, 'sendErrorResponse')
+    .returns(sendErrorResponseStub);
+
   // setup req, res mocks
   t.context.req = httpMocks.createRequest();
   t.context.res = httpMocks.createResponse();
@@ -52,7 +62,6 @@ test.afterEach((t) => {
 test('getConversation should inject a conversation into the req object when found in DB', async (t) => {
   // setup
   const next = sinon.stub();
-  sandbox.stub(Conversation, 'getFromReq').returns(conversationLookupStub);
   const middleware = getConversation();
 
   // test
@@ -71,27 +80,20 @@ test('getConversation should inject a conversation into the req object when foun
 test('getConversation should call next if Conversation.getFromReq response is null', async (t) => {
   // setup
   const next = sinon.stub();
-  const mobile = '+15559939292';
-  sandbox.stub(Conversation, 'getFromReq').returns(conversationLookupNotFoundStub);
   const middleware = getConversation();
-  t.context.req.platformUserId = mobile;
 
   // test
-  await middleware(t.context.req, t.context.res, next);
-  t.context.req.should.not.have.property('conversation');
+  await middleware('notFound', t.context.res, next);
   next.should.have.been.called;
 });
 
 test('getConversation should call sendErrorResponse if Conversation.getFromReq fails', async (t) => {
   // setup
   const next = sinon.stub();
-  sandbox.stub(Conversation, 'getFromReq').returns(conversationLookupFailStub);
-  sandbox.stub(helpers, 'sendErrorResponse').returns(sendErrorResponseStub);
   const middleware = getConversation();
 
   // test
-  await middleware(t.context.req, t.context.res, next);
-  // TODO: This doesn't get called in the test, but we're expecting it to :(
-  // helpers.sendErrorResponse.should.have.been.called;
+  await middleware('fail', t.context.res, next);
+  helpers.sendErrorResponse.should.have.been.called;
   next.should.not.have.been.called;
 });
