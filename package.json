@@ -1,6 +1,6 @@
 {
   "name": "gambit-conversations",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A DoSomething.org chatbot",
   "author": "DoSomething.org",
   "license": "MIT",
@@ -9,6 +9,7 @@
     "url": "git+https://github.com/DoSomething/gambit-conversations.git"
   },
   "scripts": {
+    "test-fast": "NODE=test ava --serial --fail-fast",
     "test": "NODE=test ava --serial",
     "all-tests": "npm run lint && npm run coverage",
     "coverage": "NODE_ENV=test nyc --all ava --serial",
