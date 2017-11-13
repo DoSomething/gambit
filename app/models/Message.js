@@ -33,6 +33,9 @@ const messageSchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
+messageSchema.index({ createdAt: 1 });
+messageSchema.index({ updatedAt: 1 });
+
 /**
  * Gets the message that matches this metadata.requestId and direction.
  * Updates it with the new properties passed in the update object.
