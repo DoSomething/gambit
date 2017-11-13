@@ -26,7 +26,6 @@ const getConversation = require('../../../lib/middleware/conversation-get');
 const sandbox = sinon.sandbox.create();
 
 // stubs
-const addParametersStub = underscore.noop;
 const sendErrorResponseStub = underscore.noop;
 const mockConversation = stubs.middleware.getConversation.getConversationFromLookup();
 const conversationLookupStub = () => Promise.resolve(mockConversation);
@@ -43,7 +42,7 @@ test.beforeEach((t) => {
     .callsFake(conversationLookupNotFoundStub);
 
   sandbox.stub(analyticsHelper, 'addParameters')
-    .returns(addParametersStub);
+    .returns(underscore.noop);
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(sendErrorResponseStub);
 

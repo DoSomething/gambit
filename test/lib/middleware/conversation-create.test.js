@@ -11,6 +11,7 @@ const underscore = require('underscore');
 const Promise = require('bluebird');
 
 const helpers = require('../../../lib/helpers');
+const analyticsHelper = require('../../../lib/helpers/analytics');
 const Conversation = require('../../../app/models/Conversation');
 const stubs = require('../../helpers/stubs');
 
@@ -35,6 +36,8 @@ test.beforeEach((t) => {
   // setup req, res mocks
   t.context.req = httpMocks.createRequest();
   t.context.res = httpMocks.createResponse();
+  sandbox.stub(analyticsHelper, 'addParameters')
+    .returns(underscore.noop);
 
   // add params
   t.context.req.platform = stubs.getPlatform();
@@ -64,6 +67,7 @@ test('createConversation should inject a conversation into the req object when s
   properties.forEach(property => conversation.should.have.property(property));
   conversation.platform.should.be.equal(t.context.req.platform);
   conversation.platformUserId.should.be.equal(t.context.req.platformUserId);
+  analyticsHelper.addParameters.should.have.been.called;
   next.should.have.been.called;
 });
 
@@ -78,5 +82,6 @@ test('createConversation should call sendErrorResponse when posting new users fa
   // test
   await middleware(t.context.req, t.context.res, next);
   helpers.sendErrorResponse.should.have.been.called;
+  analyticsHelper.addParameters.should.not.have.been.called;
   next.should.not.have.been.called;
 });
