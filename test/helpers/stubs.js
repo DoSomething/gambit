@@ -34,6 +34,9 @@ module.exports = {
 
     return req;
   },
+  getMobileNumber: function getMobileNumber() {
+    return mobileNumber;
+  },
   getPlatform: function getPlatform() {
     return 'sms';
   },
