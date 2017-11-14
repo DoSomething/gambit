@@ -3,8 +3,6 @@
 const httpMocks = require('node-mocks-http');
 const url = require('url');
 
-const conversationId = '58d2b8fe10707d6d21713c55';
-const date = new Date();
 const mobileNumber = '+1555910832';
 
 module.exports = {
@@ -34,44 +32,13 @@ module.exports = {
 
     return req;
   },
+  getMobileNumber: function getMobileNumber() {
+    return mobileNumber;
+  },
   getPlatform: function getPlatform() {
     return 'sms';
   },
   getPlatformUserId: function getPlatformUserId() {
     return mobileNumber;
-  },
-  middleware: {
-    getConversation: {
-      getConversationFromLookup: function geConversationFromLookup() {
-        return {
-          _id: conversationId,
-          // Mongoose provides an id shorthand.
-          id: conversationId,
-          updatedAt: date,
-          createdAt: date,
-          __v: 0,
-          platform: 'sms',
-          platformUserId: mobileNumber,
-          topic: 'campaign',
-          paused: false,
-          campaignId: 2299,
-        };
-      },
-    },
-    createConversation: {
-      getConversationFromCreate: function getConversationFromCreate() {
-        return {
-          _id: conversationId,
-          id: conversationId,
-          updatedAt: date,
-          createdAt: date,
-          __v: 0,
-          platform: 'sms',
-          platformUserId: mobileNumber,
-          topic: 'random',
-          paused: false,
-        };
-      },
-    },
   },
 };

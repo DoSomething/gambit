@@ -35,6 +35,9 @@ const conversationSchema = new mongoose.Schema({
   slackChannel: String,
 }, { timestamps: true });
 
+conversationSchema.index({ createdAt: 1 });
+conversationSchema.index({ updatedAt: 1 });
+
 /**
  * @param {Object} req - Express request
  * @return {Promise}
