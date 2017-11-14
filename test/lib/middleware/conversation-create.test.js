@@ -14,6 +14,7 @@ const helpers = require('../../../lib/helpers');
 const analyticsHelper = require('../../../lib/helpers/analytics');
 const Conversation = require('../../../app/models/Conversation');
 const stubs = require('../../helpers/stubs');
+const conversationFactory = require('../../helpers/factories/conversation');
 
 // setup "x.should.y" assertion style
 chai.should();
@@ -27,7 +28,7 @@ const sandbox = sinon.sandbox.create();
 
 // stubs
 const sendErrorResponseStub = underscore.noop;
-const mockConversation = stubs.middleware.createConversation.getConversationFromCreate();
+const mockConversation = conversationFactory.getValidConversation();
 const conversationCreateStub = Promise.resolve(mockConversation);
 const conversationCreateFailStub = Promise.reject({ status: 500 });
 
@@ -63,7 +64,7 @@ test('createConversation should inject a conversation into the req object when s
   const conversation = t.context.req.conversation;
   // We can't test object equality with middleware.createConversation.getConversationFromCreate())
   // because we currently can't pass the createdAt and updatedAt fields that get auto-set.
-  const properties = ['_id', 'topic', 'createdAt', 'updatedAt'];
+  const properties = ['_id', 'topic', 'createdAt', 'updatedAt', 'paused'];
   properties.forEach(property => conversation.should.have.property(property));
   conversation.platform.should.be.equal(t.context.req.platform);
   conversation.platformUserId.should.be.equal(t.context.req.platformUserId);
