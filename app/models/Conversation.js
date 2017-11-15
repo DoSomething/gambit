@@ -5,7 +5,6 @@ const logger = require('heroku-logger');
 const Promise = require('bluebird');
 
 const Messages = require('./Message');
-const facebook = require('../../lib/facebook');
 const northstar = require('../../lib/northstar');
 const slack = require('../../lib/slack');
 const twilio = require('../../lib/twilio');
@@ -305,22 +304,12 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function () {
       .then(res => logger.debug(loggerMessage, { status: res.status }))
       .catch(err => logger.error(loggerMessage, err));
   }
-
-  if (this.platform === 'facebook') {
-    facebook.postMessage(this.platformUserId, messageText);
-  }
 };
 
 /**
  * @return {Promise}
  */
 conversationSchema.methods.getNorthstarUser = function () {
-  if (this.platform === 'facebook') {
-    const errorMsg = `getNorthstarUser: Fetching Northstar users is not supported in ${this.platform} platform.`;
-    const error = new UnprocessibleEntityError(errorMsg);
-    return Promise.reject(error);
-  }
-
   if (this.platform === 'slack') {
     return slack.fetchSlackUserBySlackId(this.platformUserId)
       .then(slackUser => northstar.fetchUserByEmail(slackUser.profile.email))
