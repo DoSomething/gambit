@@ -9,6 +9,7 @@ const facebook = require('../../lib/facebook');
 const northstar = require('../../lib/northstar');
 const slack = require('../../lib/slack');
 const twilio = require('../../lib/twilio');
+const helpers = require('../../lib/helpers');
 const UnprocessibleEntityError = require('../../app/exceptions/UnprocessibleEntityError');
 
 const campaignTopic = 'campaign';
@@ -232,7 +233,7 @@ conversationSchema.methods.getMessagePayloadFromReq = function (req = {}, direct
  * @return {Promise}
  */
 conversationSchema.methods.createMessage = function (direction, text, template, req) {
-  logger.debug('createMessage', { direction });
+  logger.debug('createMessage', helpers.request.injectRequestId({ direction }, req));
 
   const data = {
     text,
