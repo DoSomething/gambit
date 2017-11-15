@@ -13,6 +13,7 @@ const httpMocks = require('node-mocks-http');
 // App Modules
 const contentful = require('../../lib/contentful.js');
 const stubs = require('../helpers/stubs.js');
+
 const broadcastId = stubs.getBroadcastId();
 
 // Module to test
