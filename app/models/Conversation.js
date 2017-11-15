@@ -64,7 +64,8 @@ conversationSchema.statics.createFromReq = function (req) {
  */
 conversationSchema.statics.getFromReq = function (req) {
   const query = { platformUserId: req.platformUserId };
-  logger.trace('Conversation.getFromReq', query);
+  logger.trace('Conversation.getFromReq',
+    helpers.request.injectRequestId(query, req));
 
   return this.findOne(query).populate('lastOutboundMessage');
 };
