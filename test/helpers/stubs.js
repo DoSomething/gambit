@@ -44,4 +44,7 @@ module.exports = {
   getPlatformUserId: function getPlatformUserId() {
     return mobileNumber;
   },
+  getTopic: function getTopic() {
+    return 'random';
+  },
 };

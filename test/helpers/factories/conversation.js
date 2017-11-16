@@ -12,7 +12,7 @@ module.exports.getValidConversation = function getValidConversation(phoneNumber)
     _id: id,
     platform: stubs.getPlatform(),
     platformUserId: phoneNumber || stubs.getMobileNumber(),
-    topic: 'random',
+    topic: stubs.getTopic(),
     paused: false,
     createdAt: date,
     updatedAt: date,
