@@ -1,7 +1,7 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const logger = require('heroku-logger');
+const logger = require('../../lib/logger');
 const Promise = require('bluebird');
 
 const Messages = require('./Message');
@@ -9,7 +9,6 @@ const facebook = require('../../lib/facebook');
 const northstar = require('../../lib/northstar');
 const slack = require('../../lib/slack');
 const twilio = require('../../lib/twilio');
-const helpers = require('../../lib/helpers');
 const UnprocessibleEntityError = require('../../app/exceptions/UnprocessibleEntityError');
 
 const campaignTopic = 'campaign';
@@ -64,8 +63,7 @@ conversationSchema.statics.createFromReq = function (req) {
  */
 conversationSchema.statics.getFromReq = function (req) {
   const query = { platformUserId: req.platformUserId };
-  logger.trace('Conversation.getFromReq',
-    helpers.request.injectRequestId(query, req));
+  logger.debug('Conversation.getFromReq', query, req);
 
   return this.findOne(query).populate('lastOutboundMessage');
 };
@@ -88,7 +86,7 @@ conversationSchema.methods.setTopic = function (newTopic) {
   }
 
   this.topic = newTopic;
-  logger.trace('Conversation.setTopic', { newTopic });
+  logger.debug('Conversation.setTopic', { newTopic });
 
   return this.save();
 };
@@ -234,7 +232,7 @@ conversationSchema.methods.getMessagePayloadFromReq = function (req = {}, direct
  * @return {Promise}
  */
 conversationSchema.methods.createMessage = function (direction, text, template, req) {
-  logger.debug('createMessage', helpers.request.injectRequestId({ direction }, req));
+  logger.debug('createMessage', { direction }, req);
 
   const data = {
     text,
