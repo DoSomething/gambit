@@ -21,13 +21,12 @@ chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const getBroadcast = require('../../../../lib/middleware/import-message/broadcast');
+const getBroadcast = require('../../../../lib/middleware/import-message/broadcast-get');
 
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();
 
 // stubs
-const topic = stubs.getTopic();
 const sendErrorResponseStub = underscore.noop;
 const mockBroadcast = broadcastFactory.getValidBroadcast();
 const broadcastLookupStub = () => Promise.resolve(mockBroadcast);
@@ -63,10 +62,10 @@ test('getBroadcast should inject vars into the req object when found in Contentf
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  t.context.req.topic.should.equal(topic);
   analyticsHelper.addParameters.should.have.been.called;
+  t.context.req.broadcast.should.deep.equal(mockBroadcast);
   // TODO: This should be called! :(
-  // next.should.have.been.called;
+  next.should.have.been.called;
 });
 
 test('getBroadcast should call sendErrorResponse if broadcastId not found', async (t) => {
@@ -80,8 +79,8 @@ test('getBroadcast should call sendErrorResponse if broadcastId not found', asyn
   // test
   await middleware(t.context.req, t.context.res, next);
   analyticsHelper.addParameters.should.have.been.called;
-  t.context.req.should.not.have.property('topic');
   helpers.sendErrorResponse.should.have.been.called;
+  t.context.req.should.not.have.property('broadcast');
   next.should.not.have.been.called;
 });
 
@@ -96,7 +95,7 @@ test('getBroadcast should call sendErrorResponse if contentful.fetchBroadcast fa
   // test
   await middleware(t.context.req, t.context.res, next);
   analyticsHelper.addParameters.should.have.been.called;
-  t.context.req.should.not.have.property('topic');
   helpers.sendErrorResponse.should.have.been.called;
+  t.context.req.should.not.have.property('broadcast');
   next.should.not.have.been.called;
 });
