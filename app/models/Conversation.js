@@ -1,11 +1,10 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const logger = require('heroku-logger');
+const logger = require('../../lib/logger');
 const Promise = require('bluebird');
 
 const Messages = require('./Message');
-const facebook = require('../../lib/facebook');
 const northstar = require('../../lib/northstar');
 const slack = require('../../lib/slack');
 const twilio = require('../../lib/twilio');
@@ -63,7 +62,7 @@ conversationSchema.statics.createFromReq = function (req) {
  */
 conversationSchema.statics.getFromReq = function (req) {
   const query = { platformUserId: req.platformUserId };
-  logger.trace('Conversation.getFromReq', query);
+  logger.debug('Conversation.getFromReq', query, req);
 
   return this.findOne(query).populate('lastOutboundMessage');
 };
@@ -86,7 +85,7 @@ conversationSchema.methods.setTopic = function (newTopic) {
   }
 
   this.topic = newTopic;
-  logger.trace('Conversation.setTopic', { newTopic });
+  logger.debug('Conversation.setTopic', { newTopic });
 
   return this.save();
 };
@@ -232,7 +231,7 @@ conversationSchema.methods.getMessagePayloadFromReq = function (req = {}, direct
  * @return {Promise}
  */
 conversationSchema.methods.createMessage = function (direction, text, template, req) {
-  logger.debug('createMessage', { direction });
+  logger.debug('createMessage', { direction }, req);
 
   const data = {
     text,
@@ -305,22 +304,12 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function () {
       .then(res => logger.debug(loggerMessage, { status: res.status }))
       .catch(err => logger.error(loggerMessage, err));
   }
-
-  if (this.platform === 'facebook') {
-    facebook.postMessage(this.platformUserId, messageText);
-  }
 };
 
 /**
  * @return {Promise}
  */
 conversationSchema.methods.getNorthstarUser = function () {
-  if (this.platform === 'facebook') {
-    const errorMsg = `getNorthstarUser: Fetching Northstar users is not supported in ${this.platform} platform.`;
-    const error = new UnprocessibleEntityError(errorMsg);
-    return Promise.reject(error);
-  }
-
   if (this.platform === 'slack') {
     return slack.fetchSlackUserBySlackId(this.platformUserId)
       .then(slackUser => northstar.fetchUserByEmail(slackUser.profile.email))
