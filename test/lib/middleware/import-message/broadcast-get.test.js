@@ -64,7 +64,6 @@ test('getBroadcast should inject vars into the req object when found in Contentf
   await middleware(t.context.req, t.context.res, next);
   analyticsHelper.addParameters.should.have.been.called;
   t.context.req.broadcast.should.deep.equal(mockBroadcast);
-  // TODO: This should be called! :(
   next.should.have.been.called;
 });
 
