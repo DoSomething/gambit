@@ -32,6 +32,9 @@ module.exports = {
 
     return req;
   },
+  getBroadcastId: function getBroadcastId() {
+    return '72mon4jUeQOaokEIkQMaoa';
+  },
   getMobileNumber: function getMobileNumber() {
     return mobileNumber;
   },
@@ -40,5 +43,8 @@ module.exports = {
   },
   getPlatformUserId: function getPlatformUserId() {
     return mobileNumber;
+  },
+  getTopic: function getTopic() {
+    return 'random';
   },
 };
