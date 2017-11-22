@@ -7,6 +7,9 @@
 + @yes [*]
 - confirmedCampaign
 
++ (heck|hell|hells|hm|uh|why) @yes [*]
+- confirmedCampaign
+
 + @no [*]
 - declinedCampaign
 
