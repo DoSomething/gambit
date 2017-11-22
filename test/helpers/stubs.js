@@ -35,6 +35,12 @@ module.exports = {
   getBroadcastId: function getBroadcastId() {
     return '72mon4jUeQOaokEIkQMaoa';
   },
+  getBroadcastMessageText: function getBroadcastMessageText() {
+    return 'Winter is coming, will you be prepared? Yes or No.';
+  },
+  getCampaignId: function getCampaignId() {
+    return 2299;
+  },
   getMobileNumber: function getMobileNumber() {
     return mobileNumber;
   },

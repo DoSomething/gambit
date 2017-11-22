@@ -9,6 +9,15 @@ module.exports.getValidBroadcast = function getValidBroadcast() {
     },
     fields: {
       topic: stubs.getTopic(),
+      message: stubs.getBroadcastMessageText(),
+      campaign: {
+        sys: {
+          id: '4wg9DK69oAiak446OyAuWA',
+        },
+        fields: {
+          campaignId: stubs.getCampaignId(),
+        },
+      },
     },
   };
 };
