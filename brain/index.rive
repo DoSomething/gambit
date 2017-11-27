@@ -91,5 +91,10 @@
 ! array unsubscribe = stop|quit|end|unsubscribe|cancel|do not
 ! array want      = want|am going|am thinking about
 ! array why       = why y how
-! array yes       = y yas yes yeah yep yup ya yea
- ^ fine ok sure
+! array yes       = y ya yas yea yeah yep yes yup
+ ^ 1 absolutely correct definitely fine k ok okay sure t totally true
+ ^ s si so claro oui oue ouais
+ ^ yass yasss yassss yasssss yassssss
+ ^ yess yesss yessss yesssss yessssss
+ ^ i can|i did
+ 

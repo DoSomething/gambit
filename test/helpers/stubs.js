@@ -3,6 +3,8 @@
 const httpMocks = require('node-mocks-http');
 const url = require('url');
 
+const mobileNumber = '+1555910832';
+
 module.exports = {
   stubLogger: function stubLogger(sandbox, logger) {
     sandbox.stub(logger, 'warn').returns(() => {});
@@ -29,5 +31,26 @@ module.exports = {
     req.baseUrl = myUrl.pathname;
 
     return req;
+  },
+  getBroadcastId: function getBroadcastId() {
+    return '72mon4jUeQOaokEIkQMaoa';
+  },
+  getBroadcastMessageText: function getBroadcastMessageText() {
+    return 'Winter is coming, will you be prepared? Yes or No.';
+  },
+  getCampaignId: function getCampaignId() {
+    return 2299;
+  },
+  getMobileNumber: function getMobileNumber() {
+    return mobileNumber;
+  },
+  getPlatform: function getPlatform() {
+    return 'sms';
+  },
+  getPlatformUserId: function getPlatformUserId() {
+    return mobileNumber;
+  },
+  getTopic: function getTopic() {
+    return 'random';
   },
 };
