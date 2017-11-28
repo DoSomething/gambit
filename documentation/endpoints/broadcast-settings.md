@@ -14,8 +14,7 @@ The endpoint expects you to use [Basic Auth](../authentication.md). Example url 
 
 Param | Description
 --- | ---
-`useTwilioTestCredentials=true` | Returns broadcast settings that use Twilio's [test credentials](https://www.twilio.com/docs/api/rest/test-credentials).
-`userPhoneField=<any valid US number>` | Overrides the `To=` field with the passed `userPhoneField` in the `webhook.body` settings property.  
+`userPhoneField=<any valid US number>` | Overrides the `To` property with the passed `userPhoneField` in the `webhook.To` settings property.  
 
 ## Examples
 
@@ -45,12 +44,17 @@ curl -X "GET" "http://localhost:5100/api/v1/broadcast-settings/tacosfest" \
     "campaignId": "48"
   },
   "webhook": {
-    "url": "https://SKXX:wtXX@api.twilio.com/2010-04-01/Accounts/ACXX/Messages.json",
+    "url": "http://<secret>:<secret>@blink-staging.dosomething.org/api/v1/webhooks/customerio-sms-broadcast",
     "headers": {
-      "Content-Type": "application/x-www-form-urlencoded"
+      "Content-Type": "application/json"
     },
-    "body": "To={{customer.phone}}&Body=hola, you are invited to the best tacos festival in the whole world.&MessagingServiceSid=MGXX&StatusCallback=https%3A%2F%2Fpuppet%3Atotallysecret%4057528dc6.ngrok.io%2Fapi%2Fv1%2Fimport-message%3FbroadcastId%3Dtacosfest"
-  }
+    "body": {
+      "To": "{{customer.phone}}",
+      "Body": "hola, you are invited to the best tacos festival in the whole world.",
+      "StatusCallback": "http://<secret>:<secret>@blink-staging.dosomething.org/api/v1/webhooks/customerio-sms-broadcast?broadcastId=tacosfest"
+    }
+  },
+  "statusCallbackUrl": "http://<secret>:<secret>@blink-staging.dosomething.org/api/v1/webhooks/customerio-sms-broadcast?broadcastId=tacosfest"
 }
 ```
 </details>
