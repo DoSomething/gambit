@@ -1,7 +1,7 @@
 'use strict';
 
 class UnprocessibleEntityError extends Error {
-  constructor(message) {
+  constructor(message = 'Generic Unprocessible Error') {
     super(message);
     this.status = 422;
   }
