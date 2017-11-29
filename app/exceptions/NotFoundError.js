@@ -1,7 +1,7 @@
 'use strict';
 
 class NotFoundError extends Error {
-  constructor(message) {
+  constructor(message = 'Generic Not Found Error') {
     super(message);
     this.status = 404;
   }
