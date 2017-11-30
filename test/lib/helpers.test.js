@@ -19,12 +19,16 @@ const sandbox = sinon.sandbox.create();
 // Module to test
 const helpers = require('../../lib/helpers');
 
+const analyticsHelper = helpers.analytics;
+
 test.afterEach(() => {
   // reset stubs, spies, and mocks
   sandbox.restore();
 });
 
 // Tests
+
+// sendErrorResponse
 
 test('helpers.sendErrorResponse(res, anyString): should respond with error status 500 and anyString\'s value as message', () => {
   const res = httpMocks.createResponse();
@@ -63,4 +67,15 @@ test('helpers.sendErrorResponse(res): not sending an error should use a Generic 
   helpers.sendResponseWithStatusCode.should.have.been.called;
   callArgs[1].should.be.equal(genericError.status);
   callArgs[2].should.be.equal(genericError.message);
+});
+
+// sendResponseWithStatusCode
+test('helpers.sendResponseWithStatusCode(res, code, msg): should call analyticsHelper.addParameters', () => {
+  const res = httpMocks.createResponse();
+  sandbox.stub(analyticsHelper, 'addParameters').returns(true);
+  const message = 'Epic fail :-(';
+
+  helpers.sendErrorResponse(res, 500, message);
+
+  analyticsHelper.addParameters.should.have.been.called;
 });
