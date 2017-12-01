@@ -3,14 +3,6 @@
 const menuCommand = 'menu';
 
 module.exports = {
-  askContinueTemplates: [
-    'askContinue',
-    'invalidAskContinueResponse',
-  ],
-  askSignupTemplates: [
-    'askSignup',
-    'invalidAskSignupResponse',
-  ],
   menuCommand,
   macros: {
     confirmedCampaign: 'confirmedCampaign',
