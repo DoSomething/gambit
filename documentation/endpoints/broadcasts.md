@@ -1,13 +1,13 @@
-# Broadcast Settings
+# Broadcasts
 
 ```
-GET /api/v1/broadcast-settings/<broadcastId>
+GET /api/v1/broadcasts/<broadcastId>
 ```
 Returns the settings necessary to setup a Customer.io Triggered Campaign **after** the broadcast is created in Contentful.
 
 ## Authentication
 
-The endpoint expects you to use [Basic Auth](../authentication.md). Example url using the browser: `http://protectedName:protectedPass@localhost:5100/api/v1/broadcast-settings/100`
+The endpoint expects you to use [Basic Auth](../authentication.md). Example url using the browser: `http://protectedName:protectedPass@localhost:5100/api/v1/broadcasts/100`
 
 
 ## Inputs
@@ -22,10 +22,10 @@ Param | Description
 <details>
 <summary><strong>Example Request</strong></summary>
 
-GET settings for the broadcastId: `tacosfest`.
+Get Broadcast with Contentful entry ID: `4kBM6LBfCowMmKKuqwwSUE`.
 
 ```
-curl -X "GET" "http://localhost:5100/api/v1/broadcast-settings/tacosfest" \
+curl -X "GET" "http://localhost:5100/api/v1/broadcasts/4kBM6LBfCowMmKKuqwwSUE" \
      -H "Authorization: Basic cHVwcGV0OnRvdGFsbHlzZWNyZXQ="
 ```
 </details>
@@ -63,6 +63,6 @@ curl -X "GET" "http://localhost:5100/api/v1/broadcast-settings/tacosfest" \
 
 Error | Meaning
 --- | ---
-Cannot GET `/api/v1/broadcast-settings` | Missing broadcastId in the URL
+Cannot GET `/api/v1/broadcasts` | Missing broadcastId in the URL
 Broadcast **X** not found. | broadcastId was not found in Contentful. Is it published?
-Broadcast misconfigured. Message is required! | Broadcast `message` field is empty in Contentful. Is this an old broadcast? Customer.io broadcasts expect the copy to exist in Contentful.
+Broadcast misconfigured. Message is required! | Broadcast `message` field is empty in Contentful. Is this a pre-TGM/Conversations broadcast? Customer.io broadcasts expect the copy to exist in Contentful.
