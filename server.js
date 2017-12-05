@@ -28,7 +28,7 @@ if (!fs.existsSync(dir)) {
 }
 
 /**
- * Fetch rivescript files from Contentful. 
+ * Fetch rivescript files from Contentful.
  * TODO: Page through results.
  * @see https://github.com/DoSomething/gambit-conversations/issues/197
  */
