@@ -8,6 +8,7 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const logger = require('heroku-logger');
 const contentful = require('../../../lib/contentful');
+const Message = require('../../../app/models/Message');
 const stubs = require('../../helpers/stubs');
 const broadcastFactory = require('../../helpers/factories/broadcast');
 
@@ -72,4 +73,20 @@ test('parseBroadcast should return an object', () => {
   result.topic.should.equal(topic);
   contentful.getMessageTextFromBroadcast.should.have.been.called;
   result.message.should.equal(message);
+});
+
+test('getBroadcastCount should return a number', () => {
+  const broadcastId = stubs.getBroadcastId();
+  const mockCount = 42;
+  const mockWhere = {
+    count: function count() {
+      return mockCount;
+    },
+  };
+
+  sandbox.stub(Message, 'where').returns(mockWhere);
+
+  const result = broadcastHelper.getMessageCount(broadcastId, 'inbound');
+  result.should.equal(mockCount);
+  Message.where.should.have.been.called;
 });
