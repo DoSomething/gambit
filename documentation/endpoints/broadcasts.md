@@ -1,13 +1,13 @@
 # Broadcasts
 
 ```
-GET /api/v1/broadcasts/<broadcastId>
+GET /api/v1/broadcasts/:broadcastId
 ```
 Returns the settings necessary to setup a Customer.io Triggered Campaign **after** the broadcast is created in Contentful.
 
 ## Authentication
 
-The endpoint expects you to use [Basic Auth](../authentication.md). Example url using the browser: `http://protectedName:protectedPass@localhost:5100/api/v1/broadcasts/100`
+The endpoint expects you to use [Basic Auth](../authentication.md). Example url using the browser: `http://protectedName:protectedPass@localhost:5100/api/v1/broadcasts/4kBM6LBfCowMmKKuqwwSUE`
 
 
 ## Inputs
@@ -35,26 +35,27 @@ curl -X "GET" "http://localhost:5100/api/v1/broadcasts/4kBM6LBfCowMmKKuqwwSUE" \
 
 ```
 {
-  "broadcast": {
-    "broadcastId": "tacosfest",
-    "message": "hola, you are invited to the best tacos festival in the whole world.",
-    "declinedMessage": "nope"
-  },
-  "campaign": {
-    "campaignId": "48"
-  },
-  "webhook": {
-    "url": "http://<secret>:<secret>@blink-staging.dosomething.org/api/v1/webhooks/customerio-sms-broadcast",
-    "headers": {
-      "Content-Type": "application/json"
+  "data": {
+    "id": "4kBM6LBfCowMmKKuqwwSUE",
+    "campaignId": "7927",
+    "topic": "defenddreamers_nov9",
+    "message": "It's Freddie again! It's inspiring to see thousands of DoSomething members pushing Congress to pass the DREAM Act, before they break for the holidays in mid-December! \n\nWe saw that there's misconceptions about actions you can take. Did you know even if you're under 18 you CAN call your congressperson? \n\nLet's build this movement together, take 2 mins to share this myth busting guide and encourage others to join the movement to protect young people. Click here to share: http://bit.ly/2yor7e7\n\nWant to keep calling? Click here: +1 202-851-9273",
+    "stats": {
+      "totalOutboundMessages": 331,
+      "totalInboundMessages": 112
     },
-    "body": {
-      "To": "{{customer.phone}}",
-      "Body": "hola, you are invited to the best tacos festival in the whole world.",
-      "StatusCallback": "http://<secret>:<secret>@blink-staging.dosomething.org/api/v1/webhooks/customerio-sms-broadcast?broadcastId=tacosfest"
+    "webhook": {
+      "url": "http://<secret>:<secret>@blink-staging.dosomething.org/api/v1/webhooks/twilio-sms-broadcast",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "To": "{{customer.phone}}",
+        "Body": "It's Freddie again! It's inspiring to see thousands of DoSomething members pushing Congress to pass the DREAM Act, before they break for the holidays in mid-December! \n\nWe saw that there's misconceptions about actions you can take. Did you know even if you're under 18 you CAN call your congressperson? \n\nLet's build this movement together, take 2 mins to share this myth busting guide and encourage others to join the movement to protect young people. Click here to share: http://bit.ly/2yor7e7\n\nWant to keep calling? Click here: +1 202-851-9273",
+        "StatusCallback": "http://<secret>:<secret>@blink-staging.dosomething.org/api/v1/webhooks/twilio-sms-broadcast?broadcastId=4kBM6LBfCowMmKKuqwwSUE"
+      }
     }
-  },
-  "statusCallbackUrl": "http://<secret>:<secret>@blink-staging.dosomething.org/api/v1/webhooks/customerio-sms-broadcast?broadcastId=tacosfest"
+  }
 }
 ```
 </details>
