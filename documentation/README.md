@@ -19,12 +19,10 @@ Endpoint | Functionality
 `GET /api/v1/conversations/:id` | Retrieve a Conversation.
 `GET /api/v1/messages` | Retrieve all Messages.
 `GET /api/v1/messages/:id` | Retrieve a Message.
-`GET /api/v1/campaigns` | Retrieve all cached Campaigns.
-`GET /api/v1/campaigns/:id` | Retrieve a cached Campaign.
 
 ### Query paramters
 
-See https://florianholzapfel.github.io/express-restify-mongoose/ for querying the GET endpoints:
+The GET Conversation and Messages are served via the Express Restify Mongoose package. [Docs](https://florianholzapfel.github.io/express-restify-mongoose/)
 
 ### Filtering
 * https://gambit-conversations-staging.herokuapp.com/api/v1/messages?query={"platform":"slack"}
