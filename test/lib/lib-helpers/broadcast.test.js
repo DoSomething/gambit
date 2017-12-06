@@ -7,7 +7,10 @@ const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const logger = require('heroku-logger');
+const contentful = require('../../../lib/contentful');
+const Message = require('../../../app/models/Message');
 const stubs = require('../../helpers/stubs');
+const broadcastFactory = require('../../helpers/factories/broadcast');
 
 // setup "x.should.y" assertion style
 chai.should();
@@ -47,4 +50,43 @@ test('the broadcastId should be parsed out of the body params and injected in th
   });
   broadcastHelper.parseBody(req);
   req.broadcastId.should.be.equal(broadcastId);
+});
+
+test('parseBroadcast should return an object', () => {
+  const broadcast = broadcastFactory.getValidBroadcast();
+  const broadcastId = stubs.getBroadcastId();
+  const campaignId = stubs.getCampaignId();
+  const topic = stubs.getTopic();
+  const message = stubs.getBroadcastMessageText();
+  sandbox.stub(contentful, 'getCampaignIdFromBroadcast')
+    .returns(campaignId);
+  sandbox.stub(contentful, 'getTopicFromBroadcast')
+    .returns(topic);
+  sandbox.stub(contentful, 'getMessageTextFromBroadcast')
+    .returns(message);
+
+  const result = broadcastHelper.parseBroadcast(broadcast);
+  result.id.should.equal(broadcastId);
+  contentful.getCampaignIdFromBroadcast.should.have.been.called;
+  result.campaignId.should.equal(campaignId);
+  contentful.getTopicFromBroadcast.should.have.been.called;
+  result.topic.should.equal(topic);
+  contentful.getMessageTextFromBroadcast.should.have.been.called;
+  result.message.should.equal(message);
+});
+
+test('getBroadcastCount should return a number', () => {
+  const broadcastId = stubs.getBroadcastId();
+  const mockCount = 42;
+  const mockWhere = {
+    count: function count() {
+      return mockCount;
+    },
+  };
+
+  sandbox.stub(Message, 'where').returns(mockWhere);
+
+  const result = broadcastHelper.getMessageCount(broadcastId, 'inbound');
+  result.should.equal(mockCount);
+  Message.where.should.have.been.called;
 });

@@ -3,7 +3,8 @@
 const receiveMessageRoute = require('./receive-message');
 const sendMessageRoute = require('./send-message');
 const importMessageRoute = require('./import-message');
-const broadcastSettingsRoute = require('./broadcast-settings');
+const broadcastsIndexRoute = require('./broadcasts-index');
+const broadcastsSingleRoute = require('./broadcasts-single');
 const mongooseRoutes = require('./mongoose');
 
 // middleware
@@ -32,7 +33,10 @@ module.exports = function init(app) {
   // import-message route
   app.use('/api/v1/import-message',
     importMessageRoute);
-  // broadcast-settings route
-  app.use('/api/v1/broadcast-settings',
-    broadcastSettingsRoute);
+  // broadcasts-single route
+  app.use('/api/v1/broadcasts/:broadcastId',
+    broadcastsSingleRoute);
+  // broadcasts-index route
+  app.use('/api/v1/broadcasts',
+    broadcastsIndexRoute);
 };
