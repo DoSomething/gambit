@@ -5,6 +5,7 @@ module.exports = {
     confirmedCampaign: 'confirmedCampaign',
     declinedCampaign: 'declinedCampaign',
     gambit: 'gambit',
+    pitchCampaign: 'pitchCampaign',
     sendCrisisMessage: 'sendCrisisMessage',
     sendInfoMessage: 'sendInfoMessage',
     subscriptionStatusLess: 'subscriptionStatusLess',

@@ -217,7 +217,9 @@ conversationSchema.methods.getMessagePayloadFromReq = function (req = {}, direct
   if (req.rivescriptMatch) {
     data.match = req.rivescriptMatch;
   }
-
+  if (req.macro) {
+    data.macro = req.macro;
+  }
   return data;
 };
 
