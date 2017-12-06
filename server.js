@@ -27,7 +27,11 @@ if (!fs.existsSync(dir)) {
   fs.mkdirSync(dir);
 }
 
-// Fetch rivescript files from Contentful.
+/**
+ * Fetch rivescript files from Contentful.
+ * TODO: Page through results.
+ * @see https://github.com/DoSomething/gambit-conversations/issues/197
+ */
 contentful.fetchRivescripts()
   .then((entries) => {
     entries.forEach((entry) => {

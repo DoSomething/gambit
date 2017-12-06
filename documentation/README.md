@@ -13,7 +13,8 @@ Endpoint | Functionality
 `POST /api/v1/receive-message` | [Receive an inbound Message, and send a reply Message.](endpoints/receive-message.md)
 `POST /api/v1/send-message` | [Send an outbound Message](endpoints/send-message.md).
 `POST /api/v1/import-message` | [Import an outbound Message](endpoints/import-message.md) that was sent on behalf of another service.
-`GET /api/v1/broadcast-settings` | [Get broadcast setup settings](endpoints/broadcast-settings.md)
+`GET /api/v1/broadcasts` | Retrieve all Broadcasts.
+`GET /api/v1/broadcasts/:id` | [Retrieve a Broadcast](endpoints/broadcasts.md).
 `GET /api/v1/conversations` | Retrieve all Conversations.
 `GET /api/v1/conversations/:id` | Retrieve a Conversation.
 `GET /api/v1/messages` | Retrieve all Messages.
