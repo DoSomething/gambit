@@ -34,6 +34,8 @@ test.beforeEach((t) => {
     .returns(underscore.noop);
   sandbox.stub(replies, 'continueCampaign')
     .returns(underscore.noop);
+  sandbox.stub(helpers, 'sendErrorResponse')
+    .returns(underscore.noop);
   t.context.req = httpMocks.createRequest();
   t.context.req.conversation = mockConversation;
   sandbox.stub(mockConversation, 'setCampaign')
@@ -126,4 +128,37 @@ test('getCampaignByKeyword should call replies.continueCampaign if keyword Campa
   t.context.req.keyword.should.equal(mockKeyword);
   replies.continueCampaign.should.have.been.called;
   replies.campaignClosed.should.not.have.been.called;
+});
+
+test('getCampaignByKeyword should call helpers.sendErrorResponse if getCampaignByKeyword fails', async (t) => {
+  // setup
+  const next = sinon.stub();
+  const middleware = getCampaignByKeyword();
+
+  sandbox.stub(gambitCampaigns, 'getCampaignByKeyword')
+    .returns(Promise.reject(new Error()));
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  t.context.req.conversation.setCampaign.should.not.have.been.called;
+  next.should.not.have.been.called;
+  helpers.sendErrorResponse.should.have.been.called;
+});
+
+test('getCampaignByKeyword should call helpers.sendErrorResponse if setCampaign fails', async (t) => {
+  // setup
+  const next = sinon.stub();
+  const middleware = getCampaignByKeyword();
+
+  const conversation = conversationFactory.getValidConversation();
+  t.context.req.conversation = conversation;
+  sandbox.stub(gambitCampaigns, 'getCampaignByKeyword')
+    .returns(Promise.resolve(true));
+  sandbox.stub(conversation, 'setCampaign')
+    .returns(Promise.reject(new Error()));
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  next.should.not.have.been.called;
+  helpers.sendErrorResponse.should.have.been.called;
 });
