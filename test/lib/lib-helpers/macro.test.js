@@ -39,6 +39,11 @@ test('isMacro should return falsy for undefined macro', (t) => {
   t.falsy(macroHelper.isMacro(undefinedMacroName));
 });
 
+test('isCampaignMenu should return boolean', (t) => {
+  t.true(macroHelper.isCampaignMenu(macros.campaignMenu));
+  t.falsy(macroHelper.isCampaignMenu(undefinedMacroName));
+});
+
 test('isConfirmedCampaign should return boolean', (t) => {
   t.true(macroHelper.isConfirmedCampaign(macros.confirmedCampaign));
   t.falsy(macroHelper.isConfirmedCampaign(undefinedMacroName));

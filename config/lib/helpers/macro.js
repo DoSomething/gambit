@@ -2,6 +2,7 @@
 
 module.exports = {
   macros: {
+    campaignMenu: 'campaignMenu',
     confirmedCampaign: 'confirmedCampaign',
     declinedCampaign: 'declinedCampaign',
     gambit: 'gambit',

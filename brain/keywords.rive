@@ -9,6 +9,9 @@
 + help
 @ info
 
++ menu
+- campaignMenu
+
 + q
 - supportRequested
 
