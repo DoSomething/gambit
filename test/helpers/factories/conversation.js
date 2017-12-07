@@ -1,13 +1,13 @@
 'use strict';
 
 const ObjectID = require('mongoose').Types.ObjectId;
-
+const Conversation = require('../../../app/models/Conversation');
 const stubs = require('../stubs');
 
 module.exports.getValidConversation = function getValidConversation(phoneNumber) {
   const id = new ObjectID();
   const date = new Date();
-  return {
+  return new Conversation({
     id,
     _id: id,
     platform: stubs.getPlatform(),
@@ -16,5 +16,5 @@ module.exports.getValidConversation = function getValidConversation(phoneNumber)
     paused: false,
     createdAt: date,
     updatedAt: date,
-  };
+  });
 };

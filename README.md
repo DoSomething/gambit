@@ -2,19 +2,55 @@
 
 # Gambit Conversations
 
-The Gambit Conversations API built with [Express](https://expressjs.com/), [MongoDB](https://www.mongodb.com/), and [Rivescript](https://www.rivescript.com/).
+Gambit Conversations handles SMS and Slack conversations with DoSomething.org members, integrating with a number of services:
+
+#### Internal 
+* [Northstar](https://github.com/dosomething/northstar)
+* [Gambit Campaigns](https://github.com/dosomething/gambit-campaigns)
+
+#### External 
+* Twilio
+* Slack
+* Front
+* Contentful
+
+Gambit Conversations is built with [Express](https://expressjs.com/), [MongoDB](https://www.mongodb.com/), and [Rivescript](https://www.rivescript.com/).
 
 ## Installation
 
-* Install Node, Mongo, and the Heroku toolbelt
+* Install Node and Mongo
 * Clone this repo, and create a `.env` file with required variables. See `.env.example`.
 * `npm install`
 * `sudo mongodb`
-* `npm test` - Make sure all tests pass
-* `heroku local` will start a local instance of the Conversations API. To send a message:
-    * In another terminal window, run `npm shell` to use consolebot and chat via Terminal.
-      * `DS_CONSOLEBOT_USER_ID` needs to be updated before using the consolebot.
-    * POST to your localhost `/api/v1/send-message` endpoint.
+* `npm start` to run Conversations locally.
+
+### Consolebot
+With Conversations running locally, test Gambit replies by opening a new terminal window and running `node shell`. 
+
+```
+PuppetSloth-MacBook-Pro-2:gambit-conversations puppetsloth$ node shell
+
+
+ ██████╗  █████╗ ███╗   ███╗██████╗ ██╗████████╗
+██╔════╝ ██╔══██╗████╗ ████║██╔══██╗██║╚══██╔══╝
+██║  ███╗███████║██╔████╔██║██████╔╝██║   ██║
+██║   ██║██╔══██║██║╚██╔╝██║██╔══██╗██║   ██║
+╚██████╔╝██║  ██║██║ ╚═╝ ██║██████╔╝██║   ██║
+ ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═════╝ ╚═╝   ╚═╝
+
+===============================================================
+
+* To send a photo, type 'photo'.
+* To retry last message, type 'retry'.
+
+===============================================================
+You> 
+```
+
+Input is posted to your localhost `api/v1/receive-message` endpoint on behalf of the Northstar User  with mobile number matching your  `DS_CONSOLEBOT_MOBILE` config variable. A new Northstar User is created for the mobile number if it doesn't exist.
+
 
 ## Development
-Starting in release **0.2.1** we follow wunder.io's Git workflow:  **[Wunderflow](http://wunderflow.wunder.io/)**. Going forward, contributions to this repo must adhere to the steps in the linked guide.
+* Contributions to this repo must adhere to the steps in wunder.io's Git workflow:  **[Wunderflow](http://wunderflow.wunder.io/)**.
+
+* Run `npm all-tests` to lint code and run automated tests.

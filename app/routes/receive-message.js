@@ -38,12 +38,12 @@ router.use(createConversationMiddleware());
 router.use(getUserMiddleware());
 router.use(createUserIfNotFoundMiddleware());
 
+// Send inbound message text to Rivescript for a reply.
+router.use(getRivescriptReplyMiddleware());
+
 // Load/create inbound message.
 router.use(loadInboundMessageMiddleware());
 router.use(createInboundMessageMiddleware());
-
-// Send our inbound message to Rivescript bot for a reply.
-router.use(getRivescriptReplyMiddleware());
 
 // Updates Last Messaged At, Subscription Status, Paused.
 router.use(updateUserMiddleware());

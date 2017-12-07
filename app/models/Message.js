@@ -27,6 +27,7 @@ const messageSchema = new mongoose.Schema({
   broadcastId: String,
   agentId: String,
   match: String,
+  macro: String,
   metadata: {
     requestId: { type: String, index: true },
     retryCount: Number,
