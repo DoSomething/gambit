@@ -13,6 +13,7 @@ const helpers = require('../../../../lib/helpers');
 const rivescript = require('../../../../lib/rivescript');
 const conversationFactory = require('../../../helpers/factories/conversation');
 
+const macroHelper = helpers.macro;
 const mockConversation = conversationFactory.getValidConversation();
 const mockText = 'The one true king';
 const mockTopic = 'winterfell';
@@ -52,7 +53,6 @@ test('getRivescriptReply should inject vars into req', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = getRivescriptReply();
-
   sandbox.stub(rivescript, 'getReply')
     .returns(Promise.resolve(mockRivescriptReply));
 
@@ -70,12 +70,58 @@ test('getRivescriptReply should call sendErrorResponse if rivescript.getReply fa
   // setup
   const next = sinon.stub();
   const middleware = getRivescriptReply();
-
   sandbox.stub(rivescript, 'getReply')
     .returns(Promise.reject(new Error()));
 
   // test
   await middleware(t.context.req, t.context.res, next);
+  next.should.not.have.been.called;
+  helpers.sendErrorResponse.should.have.been.called;
+});
+
+test('getRivescriptReply should set req.macro if rivescript.getReplyText is a macro', async (t) => {
+  // setup
+  const next = sinon.stub();
+  const middleware = getRivescriptReply();
+  sandbox.stub(rivescript, 'getReply')
+    .returns(Promise.resolve(mockRivescriptReply));
+  sandbox.stub(macroHelper, 'isMacro')
+    .returns(mockText);
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  macroHelper.isMacro.should.have.been.called;
+  t.context.req.macro.should.equal(mockText);
+  next.should.have.been.called;
+});
+
+test('getRivescriptReply should not set req.macro if rivescript.getReplyText is not a macro', async (t) => {
+  // setup
+  const next = sinon.stub();
+  const middleware = getRivescriptReply();
+  sandbox.stub(rivescript, 'getReply')
+    .returns(Promise.resolve(mockRivescriptReply));
+  sandbox.stub(macroHelper, 'isMacro')
+    .returns(null);
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  macroHelper.isMacro.should.have.been.called;
+  t.falsy(t.context.req.macro);
+  next.should.have.been.called;
+});
+
+test('getRivescriptReply should not set req.macro if helpers.macro.isMacro fails', async (t) => {
+  // setup
+  const next = sinon.stub();
+  const middleware = getRivescriptReply();
+  sandbox.stub(rivescript, 'getReply')
+    .returns(Promise.resolve(mockRivescriptReply));
+  sandbox.stub(macroHelper, 'isMacro').throws();
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  macroHelper.isMacro.should.have.been.called;
   next.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
 });
