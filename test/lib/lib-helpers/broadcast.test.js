@@ -53,11 +53,13 @@ test('the broadcastId should be parsed out of the body params and injected in th
 });
 
 test('parseBroadcast should return an object', () => {
-  const broadcast = broadcastFactory.getValidBroadcast();
+  const date = Date.now();
+  const broadcast = broadcastFactory.getValidBroadcast(date);
   const broadcastId = stubs.getBroadcastId();
   const campaignId = stubs.getCampaignId();
   const topic = stubs.getTopic();
   const message = stubs.getBroadcastMessageText();
+  const name = stubs.getBroadcastName();
   sandbox.stub(contentful, 'getCampaignIdFromBroadcast')
     .returns(campaignId);
   sandbox.stub(contentful, 'getTopicFromBroadcast')
@@ -73,6 +75,9 @@ test('parseBroadcast should return an object', () => {
   result.topic.should.equal(topic);
   contentful.getMessageTextFromBroadcast.should.have.been.called;
   result.message.should.equal(message);
+  result.name.should.equal(name);
+  result.createdAt.should.equal(date);
+  result.updatedAt.should.equal(date);
 });
 
 test('getBroadcastCount should return a number', () => {
