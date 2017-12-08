@@ -38,6 +38,9 @@ module.exports = {
   getBroadcastMessageText: function getBroadcastMessageText() {
     return 'Winter is coming, will you be prepared? Yes or No.';
   },
+  getBroadcastName: function getBroadcastName() {
+    return 'NightsWatch2017';
+  },
   getCampaignId: function getCampaignId() {
     return 2299;
   },
