@@ -14,8 +14,7 @@ chai.use(sinonChai);
 // app modules
 const config = require('../../../config/lib/helpers/subscription');
 
-const statuses = config.subscriptionStatusValues;
-// const undefinedMacroName = 'trialByCombat';
+const statuses = config.subscriptionStatuses;
 
 // module to be tested
 const subscriptionHelper = require('../../../lib/helpers/subscription');

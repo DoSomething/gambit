@@ -1,9 +1,10 @@
 'use strict';
 
 module.exports = {
-  subscriptionStatusValues: {
+  subscriptionStatuses: {
     active: 'active',
     less: 'less',
     stop: 'stop',
+    undeliverable: 'undeliverable',
   },
 };
