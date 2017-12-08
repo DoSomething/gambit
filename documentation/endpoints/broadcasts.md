@@ -37,6 +37,9 @@ curl -X "GET" "http://localhost:5100/api/v1/broadcasts/4kBM6LBfCowMmKKuqwwSUE" \
 {
   "data": {
     "id": "4kBM6LBfCowMmKKuqwwSUE",
+    "name": "DefendDreamers_Nov9_GroupA",
+    "createdAt": "2017-11-02T16:55:26.123Z",
+    "updatedAt": "2017-11-02T16:55:26.123Z",
     "campaignId": "7927",
     "topic": "defenddreamers_nov9",
     "message": "It's Freddie again! It's inspiring to see thousands of DoSomething members pushing Congress to pass the DREAM Act, before they break for the holidays in mid-December! \n\nWe saw that there's misconceptions about actions you can take. Did you know even if you're under 18 you CAN call your congressperson? \n\nLet's build this movement together, take 2 mins to share this myth busting guide and encourage others to join the movement to protect young people. Click here to share: http://bit.ly/2yor7e7\n\nWant to keep calling? Click here: +1 202-851-9273",
