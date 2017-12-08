@@ -19,6 +19,14 @@ chai.use(sinonChai);
 // module to be tested
 const broadcastHelper = require('../../../lib/helpers/broadcast');
 
+const broadcastId = stubs.getBroadcastId();
+const mockCount = 42;
+const mockWhere = {
+  count: function count() {
+    return mockCount;
+  },
+};
+
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();
 
@@ -34,7 +42,6 @@ test.afterEach(() => {
 });
 
 test('the broadcastId should be parsed out of the query params and injected in the req object', () => {
-  const broadcastId = 'test';
   const req = stubs.getMockRequest({
     query: { broadcastId },
   });
@@ -43,19 +50,9 @@ test('the broadcastId should be parsed out of the query params and injected in t
   req.broadcastId.should.be.equal(broadcastId);
 });
 
-test('the broadcastId should be parsed out of the body params and injected in the req object', () => {
-  const broadcastId = 'test';
-  const req = stubs.getMockRequest({
-    body: { broadcastId },
-  });
-  broadcastHelper.parseBody(req);
-  req.broadcastId.should.be.equal(broadcastId);
-});
-
 test('parseBroadcast should return an object', () => {
   const date = Date.now();
   const broadcast = broadcastFactory.getValidBroadcast(date);
-  const broadcastId = stubs.getBroadcastId();
   const campaignId = stubs.getCampaignId();
   const topic = stubs.getTopic();
   const message = stubs.getBroadcastMessageText();
@@ -80,18 +77,11 @@ test('parseBroadcast should return an object', () => {
   result.updatedAt.should.equal(date);
 });
 
+// TODO: Update tests with cache.get / cache.set
 test('getBroadcastCount should return a number', () => {
-  const broadcastId = stubs.getBroadcastId();
-  const mockCount = 42;
-  const mockWhere = {
-    count: function count() {
-      return mockCount;
-    },
-  };
-
   sandbox.stub(Message, 'where').returns(mockWhere);
 
   const result = broadcastHelper.getMessageCount(broadcastId, 'inbound');
-  result.should.equal(mockCount);
-  Message.where.should.have.been.called;
+  result.should.not.equal(mockCount);
+  Message.where.should.not.have.been.called;
 });
