@@ -67,3 +67,36 @@ test('crisisTemplate should call next if macro.isSendCrisisMessage is false', as
   replies.crisisMessage.should.not.have.been.called;
   next.should.have.been.called;
 });
+
+test('crisisTemplate should call sendErrorResponse if macro.isSendCrisisMessage throws', async (t) => {
+  // setup
+  const next = sinon.stub();
+  const middleware = crisisTemplate();
+  sandbox.stub(macroHelper, 'isSendCrisisMessage')
+    .throws();
+  sandbox.stub(replies, 'crisisMessage')
+    .returns(underscore.noop);
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+
+  helpers.sendErrorResponse.should.have.been.called;
+  replies.crisisMessage.should.not.have.been.called;
+  next.should.not.have.been.called;
+});
+
+test('crisisTemplate should call sendErrorResponse if replies.crisisMessage throws', async (t) => {
+  // setup
+  const next = sinon.stub();
+  const middleware = crisisTemplate();
+  sandbox.stub(macroHelper, 'isSendCrisisMessage')
+    .returns(true);
+  sandbox.stub(replies, 'crisisMessage')
+    .throws();
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+
+  helpers.sendErrorResponse.should.have.been.called;
+  next.should.not.have.been.called;
+});
