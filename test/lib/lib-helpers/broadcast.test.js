@@ -77,11 +77,10 @@ test('parseBroadcast should return an object', () => {
   result.updatedAt.should.equal(date);
 });
 
-// TODO: Update tests with cache.get / cache.set
-test('getBroadcastCount should return a number', () => {
+
+test('getStatsForBroadcastId should return an object', () => {
   sandbox.stub(Message, 'where').returns(mockWhere);
 
-  const result = broadcastHelper.getMessageCount(broadcastId, 'inbound');
-  result.should.not.equal(mockCount);
-  Message.where.should.not.have.been.called;
+  const result = broadcastHelper.getStatsForBroadcastId(broadcastId);
+  result.should.be.an.instanceof(Object);
 });
