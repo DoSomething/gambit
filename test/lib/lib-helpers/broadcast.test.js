@@ -7,8 +7,8 @@ const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const logger = require('heroku-logger');
+const rewire = require('rewire');
 const contentful = require('../../../lib/contentful');
-const Message = require('../../../app/models/Message');
 const stubs = require('../../helpers/stubs');
 const broadcastFactory = require('../../helpers/factories/broadcast');
 
@@ -17,13 +17,18 @@ chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const broadcastHelper = require('../../../lib/helpers/broadcast');
+const broadcastHelper = rewire('../../../lib/helpers/broadcast');
 
 const broadcastId = stubs.getBroadcastId();
-const mockCount = 42;
-const mockWhere = {
-  count: function count() {
-    return mockCount;
+const mockInboundCount = 283;
+const mockOutboundCount = 42;
+
+const mockResult = {
+  inbound: {
+    total: mockInboundCount,
+  },
+  outbound: {
+    total: mockOutboundCount,
   },
 };
 
@@ -77,10 +82,13 @@ test('parseBroadcast should return an object', () => {
   result.updatedAt.should.equal(date);
 });
 
+test('getStatsForBroadcastId should return cached result when it exists', async () => {
+  broadcastHelper.__set__('statsCache', {
+    get: () => Promise.resolve(mockResult),
+  });
+  sandbox.stub(broadcastHelper, 'getTotalsForBroadcastId').returns(mockResult);
 
-test('getStatsForBroadcastId should return an object', () => {
-  sandbox.stub(Message, 'where').returns(mockWhere);
-
-  const result = broadcastHelper.getStatsForBroadcastId(broadcastId);
-  result.should.be.an.instanceof(Object);
+  const result = await broadcastHelper.getStatsForBroadcastId(broadcastId);
+  broadcastHelper.getTotalsForBroadcastId.should.not.have.been.called;
+  result.should.deep.equal(mockResult);
 });
