@@ -41,6 +41,20 @@ module.exports = {
   getBroadcastName: function getBroadcastName() {
     return 'NightsWatch2017';
   },
+  getBroadcastStats: function getBroadcastStats() {
+    return {
+      inbound: {
+        total: 283,
+      },
+      outbound: {
+        total: 42,
+        macros: {
+          confirmedCampaign: 12,
+          declinedCampaign: 7,
+        },
+      },
+    };
+  },
   getCampaignId: function getCampaignId() {
     return 2299;
   },
