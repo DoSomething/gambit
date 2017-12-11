@@ -110,10 +110,10 @@ test('aggregateMessagesForBroadcastId should call Messages.aggregate', async () 
   Message.aggregate.should.have.been.called;
 });
 
-// test('getStatsCacheForBroadcastId should return an object', async () => {
-//   broadcastHelper.__set__('statsCache', {
-//     set: () => Promise.resolve(mockResult),
-//   });
-//   const result = await broadcastHelper.getStatsForBroadcastId(broadcastId);
-//   result.should.deep.equal(mockResult);
-// });
+test('setStatsCacheForBroadcastId should return an object', async () => {
+  broadcastHelper.__set__('statsCache', {
+    set: () => Promise.resolve(mockResult),
+  });
+  const result = await broadcastHelper.setStatsCacheForBroadcastId(broadcastId);
+  result.should.deep.equal(mockResult);
+});
