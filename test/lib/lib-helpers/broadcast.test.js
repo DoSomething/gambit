@@ -87,35 +87,33 @@ test('parseBroadcast should return an object', () => {
   result.updatedAt.should.equal(date);
 });
 
-test('getStatsForBroadcastId should return cached result when it exists', async () => {
+test('getStatsCacheForBroadcastId should return object when stats cache exists', async () => {
   broadcastHelper.__set__('statsCache', {
     get: () => Promise.resolve(mockResult),
   });
-  sandbox.spy(broadcastHelper, 'getTotalsForBroadcastId');
-
-  const result = await broadcastHelper.getStatsForBroadcastId(broadcastId);
-  broadcastHelper.getTotalsForBroadcastId.should.not.have.been.called;
+  const result = await broadcastHelper.getStatsCacheForBroadcastId(broadcastId);
   result.should.deep.equal(mockResult);
 });
 
-test('getStatsForBroadcastId should call getTotalsForBroadcastId when cached result undefined', async () => {
+test('getStatsCacheForBroadcastId should return falsy when stats cache undefined', async (t) => {
   broadcastHelper.__set__('statsCache', {
-    get: () => Promise.resolve(false),
-    set: () => Promise.resolve(mockResult),
+    get: () => Promise.resolve(null),
   });
+  const result = await broadcastHelper.getStatsCacheForBroadcastId(broadcastId);
+  t.falsy(result);
+});
 
-  sandbox.stub(broadcastHelper, 'getTotalsForBroadcastId')
-    .returns(() => Promise.resolve(true));
+test('aggregateMessagesForBroadcastId should call Messages.aggregate', async () => {
   sandbox.stub(Message, 'aggregate')
     .returns(Promise.resolve([]));
-  sandbox.stub(broadcastHelper, 'formatTotals')
-    .returns(mockResult);
-
-  const result = await broadcastHelper.getStatsForBroadcastId(broadcastId);
-  // These should be working but aren't. The debug logs show, so something's weird.
-  // Maybe this doesn't play nice with Rewire -- or move some of this logic into middleware.
-  // broadcastHelper.getTotalsForBroadcastId.should.have.been.called;
-  // Message.aggregate.should.have.been.called;
-  // broadcastHelper.formatTotals.should.have.been.called;
-  result.should.deep.equal(mockResult);
+  await broadcastHelper.aggregateMessagesForBroadcastId(broadcastId);
+  Message.aggregate.should.have.been.called;
 });
+
+// test('getStatsCacheForBroadcastId should return an object', async () => {
+//   broadcastHelper.__set__('statsCache', {
+//     set: () => Promise.resolve(mockResult),
+//   });
+//   const result = await broadcastHelper.getStatsForBroadcastId(broadcastId);
+//   result.should.deep.equal(mockResult);
+// });
