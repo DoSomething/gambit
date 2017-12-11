@@ -2,12 +2,15 @@
 
 const stubs = require('../stubs');
 
-module.exports.getValidBroadcast = function getValidBroadcast() {
+module.exports.getValidBroadcast = function getValidBroadcast(date = Date.now()) {
   return {
     sys: {
       id: stubs.getBroadcastId(),
+      createdAt: date,
+      updatedAt: date,
     },
     fields: {
+      name: stubs.getBroadcastName(),
       topic: stubs.getTopic(),
       message: stubs.getBroadcastMessageText(),
       campaign: {
