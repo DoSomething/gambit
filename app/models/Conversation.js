@@ -5,6 +5,7 @@ const logger = require('../../lib/logger');
 const Promise = require('bluebird');
 
 const Messages = require('./Message');
+const helpers = require('../../lib/helpers');
 const northstar = require('../../lib/northstar');
 const slack = require('../../lib/slack');
 const twilio = require('../../lib/twilio');
@@ -269,7 +270,9 @@ conversationSchema.methods.setLastOutboundMessage = function (outboundMessage) {
  * @return {Promise}
  */
 conversationSchema.methods.createLastOutboundMessage = function (direction, text, template, req) {
-  return this.createMessage(direction, text, template, req)
+  const renderedText = helpers.tags.render(text, req);
+
+  return this.createMessage(direction, renderedText, template, req)
     .then(message => this.setLastOutboundMessage(message));
 };
 
