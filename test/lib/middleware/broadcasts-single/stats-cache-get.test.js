@@ -52,6 +52,7 @@ test('getStatsCache should send response if cached stats exist', async (t) => {
   // test
   await middleware(t.context.req, t.context.res, next);
 
+  t.context.req.data.stats.should.deep.equal(broadcastStats);
   t.context.res.send.should.have.been.called;
   next.should.not.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;

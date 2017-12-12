@@ -108,6 +108,13 @@ test('aggregateMessagesForBroadcastId should call Messages.aggregate and return 
   result.should.equal(array);
 });
 
+test('parseMessageDirection should return string', (t) => {
+  t.deepEqual(broadcastHelper.parseMessageDirection('inbound'), 'inbound');
+  t.deepEqual(broadcastHelper.parseMessageDirection('outbound-api-import'), 'outbound');
+  t.deepEqual(broadcastHelper.parseMessageDirection('outbound-api-send'), 'outbound');
+  t.deepEqual(broadcastHelper.parseMessageDirection('default'), 'outbound');
+});
+
 test('aggregateMessagesForBroadcastId should throw if Messages.aggregate fails', async (t) => {
   sandbox.stub(Message, 'aggregate')
     .returns(Promise.reject(new Error()));
