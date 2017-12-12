@@ -7,13 +7,15 @@ const router = express.Router({ mergeParams: true });
 // Middleware
 const paramsMiddleware = require('../../lib/middleware/broadcasts-single/params');
 const getBroadcastMiddleware = require('../../lib/middleware/broadcasts-single/broadcast');
-const getStatsMiddleware = require('../../lib/middleware/broadcasts-single/stats');
 const getWebhookMiddleware = require('../../lib/middleware/broadcasts-single/webhook');
+const getStatsCacheMiddleware = require('../../lib/middleware/broadcasts-single/stats-cache-get');
+const setStatsCacheMiddleware = require('../../lib/middleware/broadcasts-single/stats-cache-set');
 
 router.get('/',
   paramsMiddleware(),
   getBroadcastMiddleware(),
-  getStatsMiddleware(),
-  getWebhookMiddleware());
+  getWebhookMiddleware(),
+  getStatsCacheMiddleware(),
+  setStatsCacheMiddleware());
 
 module.exports = router;
