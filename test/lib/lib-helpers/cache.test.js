@@ -36,40 +36,40 @@ test.afterEach(() => {
   cacheHelper.__set__('broadcastStatsCache', undefined);
 });
 
-test('getStatsCacheForBroadcastId should return object when stats cache exists', async () => {
+test('broadcastStats.get should return object when stats cache exists', async () => {
   cacheHelper.__set__('broadcastStatsCache', {
     get: () => Promise.resolve(broadcastStats),
   });
-  const result = await cacheHelper.getStatsCacheForBroadcastId(broadcastId);
+  const result = await cacheHelper.broadcastStats.get(broadcastId);
   result.should.deep.equal(broadcastStats);
 });
 
-test('getStatsCacheForBroadcastId should return falsy when stats cache undefined', async (t) => {
+test('broadcastStats.get should return falsy when stats cache undefined', async (t) => {
   cacheHelper.__set__('broadcastStatsCache', {
     get: () => Promise.resolve(null),
   });
-  const result = await cacheHelper.getStatsCacheForBroadcastId(broadcastId);
+  const result = await cacheHelper.broadcastStats.get(broadcastId);
   t.falsy(result);
 });
 
-test('getStatsCacheForBroadcastId should throw when statsCache.get fails', async (t) => {
+test('broadcastStats.get should throw when statsCache.get fails', async (t) => {
   cacheHelper.__set__('broadcastStatsCache', {
     get: () => Promise.reject(new Error()),
   });
-  await t.throws(cacheHelper.getStatsCacheForBroadcastId(broadcastId));
+  await t.throws(cacheHelper.broadcastStats.get(broadcastId));
 });
 
-test('setStatsCacheForBroadcastId should return an object', async () => {
+test('broadcastStats.set should return an object', async () => {
   cacheHelper.__set__('broadcastStatsCache', {
     set: () => Promise.resolve(broadcastStats),
   });
-  const result = await cacheHelper.setStatsCacheForBroadcastId(broadcastId);
+  const result = await cacheHelper.broadcastStats.set(broadcastId);
   result.should.deep.equal(broadcastStats);
 });
 
-test('setStatsCacheForBroadcastId should throw if statsCache.set fails', async (t) => {
+test('broadcastStats.set should throw if statsCache.set fails', async (t) => {
   cacheHelper.__set__('broadcastStatsCache', {
     set: () => Promise.reject(new Error()),
   });
-  await t.throws(cacheHelper.setStatsCacheForBroadcastId(broadcastId));
+  await t.throws(cacheHelper.broadcastStats.set(broadcastId));
 });
