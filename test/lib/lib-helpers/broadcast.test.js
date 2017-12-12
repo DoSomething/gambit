@@ -22,6 +22,7 @@ const broadcastHelper = require('../../../lib/helpers/broadcast');
 
 const broadcastId = stubs.getBroadcastId();
 const defaultStats = stubs.getBroadcastStats(true);
+const mockAggregateResults = stubs.getBroadcastAggregateMessagesResults();
 
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();
@@ -74,12 +75,11 @@ test('parseBroadcast should return an object', () => {
 });
 
 test('aggregateMessagesForBroadcastId should call Messages.aggregate and return array', async () => {
-  const array = ['tyrion', 'tywin', 'jamie', 'cersei'];
   sandbox.stub(Message, 'aggregate')
-    .returns(Promise.resolve(array));
+    .returns(Promise.resolve(mockAggregateResults));
   const result = await broadcastHelper.aggregateMessagesForBroadcastId(broadcastId);
   Message.aggregate.should.have.been.called;
-  result.should.equal(array);
+  result.should.equal(mockAggregateResults);
 });
 
 test('parseMessageDirection should return string', (t) => {
@@ -104,22 +104,12 @@ test('formatStats should return default object when no data is passed', () => {
 
 test('formatStats should return object when array is passed', () => {
   sandbox.spy(broadcastHelper, 'parseMessageDirection');
-  const inboundNoMacroCount = 43;
-  const inboundConfirmedCampaignMacroCount = 16;
-  const outboundCount = 205;
-  const aggregateResults = [
-    { _id: { direction: 'inbound' }, count: inboundNoMacroCount },
-    {
-      _id: { direction: 'inbound', macro: 'confirmedCampaign' },
-      count: inboundConfirmedCampaignMacroCount,
-    },
-    { _id: { direction: 'outbound-api-import' }, count: outboundCount },
-  ];
-  const result = broadcastHelper.formatStats(aggregateResults);
-  result.inbound.total.should.equal(inboundNoMacroCount + inboundConfirmedCampaignMacroCount);
-  result.inbound.macros.confirmedCampaign.should.equal(inboundConfirmedCampaignMacroCount);
-  result.outbound.total.should.equal(outboundCount);
-  broadcastHelper.parseMessageDirection.should.have.been.calledThrice;
+  const result = broadcastHelper.formatStats(mockAggregateResults);
+  result.inbound.total.should.be.a('number');
+  result.inbound.macros.confirmedCampaign.should.be.a('number');
+  result.outbound.total.should.be.a('number');
+  const numResults = mockAggregateResults.length;
+  broadcastHelper.parseMessageDirection.should.have.been.called.with.callCount(numResults);
 });
 
 test('formatStats should return default object when array without _id property is passed', () => {
