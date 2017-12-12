@@ -119,8 +119,7 @@ test('formatStats should return object when array is passed', () => {
   result.inbound.total.should.equal(inboundNoMacroCount + inboundConfirmedCampaignMacroCount);
   result.inbound.macros.confirmedCampaign.should.equal(inboundConfirmedCampaignMacroCount);
   result.outbound.total.should.equal(outboundCount);
-  // TODO: Why have you forsaken me? This should be called.
-  // broadcastHelper.parseMessageDirection.should.have.been.called;
+  broadcastHelper.parseMessageDirection.should.have.been.calledThrice;
 });
 
 test('formatStats should return default object when array without _id property is passed', () => {
