@@ -23,6 +23,7 @@ const broadcastHelper = rewire('../../../lib/helpers/broadcast');
 
 const broadcastId = stubs.getBroadcastId();
 const broadcastStats = stubs.getBroadcastStats();
+const defaultStats = stubs.getBroadcastStats(true);
 
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();
@@ -121,24 +122,42 @@ test('aggregateMessagesForBroadcastId should throw if Messages.aggregate fails',
   await t.throws(broadcastHelper.aggregateMessagesForBroadcastId(broadcastId));
 });
 
-test('formatStats should return object when no data is passed', () => {
+test('formatStats should return default object when no data is passed', () => {
   sandbox.spy(broadcastHelper, 'parseMessageDirection');
-  const emptyStats = stubs.getBroadcastStats(true);
   const result = broadcastHelper.formatStats();
-  result.should.deep.equal(emptyStats);
+  result.should.deep.equal(defaultStats);
   broadcastHelper.parseMessageDirection.should.not.have.been.called;
 });
 
 test('formatStats should return object when array is passed', () => {
   sandbox.spy(broadcastHelper, 'parseMessageDirection');
+  const inboundNoMacroCount = 43;
+  const inboundConfirmedCampaignMacroCount = 16;
+  const outboundCount = 205;
   const aggregateResults = [
-    { _id: { direction: 'inbound' }, count: 43 },
-    { _id: { direction: 'outbound-api-import' }, count: 205 },
+    { _id: { direction: 'inbound' }, count: inboundNoMacroCount },
+    {
+      _id: { direction: 'inbound', macro: 'confirmedCampaign' },
+      count: inboundConfirmedCampaignMacroCount,
+    },
+    { _id: { direction: 'outbound-api-import' }, count: outboundCount },
   ];
   const result = broadcastHelper.formatStats(aggregateResults);
-  result.inbound.total.should.equal(43);
-  result.outbound.total.should.equal(205);
+  result.inbound.total.should.equal(inboundNoMacroCount + inboundConfirmedCampaignMacroCount);
+  result.inbound.macros.confirmedCampaign.should.equal(inboundConfirmedCampaignMacroCount);
+  result.outbound.total.should.equal(outboundCount);
+  // TODO: This should have been called?
   // broadcastHelper.parseMessageDirection.should.have.been.called;
+});
+
+test('formatStats should return default object when array without _id property is passed', () => {
+  sandbox.spy(broadcastHelper, 'parseMessageDirection');
+  const aggregateResults = [
+    { direction: 'inbound', count: 43 },
+    { direction: 'outbound-api-import', count: 205 },
+  ];
+  const result = broadcastHelper.formatStats(aggregateResults);
+  result.should.deep.equal(defaultStats);
 });
 
 test('setStatsCacheForBroadcastId should return an object', async () => {
