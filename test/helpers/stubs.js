@@ -4,6 +4,11 @@ const httpMocks = require('node-mocks-http');
 const url = require('url');
 
 const mobileNumber = '+1555910832';
+const totalInbound = 52;
+const totalOutbound = 209;
+const totalInboundConfirmedCampaign = 23;
+const totalInboundDeclinedCampaign = 10;
+const totalInboundNoMacro = 19;
 
 module.exports = {
   stubLogger: function stubLogger(sandbox, logger) {
@@ -40,6 +45,35 @@ module.exports = {
   },
   getBroadcastName: function getBroadcastName() {
     return 'NightsWatch2017';
+  },
+  getBroadcastAggregateMessagesResults: function getBroadcastAggregateMessagesResults() {
+    return [
+      { _id: { direction: 'inbound' }, count: totalInboundNoMacro },
+      {
+        _id: { direction: 'inbound', macro: 'confirmedCampaign' },
+        count: totalInboundConfirmedCampaign,
+      },
+      {
+        _id: { direction: 'inbound', macro: 'declineddCampaign' },
+        count: totalInboundDeclinedCampaign,
+      },
+      { _id: { direction: 'outbound-api-import' }, count: totalOutbound },
+    ];
+  },
+  getBroadcastStats: function getBroadcastStats(empty = false) {
+    const macros = {
+      confirmedCampaign: totalInboundConfirmedCampaign,
+      declinedCampaign: totalInboundDeclinedCampaign,
+    };
+    return {
+      outbound: {
+        total: empty ? 0 : totalOutbound,
+      },
+      inbound: {
+        total: empty ? 0 : totalInbound,
+        macros: empty ? {} : macros,
+      },
+    };
   },
   getCampaignId: function getCampaignId() {
     return 2299;

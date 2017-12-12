@@ -71,4 +71,6 @@ messageSchema.statics.updateInboundMessageMetadataByRequestId = function (reques
   return this.updateMessageByRequestIdAndDirection(requestId, { metadata }, 'inbound');
 };
 
+messageSchema.index({ broadcastId: -1, direction: 1, macro: 1 });
+
 module.exports = mongoose.model('Message', messageSchema);
