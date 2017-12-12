@@ -20,5 +20,4 @@ module.exports = {
      */
     smsBroadcastWebhookUrl: process.env.DS_BLINK_SMS_BROADCAST_WEBHOOK_URL || 'http://localhost:5050/api/v1',
   },
-  statsCacheTtl: process.env.DS_GAMBIT_CONVERSATIONS_BROADCAST_STATS_CACHE_TTL || 300,
 };
