@@ -121,6 +121,26 @@ test('aggregateMessagesForBroadcastId should throw if Messages.aggregate fails',
   await t.throws(broadcastHelper.aggregateMessagesForBroadcastId(broadcastId));
 });
 
+test('formatStats should return object when no data is passed', () => {
+  sandbox.spy(broadcastHelper, 'parseMessageDirection');
+  const emptyStats = stubs.getBroadcastStats(true);
+  const result = broadcastHelper.formatStats();
+  result.should.deep.equal(emptyStats);
+  broadcastHelper.parseMessageDirection.should.not.have.been.called;
+});
+
+test('formatStats should return object when array is passed', () => {
+  sandbox.spy(broadcastHelper, 'parseMessageDirection');
+  const aggregateResults = [
+    { _id: { direction: 'inbound' }, count: 43 },
+    { _id: { direction: 'outbound-api-import' }, count: 205 },
+  ];
+  const result = broadcastHelper.formatStats(aggregateResults);
+  result.inbound.total.should.equal(43);
+  result.outbound.total.should.equal(205);
+  // broadcastHelper.parseMessageDirection.should.have.been.called;
+});
+
 test('setStatsCacheForBroadcastId should return an object', async () => {
   broadcastHelper.__set__('statsCache', {
     set: () => Promise.resolve(broadcastStats),

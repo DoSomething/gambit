@@ -41,17 +41,17 @@ module.exports = {
   getBroadcastName: function getBroadcastName() {
     return 'NightsWatch2017';
   },
-  getBroadcastStats: function getBroadcastStats() {
+  getBroadcastStats: function getBroadcastStats(empty = false) {
+    const inboundTotal = empty ? 0 : 283;
+    const outboundTotal = empty ? 0 : 42;
+    const macros = empty ? {} : { confirmedCampaign: 12, declinedCampaign: 7 };
     return {
-      inbound: {
-        total: 283,
-      },
       outbound: {
-        total: 42,
-        macros: {
-          confirmedCampaign: 12,
-          declinedCampaign: 7,
-        },
+        total: outboundTotal,
+      },
+      inbound: {
+        total: inboundTotal,
+        macros,
       },
     };
   },
