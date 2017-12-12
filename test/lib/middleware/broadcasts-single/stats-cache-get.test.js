@@ -13,7 +13,7 @@ const helpers = require('../../../../lib/helpers');
 const logger = require('../../../../lib/logger');
 const stubs = require('../../../helpers/stubs');
 
-const broadcastHelper = helpers.broadcast;
+const cacheHelper = helpers.cache;
 const broadcastId = stubs.getBroadcastId();
 const broadcastStats = stubs.getBroadcastStats();
 
@@ -46,7 +46,7 @@ test('getStatsCache should send response if cached stats exist', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = getStatsCache();
-  sandbox.stub(broadcastHelper, 'getStatsCacheForBroadcastId')
+  sandbox.stub(cacheHelper, 'getStatsCacheForBroadcastId')
     .returns(Promise.resolve(broadcastStats));
 
   // test
@@ -62,7 +62,7 @@ test('getStatsCache should call next if cached stats not found', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = getStatsCache();
-  sandbox.stub(broadcastHelper, 'getStatsCacheForBroadcastId')
+  sandbox.stub(cacheHelper, 'getStatsCacheForBroadcastId')
     .returns(Promise.resolve(null));
 
   // test
@@ -76,7 +76,7 @@ test('getStatsCache should call next if sendErrorResponse returns null', async (
   // setup
   const next = sinon.stub();
   const middleware = getStatsCache();
-  sandbox.stub(broadcastHelper, 'getStatsCacheForBroadcastId')
+  sandbox.stub(cacheHelper, 'getStatsCacheForBroadcastId')
     .returns(Promise.reject(new Error()));
 
   // test

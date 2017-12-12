@@ -7,7 +7,6 @@ const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const logger = require('heroku-logger');
-const rewire = require('rewire');
 
 const contentful = require('../../../lib/contentful');
 const Message = require('../../../app/models/Message');
@@ -19,10 +18,9 @@ chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const broadcastHelper = rewire('../../../lib/helpers/broadcast');
+const broadcastHelper = require('../../../lib/helpers/broadcast');
 
 const broadcastId = stubs.getBroadcastId();
-const broadcastStats = stubs.getBroadcastStats();
 const defaultStats = stubs.getBroadcastStats(true);
 
 // sinon sandbox object
@@ -37,8 +35,6 @@ test.beforeEach(() => {
 test.afterEach(() => {
   // reset stubs, spies, and mocks
   sandbox.restore();
-  // reset statsCache on each test
-  broadcastHelper.__set__('statsCache', undefined);
 });
 
 test('the broadcastId should be parsed out of the query params and injected in the req object', () => {
@@ -75,29 +71,6 @@ test('parseBroadcast should return an object', () => {
   result.name.should.equal(name);
   result.createdAt.should.equal(date);
   result.updatedAt.should.equal(date);
-});
-
-test('getStatsCacheForBroadcastId should return object when stats cache exists', async () => {
-  broadcastHelper.__set__('statsCache', {
-    get: () => Promise.resolve(broadcastStats),
-  });
-  const result = await broadcastHelper.getStatsCacheForBroadcastId(broadcastId);
-  result.should.deep.equal(broadcastStats);
-});
-
-test('getStatsCacheForBroadcastId should return falsy when stats cache undefined', async (t) => {
-  broadcastHelper.__set__('statsCache', {
-    get: () => Promise.resolve(null),
-  });
-  const result = await broadcastHelper.getStatsCacheForBroadcastId(broadcastId);
-  t.falsy(result);
-});
-
-test('getStatsCacheForBroadcastId should throw when statsCache.get fails', async (t) => {
-  broadcastHelper.__set__('statsCache', {
-    get: () => Promise.reject(new Error()),
-  });
-  await t.throws(broadcastHelper.getStatsCacheForBroadcastId(broadcastId));
 });
 
 test('aggregateMessagesForBroadcastId should call Messages.aggregate and return array', async () => {
@@ -146,7 +119,7 @@ test('formatStats should return object when array is passed', () => {
   result.inbound.total.should.equal(inboundNoMacroCount + inboundConfirmedCampaignMacroCount);
   result.inbound.macros.confirmedCampaign.should.equal(inboundConfirmedCampaignMacroCount);
   result.outbound.total.should.equal(outboundCount);
-  // TODO: This should have been called?
+  // TODO: Why have you forsaken me? This should be called.
   // broadcastHelper.parseMessageDirection.should.have.been.called;
 });
 
@@ -157,20 +130,6 @@ test('formatStats should return default object when array without _id property i
     { direction: 'outbound-api-import', count: 205 },
   ];
   const result = broadcastHelper.formatStats(aggregateResults);
+  broadcastHelper.parseMessageDirection.should.not.have.been.called;
   result.should.deep.equal(defaultStats);
-});
-
-test('setStatsCacheForBroadcastId should return an object', async () => {
-  broadcastHelper.__set__('statsCache', {
-    set: () => Promise.resolve(broadcastStats),
-  });
-  const result = await broadcastHelper.setStatsCacheForBroadcastId(broadcastId);
-  result.should.deep.equal(broadcastStats);
-});
-
-test('aggregateMessagesForBroadcastId should throw if statsCache.set fails', async (t) => {
-  broadcastHelper.__set__('statsCache', {
-    set: () => Promise.reject(new Error()),
-  });
-  await t.throws(broadcastHelper.setStatsCacheForBroadcastId(broadcastId));
 });
