@@ -22,18 +22,7 @@ chai.use(sinonChai);
 const broadcastHelper = rewire('../../../lib/helpers/broadcast');
 
 const broadcastId = stubs.getBroadcastId();
-const mockResult = {
-  inbound: {
-    total: 283,
-  },
-  outbound: {
-    total: 42,
-    macros: {
-      confirmedCampaign: 12,
-      declinedCampaign: 7,
-    },
-  },
-};
+const broadcastStats = stubs.getBroadcastStats();
 
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();
@@ -89,10 +78,10 @@ test('parseBroadcast should return an object', () => {
 
 test('getStatsCacheForBroadcastId should return object when stats cache exists', async () => {
   broadcastHelper.__set__('statsCache', {
-    get: () => Promise.resolve(mockResult),
+    get: () => Promise.resolve(broadcastStats),
   });
   const result = await broadcastHelper.getStatsCacheForBroadcastId(broadcastId);
-  result.should.deep.equal(mockResult);
+  result.should.deep.equal(broadcastStats);
 });
 
 test('getStatsCacheForBroadcastId should return falsy when stats cache undefined', async (t) => {
@@ -103,17 +92,39 @@ test('getStatsCacheForBroadcastId should return falsy when stats cache undefined
   t.falsy(result);
 });
 
-test('aggregateMessagesForBroadcastId should call Messages.aggregate', async () => {
+test('getStatsCacheForBroadcastId should throw when statsCache.get fails', async (t) => {
+  broadcastHelper.__set__('statsCache', {
+    get: () => Promise.reject(new Error()),
+  });
+  await t.throws(broadcastHelper.getStatsCacheForBroadcastId(broadcastId));
+});
+
+test('aggregateMessagesForBroadcastId should call Messages.aggregate and return array', async () => {
+  const array = ['tyrion', 'tywin', 'jamie', 'cersei'];
   sandbox.stub(Message, 'aggregate')
-    .returns(Promise.resolve([]));
-  await broadcastHelper.aggregateMessagesForBroadcastId(broadcastId);
+    .returns(Promise.resolve(array));
+  const result = await broadcastHelper.aggregateMessagesForBroadcastId(broadcastId);
   Message.aggregate.should.have.been.called;
+  result.should.equal(array);
+});
+
+test('aggregateMessagesForBroadcastId should throw if Messages.aggregate fails', async (t) => {
+  sandbox.stub(Message, 'aggregate')
+    .returns(Promise.reject(new Error()));
+  await t.throws(broadcastHelper.aggregateMessagesForBroadcastId(broadcastId));
 });
 
 test('setStatsCacheForBroadcastId should return an object', async () => {
   broadcastHelper.__set__('statsCache', {
-    set: () => Promise.resolve(mockResult),
+    set: () => Promise.resolve(broadcastStats),
   });
   const result = await broadcastHelper.setStatsCacheForBroadcastId(broadcastId);
-  result.should.deep.equal(mockResult);
+  result.should.deep.equal(broadcastStats);
+});
+
+test('aggregateMessagesForBroadcastId should throw if statsCache.set fails', async (t) => {
+  broadcastHelper.__set__('statsCache', {
+    set: () => Promise.reject(new Error()),
+  });
+  await t.throws(broadcastHelper.setStatsCacheForBroadcastId(broadcastId));
 });
