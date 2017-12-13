@@ -14,7 +14,7 @@ chai.use(sinonChai);
 // app modules
 const mustache = require('mustache');
 
-// const config = require('../../../config/lib/helpers/tags');
+const config = require('../../../config/lib/helpers/tags');
 
 const mockText = 'Testing 123';
 const mockVars = { season: 'winter' };
@@ -51,4 +51,18 @@ test('render should throw if getVars fails', () => {
   sandbox.stub(tagsHelper, 'getVars')
     .returns(new Error());
   tagsHelper.render(mockText, mockVars).should.throw;
+});
+
+test('getVars return an object', () => {
+  sandbox.stub(tagsHelper, 'getCustomUrl')
+    .returns(mockText);
+  const result = tagsHelper.getVars();
+  result.should.be.a('object');
+  result[config.tags.customUrl].should.equal(mockText);
+});
+
+test('getVars should throw if getCustomUrl fails', () => {
+  sandbox.stub(tagsHelper, 'getCustomUrl')
+    .returns(new Error());
+  tagsHelper.getVars().should.throw;
 });
