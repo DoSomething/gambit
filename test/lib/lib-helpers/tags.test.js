@@ -36,7 +36,7 @@ test.afterEach(() => {
 test('render should return a string', () => {
   sandbox.stub(mustache, 'render')
     .returns(mockText);
-  sandbox.stub(tagsHelper, 'getVars')
+  sandbox.stub(tagsHelper, 'getVarsForTags')
     .returns(mockVars);
   const result = tagsHelper.render(mockText, {});
   mustache.render.should.have.been.called;
@@ -49,24 +49,24 @@ test('render should throw if mustache.render fails', () => {
   tagsHelper.render(mockText, mockVars).should.throw;
 });
 
-test('render should throw if getVars fails', () => {
-  sandbox.stub(tagsHelper, 'getVars')
+test('render should throw if getVarsForTags fails', () => {
+  sandbox.stub(tagsHelper, 'getVarsForTags')
     .returns(new Error());
   tagsHelper.render(mockText, mockVars).should.throw;
 });
 
-test('getVars should return an object', () => {
+test('getVarsForTags should return an object', () => {
   sandbox.stub(tagsHelper, 'getCustomUrl')
     .returns(mockText);
-  const result = tagsHelper.getVars();
+  const result = tagsHelper.getVarsForTags();
   result.should.be.a('object');
   result[config.tags.customUrl].should.equal(mockText);
 });
 
-test('getVars should throw if getCustomUrl fails', () => {
+test('getVarsForTags should throw if getCustomUrl fails', () => {
   sandbox.stub(tagsHelper, 'getCustomUrl')
     .returns(new Error());
-  tagsHelper.getVars().should.throw;
+  tagsHelper.getVarsForTags().should.throw;
 });
 
 test('getCustomUrl should return a string', () => {
