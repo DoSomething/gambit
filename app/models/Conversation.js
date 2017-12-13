@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const logger = require('../../lib/logger');
 const Promise = require('bluebird');
 
-const Messages = require('./Message');
+const Message = require('./Message');
 const helpers = require('../../lib/helpers');
 const northstar = require('../../lib/northstar');
 const slack = require('../../lib/slack');
@@ -205,7 +205,7 @@ conversationSchema.methods.getMessagePayloadFromReq = function (req = {}, direct
   const data = {
     broadcastId,
     metadata: req.metadata || {},
-    attachments: req.attachments[attachmentDirection] || [],
+    attachments: req.attachments ? req.attachments[attachmentDirection] : [],
   };
 
   // Add extras if present.
@@ -235,9 +235,15 @@ conversationSchema.methods.getMessagePayloadFromReq = function (req = {}, direct
  */
 conversationSchema.methods.createMessage = function (direction, text, template, req) {
   logger.debug('createMessage', { direction }, req);
+  let messageText;
+  if (direction !== 'inbound') {
+    messageText = helpers.tags.render(text, req);
+  } else {
+    messageText = text;
+  }
 
   const data = {
-    text,
+    text: messageText,
     direction,
     template,
   };
@@ -246,9 +252,8 @@ conversationSchema.methods.createMessage = function (direction, text, template, 
   const defaultPayload = this.getDefaultMessagePayload();
   Object.assign(data, defaultPayload, this.getMessagePayloadFromReq(req, direction));
 
-  return Messages.create(data);
+  return Message.create(data);
 };
-
 
 /**
  * Sets and populates lastOutboundMessage for this conversation
@@ -270,9 +275,7 @@ conversationSchema.methods.setLastOutboundMessage = function (outboundMessage) {
  * @return {Promise}
  */
 conversationSchema.methods.createLastOutboundMessage = function (direction, text, template, req) {
-  const renderedText = helpers.tags.render(text, req);
-
-  return this.createMessage(direction, renderedText, template, req)
+  return this.createMessage(direction, text, template, req)
     .then(message => this.setLastOutboundMessage(message));
 };
 

@@ -78,6 +78,9 @@ module.exports = {
   getCampaignId: function getCampaignId() {
     return 2299;
   },
+  getMessageText: function getMessageText() {
+    return 'I\'m here to keep you alive, not help you shop. -- The Bodyguard';
+  },
   getMobileNumber: function getMobileNumber() {
     return mobileNumber;
   },
