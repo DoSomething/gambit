@@ -70,16 +70,24 @@ test('getVars should throw if getCustomUrl fails', () => {
 });
 
 test('getCustomUrl should return a string', () => {
-  sandbox.stub(tagsHelper, 'getCustomUrlQueryValue')
+  sandbox.stub(tagsHelper, 'getCustomUrlQueryParamValue')
     .returns(config.customUrl);
   const result = tagsHelper.getCustomUrl();
 
   result.should.be.a('string');
-  tagsHelper.getCustomUrlQueryValue.should.have.been.called;
+  tagsHelper.getCustomUrlQueryParamValue.should.have.been.called;
 });
 
 test('getCustomUrl should throw if getCustomUrlQueryValue fails', () => {
   sandbox.stub(tagsHelper, 'getCustomUrlQueryValue')
     .returns(new Error());
   tagsHelper.getCustomUrl().should.throw;
+});
+
+test('getCustomUrlQueryStringWithValue should return a string', () => {
+  const value = 'test';
+  const param = config.customUrl.queryParamName;
+  const expected = `${param}=${value}`;
+  const result = tagsHelper.getCustomUrlQueryStringWithValue(value);
+  result.should.equal(expected);
 });
