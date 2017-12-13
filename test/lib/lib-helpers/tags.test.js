@@ -7,6 +7,8 @@ const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 
+const stubs = require('../../helpers/stubs');
+
 // setup "x.should.y" assertion style
 chai.should();
 chai.use(sinonChai);
@@ -16,7 +18,7 @@ const mustache = require('mustache');
 
 const config = require('../../../config/lib/helpers/tags');
 
-const mockText = 'Testing 123';
+const mockText = stubs.getMessageText();
 const mockVars = { season: 'winter' };
 
 // module to be tested
@@ -53,7 +55,7 @@ test('render should throw if getVars fails', () => {
   tagsHelper.render(mockText, mockVars).should.throw;
 });
 
-test('getVars return an object', () => {
+test('getVars should return an object', () => {
   sandbox.stub(tagsHelper, 'getCustomUrl')
     .returns(mockText);
   const result = tagsHelper.getVars();
@@ -65,4 +67,19 @@ test('getVars should throw if getCustomUrl fails', () => {
   sandbox.stub(tagsHelper, 'getCustomUrl')
     .returns(new Error());
   tagsHelper.getVars().should.throw;
+});
+
+test('getCustomUrl should return a string', () => {
+  sandbox.stub(tagsHelper, 'getCustomUrlQueryValue')
+    .returns(config.customUrl);
+  const result = tagsHelper.getCustomUrl();
+
+  result.should.be.a('string');
+  tagsHelper.getCustomUrlQueryValue.should.have.been.called;
+});
+
+test('getCustomUrl should throw if getCustomUrlQueryValue fails', () => {
+  sandbox.stub(tagsHelper, 'getCustomUrlQueryValue')
+    .returns(new Error());
+  tagsHelper.getCustomUrl().should.throw;
 });
