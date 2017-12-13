@@ -93,10 +93,22 @@ test('getCustomUrlQueryStringWithValue should return a string', () => {
 });
 
 test('customUrlQueryValueField should return a string', () => {
-  const field = 'name';
+  const field = 'lastName';
   const value = 'snow';
   const suffix = config.customUrl.queryValue.fieldSuffix;
   const expected = `${field}${suffix}${value}`;
   const result = tagsHelper.customUrlQueryValueField(field, value);
   result.should.equal(expected);
+});
+
+test('joinCustomUrlQueryParamValues should return a string if passed an array', () => {
+  const data = ['a', 'b', 'c'];
+  const suffix = config.customUrl.queryValue.separator;
+  const expected = data.join(suffix);
+  const result = tagsHelper.joinCustomUrlQueryParamValues(data);
+  result.should.equal(expected);
+});
+
+test('joinCustomUrlQueryParamValues should return empty string if no value is passed', () => {
+  tagsHelper.joinCustomUrlQueryParamValues().should.equal('');
 });
