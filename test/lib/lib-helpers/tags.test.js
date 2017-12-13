@@ -91,3 +91,12 @@ test('getCustomUrlQueryStringWithValue should return a string', () => {
   const result = tagsHelper.getCustomUrlQueryStringWithValue(value);
   result.should.equal(expected);
 });
+
+test('customUrlQueryValueField should return a string', () => {
+  const field = 'name';
+  const value = 'snow';
+  const suffix = config.customUrl.queryValue.fieldSuffix;
+  const expected = `${field}${suffix}${value}`;
+  const result = tagsHelper.customUrlQueryValueField(field, value);
+  result.should.equal(expected);
+});
