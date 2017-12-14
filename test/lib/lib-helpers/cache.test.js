@@ -17,25 +17,22 @@ chai.use(sinonChai);
 // module to be tested
 const cacheHelper = rewire('../../../lib/helpers/cache');
 
+// stubs
 const broadcastId = stubs.getBroadcastId();
 const broadcastStats = stubs.getBroadcastStats();
 const campaignId = stubs.getCampaignId();
 const campaign = { id: campaignId, title: 'Winter' };
 
-// sinon sandbox object
 const sandbox = sinon.sandbox.create();
 
-// Setup!
 test.beforeEach(() => {
   stubs.stubLogger(sandbox, logger);
 });
 
-// Cleanup!
 test.afterEach(() => {
-  // reset stubs, spies, and mocks
   sandbox.restore();
-  // reset statsCache on each test
   cacheHelper.__set__('broadcastStatsCache', undefined);
+  cacheHelper.__set__('campaignsCache', undefined);
 });
 
 /**
@@ -57,7 +54,7 @@ test('broadcastStats.get should return falsy when cache undefined', async (t) =>
   t.falsy(result);
 });
 
-test('broadcastStats.get should throw when statsCache.get fails', async (t) => {
+test('broadcastStats.get should throw when cache set fails', async (t) => {
   cacheHelper.__set__('broadcastStatsCache', {
     get: () => Promise.reject(new Error()),
   });
@@ -72,7 +69,7 @@ test('broadcastStats.set should return an object', async () => {
   result.should.deep.equal(broadcastStats);
 });
 
-test('broadcastStats.set should throw if broadcastStats.set fails', async (t) => {
+test('broadcastStats.set should throw when cache set fails', async (t) => {
   cacheHelper.__set__('broadcastStatsCache', {
     set: () => Promise.reject(new Error()),
   });
@@ -106,7 +103,7 @@ test('campaigns.get should return an object', async () => {
   result.should.deep.equal(campaign);
 });
 
-test('campaigns.set should throw if campaignsCache.set fails', async (t) => {
+test('campaigns.set should throw when cache set fails', async (t) => {
   cacheHelper.__set__('campaignsCache', {
     set: () => Promise.reject(new Error()),
   });
