@@ -19,6 +19,8 @@ const cacheHelper = rewire('../../../lib/helpers/cache');
 
 const broadcastId = stubs.getBroadcastId();
 const broadcastStats = stubs.getBroadcastStats();
+const campaignId = stubs.getCampaignId();
+const campaign = { id: campaignId, title: 'Winter' };
 
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();
@@ -36,7 +38,10 @@ test.afterEach(() => {
   cacheHelper.__set__('broadcastStatsCache', undefined);
 });
 
-test('broadcastStats.get should return object when stats cache exists', async () => {
+/**
+ * Broadcast Stats
+ */
+test('broadcastStats.get should return object when cache exists', async () => {
   cacheHelper.__set__('broadcastStatsCache', {
     get: () => Promise.resolve(broadcastStats),
   });
@@ -44,7 +49,7 @@ test('broadcastStats.get should return object when stats cache exists', async ()
   result.should.deep.equal(broadcastStats);
 });
 
-test('broadcastStats.get should return falsy when stats cache undefined', async (t) => {
+test('broadcastStats.get should return falsy when cache undefined', async (t) => {
   cacheHelper.__set__('broadcastStatsCache', {
     get: () => Promise.resolve(null),
   });
@@ -67,9 +72,43 @@ test('broadcastStats.set should return an object', async () => {
   result.should.deep.equal(broadcastStats);
 });
 
-test('broadcastStats.set should throw if statsCache.set fails', async (t) => {
+test('broadcastStats.set should throw if broadcastStats.set fails', async (t) => {
   cacheHelper.__set__('broadcastStatsCache', {
     set: () => Promise.reject(new Error()),
   });
   await t.throws(cacheHelper.broadcastStats.set(broadcastId));
+});
+
+/**
+ * Campaigns
+ */
+test('campaigns.get should return object when cache exists', async () => {
+  cacheHelper.__set__('campaignsCache', {
+    get: () => Promise.resolve(campaign),
+  });
+  const result = await cacheHelper.campaigns.get(campaignId);
+  result.should.deep.equal(campaign);
+});
+
+test('campaigns.get should return falsy when cache undefined', async (t) => {
+  cacheHelper.__set__('campaignsCache', {
+    get: () => Promise.resolve(null),
+  });
+  const result = await cacheHelper.campaigns.get(campaignId);
+  t.falsy(result);
+});
+
+test('campaigns.get should return an object', async () => {
+  cacheHelper.__set__('campaignsCache', {
+    set: () => Promise.resolve(campaign),
+  });
+  const result = await cacheHelper.campaigns.set(campaignId);
+  result.should.deep.equal(campaign);
+});
+
+test('campaigns.set should throw if campaignsCache.set fails', async (t) => {
+  cacheHelper.__set__('campaignsCache', {
+    set: () => Promise.reject(new Error()),
+  });
+  await t.throws(cacheHelper.campaigns.set(campaignId));
 });
