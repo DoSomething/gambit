@@ -10,6 +10,7 @@ const httpMocks = require('node-mocks-http');
 
 const logger = require('../../../lib/logger');
 const stubs = require('../../helpers/stubs');
+const campaignFactory = require('../../helpers/factories/campaign');
 const userFactory = require('../../helpers/factories/user');
 
 // setup "x.should.y" assertion style
@@ -28,7 +29,8 @@ const tagsHelper = require('../../../lib/helpers/tags');
 const sandbox = sinon.sandbox.create();
 
 // stubs
-const mockText = stubs.getMessageText();
+const mockCampaign = campaignFactory.getValidCampaign();
+const mockText = stubs.getRandomMessageText();
 const mockUser = userFactory.getValidUser();
 const mockVars = { season: 'winter' };
 
@@ -144,3 +146,17 @@ test('getUserIdCustomUrlQueryValueField should return string for req.user', (t) 
 test('getUserIdCustomUrlQueryValueField throws if req.user undefined', (t) => {
   t.throws(() => tagsHelper.getUserIdCustomUrlQueryValueField(t.context.req));
 });
+
+test('getCampaignRunIdCustomUrlQueryValueField should return string for req.user', (t) => {
+  t.context.req.campaign = mockCampaign;
+  const fieldName = config.customUrl.queryValue.fields.campaignRunId;
+  const result = tagsHelper.getCampaignRunIdCustomUrlQueryValueField(t.context.req);
+  t.truthy(result.includes(fieldName));
+  t.truthy(result.includes(mockCampaign.currentCampaignRun.id));
+});
+
+test('getCampaignRunIdCustomUrlQueryValueField returns empty string if req.campaign undefined', (t) => {
+  const result = tagsHelper.getCampaignRunIdCustomUrlQueryValueField(t.context.req);
+  result.should.equal('');
+});
+

@@ -2,7 +2,9 @@
 
 const httpMocks = require('node-mocks-http');
 const url = require('url');
+const Chance = require('chance');
 
+const chance = new Chance();
 const mobileNumber = '+1555910832';
 const totalInbound = 52;
 const totalOutbound = 209;
@@ -81,8 +83,8 @@ module.exports = {
   getCampaignRunId: function getCampaignRunId() {
     return 6441;
   },
-  getMessageText: function getMessageText() {
-    return 'I\'m here to keep you alive, not help you shop. -- The Bodyguard';
+  getRandomMessageText: function getRandomMessageText() {
+    return chance.paragraph({ sentences: 2 });
   },
   getMobileNumber: function getMobileNumber() {
     return mobileNumber;

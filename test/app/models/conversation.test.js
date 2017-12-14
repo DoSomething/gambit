@@ -16,7 +16,7 @@ const conversationFactory = require('../../helpers/factories/conversation');
 
 const tagsHelper = helpers.tags;
 const conversation = conversationFactory.getValidConversation();
-const mockMessageText = stubs.getMessageText();
+const mockMessageText = stubs.getRandomMessageText();
 
 // setup "x.should.y" assertion style
 chai.should();
