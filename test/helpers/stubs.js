@@ -78,6 +78,9 @@ module.exports = {
   getCampaignId: function getCampaignId() {
     return 2299;
   },
+  getCampaignRunId: function getCampaignRunId() {
+    return 6441;
+  },
   getMessageText: function getMessageText() {
     return 'I\'m here to keep you alive, not help you shop. -- The Bodyguard';
   },
@@ -92,5 +95,8 @@ module.exports = {
   },
   getTopic: function getTopic() {
     return 'random';
+  },
+  getUserId: function getUserId() {
+    return '597b9ef910707d07c84b00aa';
   },
 };
