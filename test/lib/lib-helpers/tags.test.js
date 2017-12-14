@@ -160,3 +160,11 @@ test('getCampaignRunIdCustomUrlQueryValueField returns empty string if req.campa
   result.should.equal('');
 });
 
+test('getPlatformCustomUrlQueryValueField returns a string', (t) => {
+  const platform = stubs.getPlatform();
+  t.context.req.platform = platform;
+  const fieldName = config.customUrl.queryValue.fields.platform;
+  const result = tagsHelper.getPlatformCustomUrlQueryValueField(t.context.req);
+  t.truthy(result.includes(fieldName));
+  t.truthy(result.includes(platform));
+});

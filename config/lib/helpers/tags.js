@@ -6,8 +6,8 @@ module.exports = {
     customUrl: 'custom_url',
   },
   /**
-   * The customUrl tag should return a personzlied link to the User in format:
-   * dosomething.turbovote.org?referral-code=user:5745b207469c6495618b4697,campaign:7944
+   * The customUrl tag should return a custom link with Conversation variables set in query string:
+   * e.g. http://ds.puppetsloth.mx?referral-code=user:5745b207469c69618b46d97,campaign:97,source:sms
    */
   customUrl: {
     url: process.env.DS_GAMBIT_CUSTOM_URL || 'https://dosomething.turbovote.org',
@@ -18,6 +18,7 @@ module.exports = {
       fields: {
         userId: 'user',
         campaignRunId: 'campaign',
+        platform: 'source',
       },
     },
   },
