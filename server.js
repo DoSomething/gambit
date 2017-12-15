@@ -40,9 +40,11 @@ contentful.fetchRivescripts()
       const filename = `${dir}/${id}.rive`;
       // Write them.
       fs.writeFile(filename, script, ((err) => {
+        logger.debug('writeFile', { filename });
         if (err) logger.error('writeFile', { err });
       }));
     });
+    logger.info('fetchRivescripts success', { count: entries.length });
     // Load the Rivescript bot.
     rivescript.getBot();
   })
