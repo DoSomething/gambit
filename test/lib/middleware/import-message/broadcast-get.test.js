@@ -145,3 +145,25 @@ test('getBroadcast should call sendErrorResponse if contentful.fetchBroadcast fa
   t.context.req.should.not.have.property('broadcast');
   next.should.not.have.been.called;
 });
+
+test('getBroadcast should call sendErrorResponse if cache.set fails', async (t) => {
+  // setup
+  const next = sinon.stub();
+  const middleware = getBroadcast();
+  sandbox.stub(cache, 'get')
+    .returns(Promise.resolve(null));
+  sandbox.stub(contentful, 'fetchBroadcast')
+    .callsFake(broadcastLookupStub);
+  sandbox.stub(cache, 'set')
+    .returns(Promise.reject(new Error()));
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  analyticsHelper.addParameters.should.have.been.called;
+  cache.get.should.have.been.called;
+  contentful.fetchBroadcast.should.have.been.called;
+  helpers.sendErrorResponse.should.have.been.called;
+
+  t.context.req.should.not.have.property('broadcast');
+  next.should.not.have.been.called;
+});
