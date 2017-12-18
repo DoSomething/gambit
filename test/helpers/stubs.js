@@ -2,7 +2,9 @@
 
 const httpMocks = require('node-mocks-http');
 const url = require('url');
+const Chance = require('chance');
 
+const chance = new Chance();
 const mobileNumber = '+1555910832';
 const totalInbound = 52;
 const totalOutbound = 209;
@@ -78,6 +80,12 @@ module.exports = {
   getCampaignId: function getCampaignId() {
     return 2299;
   },
+  getCampaignRunId: function getCampaignRunId() {
+    return 6441;
+  },
+  getRandomMessageText: function getRandomMessageText() {
+    return chance.paragraph({ sentences: 2 });
+  },
   getMobileNumber: function getMobileNumber() {
     return mobileNumber;
   },
@@ -89,5 +97,8 @@ module.exports = {
   },
   getTopic: function getTopic() {
     return 'random';
+  },
+  getUserId: function getUserId() {
+    return '597b9ef910707d07c84b00aa';
   },
 };

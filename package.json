@@ -1,6 +1,6 @@
 {
   "name": "gambit-conversations",
-  "version": "1.1.3",
+  "version": "1.2.0",
   "description": "The DoSomething.org chatbot service for multi-platform conversations.",
   "author": "DoSomething.org",
   "license": "MIT",
@@ -32,7 +32,7 @@
     ]
   },
   "engines": {
-    "node": "6.11.5"
+    "node": "6.12.x"
   },
   "dependencies": {
     "@dosomething/northstar-js": "git://github.com/DoSomething/northstar-js.git",
@@ -50,6 +50,7 @@
     "google-libphonenumber": "^3.0.5",
     "heroku-logger": "^0.1.1",
     "mongoose": "^4.10.6",
+    "mustache": "^2.3.0",
     "newrelic": "^2.0.2",
     "request": "^2.81.0",
     "request-promise": "^4.2.1",
@@ -63,6 +64,7 @@
     "@dosomething/eslint-config": "^3.1.0",
     "ava": "^0.21.0",
     "chai": "^4.1.0",
+    "chance": "^1.0.12",
     "codecov": "^2.3.0",
     "eslint": "^4.7.0",
     "eslint-plugin-ava": "^4.2.1",
