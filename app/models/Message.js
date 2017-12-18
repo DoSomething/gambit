@@ -36,6 +36,9 @@ const messageSchema = new mongoose.Schema({
 
 messageSchema.index({ createdAt: 1 });
 messageSchema.index({ updatedAt: 1 });
+messageSchema.index({ createdAt: -1, campaignId: 1 });
+messageSchema.index({ createdAt: -1, broadcastId: 1, direction: 1, macro: 1 });
+messageSchema.index({ broadcastId: -1, direction: 1, macro: 1 });
 
 /**
  * Gets the message that matches this metadata.requestId and direction.
@@ -70,7 +73,5 @@ messageSchema.statics.updateInboundMessageMetadataByRequestId = function (reques
   metadata = {}) {
   return this.updateMessageByRequestIdAndDirection(requestId, { metadata }, 'inbound');
 };
-
-messageSchema.index({ broadcastId: -1, direction: 1, macro: 1 });
 
 module.exports = mongoose.model('Message', messageSchema);
