@@ -143,8 +143,9 @@ test('getUserIdCustomUrlQueryValueField should return string for req.user', (t) 
   t.truthy(result.includes(mockUser.id));
 });
 
-test('getUserIdCustomUrlQueryValueField throws if req.user undefined', (t) => {
-  t.throws(() => tagsHelper.getUserIdCustomUrlQueryValueField(t.context.req));
+test('getUserIdCustomUrlQueryValueField returns empty string if req.user undefined', (t) => {
+  const result = tagsHelper.getUserIdCustomUrlQueryValueField(t.context.req);
+  result.should.equal('');
 });
 
 test('getCampaignRunIdCustomUrlQueryValueField should return string for req.user', (t) => {
