@@ -14,6 +14,8 @@ chai.use(sinonChai);
 
 const sandbox = sinon.sandbox.create();
 
+const Twilio = require('twilio');
+
 const stubs = require('../helpers/stubs');
 const config = require('../../config/lib/twilio');
 
@@ -84,4 +86,24 @@ test('getMessagePayload should return object with test to/from numbers when in t
   result.from.should.equal(config.testFromNumber);
   result.to.should.equal(config.testToNumber);
   result.body.should.equal(mockMessageText);
+});
+
+test('postMessage should call Twilio client.messages.create', async () => {
+  const twilioApiStub = new Twilio(config.accountSid, config.authToken);
+  const mockTwilioResponse = {
+    status: 'queued',
+    sid: 'SM7a5268476ddf4773923134d7ba5be030',
+  };
+  const mockPayload = twilio.getMessagePayload(mockToNumber, mockMessageText);
+  sandbox.stub(twilioApiStub.messages, 'create')
+    .returns(Promise.resolve(mockTwilioResponse));
+  sandbox.stub(twilio, 'getClient')
+    .returns(twilioApiStub);
+  sandbox.stub(twilio, 'getMessagePayload')
+    .returns(mockPayload);
+
+  const result = await twilio.postMessage(mockToNumber, mockMessageText);
+  twilio.getMessagePayload.should.have.been.calledWith(mockToNumber, mockMessageText);
+  twilioApiStub.messages.create.should.have.been.calledWith(mockPayload);
+  result.should.deep.equal(mockTwilioResponse);
 });
