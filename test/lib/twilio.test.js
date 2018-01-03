@@ -43,6 +43,15 @@ test('createNewClient should create a new Twilio client by calling Twilio constr
   TwilioSpy.should.have.been.calledWith(config.accountSid, config.authToken);
 });
 
+test('createNewClient should throw when Twilio constructor fails', (t) => {
+  const failConfig = underscore.extend({}, config, {
+    authToken: 'epicFail',
+  });
+  twilio.__set__('config', failConfig);
+
+  t.throws(() => twilio.createNewClient());
+});
+
 // getClient
 test('getClient should return the existing Twilio client if already created', () => {
   // setup
@@ -73,14 +82,14 @@ test('useTwilioTestCreds should return true when config var is set to \'true\'',
 });
 
 // getMessagePayload
-test('getMessagePayload should return object with to/from numbers when not in test', () => {
+test('getMessagePayload should return object with valid to/from numbers when not testing', () => {
   const result = twilio.getMessagePayload(mockToNumber, mockMessageText);
   result.from.should.equal(config.fromNumber);
   result.to.should.equal(mockToNumber);
   result.body.should.equal(mockMessageText);
 });
 
-test('getMessagePayload should return object with test to/from numbers when in test', () => {
+test('getMessagePayload should return object with test to/from numbers when testing', () => {
   sandbox.stub(twilio, 'useTwilioTestCreds').returns(true);
   const result = twilio.getMessagePayload(mockToNumber, mockMessageText);
   result.from.should.equal(config.testFromNumber);
@@ -88,6 +97,7 @@ test('getMessagePayload should return object with test to/from numbers when in t
   result.body.should.equal(mockMessageText);
 });
 
+// postMessage
 test('postMessage should call Twilio client.messages.create', async () => {
   const twilioApiStub = new Twilio(config.accountSid, config.authToken);
   const mockTwilioResponse = {
