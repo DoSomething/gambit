@@ -7,15 +7,17 @@ const accountSid = useTwilioTestCreds === 'true' ?
 const authToken = useTwilioTestCreds === 'true' ?
   process.env.TWILIO_TEST_AUTH_TOKEN :
   process.env.TWILIO_AUTH_TOKEN;
-const fromNumber = process.env.TWILIO_TEST_FROM_NUMBER || '+15005550006';
+
+// @see https://www.twilio.com/docs/api/rest/test-credentials#test-sms-messages-parameters-From
+const testFromNumber = process.env.TWILIO_TEST_FROM_NUMBER || '+15005550006';
 // @see https://www.twilio.com/docs/api/rest/test-credentials#test-sms-messages-parameters-To
-const toNumber = process.env.TWILIO_TEST_TO_NUMBER || '+15005550006';
+const testToNumber = process.env.TWILIO_TEST_TO_NUMBER || '+15005550006';
 
 module.exports = {
   accountSid,
   authToken,
-  fromNumber,
-  toNumber,
-  messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICE_SID,
+  fromNumber: process.env.TWILIO_FROM_NUMBER,
+  testFromNumber,
+  testToNumber,
   useTwilioTestCreds,
 };
