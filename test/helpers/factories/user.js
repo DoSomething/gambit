@@ -14,7 +14,7 @@ module.exports.getValidUser = function getValidUser(phoneNumber) {
   };
 };
 
-module.exports.getValidUserWithLocation = function getValidUserWithLocation(phoneNumber) {
+module.exports.getValidUserWithAddress = function getValidUserWithAddress(phoneNumber) {
   const user = exports.getValidUser(phoneNumber);
   user.country = 'US';
   user.addr_city = chance.city();

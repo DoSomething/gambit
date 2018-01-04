@@ -31,16 +31,16 @@ test.afterEach(() => {
 
 // parseBody
 test('parseBody should inject vars into req', (t) => {
-  sandbox.spy(twilioHelper, 'parseUserLocationFromReq');
+  sandbox.spy(twilioHelper, 'parseUserAddressFromReq');
   twilioHelper.parseBody(t.context.req);
-  twilioHelper.parseUserLocationFromReq.should.have.been.called;
+  twilioHelper.parseUserAddressFromReq.should.have.been.called;
   t.context.req.platformUserId.should.equal(mockTwilioRequestBody.From);
-  t.context.req.should.have.property('platformUserLocation');
+  t.context.req.should.have.property('platformUserAddress');
 });
 
 // hasLocation
-test('parseUserLocationFromReq should return an object', (t) => {
-  const result = twilioHelper.parseUserLocationFromReq(t.context.req);
+test('parseUserAddressFromReq should return an object', (t) => {
+  const result = twilioHelper.parseUserAddressFromReq(t.context.req);
   result.addr_city.should.equal(mockTwilioRequestBody.FromCity);
   result.addr_state.should.equal(mockTwilioRequestBody.FromState);
   result.addr_zip.should.equal(mockTwilioRequestBody.FromZip);

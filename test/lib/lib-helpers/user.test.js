@@ -20,13 +20,13 @@ test.afterEach(() => {
   sandbox.restore();
 });
 
-// hasLocation
-test('hasLocation should return true if user has location properties set', (t) => {
-  const user = userFactory.getValidUserWithLocation();
-  t.true(userHelper.hasLocation(user));
+// hasAddress
+test('hasAddress should return true if user has address properties set', (t) => {
+  const user = userFactory.getValidUserWithAddress();
+  t.true(userHelper.hasAddress(user));
 });
 
-test('hasLocation should return false if user does not have location properties set', (t) => {
+test('hasAddress should return false if user does not have address properties set', (t) => {
   const user = userFactory.getValidUser();
-  t.falsy(userHelper.hasLocation(user));
+  t.falsy(userHelper.hasAddress(user));
 });
