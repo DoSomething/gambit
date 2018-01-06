@@ -44,6 +44,12 @@ test('isCampaignMenu should return boolean', (t) => {
   t.falsy(macroHelper.isCampaignMenu(undefinedMacroName));
 });
 
+test('macro.macros.x() should be equal to macro.macroNameValues.x', () => {
+  Object.keys(config.macros).forEach((macroName) => {
+    macroHelper.macros[macroName]().should.be.equal(macroName);
+  });
+});
+
 test('isConfirmedCampaign should return boolean', (t) => {
   t.true(macroHelper.isConfirmedCampaign(macros.confirmedCampaign));
   t.falsy(macroHelper.isConfirmedCampaign(undefinedMacroName));
