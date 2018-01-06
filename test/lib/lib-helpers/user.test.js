@@ -7,8 +7,6 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const macroHelper = require('../../../lib/helpers/macro');
 const subscriptionHelper = require('../../../lib/helpers/subscription');
-const stubs = require('../../helpers/stubs');
-const userFactory = require('../../helpers/factories/user');
 
 chai.should();
 chai.use(sinonChai);
@@ -19,8 +17,26 @@ const userHelper = require('../../../lib/helpers/user');
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();
 
+// stubs
+const stubs = require('../../helpers/stubs');
+const conversationFactory = require('../../helpers/factories/conversation');
+const messageFactory = require('../../helpers/factories/message');
+const userFactory = require('../../helpers/factories/user');
+
 test.afterEach(() => {
   sandbox.restore();
+});
+
+// hasAddress
+test('getDefaultUpdatePayloadFromReq should return object', () => {
+  const inboundMessage = messageFactory.getValidMessage();
+  const conversation = conversationFactory.getValidConversation();
+  const result = userHelper.getDefaultUpdatePayloadFromReq({
+    inboundMessage,
+    conversation,
+  });
+  result.last_messaged_at.should.equal(inboundMessage.createdAt.toISOString());
+  result.sms_paused.should.equal(conversation.paused);
 });
 
 // hasAddress
