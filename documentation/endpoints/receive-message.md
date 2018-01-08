@@ -15,6 +15,7 @@ Inbound Twilio messages sent to our shortcode are posted to this endpoint, passi
 
 Name | Type | Description
 --- | --- | ---
+`MessageSid` | string | Twilio Message ID
 `From` | `string` | Sender's phone number
 `Body` | `string` | Incoming message
 `MediaUrl0` | `string` | Incoming message attachment URL
