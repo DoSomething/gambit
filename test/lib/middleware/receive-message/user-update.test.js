@@ -101,6 +101,56 @@ test('updateUser should call sendErrorResponse if Northstar.updateUser fails', a
   helpers.sendErrorResponse.should.have.been.called;
 });
 
+test('updateUser should call sendErrorResponse if getDefaultUpdatePayloadFromReq throws', async (t) => {
+  // setup
+  const next = sinon.stub();
+  const middleware = updateUser();
+  sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
+    .throws();
+  sandbox.stub(userHelper, 'getSubscriptionStatusUpdate')
+    .returns(null);
+  sandbox.stub(userHelper, 'hasAddress')
+    .returns(false);
+  sandbox.stub(northstar, 'updateUser')
+    .callsFake(userUpdateStub);
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  userHelper.getDefaultUpdatePayloadFromReq.should.have.been.called;
+  userHelper.getSubscriptionStatusUpdate.should.not.have.been.called;
+  userHelper.hasAddress.should.not.have.been.called;
+  northstar.updateUser.should.not.have.been.called;
+  repliesHelper.subscriptionStatusLess.should.not.have.been.called;
+  repliesHelper.subscriptionStatusStop.should.not.have.been.called;
+  next.should.not.have.been.called;
+  helpers.sendErrorResponse.should.have.been.called;
+});
+
+test('updateUser should call getSubscriptionStatusUpdate if hasAddress throws', async (t) => {
+  // setup
+  const next = sinon.stub();
+  const middleware = updateUser();
+  sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
+    .returns(mockDefaultUserUpdateData);
+  sandbox.stub(userHelper, 'getSubscriptionStatusUpdate')
+    .throws();
+  sandbox.stub(userHelper, 'hasAddress')
+    .returns(false);
+  sandbox.stub(northstar, 'updateUser')
+    .callsFake(userUpdateStub);
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  userHelper.getDefaultUpdatePayloadFromReq.should.have.been.called;
+  userHelper.getSubscriptionStatusUpdate.should.have.been.called;
+  userHelper.hasAddress.should.not.have.been.called;
+  northstar.updateUser.should.not.have.been.called;
+  repliesHelper.subscriptionStatusLess.should.not.have.been.called;
+  repliesHelper.subscriptionStatusStop.should.not.have.been.called;
+  next.should.not.have.been.called;
+  helpers.sendErrorResponse.should.have.been.called;
+});
+
 test('updateUser should call replies.subscriptionStatusLess if statusUpdate is less', async (t) => {
   // setup
   const next = sinon.stub();
