@@ -15,8 +15,6 @@ const helpers = require('../../../../lib/helpers');
 const stubs = require('../../../helpers/stubs');
 const userFactory = require('../../../helpers/factories/user');
 
-const repliesHelper = helpers.replies;
-const subscriptionHelper = helpers.subscription;
 const userHelper = helpers.user;
 
 // setup "x.should.y" assertion style
@@ -40,10 +38,6 @@ const userUpdateFailStub = () => Promise.reject({ message: 'Epic fail' });
 
 test.beforeEach((t) => {
   sandbox.stub(helpers, 'sendErrorResponse')
-    .returns(underscore.noop);
-  sandbox.stub(repliesHelper, 'subscriptionStatusLess')
-    .returns(underscore.noop);
-  sandbox.stub(repliesHelper, 'subscriptionStatusStop')
     .returns(underscore.noop);
   t.context.req = httpMocks.createRequest();
   t.context.req.user = mockUser;
@@ -74,8 +68,6 @@ test('updateUser should call next if req.user undefined', async (t) => {
   userHelper.getDefaultUpdatePayloadFromReq.should.not.have.been.called;
   userHelper.getSubscriptionStatusUpdate.should.not.have.been.called;
   northstar.updateUser.should.not.have.been.called;
-  repliesHelper.subscriptionStatusLess.should.not.have.been.called;
-  repliesHelper.subscriptionStatusStop.should.not.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 
@@ -96,8 +88,6 @@ test('updateUser should call next if Northstar.updateUser success', async (t) =>
   userHelper.getSubscriptionStatusUpdate.should.have.been.called;
   t.context.req.userUpdateData.should.deep.equal(mockDefaultUserUpdateData);
   northstar.updateUser.should.have.been.called;
-  repliesHelper.subscriptionStatusLess.should.not.have.been.called;
-  repliesHelper.subscriptionStatusStop.should.not.have.been.called;
   next.should.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
 });
@@ -118,8 +108,6 @@ test('updateUser should call sendErrorResponse if Northstar.updateUser fails', a
   userHelper.getDefaultUpdatePayloadFromReq.should.have.been.called;
   userHelper.getSubscriptionStatusUpdate.should.have.been.called;
   northstar.updateUser.should.have.been.called;
-  repliesHelper.subscriptionStatusLess.should.not.have.been.called;
-  repliesHelper.subscriptionStatusStop.should.not.have.been.called;
   next.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
 });
@@ -143,8 +131,6 @@ test('updateUser should call sendErrorResponse if getDefaultUpdatePayloadFromReq
   userHelper.getSubscriptionStatusUpdate.should.not.have.been.called;
   userHelper.hasAddress.should.not.have.been.called;
   northstar.updateUser.should.not.have.been.called;
-  repliesHelper.subscriptionStatusLess.should.not.have.been.called;
-  repliesHelper.subscriptionStatusStop.should.not.have.been.called;
   next.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
 });
@@ -168,54 +154,8 @@ test('updateUser should call getSubscriptionStatusUpdate if hasAddress throws', 
   userHelper.getSubscriptionStatusUpdate.should.have.been.called;
   userHelper.hasAddress.should.not.have.been.called;
   northstar.updateUser.should.not.have.been.called;
-  repliesHelper.subscriptionStatusLess.should.not.have.been.called;
-  repliesHelper.subscriptionStatusStop.should.not.have.been.called;
   next.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
-});
-
-test('updateUser should call replies.subscriptionStatusLess if statusUpdate is less', async (t) => {
-  // setup
-  const next = sinon.stub();
-  const middleware = updateUser();
-  sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
-    .returns({ });
-  sandbox.stub(userHelper, 'getSubscriptionStatusUpdate')
-    .returns(subscriptionHelper.statuses.less());
-  sandbox.stub(northstar, 'updateUser')
-    .callsFake(userUpdateStub);
-
-  // test
-  await middleware(t.context.req, t.context.res, next);
-  userHelper.getDefaultUpdatePayloadFromReq.should.have.been.called;
-  userHelper.getSubscriptionStatusUpdate.should.have.been.called;
-  northstar.updateUser.should.have.been.called;
-  repliesHelper.subscriptionStatusLess.should.have.been.called;
-  repliesHelper.subscriptionStatusStop.should.not.have.been.called;
-  next.should.not.have.been.called;
-  helpers.sendErrorResponse.should.not.have.been.called;
-});
-
-test('updateUser should call replies.subscriptionStatusStop if statusUpdate is stop', async (t) => {
-  // setup
-  const next = sinon.stub();
-  const middleware = updateUser();
-  sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
-    .returns({ });
-  sandbox.stub(userHelper, 'getSubscriptionStatusUpdate')
-    .returns(subscriptionHelper.statuses.stop());
-  sandbox.stub(northstar, 'updateUser')
-    .callsFake(userUpdateStub);
-
-  // test
-  await middleware(t.context.req, t.context.res, next);
-  userHelper.getDefaultUpdatePayloadFromReq.should.have.been.called;
-  userHelper.getSubscriptionStatusUpdate.should.have.been.called;
-  northstar.updateUser.should.have.been.called;
-  repliesHelper.subscriptionStatusLess.should.not.have.been.called;
-  repliesHelper.subscriptionStatusStop.should.have.been.called;
-  next.should.not.have.been.called;
-  helpers.sendErrorResponse.should.not.have.been.called;
 });
 
 test('updateUser should not set address if req.user.platformUserAddress undefined', async (t) => {
@@ -238,8 +178,6 @@ test('updateUser should not set address if req.user.platformUserAddress undefine
   userHelper.hasAddress.should.not.have.been.called;
   t.context.req.userUpdateData.should.not.have.property('country');
   northstar.updateUser.should.have.been.called;
-  repliesHelper.subscriptionStatusLess.should.not.have.been.called;
-  repliesHelper.subscriptionStatusStop.should.not.have.been.called;
   next.should.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
 });
@@ -267,8 +205,6 @@ test('updateUser should set address when req.user does not have address', async 
   t.context.req.userUpdateData.should.have.property('country');
   northstar.updateUser
     .should.have.been.calledWith(t.context.req.userId, t.context.req.userUpdateData);
-  repliesHelper.subscriptionStatusLess.should.not.have.been.called;
-  repliesHelper.subscriptionStatusStop.should.not.have.been.called;
   next.should.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
 });
