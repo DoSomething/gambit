@@ -34,10 +34,6 @@ router.use(paramsMiddleware());
 router.use(getConversationMiddleware());
 router.use(createConversationMiddleware());
 
-// Fetch/create Northstar User.
-router.use(getUserMiddleware());
-router.use(createUserIfNotFoundMiddleware());
-
 // Send inbound message text to Rivescript for a reply.
 router.use(getRivescriptReplyMiddleware());
 
@@ -45,8 +41,12 @@ router.use(getRivescriptReplyMiddleware());
 router.use(loadInboundMessageMiddleware());
 router.use(createInboundMessageMiddleware());
 
+// Fetch User for Conversation.
+router.use(getUserMiddleware());
 // Updates Last Messaged At, Subscription Status, Paused.
 router.use(updateUserMiddleware());
+// Creates User if doesn't exist.
+router.use(createUserIfNotFoundMiddleware());
 
 // Scolds User if inbound message contains bad words.
 router.use(badWordsMiddleware());

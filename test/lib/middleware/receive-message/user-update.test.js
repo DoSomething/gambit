@@ -56,6 +56,29 @@ test.afterEach((t) => {
   t.context = {};
 });
 
+test('updateUser should call next if req.user undefined', async (t) => {
+  // setup
+  t.context.req.user = null;
+  const next = sinon.stub();
+  const middleware = updateUser();
+  sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
+    .returns(mockDefaultUserUpdateData);
+  sandbox.stub(userHelper, 'getSubscriptionStatusUpdate')
+    .returns(null);
+  sandbox.stub(northstar, 'updateUser')
+    .callsFake(userUpdateStub);
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  next.should.have.been.called;
+  userHelper.getDefaultUpdatePayloadFromReq.should.not.have.been.called;
+  userHelper.getSubscriptionStatusUpdate.should.not.have.been.called;
+  northstar.updateUser.should.not.have.been.called;
+  repliesHelper.subscriptionStatusLess.should.not.have.been.called;
+  repliesHelper.subscriptionStatusStop.should.not.have.been.called;
+  helpers.sendErrorResponse.should.not.have.been.called;
+});
+
 test('updateUser should call next if Northstar.updateUser success', async (t) => {
   // setup
   const next = sinon.stub();
