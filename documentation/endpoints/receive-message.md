@@ -9,18 +9,43 @@ Receives a message and sends a reply (or forwards it, when appropriate).
 
 ## Input
 
+### Twilio
+
+Inbound Twilio messages sent to our shortcode are posted to this endpoint, passing a Twilio message:
+
 Name | Type | Description
 --- | --- | ---
-`From` | `string` | Sender's phone number (included in Twilio message)
-`Body` | `string` | Incoming message (included in Twilio message)
-`MediaUrl0` | `string` | Incoming message attachment URL (included in Twilio message)
-`MediaContentType0` | `string` | Incoming message attachment type (included in Twilio message)
-`slackId` | `string` |
-`slackChannel` | `string` |
-`facebookId` | `string` |
-`mobile` | `string` | Mobile number for the User (passed for general API usage, e.g. Consolebot).
-`text` | `string` | Incoming message sent from User.
-`mediaUrl` | `string` | Media attachment URL (currently only supports 1 attachment).
+`MessageSid` | string | Twilio Message ID
+`From` | `string` | Sender's phone number
+`Body` | `string` | Incoming message
+`MediaUrl0` | `string` | Incoming message attachment URL
+`MediaContentType0` | `string` | Incoming message attachment type
+`FromCity` | `string` |
+`FromState` | `string` |
+`FromZip` | `string` |
+`FromCountry`| `string` |
+
+### Slack
+
+Direct messages sent to our DoSomething `@gambit-staging` Slack app are posted to this endpoint, passing parameters:
+
+Name | Type | Description
+--- | --- | ---
+`slackId` | `string` | Sender's Slack User ID
+`slackChannel` | `string` |  Direct message channel from Slack User to Gambit Slack app
+`text` | `string` | Incoming message
+`mediaUrl` | `string` | Media attachment URL (hardcoded to an image set in Gambit Slack).
+
+
+### Consolebot
+
+The Gambit shell script posts to this endpoint, passing parameters:
+
+Name | Type | Description
+--- | --- | ---
+`mobile` | `string` | Sender's mobile number (`DS_CONSOLEBOT_MOBILE`).
+`text` | `string` | Incoming message
+`mediaUrl` | `string` | Media attachment URL (`DS_CONSOLEBOT_PHOTO_URL`).
 
 <details>
 <summary><strong>Example Request</strong></summary>
