@@ -56,7 +56,7 @@ test('createUser should inject a user into the req object when created in Norths
   // setup
   const next = sinon.stub();
   const middleware = createUser();
-  sandbox.stub(conversation, 'createNorthstarUser')
+  sandbox.stub(conversation, 'createNorthstarUserFromReq')
     .callsFake(userLookupStub);
 
   // test
@@ -64,11 +64,12 @@ test('createUser should inject a user into the req object when created in Norths
   const user = t.context.req.user;
 
   user.should.deep.equal(mockUser);
+  conversation.createNorthstarUserFromReq.should.have.been.called;
   analyticsHelper.addParameters.should.have.been.called;
   next.should.have.been.called;
 });
 
-test('getUser should call next if req.user exists', async (t) => {
+test('createUser should call next if req.user exists', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = createUser();
@@ -80,11 +81,11 @@ test('getUser should call next if req.user exists', async (t) => {
   next.should.have.been.called;
 });
 
-test('createUser should call sendErrorResponse if Conversation.createNorthstarUser fails', async (t) => {
+test('createUser should call sendErrorResponse if Conversation.createNorthstarUserFromReq fails', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = createUser();
-  sandbox.stub(conversation, 'createNorthstarUser')
+  sandbox.stub(conversation, 'createNorthstarUserFromReq')
     .callsFake(userLookupFailStub);
 
   // test
