@@ -18,9 +18,11 @@ chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const infoTemplate = require('../../../../lib/middleware/receive-message/template-info');
+const macroReplyTemplate = require('../../../../lib/middleware/receive-message/template-macro-reply');
 
 const sandbox = sinon.sandbox.create();
+
+const macroName = 'subscriptionStatusStop';
 
 test.beforeEach((t) => {
   sandbox.stub(helpers, 'sendErrorResponse')
@@ -36,62 +38,62 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-test('infoTemplate should call replies.infoMessage if macro.isSendInfoMessage is true', async (t) => {
+test('macroReplyTemplate should call replies[macroReply] if macro.getReply returns string', async (t) => {
   // setup
   const next = sinon.stub();
-  const middleware = infoTemplate();
-  sandbox.stub(macroHelper, 'isSendInfoMessage')
-    .returns(true);
-  sandbox.stub(replies, 'infoMessage')
+  const middleware = macroReplyTemplate();
+  sandbox.stub(macroHelper, 'getReply')
+    .returns(macroName);
+  sandbox.stub(replies, 'subscriptionStatusStop')
     .returns(underscore.noop);
 
   // test
   await middleware(t.context.req, t.context.res, next);
 
-  replies.infoMessage.should.have.been.called;
+  replies.subscriptionStatusStop.should.have.been.called;
   next.should.not.have.been.called;
 });
 
-test('infoTemplate should call next if macro.isSendInfoMessage is false', async (t) => {
+test('macroReplyTemplate should call next if macro.getReply undefined', async (t) => {
   // setup
   const next = sinon.stub();
-  const middleware = infoTemplate();
-  sandbox.stub(macroHelper, 'isSendInfoMessage')
-    .returns(false);
-  sandbox.stub(replies, 'infoMessage')
+  const middleware = macroReplyTemplate();
+  sandbox.stub(macroHelper, 'getReply')
+    .returns(null);
+  sandbox.stub(replies, 'subscriptionStatusStop')
     .returns(underscore.noop);
 
   // test
   await middleware(t.context.req, t.context.res, next);
 
-  replies.infoMessage.should.not.have.been.called;
+  replies.subscriptionStatusStop.should.not.have.been.called;
   next.should.have.been.called;
 });
 
-test('infoTemplate should call sendErrorResponse if macro.isSendInfoMessage throws', async (t) => {
+test('macroReplyTemplate should call sendErrorResponse if macro.getReply throws', async (t) => {
   // setup
   const next = sinon.stub();
-  const middleware = infoTemplate();
-  sandbox.stub(macroHelper, 'isSendInfoMessage')
+  const middleware = macroReplyTemplate();
+  sandbox.stub(macroHelper, 'getReply')
     .throws();
-  sandbox.stub(replies, 'infoMessage')
+  sandbox.stub(replies, 'subscriptionStatusStop')
     .returns(underscore.noop);
 
   // test
   await middleware(t.context.req, t.context.res, next);
 
   helpers.sendErrorResponse.should.have.been.called;
-  replies.infoMessage.should.not.have.been.called;
+  replies.subscriptionStatusStop.should.not.have.been.called;
   next.should.not.have.been.called;
 });
 
-test('infoTemplate should call sendErrorResponse if replies.infoMessage throws', async (t) => {
+test('infoTemplate should call sendErrorResponse if replies throws', async (t) => {
   // setup
   const next = sinon.stub();
-  const middleware = infoTemplate();
-  sandbox.stub(macroHelper, 'isSendInfoMessage')
+  const middleware = macroReplyTemplate();
+  sandbox.stub(macroHelper, 'getReply')
     .returns(true);
-  sandbox.stub(replies, 'infoMessage')
+  sandbox.stub(replies, 'subscriptionStatusStop')
     .throws();
 
   // test
