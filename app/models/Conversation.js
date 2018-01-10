@@ -2,14 +2,11 @@
 
 const mongoose = require('mongoose');
 const logger = require('../../lib/logger');
-const Promise = require('bluebird');
-
 const Message = require('./Message');
 const helpers = require('../../lib/helpers');
 const northstar = require('../../lib/northstar');
 const slack = require('../../lib/slack');
 const twilio = require('../../lib/twilio');
-const UnprocessibleEntityError = require('../../app/exceptions/UnprocessibleEntityError');
 
 const campaignTopic = 'campaign';
 const defaultTopic = 'random';
@@ -325,21 +322,6 @@ conversationSchema.methods.getNorthstarUser = function () {
   }
 
   return northstar.fetchUserByMobile(this.platformUserId);
-};
-
-/**
- * @return {Promise}
- */
-conversationSchema.methods.createNorthstarUserFromReq = function (req) {
-  // For now, we only need to support creating new Users by a mobile number.
-  if (this.platform === 'sms' || this.platform === 'api') {
-    const data = helpers.user.getDefaultCreatePayloadFromReq(req);
-    return northstar.createUser(data);
-  }
-
-  const errorMsg = `createNorthstarUser: Creating Northstar users is not supported in ${this.platform} platform.`;
-  const error = new UnprocessibleEntityError(errorMsg);
-  return Promise.reject(error);
 };
 
 module.exports = mongoose.model('Conversation', conversationSchema);
