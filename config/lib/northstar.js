@@ -3,6 +3,11 @@
 module.exports = {
   clientOptions: {
     apiKey: process.env.DS_NORTHSTAR_API_KEY,
-    baseUri: process.env.DS_NORTHSTAR_API_BASEURI,
+    baseURI: process.env.DS_NORTHSTAR_API_BASEURI,
+  },
+  getUserFields: {
+    id: 'id',
+    email: 'email',
+    mobile: 'mobile',
   },
 };
