@@ -54,6 +54,9 @@ test('getDefaultCreatePayloadFromReq should return object', () => {
     platformUserAddress: platformUserAddressStub,
     platformUserId: stubs.getMobileNumber(),
   };
+  const mockDefaultPayload = { last_messaged_at: Date.now() };
+  sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
+    .returns(mockDefaultPayload);
   sandbox.stub(underscore, 'extend')
     .returns(platformUserAddressStub);
   sandbox.stub(userHelper, 'generatePassword')
@@ -61,7 +64,8 @@ test('getDefaultCreatePayloadFromReq should return object', () => {
   const result = userHelper.getDefaultCreatePayloadFromReq(req);
   result.source.should.equal(req.platform);
   result.mobile.should.equal(req.platformUserId);
-  underscore.extend.should.have.been.calledWith({}, req.platformUserAddress);
+  userHelper.getDefaultUpdatePayloadFromReq.should.have.been.calledWith(req);
+  underscore.extend.should.have.been.calledWith(mockDefaultPayload, req.platformUserAddress);
   userHelper.generatePassword.should.have.been.called;
 });
 
