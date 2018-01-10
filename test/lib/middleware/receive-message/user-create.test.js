@@ -12,6 +12,7 @@ const Promise = require('bluebird');
 const northstar = require('../../../../lib/northstar');
 const helpers = require('../../../../lib/helpers');
 const analyticsHelper = require('../../../../lib/helpers/analytics');
+const requestHelper = require('../../../../lib/helpers/request');
 const userHelper = require('../../../../lib/helpers/user');
 
 const stubs = require('../../../helpers/stubs');
@@ -60,6 +61,8 @@ test('createUser should inject a user into the req object when created in Norths
   // setup
   const next = sinon.stub();
   const middleware = createUser();
+  sandbox.stub(requestHelper, 'isSlack')
+    .returns(false);
   sandbox.stub(userHelper, 'getDefaultCreatePayloadFromReq')
     .returns(defaultPayloadStub);
   sandbox.stub(northstar, 'createUser')
@@ -87,11 +90,12 @@ test('createUser should call next if req.user exists', async (t) => {
   next.should.have.been.called;
 });
 
-test('createUser should call next if req.platform is slack', async (t) => {
+test('createUser should call next if helpers.request.isSlack', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = createUser();
-  t.context.req.platform = 'slack';
+  sandbox.stub(requestHelper, 'isSlack')
+    .returns(true);
 
   // test
   await middleware(t.context.req, t.context.res, next);
