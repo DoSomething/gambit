@@ -29,6 +29,17 @@ test.afterEach(() => {
   sandbox.restore();
 });
 
+test('getReply should return text for given macro', () => {
+  const macro = config.macros.subscriptionStatusStop;
+  const reply = config.replies[macro];
+  const result = macroHelper.getReply(macro);
+  reply.should.equal(result);
+});
+
+test('getReply should return falsy for undefined macro reply', (t) => {
+  t.falsy(macroHelper.getReply(undefinedMacroName));
+});
+
 test('isMacro should return text for given macro', () => {
   const macro = config.macros.confirmedCampaign;
   const result = macroHelper.isMacro(macro);
@@ -42,6 +53,12 @@ test('isMacro should return falsy for undefined macro', (t) => {
 test('isCampaignMenu should return boolean', (t) => {
   t.true(macroHelper.isCampaignMenu(macros.campaignMenu));
   t.falsy(macroHelper.isCampaignMenu(undefinedMacroName));
+});
+
+test('macro.macros.x() should be equal to macro.macroNameValues.x', () => {
+  Object.keys(config.macros).forEach((macroName) => {
+    macroHelper.macros[macroName]().should.be.equal(macroName);
+  });
 });
 
 test('isConfirmedCampaign should return boolean', (t) => {

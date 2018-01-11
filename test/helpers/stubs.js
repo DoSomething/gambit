@@ -5,6 +5,7 @@ const url = require('url');
 const Chance = require('chance');
 
 const chance = new Chance();
+const country = 'US';
 const mobileNumber = '+1555910832';
 const totalInbound = 52;
 const totalOutbound = 209;
@@ -82,6 +83,24 @@ module.exports = {
   },
   getCampaignRunId: function getCampaignRunId() {
     return 6441;
+  },
+  getMockInboundTwilioRequestBody: function getMockInboundTwilioRequestBody() {
+    return {
+      Body: this.getRandomMessageText(),
+      From: this.getMobileNumber(),
+      FromCity: chance.city(),
+      FromCountry: country,
+      FromState: chance.state(),
+      FromZip: chance.zip(),
+      NumMedia: 0,
+      ToCity: chance.city(),
+      ToCountry: country,
+      ToState: chance.state(),
+      ToZip: chance.zip(),
+      SmsMessageSid: 'SMe62bd767ea4438d7f7f307ff9d3212e0',
+      SmsSid: 'SMe62bd767ea4438d7f7f307ff9d3212e0',
+      SmsStatus: 'received',
+    };
   },
   getRandomMessageText: function getRandomMessageText() {
     return chance.paragraph({ sentences: 2 });

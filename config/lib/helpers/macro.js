@@ -12,4 +12,10 @@ module.exports = {
     subscriptionStatusStop: 'subscriptionStatusStop',
     supportRequested: 'supportRequested',
   },
+  replies: {
+    sendCrisisMessage: 'crisisMessage',
+    sendInfoMessage: 'infoMessage',
+    subscriptionStatusLess: 'subscriptionStatusLess',
+    subscriptionStatusStop: 'subscriptionStatusStop',
+  },
 };
