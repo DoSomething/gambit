@@ -11,12 +11,11 @@ const getUserMiddleware = require('../../lib/middleware/receive-message/user-get
 const createUserIfNotFoundMiddleware = require('../../lib/middleware/receive-message/user-create');
 const loadInboundMessageMiddleware = require('../../lib/middleware/receive-message/message-inbound-load');
 const createInboundMessageMiddleware = require('../../lib/middleware/receive-message/message-inbound-create');
+const macroReplyMiddleware = require('../../lib/middleware/receive-message/template-macro-reply');
 const badWordsMiddleware = require('../../lib/middleware/receive-message/bad-words');
 const campaignKeywordMiddleware = require('../../lib/middleware/receive-message/campaign-keyword');
 const getRivescriptReplyMiddleware = require('../../lib/middleware/receive-message/rivescript-reply-get');
 const rivescriptTemplateMiddleware = require('../../lib/middleware/receive-message/template-rivescript');
-const crisisTemplateMiddleware = require('../../lib/middleware/receive-message/template-crisis');
-const infoTemplateMiddleware = require('../../lib/middleware/receive-message/template-info');
 const updateUserMiddleware = require('../../lib/middleware/receive-message/user-update');
 const supportRequestedMiddleware = require('../../lib/middleware/receive-message/support-requested');
 const forwardSupportMessageMiddleware = require('../../lib/middleware/receive-message/support-message');
@@ -34,10 +33,6 @@ router.use(paramsMiddleware());
 router.use(getConversationMiddleware());
 router.use(createConversationMiddleware());
 
-// Fetch/create Northstar User.
-router.use(getUserMiddleware());
-router.use(createUserIfNotFoundMiddleware());
-
 // Send inbound message text to Rivescript for a reply.
 router.use(getRivescriptReplyMiddleware());
 
@@ -45,23 +40,25 @@ router.use(getRivescriptReplyMiddleware());
 router.use(loadInboundMessageMiddleware());
 router.use(createInboundMessageMiddleware());
 
+// Fetch User for Conversation.
+router.use(getUserMiddleware());
 // Updates Last Messaged At, Subscription Status, Paused.
 router.use(updateUserMiddleware());
 
+// Creates User if doesn't exist.
+router.use(createUserIfNotFoundMiddleware());
+
+// Sends macro reply if exists.
+router.use(macroReplyMiddleware());
+
 // Scolds User if inbound message contains bad words.
 router.use(badWordsMiddleware());
-
-// Checks for INFO or HELP keywords.
-router.use(infoTemplateMiddleware());
 
 // If MENU keyword, set random Campaign and ask for Signup.
 router.use(campaignMenuMiddleware());
 
 // If Campaign keyword was sent, update Conversation campaign and send continueCampaign.
 router.use(campaignKeywordMiddleware());
-
-// Sends CTL info for any crisis triggers.
-router.use(crisisTemplateMiddleware());
 
 // If Conversation is paused, forward inbound messages to Front, for agents to respond to.
 // Sends an empty reply message back.

@@ -5,8 +5,11 @@ const test = require('ava');
 const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
+const crypto = require('crypto');
+const underscore = require('underscore');
 const macroHelper = require('../../../lib/helpers/macro');
 const subscriptionHelper = require('../../../lib/helpers/subscription');
+const config = require('../../../config/lib/helpers/user');
 
 chai.should();
 chai.use(sinonChai);
@@ -23,11 +26,50 @@ const conversationFactory = require('../../helpers/factories/conversation');
 const messageFactory = require('../../helpers/factories/message');
 const userFactory = require('../../helpers/factories/user');
 
+const cryptoCreateHmacStub = {
+  update() { return this; },
+  digest() { return this; },
+  substring() { return this; },
+};
+const platformUserAddressStub = {
+  country: 'US',
+};
+
 test.afterEach(() => {
   sandbox.restore();
 });
 
-// hasAddress
+// createPassword
+test('generatePassword', () => {
+  const opts = config.createOptions;
+  sandbox.stub(crypto, 'createHmac').returns(cryptoCreateHmacStub);
+  userHelper.generatePassword('taco');
+  crypto.createHmac.should.have.been.calledWithExactly(opts.passwordAlgorithm, opts.passwordKey);
+});
+
+// getDefaultCreatePayloadFromReq
+test('getDefaultCreatePayloadFromReq should return object', () => {
+  const req = {
+    platform: stubs.getPlatform(),
+    platformUserAddress: platformUserAddressStub,
+    platformUserId: stubs.getMobileNumber(),
+  };
+  const mockDefaultPayload = { last_messaged_at: Date.now() };
+  sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
+    .returns(mockDefaultPayload);
+  sandbox.stub(underscore, 'extend')
+    .returns(platformUserAddressStub);
+  sandbox.stub(userHelper, 'generatePassword')
+    .returns('taco');
+  const result = userHelper.getDefaultCreatePayloadFromReq(req);
+  result.source.should.equal(req.platform);
+  result.mobile.should.equal(req.platformUserId);
+  userHelper.getDefaultUpdatePayloadFromReq.should.have.been.calledWith(req);
+  underscore.extend.should.have.been.calledWith(mockDefaultPayload, req.platformUserAddress);
+  userHelper.generatePassword.should.have.been.called;
+});
+
+// getDefaultUpdatePayloadFromReq
 test('getDefaultUpdatePayloadFromReq should return object', () => {
   const inboundMessage = messageFactory.getValidMessage();
   const conversation = conversationFactory.getValidConversation();

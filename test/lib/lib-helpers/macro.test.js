@@ -29,6 +29,17 @@ test.afterEach(() => {
   sandbox.restore();
 });
 
+test('getReply should return text for given macro', () => {
+  const macro = config.macros.subscriptionStatusStop;
+  const reply = config.replies[macro];
+  const result = macroHelper.getReply(macro);
+  reply.should.equal(result);
+});
+
+test('getReply should return falsy for undefined macro reply', (t) => {
+  t.falsy(macroHelper.getReply(undefinedMacroName));
+});
+
 test('isMacro should return text for given macro', () => {
   const macro = config.macros.confirmedCampaign;
   const result = macroHelper.isMacro(macro);
