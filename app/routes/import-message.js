@@ -8,7 +8,7 @@ const router = express.Router();
 const outboundMessageConfig = require('../../config/lib/middleware/import-message/message-outbound');
 
 // Middleware
-const paramsMiddleware = require('../../lib/middleware/messages/broadcast/params');
+const paramsMiddleware = require('../../lib/middleware/import-message/params');
 const getBroadcastMiddleware = require('../../lib/middleware/messages/broadcast/broadcast-get');
 const parseBroadcastMiddleware = require('../../lib/middleware/messages/broadcast/parse-broadcast');
 const getConvoMiddleware = require('../../lib/middleware/conversation-get');
