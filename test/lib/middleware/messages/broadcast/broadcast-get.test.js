@@ -11,12 +11,12 @@ const underscore = require('underscore');
 const Promise = require('bluebird');
 const logger = require('heroku-logger');
 
-const helpers = require('../../../../lib/helpers');
-const analyticsHelper = require('../../../../lib/helpers/analytics');
-const cacheHelper = require('../../../../lib/helpers/cache');
-const contentful = require('../../../../lib/contentful');
-const stubs = require('../../../helpers/stubs');
-const broadcastFactory = require('../../../helpers/factories/broadcast');
+const helpers = require('../../../../../lib/helpers');
+const analyticsHelper = require('../../../../../lib/helpers/analytics');
+const cacheHelper = require('../../../../../lib/helpers/cache');
+const contentful = require('../../../../../lib/contentful');
+const stubs = require('../../../../helpers/stubs');
+const broadcastFactory = require('../../../../helpers/factories/broadcast');
 
 // stubs
 const broadcastId = stubs.getBroadcastId();
@@ -32,7 +32,7 @@ chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const getBroadcast = require('../../../../lib/middleware/import-message/broadcast-get');
+const getBroadcast = require('../../../../../lib/middleware/messages/broadcast/broadcast-get');
 
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();

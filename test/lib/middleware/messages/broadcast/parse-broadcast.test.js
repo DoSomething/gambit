@@ -9,18 +9,18 @@ const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 
-const helpers = require('../../../../lib/helpers');
-const analyticsHelper = require('../../../../lib/helpers/analytics');
-const contentful = require('../../../../lib/contentful');
-const stubs = require('../../../helpers/stubs');
-const broadcastFactory = require('../../../helpers/factories/broadcast');
+const helpers = require('../../../../../lib/helpers');
+const analyticsHelper = require('../../../../../lib/helpers/analytics');
+const contentful = require('../../../../../lib/contentful');
+const stubs = require('../../../../helpers/stubs');
+const broadcastFactory = require('../../../../helpers/factories/broadcast');
 
 // setup "x.should.y" assertion style
 chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const parseBroadcast = require('../../../../lib/middleware/import-message/parse-broadcast');
+const parseBroadcast = require('../../../../../lib/middleware/messages/broadcast/parse-broadcast');
 
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();

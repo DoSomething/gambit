@@ -114,6 +114,9 @@ module.exports = {
   getPlatformUserId: function getPlatformUserId() {
     return mobileNumber;
   },
+  getTemplate: function getTemplate() {
+    return 'askSignup';
+  },
   getTopic: function getTopic() {
     return 'random';
   },
