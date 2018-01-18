@@ -22,7 +22,7 @@ const paramsMiddleware = require('../../../../../lib/middleware/messages/broadca
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();
 
-const mobileNumber = stubs.getMobileNumber();
+const userId = stubs.getUserId();
 const broadcastId = stubs.getBroadcastId();
 
 test.beforeEach((t) => {
@@ -41,7 +41,7 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-test('paramsMiddleware should call sendErrorResponse if body.mobile not found', async (t) => {
+test('paramsMiddleware should call sendErrorResponse if body.northstarId not found', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = paramsMiddleware();
@@ -52,18 +52,18 @@ test('paramsMiddleware should call sendErrorResponse if body.mobile not found', 
   next.should.not.have.been.called;
 });
 
-test('paramsMiddleware should call next if body.mobile found', async (t) => {
+test('paramsMiddleware should call next if body.northstarId found', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = paramsMiddleware();
-  t.context.req.body.mobile = mobileNumber;
   t.context.req.body = {
-    mobile: mobileNumber,
+    northstarId: userId,
     broadcastId,
   };
 
   // test
   await middleware(t.context.req, t.context.res, next);
   helpers.sendErrorResponse.should.not.have.been.called;
+  t.context.req.userId.should.equal(userId);
   next.should.have.been.called;
 });

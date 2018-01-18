@@ -4,6 +4,7 @@ module.exports = {
   // To be deprecated after v2 launch:
   currentVersion: process.env.DS_GAMBIT_CONVERSATIONS_BROADCAST_API_VERSION || '1',
   customerIo: {
+    userIdField: '{{customer.id}}',
     userPhoneField: '{{customer.phone}}',
   },
   twilio: {
