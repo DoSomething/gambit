@@ -122,3 +122,15 @@ test('formatStats should return default object when array without _id property i
   broadcastHelper.parseMessageDirection.should.not.have.been.called;
   result.should.deep.equal(defaultStats);
 });
+
+test('getWebhook should return an object', () => {
+  const mockRequest = {
+    data: {
+      message: stubs.getRandomMessageText(),
+    },
+  };
+  const result = broadcastHelper.getWebhook(mockRequest);
+  result.should.have.property('body');
+  result.should.have.property('headers');
+  result.should.have.property('url');
+});
