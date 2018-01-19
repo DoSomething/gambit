@@ -44,7 +44,7 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-test('validateUser calls sendErrorResponseWithSuppressHeaders if user is not subscriber', async (t) => {
+test('validateUser calls sendErrorResponseWithSuppressHeaders if user is not subscriber', (t) => {
   // setup
   const next = sinon.stub();
   const middleware = validateUser();
@@ -52,7 +52,65 @@ test('validateUser calls sendErrorResponseWithSuppressHeaders if user is not sub
     .returns(false);
 
   // test
-  await middleware(t.context.req, t.context.res, next);
+  middleware(t.context.req, t.context.res, next);
+  helpers.user.isSubscriber.should.have.been.called;
   helpers.sendErrorResponseWithSuppressHeaders.should.have.been.called;
   next.should.not.have.been.called;
+});
+
+test('validateUser calls sendErrorResponseWithSuppressHeaders if user is paused', (t) => {
+  // setup
+  const next = sinon.stub();
+  const middleware = validateUser();
+  sandbox.stub(helpers.user, 'isSubscriber')
+    .returns(true);
+  sandbox.stub(helpers.user, 'isPaused')
+    .returns(true);
+
+  // test
+  middleware(t.context.req, t.context.res, next);
+  helpers.user.isSubscriber.should.have.been.called;
+  helpers.user.isPaused.should.have.been.called;
+  helpers.sendErrorResponseWithSuppressHeaders.should.have.been.called;
+  next.should.not.have.been.called;
+});
+
+test('validateUser calls sendErrorResponseWithSuppressHeaders if formatMobileNumber throws', (t) => {
+  // setup
+  const next = sinon.stub();
+  const middleware = validateUser();
+  sandbox.stub(helpers.user, 'isSubscriber')
+    .returns(true);
+  sandbox.stub(helpers.user, 'isPaused')
+    .returns(false);
+  sandbox.stub(helpers, 'formatMobileNumber')
+    .throws();
+
+  // test
+  middleware(t.context.req, t.context.res, next);
+  helpers.user.isSubscriber.should.have.been.called;
+  helpers.user.isPaused.should.have.been.called;
+  helpers.formatMobileNumber.should.have.been.called;
+  helpers.sendErrorResponseWithSuppressHeaders.should.have.been.called;
+  next.should.not.have.been.called;
+});
+
+test('validateUser calls next if user validates', (t) => {
+  // setup
+  const next = sinon.stub();
+  const middleware = validateUser();
+  sandbox.stub(helpers.user, 'isSubscriber')
+    .returns(true);
+  sandbox.stub(helpers.user, 'isPaused')
+    .returns(false);
+  sandbox.stub(helpers, 'formatMobileNumber')
+    .returns(mockUser.mobile);
+
+  // test
+  middleware(t.context.req, t.context.res, next);
+  helpers.user.isSubscriber.should.have.been.called;
+  helpers.user.isPaused.should.have.been.called;
+  helpers.formatMobileNumber.should.have.been.called;
+  helpers.sendErrorResponseWithSuppressHeaders.should.not.have.been.called;
+  next.should.have.been.called;
 });
