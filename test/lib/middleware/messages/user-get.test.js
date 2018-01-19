@@ -32,8 +32,9 @@ const userLookupNotFoundStub = () => Promise.reject({ status: 404 });
 
 // Setup!
 test.beforeEach((t) => {
-  sandbox.spy(helpers, 'addBlinkSuppressHeaders');
   sandbox.stub(helpers, 'sendErrorResponse')
+    .returns(sendErrorResponseStub);
+  sandbox.stub(helpers, 'sendErrorResponseWithSuppressHeaders')
     .returns(sendErrorResponseStub);
 
   // setup req, res mocks
@@ -77,7 +78,7 @@ test('getUser calls sendErrorResponse if helpers.user.fetchById fails', async (t
   // test
   await middleware(t.context.req, t.context.res, next);
   helpers.sendErrorResponse.should.have.been.called;
-  helpers.addBlinkSuppressHeaders.should.not.have.been.called;
+  helpers.sendErrorResponseWithSuppressHeaders.should.not.have.been.called;
   t.context.req.should.not.have.property('user');
   next.should.not.have.been.called;
 });
@@ -91,8 +92,8 @@ test('getUser calls sendErrorResponse if helpers.user.fetchById response is stat
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  helpers.sendErrorResponse.should.have.been.called;
-  helpers.addBlinkSuppressHeaders.should.have.been.called;
+  helpers.sendErrorResponse.should.not.have.been.called;
+  helpers.sendErrorResponseWithSuppressHeaders.should.have.been.called;
   t.context.req.should.not.have.property('user');
   next.should.not.have.been.called;
 });
