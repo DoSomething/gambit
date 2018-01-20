@@ -3,8 +3,8 @@
 const receiveMessageRoute = require('./receive-message');
 const sendMessageRoute = require('./send-message');
 const importMessageRoute = require('./import-message');
-const broadcastsIndexRoute = require('./broadcasts-index');
-const broadcastsSingleRoute = require('./broadcasts-single');
+const broadcastsIndexRoute = require('./broadcasts/index');
+const broadcastsSingleRoute = require('./broadcasts/single');
 const mongooseRoutes = require('./mongoose');
 const broadcastMessagesRoute = require('./messages/broadcast');
 
