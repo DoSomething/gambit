@@ -1,34 +1,47 @@
 'use strict';
 
+const underscore = require('underscore');
+
 const helpCenterUrl = 'http://doso.me/1jf4/291kep';
 // TODO: DRY menuCommand definition.
 // @see lib/helpers.js
 const menuCommand = 'menu';
 
+
+const templatesMap = {
+  campaignClosed: 'campaignClosed',
+  declinedSignup: 'declinedSignup',
+  declinedContinue: 'declinedContinue',
+  askContinueTemplates: {
+    askContinue: 'askContinue',
+    invalidAskContinueResponse: 'invalidAskContinueResponse',
+  },
+  askSignupTemplates: {
+    askSignup: 'askSignup',
+    invalidAskSignupResponse: 'invalidAskSignupResponse',
+  },
+  gambitCampaignsTemplates: {
+    askCaption: 'askCaption',
+    askPhoto: 'askPhoto',
+    askQuantity: 'askQuantity',
+    askWhyParticipated: 'askWhyParticipated',
+    completedMenu: 'completedMenu',
+    externalSignupMenu: 'externalSignupMenu',
+    gambitSignupMenu: 'gambitSignupMenu',
+    invalidCaption: 'invalidCaption',
+    invalidCompletedMenuCommand: 'invalidCompletedMenuCommand',
+    invalidPhoto: 'invalidPhoto',
+    invalidQuantity: 'invalidQuantity',
+    invalidSignupMenuCommand: 'invalidSignupMenuCommand',
+    invalidWhyParticipated: 'invalidWhyParticipated',
+  },
+};
+
 module.exports = {
-  askContinueTemplates: [
-    'askContinue',
-    'invalidAskContinueResponse',
-  ],
-  askSignupTemplates: [
-    'askSignup',
-    'invalidAskSignupResponse',
-  ],
-  gambitCampaignsTemplates: [
-    'askCaption',
-    'askPhoto',
-    'askQuantity',
-    'askWhyParticipated',
-    'completedMenu',
-    'externalSignupMenu',
-    'gambitSignupMenu',
-    'invalidCaption',
-    'invalidCompletedMenuCommand',
-    'invalidPhoto',
-    'invalidQuantity',
-    'invalidSignupMenuCommand',
-    'invalidWhyParticipated',
-  ],
+  templatesMap,
+  askContinueTemplates: underscore.values(templatesMap.askContinueTemplates),
+  askSignupTemplates: underscore.values(templatesMap.askSignupTemplates),
+  gambitCampaignsTemplates: underscore.values(templatesMap.gambitCampaignsTemplates),
   templateText: {
     badWords: 'Not cool. I\'m a real person & that offends me. I send out these texts to help young ppl take action. If you don\'t want my texts, text STOP or LESS to get less.',
     crisis: 'Thanks for being brave and sharing that. If you want to talk to someone, our friends at CTL are here for you 24/7. Just send a text to 741741. Theyll listen!',
