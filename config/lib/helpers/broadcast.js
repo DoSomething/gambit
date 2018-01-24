@@ -1,17 +1,9 @@
 'use strict';
 
 module.exports = {
-  // To be deprecated after v2 launch:
-  currentVersion: process.env.DS_GAMBIT_CONVERSATIONS_BROADCAST_API_VERSION || '1',
   customerIo: {
     userIdField: '{{customer.id}}',
     userPhoneField: '{{customer.phone}}',
-  },
-  twilio: {
-    /**
-     * @see https://www.twilio.com/docs/api/rest/test-credentials#test-sms-messages-example-1
-     */
-    testCredentialsFromNumber: process.env.TWILIO_TEST_FROM_NUMBER || '+15005550006',
   },
   /**
    * Our current smsBroadcastWebhook is setup in Blink

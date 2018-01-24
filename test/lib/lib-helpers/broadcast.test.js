@@ -38,15 +38,6 @@ test.afterEach(() => {
   sandbox.restore();
 });
 
-test('the broadcastId should be parsed out of the query params and injected in the req object', () => {
-  const req = stubs.getMockRequest({
-    query: { broadcastId },
-  });
-
-  broadcastHelper.parseBody(req);
-  req.broadcastId.should.be.equal(broadcastId);
-});
-
 test('parseBroadcast should return an object', () => {
   const date = Date.now();
   const broadcast = broadcastFactory.getValidBroadcast(date);
