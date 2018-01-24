@@ -32,6 +32,7 @@ const sandbox = sinon.sandbox.create();
 const gCampResponse = stubs.gambitCampaigns.getReceiveMessageResponse();
 const templates = templatesConfig.templatesMap;
 const resolvedPromise = Promise.resolve({});
+const rejectedPromise = Promise.reject({});
 
 // Setup
 test.beforeEach((t) => {
@@ -73,39 +74,97 @@ async function assertSendingGambitConversationsTemplate(req, res, template, repl
     .should.have.been.calledWith(req, res, template);
 }
 
+function getReqWithProps(opts = {}) {
+  const req = httpMocks.createRequest();
+  req.metadata = {};
+  req.isARetryRequest = opts.isARetryRequest || function () { return false; };
+  req.inboundMessage = opts.inboundMessage;
+  req.conversation = opts.conversation || conversationFactory.getValidConversation();
+  req.conversation.lastOutboundMessage = opts.outboundMessage;
+  return req;
+}
+
 
 /**
  * Tests --------------------------------------------------
  */
 
-test('sendReply()', async (t) => {
+test('sendReply(): responds with the inbound and outbound messages', async (t) => {
   // setup
-  // TODO: DRY this somehow :/
-  const text = 'text line';
-  const template = templates.campaignClosed;
-  const inboundMsg = messageFactory.getValidMessage();
-  const outboundMsg = messageFactory.getValidOutboundReplyMessage();
-  t.context.req.metadata = {};
-  t.context.req.isARetryRequest = () => false;
-  t.context.req.inboundMessage = inboundMsg;
-  t.context.req.conversation = conversationFactory.getValidConversation();
-  t.context.req.conversation.lastOutboundMessage = outboundMsg;
-  sandbox.stub(t.context.req.conversation, 'postLastOutboundMessageToPlatform')
-    .returns(resolvedPromise);
-  sandbox.stub(t.context.req.conversation, 'createAndPostOutboundReplyMessage')
-    .returns(resolvedPromise);
-  sandbox.stub(Message, 'updateMessageByRequestIdAndDirection')
+  const inboundMessage = messageFactory.getValidMessage();
+  const outboundMessage = messageFactory.getValidOutboundReplyMessage();
+  const req = getReqWithProps({
+    inboundMessage,
+    outboundMessage,
+  });
+  sandbox.stub(req.conversation, 'createAndPostOutboundReplyMessage')
     .returns(resolvedPromise);
   sandbox.spy(t.context.res, 'send');
 
   // test
-  await repliesHelper.sendReply(t.context.req, t.context.res, text, template);
+  await repliesHelper.sendReply(req, t.context.res, 'text line', templates.campaignClosed);
   const responseMessages = t.context.res.send.getCall(0).args[0].data.messages;
 
   // asserts
   t.context.res.send.should.have.been.called;
-  responseMessages.inbound[0].should.be.equal(inboundMsg);
-  responseMessages.outbound[0].should.be.equal(outboundMsg);
+  req.conversation.createAndPostOutboundReplyMessage.should.have.been.called;
+  responseMessages.inbound[0].should.be.equal(inboundMessage);
+  responseMessages.outbound[0].should.be.equal(outboundMessage);
+});
+
+test('sendReply(): should update and post last outbound message on retry', async (t) => {
+  // setup
+  const req = getReqWithProps({
+    outboundMessage: messageFactory.getValidOutboundReplyMessage(),
+    isARetryRequest: () => true,
+  });
+  sandbox.stub(req.conversation, 'postLastOutboundMessageToPlatform')
+    .returns(resolvedPromise);
+  sandbox.stub(Message, 'updateMessageByRequestIdAndDirection')
+    .returns(resolvedPromise);
+
+  // test
+  await repliesHelper.sendReply(req, t.context.res, 'text line', templates.campaignClosed);
+
+  // asserts
+  Message.updateMessageByRequestIdAndDirection.should.have.been.called;
+  req.conversation.postLastOutboundMessageToPlatform.should.have.been.called;
+});
+
+test('sendReply(): should create and post the outbound message if there is no lastOutboundMessage on a retry', async (t) => {
+  // setup
+  const inboundMessage = messageFactory.getValidMessage();
+  const req = getReqWithProps({
+    inboundMessage,
+    isARetryRequest: () => true,
+  });
+  sandbox.stub(req.conversation, 'postLastOutboundMessageToPlatform')
+    .returns(resolvedPromise);
+  sandbox.stub(Message, 'updateMessageByRequestIdAndDirection')
+    .returns(resolvedPromise);
+  sandbox.stub(req.conversation, 'createAndPostOutboundReplyMessage')
+    .returns(resolvedPromise);
+
+  // test
+  await repliesHelper.sendReply(req, t.context.res, 'text line', templates.campaignClosed);
+
+  // asserts
+  Message.updateMessageByRequestIdAndDirection.should.not.have.been.called;
+  req.conversation.postLastOutboundMessageToPlatform.should.not.have.been.called;
+  req.conversation.createAndPostOutboundReplyMessage.should.have.been.called;
+});
+
+test('sendReply(): should call sendErrorResponse on failure', async (t) => {
+  // setup
+  const req = getReqWithProps();
+  sandbox.stub(req.conversation, 'createAndPostOutboundReplyMessage')
+    .returns(rejectedPromise);
+
+  // test
+  await repliesHelper.sendReply(req, t.context.res, 'text line', templates.campaignClosed);
+
+  // asserts
+  helpers.sendErrorResponse.should.have.been.called;
 });
 
 test('continueCampaign(): sendReplyWithCampaignTemplate should be called', async (t) => {
