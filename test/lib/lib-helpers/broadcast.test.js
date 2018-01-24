@@ -134,7 +134,7 @@ test('getWebhook should return an object', () => {
       message: stubs.getRandomMessageText(),
     },
   };
-  const result = broadcastHelper.getWebhook(mockRequest);
+  const result = broadcastHelper.getWebhook(true, mockRequest);
   result.should.have.property('body');
   result.should.have.property('headers');
   result.should.have.property('url');
