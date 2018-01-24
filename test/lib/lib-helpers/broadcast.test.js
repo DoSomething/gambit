@@ -51,11 +51,14 @@ test('parseBroadcast should return an object', () => {
   const date = Date.now();
   const broadcast = broadcastFactory.getValidBroadcast(date);
   const campaignId = stubs.getCampaignId();
+  const platform = stubs.getPlatform();
   const topic = stubs.getTopic();
   const message = stubs.getBroadcastMessageText();
   const name = stubs.getBroadcastName();
   sandbox.stub(contentful, 'getCampaignIdFromBroadcast')
     .returns(campaignId);
+  sandbox.stub(contentful, 'getPlatformFromBroadcast')
+    .returns(platform);
   sandbox.stub(contentful, 'getTopicFromBroadcast')
     .returns(topic);
   sandbox.stub(contentful, 'getMessageTextFromBroadcast')
@@ -65,6 +68,8 @@ test('parseBroadcast should return an object', () => {
   result.id.should.equal(broadcastId);
   contentful.getCampaignIdFromBroadcast.should.have.been.called;
   result.campaignId.should.equal(campaignId);
+  contentful.getPlatformFromBroadcast.should.have.been.called;
+  result.platform.should.equal(platform);
   contentful.getTopicFromBroadcast.should.have.been.called;
   result.topic.should.equal(topic);
   contentful.getMessageTextFromBroadcast.should.have.been.called;
