@@ -9,15 +9,15 @@ const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 
-const helpers = require('../../../../lib/helpers');
-const stubs = require('../../../helpers/stubs');
+const helpers = require('../../../../../lib/helpers');
+const stubs = require('../../../../helpers/stubs');
 
 // setup "x.should.y" assertion style
 chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const paramsMiddleware = require('../../../../lib/middleware/broadcasts-single/params');
+const paramsMiddleware = require('../../../../../lib/middleware/broadcasts/single/params');
 
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();
