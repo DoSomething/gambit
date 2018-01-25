@@ -16,8 +16,8 @@ POST /v2/messages?origin=broadcast
 
 Name | Type | Description
 --- | --- | ---
-`mobile` | `string` | Mobile number of User to send broadcast message to
-`broadcastId` | `string` | Broadcast message to send
+`northstarId` | `string` | User Id to send Broadcast message to
+`broadcastId` | `string` | Broadcast Id to send
 
 <details>
 <summary><strong>Example Request</strong></summary>
@@ -27,7 +27,7 @@ curl -X "POST" "http://localhost:5100/api/v2/messages" \
      -H 'Content-Type: application/json; charset=utf-8' \
      -u 'puppet:totallysecret' \
      -d $'{
-  "mobile": "+5555555555",
+  "northstarId": "5547be89429c64ec7e8b518d",
   "broadcastId": "5Akz30ejtKCsiWgwKIkOyo"
 }'
 ```

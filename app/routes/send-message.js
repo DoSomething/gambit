@@ -10,8 +10,8 @@ const outboundMessageConfig = require('../../config/lib/middleware/send-message/
 // Middleware
 const supportParamsMiddleware = require('../../lib/middleware/send-message/params-support');
 const campaignParamsMiddleware = require('../../lib/middleware/send-message/params-campaign');
-const getUserMiddleware = require('../../lib/middleware/send-message/user-get');
-const validateUserMiddleware = require('../../lib/middleware/send-message/user-validate');
+const getUserMiddleware = require('../../lib/middleware/messages/user-get');
+const validateUserMiddleware = require('../../lib/middleware/messages/user-validate');
 const getConversationMiddleware = require('../../lib/middleware/conversation-get');
 const createConversationMiddleware = require('../../lib/middleware/conversation-create');
 const campaignMiddleware = require('../../lib/middleware/send-message/campaign');

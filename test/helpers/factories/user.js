@@ -11,6 +11,7 @@ module.exports.getValidUser = function getValidUser(phoneNumber) {
     id: new ObjectID(),
     mobile: phoneNumber || stubs.getMobileNumber(),
     sms_status: 'active',
+    sms_paused: false,
   };
 };
 
