@@ -13,6 +13,8 @@ const Message = require('../../../app/models/Message');
 const stubs = require('../../helpers/stubs');
 const broadcastFactory = require('../../helpers/factories/broadcast');
 
+const config = require('../../../config/lib/helpers/broadcast');
+
 // setup "x.should.y" assertion style
 chai.should();
 chai.use(sinonChai);
@@ -23,6 +25,7 @@ const broadcastHelper = require('../../../lib/helpers/broadcast');
 const broadcastId = stubs.getBroadcastId();
 const defaultStats = stubs.getBroadcastStats(true);
 const mockAggregateResults = stubs.getBroadcastAggregateMessagesResults();
+const webhookContentTypeHeader = 'application/json';
 
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();
@@ -119,14 +122,28 @@ test('formatStats should return default object when array without _id property i
   result.should.deep.equal(defaultStats);
 });
 
-test('getWebhook should return an object', () => {
+test('getWebhook v1 should return an object with body of a Twilio POST Messages request', () => {
+  const messageText = stubs.getRandomMessageText();
   const mockRequest = {
     data: {
-      message: stubs.getRandomMessageText(),
+      message: messageText,
     },
   };
+  const result = broadcastHelper.getWebhook(false, mockRequest);
+  result.headers['Content-Type'].should.equal(webhookContentTypeHeader);
+  result.body.To.should.equal(config.customerIo.userPhoneField);
+  result.body.Body.should.equal(messageText);
+  result.body.should.have.property('StatusCallback');
+  result.url.should.equal(config.blink.v1WebhookUrl);
+});
+
+test('getWebhook v2 should return an object with body of a POST Broadcast Message request', () => {
+  const mockRequest = {
+    broadcastId,
+  };
   const result = broadcastHelper.getWebhook(true, mockRequest);
-  result.should.have.property('body');
-  result.should.have.property('headers');
+  result.headers['Content-Type'].should.equal(webhookContentTypeHeader);
+  result.body.northstarId.should.equal(config.customerIo.userIdField);
+  result.body.broadcastId.should.equal(broadcastId);
   result.should.have.property('url');
 });
