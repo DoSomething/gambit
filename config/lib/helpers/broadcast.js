@@ -1,15 +1,15 @@
 'use strict';
 
 module.exports = {
+  defaultPlatform: 'sms',
   customerIo: {
     userIdField: '{{customer.id}}',
     userPhoneField: '{{customer.phone}}',
   },
-  /**
-   * Our current smsBroadcastWebhook is setup in Blink
-   */
   blink: {
-    /*
+    /**
+     * Our current smsBroadcastWebhook is setup in Blink
+     *
      * Blink requires Basic Auth but it may not need it in the future.
      * This can be easily managed without additional code by adding/removing
      * the name:pass@ to the URL set in the .env file directly.
