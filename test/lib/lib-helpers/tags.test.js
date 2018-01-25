@@ -150,9 +150,11 @@ test('getUserIdCustomUrlQueryValueField returns empty string if req.user undefin
 
 test('getCampaignCustomUrlQueryValueField should return string for req.user', (t) => {
   t.context.req.campaign = mockCampaign;
-  const fieldName = config.customUrl.queryValue.fields.campaignRunId;
+  const fields = config.customUrl.queryValue.fields;
   const result = tagsHelper.getCampaignCustomUrlQueryValueField(t.context.req);
-  t.truthy(result.includes(fieldName));
+  t.truthy(result.includes(fields.campaignId));
+  t.truthy(result.includes(mockCampaign.id));
+  t.truthy(result.includes(fields.campaignRunId));
   t.truthy(result.includes(mockCampaign.currentCampaignRun.id));
 });
 
