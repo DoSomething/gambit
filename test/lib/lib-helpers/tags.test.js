@@ -103,13 +103,13 @@ test('getCustomUrlQueryParamValue should call joinCustomUrlQueryValueFields', (t
   const mockResult = 'success';
   sandbox.stub(tagsHelper, 'getUserIdCustomUrlQueryValueField')
     .returns('success1');
-  sandbox.stub(tagsHelper, 'getCampaignRunIdCustomUrlQueryValueField')
+  sandbox.stub(tagsHelper, 'getCampaignCustomUrlQueryValueField')
     .returns('success2');
   sandbox.stub(tagsHelper, 'joinCustomUrlQueryValueFields')
     .returns(mockResult);
   const result = tagsHelper.getCustomUrlQueryParamValue(t.context.req);
   tagsHelper.getUserIdCustomUrlQueryValueField.should.have.been.called;
-  tagsHelper.getCampaignRunIdCustomUrlQueryValueField.should.have.been.called;
+  tagsHelper.getCampaignCustomUrlQueryValueField.should.have.been.called;
   tagsHelper.joinCustomUrlQueryValueFields.should.have.been.called;
   result.should.equal(mockResult);
 });
@@ -148,16 +148,18 @@ test('getUserIdCustomUrlQueryValueField returns empty string if req.user undefin
   result.should.equal('');
 });
 
-test('getCampaignRunIdCustomUrlQueryValueField should return string for req.user', (t) => {
+test('getCampaignCustomUrlQueryValueField should return string for req.user', (t) => {
   t.context.req.campaign = mockCampaign;
-  const fieldName = config.customUrl.queryValue.fields.campaignRunId;
-  const result = tagsHelper.getCampaignRunIdCustomUrlQueryValueField(t.context.req);
-  t.truthy(result.includes(fieldName));
+  const fields = config.customUrl.queryValue.fields;
+  const result = tagsHelper.getCampaignCustomUrlQueryValueField(t.context.req);
+  t.truthy(result.includes(fields.campaignId));
+  t.truthy(result.includes(mockCampaign.id));
+  t.truthy(result.includes(fields.campaignRunId));
   t.truthy(result.includes(mockCampaign.currentCampaignRun.id));
 });
 
-test('getCampaignRunIdCustomUrlQueryValueField returns empty string if req.campaign undefined', (t) => {
-  const result = tagsHelper.getCampaignRunIdCustomUrlQueryValueField(t.context.req);
+test('getCampaignCustomUrlQueryValueField returns empty string if req.campaign undefined', (t) => {
+  const result = tagsHelper.getCampaignCustomUrlQueryValueField(t.context.req);
   result.should.equal('');
 });
 
