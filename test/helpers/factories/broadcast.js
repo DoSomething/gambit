@@ -11,6 +11,7 @@ module.exports.getValidBroadcast = function getValidBroadcast(date = Date.now())
     },
     fields: {
       name: stubs.getBroadcastName(),
+      platform: stubs.getPlatform(),
       topic: stubs.getTopic(),
       message: stubs.getBroadcastMessageText(),
       campaign: {

@@ -14,6 +14,28 @@ const totalInboundDeclinedCampaign = 10;
 const totalInboundNoMacro = 19;
 
 module.exports = {
+  gambitCampaigns: {
+    getSignupId: function getSignupId() {
+      return 8496477;
+    },
+    getReceiveMessageResponse: function getReceiveMessageResponse() {
+      return {
+        data: {
+          replyTemplate: module.exports.getTemplate(),
+          signup: {
+            id: this.getSignupId(),
+            campaign: {
+              id: module.exports.getCampaignId(),
+            },
+            user: {
+              id: module.exports.getUserId(),
+            },
+            totalQuantitySubmitted: null,
+          },
+        },
+      };
+    },
+  },
   stubLogger: function stubLogger(sandbox, logger) {
     sandbox.stub(logger, 'warn').returns(() => {});
     sandbox.stub(logger, 'error').returns(() => {});
@@ -113,6 +135,9 @@ module.exports = {
   },
   getPlatformUserId: function getPlatformUserId() {
     return mobileNumber;
+  },
+  getTemplate: function getTemplate() {
+    return 'askSignup';
   },
   getTopic: function getTopic() {
     return 'random';

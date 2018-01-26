@@ -30,7 +30,7 @@ test.afterEach(() => {
 
 test('getTextForTemplate should return text for given template', () => {
   const template = 'badWords';
-  const templateText = config.templateText[template];
+  const templateText = config.conversationsTemplatesText[template];
   const result = templateHelper.getTextForTemplate(template);
   templateText.should.equal(result);
 });

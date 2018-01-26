@@ -11,12 +11,11 @@ const underscore = require('underscore');
 const Promise = require('bluebird');
 const logger = require('heroku-logger');
 
-const helpers = require('../../../../lib/helpers');
-const analyticsHelper = require('../../../../lib/helpers/analytics');
-const cacheHelper = require('../../../../lib/helpers/cache');
-const contentful = require('../../../../lib/contentful');
-const stubs = require('../../../helpers/stubs');
-const broadcastFactory = require('../../../helpers/factories/broadcast');
+const helpers = require('../../../../../lib/helpers');
+const cacheHelper = require('../../../../../lib/helpers/cache');
+const contentful = require('../../../../../lib/contentful');
+const stubs = require('../../../../helpers/stubs');
+const broadcastFactory = require('../../../../helpers/factories/broadcast');
 
 // stubs
 const broadcastId = stubs.getBroadcastId();
@@ -32,15 +31,13 @@ chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const getBroadcast = require('../../../../lib/middleware/import-message/broadcast-get');
+const getBroadcast = require('../../../../../lib/middleware/messages/broadcast/broadcast-get');
 
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();
 
 test.beforeEach((t) => {
   stubs.stubLogger(sandbox, logger);
-  sandbox.stub(analyticsHelper, 'addParameters')
-    .returns(underscore.noop);
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(sendErrorResponseStub);
   // setup req, res mocks
@@ -72,7 +69,6 @@ test('getBroadcast should set broadcast from cache if cached', async (t) => {
   // test
   await middleware(t.context.req, t.context.res, next);
   cache.get.should.have.been.called;
-  analyticsHelper.addParameters.should.have.been.called;
   contentful.fetchBroadcast.should.not.have.been.called;
   cache.set.should.not.have.been.called;
   t.context.req.broadcast.should.deep.equal(mockBroadcast);
@@ -93,7 +89,6 @@ test('getBroadcast should fetch from Contentful to set broadcast if not cached',
   // test
   await middleware(t.context.req, t.context.res, next);
   cache.get.should.have.been.called;
-  analyticsHelper.addParameters.should.have.been.called;
   contentful.fetchBroadcast.should.have.been.called;
   cache.set.should.have.been.called;
   t.context.req.broadcast.should.deep.equal(mockBroadcast);
@@ -109,7 +104,6 @@ test('getBroadcast should call sendErrorResponse if broadcastId not found', asyn
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  analyticsHelper.addParameters.should.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
   t.context.req.should.not.have.property('broadcast');
   next.should.not.have.been.called;
@@ -124,7 +118,6 @@ test('getBroadcast should call sendErrorResponse if cache.get fails', async (t) 
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  analyticsHelper.addParameters.should.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
   t.context.req.should.not.have.property('broadcast');
   next.should.not.have.been.called;
@@ -140,7 +133,6 @@ test('getBroadcast should call sendErrorResponse if contentful.fetchBroadcast fa
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  analyticsHelper.addParameters.should.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
   t.context.req.should.not.have.property('broadcast');
   next.should.not.have.been.called;
@@ -159,7 +151,6 @@ test('getBroadcast should call sendErrorResponse if cache.set fails', async (t) 
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  analyticsHelper.addParameters.should.have.been.called;
   cache.get.should.have.been.called;
   contentful.fetchBroadcast.should.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;

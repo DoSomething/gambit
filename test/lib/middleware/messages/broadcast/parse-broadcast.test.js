@@ -9,18 +9,18 @@ const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 
-const helpers = require('../../../../lib/helpers');
-const analyticsHelper = require('../../../../lib/helpers/analytics');
-const contentful = require('../../../../lib/contentful');
-const stubs = require('../../../helpers/stubs');
-const broadcastFactory = require('../../../helpers/factories/broadcast');
+const helpers = require('../../../../../lib/helpers');
+const analyticsHelper = require('../../../../../lib/helpers/analytics');
+const contentful = require('../../../../../lib/contentful');
+const stubs = require('../../../../helpers/stubs');
+const broadcastFactory = require('../../../../helpers/factories/broadcast');
 
 // setup "x.should.y" assertion style
 chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const parseBroadcast = require('../../../../lib/middleware/import-message/parse-broadcast');
+const parseBroadcast = require('../../../../../lib/middleware/messages/broadcast/parse-broadcast');
 
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();
@@ -49,18 +49,15 @@ test('parseBroadcast should inject vars into the req object when they exist', as
   // setup
   const next = sinon.stub();
   const middleware = parseBroadcast();
-  sandbox.spy(contentful, 'getCampaignIdFromBroadcast');
-  sandbox.spy(contentful, 'getMessageTextFromBroadcast');
-  sandbox.spy(contentful, 'getTopicFromBroadcast');
+  sandbox.spy(helpers.broadcast, 'parseBroadcast');
 
   // test
   await middleware(t.context.req, t.context.res, next);
   analyticsHelper.addParameters.should.have.been.called;
-  contentful.getCampaignIdFromBroadcast.should.have.been.called;
+  helpers.broadcast.parseBroadcast.should.have.been.called;
+  t.context.req.platform.should.equal(stubs.getPlatform());
   t.context.req.campaignId.should.equal(stubs.getCampaignId());
-  contentful.getTopicFromBroadcast.should.have.been.called;
   t.context.req.topic.should.equal(stubs.getTopic());
-  contentful.getMessageTextFromBroadcast.should.have.been.called;
   t.context.req.outboundMessageText.should.equal(stubs.getBroadcastMessageText());
   next.should.have.been.called;
 });

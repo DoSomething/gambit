@@ -19,6 +19,7 @@ Endpoint | Functionality
 `GET /api/v1/conversations/:id` | Retrieve a Conversation.
 `GET /api/v1/messages` | Retrieve all Messages.
 `GET /api/v1/messages/:id` | Retrieve a Message.
+`POST /api/v2/messages` | [Create a Message](endpoints/messages.md).
 
 ### Query paramters
 

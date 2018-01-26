@@ -7,6 +7,7 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const crypto = require('crypto');
 const underscore = require('underscore');
+const northstar = require('../../../lib/northstar');
 const macroHelper = require('../../../lib/helpers/macro');
 const subscriptionHelper = require('../../../lib/helpers/subscription');
 const config = require('../../../config/lib/helpers/user');
@@ -37,6 +38,16 @@ const platformUserAddressStub = {
 
 test.afterEach(() => {
   sandbox.restore();
+});
+
+test('fetchById calls northstar.fetchUserById', async () => {
+  const mockUser = userFactory.getValidUser();
+  const userLookupStub = () => Promise.resolve(mockUser);
+  sandbox.stub(northstar, 'fetchUserById')
+    .returns(userLookupStub);
+  const result = await userHelper.fetchById(mockUser.id);
+  northstar.fetchUserById.should.have.been.called;
+  result.should.deep.equal(userLookupStub);
 });
 
 // createPassword
@@ -132,4 +143,10 @@ test('getSubscriptionStatusUpdate should return falsy if current status is activ
   const user = userFactory.getValidUser();
   const result = userHelper.getSubscriptionStatusUpdate(user, stubs.getRandomMessageText());
   t.falsy(result);
+});
+
+test('isPaused should return user.sms_status', (t) => {
+  const user = userFactory.getValidUser();
+  const result = userHelper.isPaused(user);
+  t.deepEqual(result, user.sms_paused);
 });

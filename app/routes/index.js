@@ -3,9 +3,10 @@
 const receiveMessageRoute = require('./receive-message');
 const sendMessageRoute = require('./send-message');
 const importMessageRoute = require('./import-message');
-const broadcastsIndexRoute = require('./broadcasts-index');
-const broadcastsSingleRoute = require('./broadcasts-single');
+const broadcastsIndexRoute = require('./broadcasts/index');
+const broadcastsSingleRoute = require('./broadcasts/single');
 const mongooseRoutes = require('./mongoose');
+const broadcastMessagesRoute = require('./messages/broadcast');
 
 // middleware
 const authenticateMiddleware = require('../../lib/middleware/authenticate');
@@ -39,4 +40,8 @@ module.exports = function init(app) {
   // broadcasts-index route
   app.use('/api/v1/broadcasts',
     broadcastsIndexRoute);
+
+  // TODO: Check for origin query param. For now, use broadcastMessagesRoute.
+  app.use('/api/v2/messages',
+    broadcastMessagesRoute);
 };
