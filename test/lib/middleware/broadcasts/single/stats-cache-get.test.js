@@ -9,9 +9,9 @@ const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 
-const helpers = require('../../../../lib/helpers');
-const logger = require('../../../../lib/logger');
-const stubs = require('../../../helpers/stubs');
+const helpers = require('../../../../../lib/helpers');
+const logger = require('../../../../../lib/logger');
+const stubs = require('../../../../helpers/stubs');
 
 const cacheHelper = helpers.cache.broadcastStats;
 const broadcastId = stubs.getBroadcastId();
@@ -21,7 +21,7 @@ chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const getStatsCache = require('../../../../lib/middleware/broadcasts-single/stats-cache-get');
+const getStatsCache = require('../../../../../lib/middleware/broadcasts/single/stats-cache-get');
 
 const sandbox = sinon.sandbox.create();
 
