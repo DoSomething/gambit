@@ -69,18 +69,24 @@ test('render should throw if getVarsForTags fails', () => {
   tagsHelper.render(mockText, mockVars).should.throw;
 });
 
-test('getVarsForTags should return an object', () => {
+test('render should replace user vars', (t) => {
+  t.context.req.user = mockUser;
+  const result = tagsHelper.render('{{user.id}}', t.context.req);
+  result.should.equal(mockUser.id);
+});
+
+test('getVarsForTags should return an object', (t) => {
   sandbox.stub(tagsHelper, 'getCustomUrl')
     .returns(mockText);
-  const result = tagsHelper.getVarsForTags();
+  const result = tagsHelper.getVarsForTags(t.context.req);
   result.should.be.a('object');
   result[config.tags.customUrl].should.equal(mockText);
 });
 
-test('getVarsForTags should throw if getCustomUrl fails', () => {
+test('getVarsForTags should throw if getCustomUrl fails', (t) => {
   sandbox.stub(tagsHelper, 'getCustomUrl')
     .returns(new Error());
-  tagsHelper.getVarsForTags().should.throw;
+  tagsHelper.getVarsForTags(t.context.req).should.throw;
 });
 
 test('getCustomUrl should return a string', () => {

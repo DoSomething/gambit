@@ -8,7 +8,7 @@ const chance = new Chance();
 
 module.exports.getValidUser = function getValidUser(phoneNumber) {
   return {
-    id: new ObjectID(),
+    id: new ObjectID().toString(),
     mobile: phoneNumber || stubs.getMobileNumber(),
     sms_status: 'active',
     sms_paused: false,

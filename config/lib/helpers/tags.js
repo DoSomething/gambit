@@ -4,6 +4,7 @@ module.exports = {
   // Tags used in message templates.
   tags: {
     customUrl: 'custom_url',
+    user: 'user',
   },
   /**
    * The customUrl tag should return a custom link with Conversation variables set in query string:
