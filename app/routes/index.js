@@ -51,7 +51,7 @@ module.exports = function init(app) {
     } else if (origin === 'agent') {
       agentMessagesRoute(req, res, next);
     } else {
-      res.status(403).send('Missing origin query parameter.');
+      res.status(403).send('Missing or invalid origin query parameter.');
     }
   });
 };
