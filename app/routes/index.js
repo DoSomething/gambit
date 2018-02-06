@@ -7,8 +7,8 @@ const mongooseRoutes = require('./mongoose');
 const importMessageRoute = require('./import-message');
 const receiveMessageRoute = require('./receive-message');
 // v2
-const agentMessagesRoute = require('./messages/agent');
 const broadcastMessagesRoute = require('./messages/broadcast');
+const frontMessagesRoute = require('./messages/front');
 const signupMessagesRoute = require('./messages/signup');
 
 // middleware
@@ -48,8 +48,8 @@ module.exports = function init(app) {
     const origin = req.query.origin;
     if (origin === 'broadcast') {
       broadcastMessagesRoute(req, res, next);
-    } else if (origin === 'agent') {
-      agentMessagesRoute(req, res, next);
+    } else if (origin === 'front') {
+      frontMessagesRoute(req, res, next);
     } else {
       res.status(403).send('Missing or invalid origin query parameter.');
     }
