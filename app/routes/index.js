@@ -50,6 +50,8 @@ module.exports = function init(app) {
       broadcastMessagesRoute(req, res, next);
     } else if (origin === 'front') {
       frontMessagesRoute(req, res, next);
+    } else if (origin === 'signup') {
+      signupMessagesRoute(req, res, next);
     } else {
       res.status(403).send('Missing or invalid origin query parameter.');
     }

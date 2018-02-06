@@ -25,7 +25,6 @@ router.use(paramsMiddleware());
 // router.use(validateUserMiddleware());
 
 router.use(getConversationMiddleware());
-// 
 router.use(frontMiddleware());
 router.use(createOutboundMessageMiddleware(outboundMessageConfig));
 
