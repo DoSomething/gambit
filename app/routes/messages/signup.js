@@ -13,7 +13,8 @@ const getUserMiddleware = require('../../../lib/middleware/messages/user-get');
 const validateUserMiddleware = require('../../../lib/middleware/messages/user-validate');
 const getConversationMiddleware = require('../../../lib/middleware/conversation-get');
 const createConversationMiddleware = require('../../../lib/middleware/conversation-create');
-const campaignMiddleware = require('../../../lib/middleware/messages/signup/campaign');
+const getCampaignMiddleware = require('../../../lib/middleware/messages/signup/campaign-get');
+const updateConversationMiddleware = require('../../../lib/middleware/messages/signup/conversation-update');
 const loadOutboundMessageMiddleware = require('../../../lib/middleware/message-outbound-load');
 const createOutboundMessageMiddleware = require('../../../lib/middleware/message-outbound-create');
 
@@ -23,10 +24,12 @@ router.use(paramsMiddleware());
 router.use(getUserMiddleware());
 router.use(validateUserMiddleware());
 
+// Find or create Conversation.
 router.use(getConversationMiddleware());
 router.use(createConversationMiddleware());
 
-router.use(campaignMiddleware());
+router.use(getCampaignMiddleware());
+router.use(updateConversationMiddleware());
 
 // Load/create outbound message
 router.use(loadOutboundMessageMiddleware(outboundMessageConfig));
