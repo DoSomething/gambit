@@ -6,7 +6,6 @@ module.exports = {
     apiSecret: process.env.FRONT_API_SECRET,
     apiToken: process.env.FRONT_API_TOKEN,
     signatureHeader: 'x-front-signature',
-    validationDisabled: process.env.FRONT_VALIDATION_DISABLED || false,
   },
   channels: {
     support: process.env.FRONT_API_SUPPORT_CHANNEL,

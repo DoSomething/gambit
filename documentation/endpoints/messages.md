@@ -63,6 +63,100 @@ curl -X "POST" "http://localhost:5100/api/v2/messages?origin=broadcast" \
 
 </details>
 
+## Front
+
+### Input
+
+See [Front docs](https://dev.frontapp.com/#sending-messages).
+
+
+<details>
+<summary><strong>Example Request</strong></summary>
+
+```
+curl -X "POST" "http://localhost:5100/api/v2/messages?origin=front" \
+     -H 'Content-Type: application/json; charset=utf-8' \
+     -H 'X-Front-Signature: secretsauce' \
+     -u 'puppet:totallysecret' \
+     -d $'{
+  "_links": {
+    "self": "https://api2.frontapp.com/messages/msg_55c8c149",
+    "related": {
+      "conversation": "https://api2.frontapp.com/conversations/cnv_55c8c149",
+      "message_replied_to": "https://api2.frontapp.com/messages/msg_1ab23cd4"
+    }
+  },
+  "id": "msg_55c8c149",
+  "type": "custom",
+  "is_inbound": false,
+  "created_at": 1453770984.123,
+  "blurb": "Anything less than immortality is a...",
+  "author": {
+    "_links": {
+      "self": "https://api2.frontapp.com/teammates/tea_55c8c149",
+      "related": {
+        "inboxes": "https://api2.frontapp.com/teammates/tea_55c8c149/inboxes",
+        "conversations": "https://api2.frontapp.com/teammates/tea_55c8c149/conversations"
+      }
+    },
+    "id": "tea_55c8c149",
+    "email": "leela@planet-express.com",
+    "username": "leela",
+    "first_name": "Leela",
+    "last_name": "Turanga",
+    "is_admin": true,
+    "is_available": true
+  },
+  "recipients": [
+    {
+      "handle": "calculon@momsbot.com",
+      "role": "to",
+      "_links": {
+        "related": {
+          "contact": "https://api2.frontapp.com/contacts/crd_55c8c149"
+        }
+      }
+    }
+  ],
+  "body": "Anything less than immortality is a complete waste of time.",
+  "text": "Anything less than immortality is a complete waste of time.",
+  "attachments": [],
+  "metadata": {}
+}'
+```
+
+
+</details>
+<details>
+<summary><strong>Example Response</strong></summary>
+
+```
+{
+  "data": {
+    "messages": [
+      {
+        "_id": "5a7b70f478225e00040c5f22",
+        "updatedAt": "2018-02-07T21:34:44.382Z",
+        "createdAt": "2018-02-07T21:34:44.382Z",
+        "text": "Thank you for your feedback!",
+        "direction": "outbound-api-send",
+        "template": "support",
+        "conversationId": "59b0de57e9f1ae00126cd731",
+        "campaignId": 2299,
+        "topic": "random",
+        "broadcastId": null,
+        "__v": 0,
+        "metadata": {
+            "requestId": "333d0a65-ee7a-4d62-b815-336495628bca"
+        },
+        "attachments": []
+      }
+    ]
+  }
+```
+
+</details>
+
 
 ## Signup
 
