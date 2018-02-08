@@ -106,6 +106,9 @@ module.exports = {
   getCampaignRunId: function getCampaignRunId() {
     return 6441;
   },
+  getKeyword: function getKeyword() {
+    return chance.word();
+  },
   getMockInboundTwilioRequestBody: function getMockInboundTwilioRequestBody() {
     return {
       Body: this.getRandomMessageText(),

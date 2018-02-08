@@ -89,16 +89,18 @@ conversationSchema.methods.setTopic = function (newTopic) {
 };
 
 /**
- * Set topic to support to pause User.
+ * Set topic to support to pause Conversation.
  */
 conversationSchema.methods.supportRequested = function () {
   return this.setTopic(supportTopic);
 };
 
 /**
- * Set topic to random to upause User.
+ * Set topic to our default to unpause Conversation.
  */
 conversationSchema.methods.supportResolved = function () {
+  // TODO: We should update Northstar User's sms_status here. It currently won't get updated until
+  // the User sends a message back to Gambit, after receiving the support message from an agent.
   return this.setTopic(defaultTopic);
 };
 

@@ -8,28 +8,28 @@ const router = express.Router();
 const outboundMessageConfig = require('../../../config/lib/middleware/messages/message-outbound');
 
 // Middleware
-const paramsMiddleware = require('../../../lib/middleware/messages/broadcast/params');
-const getBroadcastMiddleware = require('../../../lib/middleware/messages/broadcast/broadcast-get');
-const parseBroadcastMiddleware = require('../../../lib/middleware/messages/broadcast/parse-broadcast');
+const paramsMiddleware = require('../../../lib/middleware/messages/signup/params');
 const getUserMiddleware = require('../../../lib/middleware/messages/user-get');
 const validateUserMiddleware = require('../../../lib/middleware/messages/user-validate');
-const getConvoMiddleware = require('../../../lib/middleware/conversation-get');
-const createConvoMiddleware = require('../../../lib/middleware/conversation-create');
-const updateConvoMiddleware = require('../../../lib/middleware/messages/broadcast/conversation-update');
+const getConversationMiddleware = require('../../../lib/middleware/conversation-get');
+const createConversationMiddleware = require('../../../lib/middleware/conversation-create');
+const getCampaignMiddleware = require('../../../lib/middleware/messages/signup/campaign-get');
+const updateConversationMiddleware = require('../../../lib/middleware/messages/signup/conversation-update');
 const loadOutboundMessageMiddleware = require('../../../lib/middleware/message-outbound-load');
 const createOutboundMessageMiddleware = require('../../../lib/middleware/message-outbound-create');
 
 router.use(paramsMiddleware());
-router.use(getBroadcastMiddleware());
-router.use(parseBroadcastMiddleware());
+
+// Fetch Northstar User.
 router.use(getUserMiddleware());
 router.use(validateUserMiddleware());
 
-// Load or create conversation
-router.use(getConvoMiddleware());
-router.use(createConvoMiddleware());
+// Find or create Conversation.
+router.use(getConversationMiddleware());
+router.use(createConversationMiddleware());
 
-router.use(updateConvoMiddleware());
+router.use(getCampaignMiddleware());
+router.use(updateConversationMiddleware());
 
 // Load/create outbound message
 router.use(loadOutboundMessageMiddleware(outboundMessageConfig));
