@@ -46,4 +46,3 @@ test('getMessagePayload should return an object', () => {
   result.sender.handle.should.equal(mockSenderHandle);
   result.body.should.equal(mockMessageText);
 });
-
