@@ -1,6 +1,7 @@
 'use strict';
 
 const Chance = require('chance');
+const stubs = require('../stubs');
 
 const chance = new Chance();
 
@@ -19,5 +20,6 @@ module.exports.getValidCampaign = function getValidCampaign() {
     currentCampaignRun: {
       id: chance.integer(numericIdRange),
     },
+    keywords: [stubs.getKeyword()],
   };
 };

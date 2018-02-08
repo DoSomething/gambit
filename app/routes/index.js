@@ -1,12 +1,15 @@
 'use strict';
 
-const receiveMessageRoute = require('./receive-message');
-const sendMessageRoute = require('./send-message');
-const importMessageRoute = require('./import-message');
 const broadcastsIndexRoute = require('./broadcasts/index');
 const broadcastsSingleRoute = require('./broadcasts/single');
 const mongooseRoutes = require('./mongoose');
+// v1
+const importMessageRoute = require('./import-message');
+const receiveMessageRoute = require('./receive-message');
+// v2
 const broadcastMessagesRoute = require('./messages/broadcast');
+const frontMessagesRoute = require('./messages/front');
+const signupMessagesRoute = require('./messages/signup');
 
 // middleware
 const authenticateMiddleware = require('../../lib/middleware/authenticate');
@@ -30,7 +33,7 @@ module.exports = function init(app) {
     receiveMessageRoute);
   // send-message route
   app.use('/api/v1/send-message',
-    sendMessageRoute);
+    signupMessagesRoute);
   // import-message route
   app.use('/api/v1/import-message',
     importMessageRoute);
@@ -41,7 +44,16 @@ module.exports = function init(app) {
   app.use('/api/v1/broadcasts',
     broadcastsIndexRoute);
 
-  // TODO: Check for origin query param. For now, use broadcastMessagesRoute.
-  app.use('/api/v2/messages',
-    broadcastMessagesRoute);
+  app.use('/api/v2/messages', (req, res, next) => {
+    const origin = req.query.origin;
+    if (origin === 'broadcast') {
+      broadcastMessagesRoute(req, res, next);
+    } else if (origin === 'front') {
+      frontMessagesRoute(req, res, next);
+    } else if (origin === 'signup') {
+      signupMessagesRoute(req, res, next);
+    } else {
+      res.status(403).send('Missing or invalid origin query parameter.');
+    }
+  });
 };
