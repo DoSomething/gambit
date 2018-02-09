@@ -11,11 +11,11 @@ const outboundMessageConfig = require('../../config/lib/middleware/import-messag
 const paramsMiddleware = require('../../lib/middleware/import-message/params');
 const getBroadcastMiddleware = require('../../lib/middleware/messages/broadcast/broadcast-get');
 const parseBroadcastMiddleware = require('../../lib/middleware/messages/broadcast/parse-broadcast');
-const getConvoMiddleware = require('../../lib/middleware/conversation-get');
-const createConvoMiddleware = require('../../lib/middleware/conversation-create');
+const getConvoMiddleware = require('../../lib/middleware/messages/conversation-get');
+const createConvoMiddleware = require('../../lib/middleware/messages/conversation-create');
 const updateConvoMiddleware = require('../../lib/middleware/messages/broadcast/conversation-update');
-const loadOutboundMessageMiddleware = require('../../lib/middleware/message-outbound-load');
-const createOutboundMessageMiddleware = require('../../lib/middleware/message-outbound-create');
+const loadOutboundMessageMiddleware = require('../../lib/middleware/messages/message-outbound-load');
+const createOutboundMessageMiddleware = require('../../lib/middleware/messages/message-outbound-create');
 
 router.use(paramsMiddleware());
 router.use(getBroadcastMiddleware());
