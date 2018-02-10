@@ -17,7 +17,7 @@ chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const validateUser = require('../../../../lib/middleware/messages/user-validate');
+const validateOutbound = require('../../../../lib/middleware/messages/message-outbound-validate');
 
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();
@@ -25,6 +25,9 @@ const sandbox = sinon.sandbox.create();
 // stubs
 const sendErrorResponseStub = underscore.noop;
 const mockUser = userFactory.getValidUser();
+const defaultConfigStub = {
+  shouldSendWhenPaused: false,
+};
 
 // Setup!
 test.beforeEach((t) => {
@@ -47,7 +50,7 @@ test.afterEach((t) => {
 test('validateUser calls sendErrorResponseWithSuppressHeaders if user is not subscriber', (t) => {
   // setup
   const next = sinon.stub();
-  const middleware = validateUser();
+  const middleware = validateOutbound(defaultConfigStub);
   sandbox.stub(helpers.user, 'isSubscriber')
     .returns(false);
 
@@ -61,7 +64,7 @@ test('validateUser calls sendErrorResponseWithSuppressHeaders if user is not sub
 test('validateUser calls sendErrorResponseWithSuppressHeaders if user is paused', (t) => {
   // setup
   const next = sinon.stub();
-  const middleware = validateUser();
+  const middleware = validateOutbound(defaultConfigStub);
   sandbox.stub(helpers.user, 'isSubscriber')
     .returns(true);
   sandbox.stub(helpers.user, 'isPaused')
@@ -78,7 +81,7 @@ test('validateUser calls sendErrorResponseWithSuppressHeaders if user is paused'
 test('validateUser calls sendErrorResponseWithSuppressHeaders if formatMobileNumber throws', (t) => {
   // setup
   const next = sinon.stub();
-  const middleware = validateUser();
+  const middleware = validateOutbound(defaultConfigStub);
   sandbox.stub(helpers.user, 'isSubscriber')
     .returns(true);
   sandbox.stub(helpers.user, 'isPaused')
@@ -98,7 +101,7 @@ test('validateUser calls sendErrorResponseWithSuppressHeaders if formatMobileNum
 test('validateUser calls next if user validates', (t) => {
   // setup
   const next = sinon.stub();
-  const middleware = validateUser();
+  const middleware = validateOutbound(defaultConfigStub);
   sandbox.stub(helpers.user, 'isSubscriber')
     .returns(true);
   sandbox.stub(helpers.user, 'isPaused')

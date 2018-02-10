@@ -3,4 +3,5 @@
 module.exports = {
   messageDirection: 'outbound-api-send',
   shouldPostToPlatform: true,
+  shouldSendWhilePaused: true,
 };

@@ -5,14 +5,14 @@ const express = require('express');
 const router = express.Router();
 
 // Middleware configs
-const outboundMessageConfig = require('../../../config/lib/middleware/messages/message-outbound');
+const outboundMessageConfig = require('../../../config/lib/middleware/messages/broadcast/message-outbound');
 
 // Middleware
 const paramsMiddleware = require('../../../lib/middleware/messages/broadcast/params');
 const getBroadcastMiddleware = require('../../../lib/middleware/messages/broadcast/broadcast-get');
 const parseBroadcastMiddleware = require('../../../lib/middleware/messages/broadcast/parse-broadcast');
 const getUserMiddleware = require('../../../lib/middleware/messages/user-get');
-const validateUserMiddleware = require('../../../lib/middleware/messages/user-validate');
+const validateOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-validate');
 const getConvoMiddleware = require('../../../lib/middleware/messages/conversation-get');
 const createConvoMiddleware = require('../../../lib/middleware/messages/conversation-create');
 const updateConvoMiddleware = require('../../../lib/middleware/messages/broadcast/conversation-update');
@@ -23,7 +23,7 @@ router.use(paramsMiddleware());
 router.use(getBroadcastMiddleware());
 router.use(parseBroadcastMiddleware());
 router.use(getUserMiddleware());
-router.use(validateUserMiddleware());
+router.use(validateOutboundMessageMiddleware(outboundMessageConfig));
 
 // Load or create conversation
 router.use(getConvoMiddleware());
