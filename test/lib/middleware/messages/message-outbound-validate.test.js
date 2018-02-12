@@ -28,6 +28,9 @@ const mockUser = userFactory.getValidUser();
 const defaultConfigStub = {
   shouldSendWhenPaused: false,
 };
+const supportConfigStub = {
+  shouldSendWhenPaused: true,
+};
 
 // Setup!
 test.beforeEach((t) => {
@@ -61,7 +64,7 @@ test('validateUser calls sendErrorResponseWithSuppressHeaders if user is not sub
   next.should.not.have.been.called;
 });
 
-test('validateUser calls sendErrorResponseWithSuppressHeaders if user is paused', (t) => {
+test('validateUser sends error if user is paused and config is not shouldSendWhenPaused', (t) => {
   // setup
   const next = sinon.stub();
   const middleware = validateOutbound(defaultConfigStub);
@@ -114,6 +117,21 @@ test('validateUser calls next if user validates', (t) => {
   helpers.user.isSubscriber.should.have.been.called;
   helpers.user.isPaused.should.have.been.called;
   helpers.formatMobileNumber.should.have.been.called;
+  helpers.sendErrorResponseWithSuppressHeaders.should.not.have.been.called;
+  next.should.have.been.called;
+});
+
+test('validateUser calls next if user is paused and config is shouldSendWhenPaused', (t) => {
+  // setup
+  const next = sinon.stub();
+  const middleware = validateOutbound(supportConfigStub);
+  sandbox.stub(helpers.user, 'isSubscriber')
+    .returns(true);
+  sandbox.stub(helpers.user, 'isPaused')
+    .returns(true);
+
+  // test
+  middleware(t.context.req, t.context.res, next);
   helpers.sendErrorResponseWithSuppressHeaders.should.not.have.been.called;
   next.should.have.been.called;
 });
