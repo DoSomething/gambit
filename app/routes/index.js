@@ -35,10 +35,6 @@ module.exports = function init(app) {
   app.use(parseMessageMetadataMiddleware());
 
   // v1
-  app.use('/api/v1/receive-message',
-    memberMessagesRoute);
-  app.use('/api/v1/send-message',
-    signupMessagesRoute);
   app.use('/api/v1/import-message',
     importMessageRoute);
 
