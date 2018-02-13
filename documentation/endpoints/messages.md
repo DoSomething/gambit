@@ -4,13 +4,20 @@
 POST /v2/messages
 ```
 
-The v2 POST Messages resource is a work in progress, aiming to deprecate the v1 POST Receive, Import, and Send Message resources. A Message is created for each POST request, and handled differently per `origin` query parameter passed.
+The v2 POST Messages resource requires an `origin` query parameter, with possible values:
+* [Broadcast](#broadcast)
+* [Front](#front)
+* [Slack](#slack)
+* [Signup](#signup)
+* [Twilio](#twilio)
 
 ## Broadcast
 
 ```
 POST /v2/messages?origin=broadcast
 ```
+
+Sends a Broadcast message to a User.
 
 ### Input
 
@@ -65,9 +72,15 @@ curl -X "POST" "http://localhost:5100/api/v2/messages?origin=broadcast" \
 
 ## Front
 
+```
+POST /v2/messages?origin=front
+```
+
+Sends a direct message to a member and unpauses their Conversation (if archived).
+
 ### Input
 
-See [Front docs](https://dev.frontapp.com/#sending-messages).
+See https://dev.frontapp.com/#sending-messages.
 
 
 <details>
@@ -158,6 +171,8 @@ curl -X "POST" "http://localhost:5100/api/v2/messages?origin=front" \
 POST /v2/messages?origin=signup
 ```
 
+Sends a Campaign Signup Confirmation Menu message to a User.
+
 ### Input
 
 Name | Type | Description
@@ -209,3 +224,97 @@ curl -X "POST" "http://localhost:5100/api/v2/messages?origin=signup" \
 ```
 
 </details>
+
+### Slack
+
+```
+POST /v2/messages?origin=slack
+```
+
+Receives direct messages from DS staff to internal [Gambit Slack](https://github.com/dosomething/gambit-slack) app, and either posts back a reply or forwards the message to Front.
+
+### Input
+
+Name | Type | Description
+--- | --- | ---
+`slackId` | `string` | Sender's Slack User ID
+`slackChannel` | `string` |  Direct message channel from Slack User to Gambit Slack app
+`text` | `string` | Incoming message
+`mediaUrl` | `string` | Media attachment URL (hardcoded to an image set in Gambit Slack).
+
+## Twilio
+
+```
+POST /v2/messages?origin=twilio
+```
+
+Receives SMS/MMS messages from DS members to our Twilio messaging service, and either posts back a reply or forwards the message to Front.
+
+### Input
+
+See https://www.twilio.com/docs/api/messaging/message.
+
+<details>
+<summary><strong>Example Request</strong></summary>
+
+```
+curl -X "POST" "http://localhost:5100/api/v2/messages?origin=twilio" \
+     -H "Content-Type: application/json; charset=utf-8" \
+     -u puppet:totallysecret \
+     -d $'{
+  "MessageSid": "MM09a8f657567f807443191c1e7exxxxxx",
+  "MediaUrl0": "http://bit.ly/2wkfrep",
+  "From":  "+5555555555",
+  "Body": "uhh",
+  "MediaContentType0": "image/png"
+}'
+
+```
+
+</details>
+
+<details>
+<summary><strong>Example Response</strong></summary>
+
+```
+{
+  "data": {
+    "messages": {
+      "inbound": [
+        {
+          "__v": 0,
+          "updatedAt": "2017-08-31T19:21:47.556Z",
+          "createdAt": "2017-08-31T19:21:47.556Z",
+          "conversationId": "59a7203fc731160d31cfdad2",
+          "campaignId": 2710,
+          "topic": "campaign",
+          "text": "menu",
+          "direction": "inbound",
+          "_id": "59a861cbf64c3e0902d956e7",
+          "attachments": [
+            {
+              "contentType": "image/png",
+              "url": "http://placekitten.com/g/800/600"
+            }
+          ]
+        }
+      ],
+      "outbound": [
+        {
+          "__v": 0,
+          "updatedAt": "2017-08-31T19:21:47.597Z",
+          "createdAt": "2017-08-31T19:21:47.597Z",
+          "conversationId": "59a7203fc731160d31cfdad2",
+          "campaignId": 7656,
+          "topic": "campaign_7656",
+          "text": "Help us send letters of support to every mosque in the United States. \n\nWant to join Sincerely, Us?\n\nYes or No",
+          "template": "askSignupMessage",
+          "direction": "outbound-reply",
+          "_id": "59a861cbf64c3e0902d956e8",
+          "attachments": []
+        }
+      ]
+    }
+  }
+}
+```

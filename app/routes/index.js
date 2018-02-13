@@ -21,27 +21,23 @@ module.exports = function init(app) {
   // authenticate all requests
   app.use(authenticateMiddleware());
 
-  // restified routes
+  // v1 restified routes
   app.use(mongooseRoutes);
 
-  // broadcasts-single route
+  // broadcasts - v1 to keep consistent with our Mongoose routes
   app.use('/api/v1/broadcasts/:broadcastId',
     broadcastsSingleRoute);
-  // broadcasts-index route
   app.use('/api/v1/broadcasts',
     broadcastsIndexRoute);
 
   // parse metadata like requestId and retryCount for all requests after this line
   app.use(parseMessageMetadataMiddleware());
 
-  // v1
-  app.use('/api/v1/receive-message',
-    memberMessagesRoute);
-  app.use('/api/v1/send-message',
-    signupMessagesRoute);
+  // Broadcasts v1: To be deprecated
   app.use('/api/v1/import-message',
     importMessageRoute);
 
+  // v2 POST
   app.use('/api/v2/messages', (req, res, next) => {
     const origin = req.query.origin;
     if (origin === 'broadcast') {
