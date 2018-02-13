@@ -17,7 +17,7 @@ chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const validateUser = require('../../../../lib/middleware/messages/user-validate');
+const validateOutbound = require('../../../../lib/middleware/messages/message-outbound-validate');
 
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();
@@ -25,6 +25,12 @@ const sandbox = sinon.sandbox.create();
 // stubs
 const sendErrorResponseStub = underscore.noop;
 const mockUser = userFactory.getValidUser();
+const defaultConfigStub = {
+  shouldSendWhenPaused: false,
+};
+const supportConfigStub = {
+  shouldSendWhenPaused: true,
+};
 
 // Setup!
 test.beforeEach((t) => {
@@ -47,7 +53,7 @@ test.afterEach((t) => {
 test('validateUser calls sendErrorResponseWithSuppressHeaders if user is not subscriber', (t) => {
   // setup
   const next = sinon.stub();
-  const middleware = validateUser();
+  const middleware = validateOutbound(defaultConfigStub);
   sandbox.stub(helpers.user, 'isSubscriber')
     .returns(false);
 
@@ -58,10 +64,10 @@ test('validateUser calls sendErrorResponseWithSuppressHeaders if user is not sub
   next.should.not.have.been.called;
 });
 
-test('validateUser calls sendErrorResponseWithSuppressHeaders if user is paused', (t) => {
+test('validateUser sends error if user is paused and config is not shouldSendWhenPaused', (t) => {
   // setup
   const next = sinon.stub();
-  const middleware = validateUser();
+  const middleware = validateOutbound(defaultConfigStub);
   sandbox.stub(helpers.user, 'isSubscriber')
     .returns(true);
   sandbox.stub(helpers.user, 'isPaused')
@@ -78,7 +84,7 @@ test('validateUser calls sendErrorResponseWithSuppressHeaders if user is paused'
 test('validateUser calls sendErrorResponseWithSuppressHeaders if formatMobileNumber throws', (t) => {
   // setup
   const next = sinon.stub();
-  const middleware = validateUser();
+  const middleware = validateOutbound(defaultConfigStub);
   sandbox.stub(helpers.user, 'isSubscriber')
     .returns(true);
   sandbox.stub(helpers.user, 'isPaused')
@@ -98,7 +104,7 @@ test('validateUser calls sendErrorResponseWithSuppressHeaders if formatMobileNum
 test('validateUser calls next if user validates', (t) => {
   // setup
   const next = sinon.stub();
-  const middleware = validateUser();
+  const middleware = validateOutbound(defaultConfigStub);
   sandbox.stub(helpers.user, 'isSubscriber')
     .returns(true);
   sandbox.stub(helpers.user, 'isPaused')
@@ -111,6 +117,21 @@ test('validateUser calls next if user validates', (t) => {
   helpers.user.isSubscriber.should.have.been.called;
   helpers.user.isPaused.should.have.been.called;
   helpers.formatMobileNumber.should.have.been.called;
+  helpers.sendErrorResponseWithSuppressHeaders.should.not.have.been.called;
+  next.should.have.been.called;
+});
+
+test('validateUser calls next if user is paused and config is shouldSendWhenPaused', (t) => {
+  // setup
+  const next = sinon.stub();
+  const middleware = validateOutbound(supportConfigStub);
+  sandbox.stub(helpers.user, 'isSubscriber')
+    .returns(true);
+  sandbox.stub(helpers.user, 'isPaused')
+    .returns(true);
+
+  // test
+  middleware(t.context.req, t.context.res, next);
   helpers.sendErrorResponseWithSuppressHeaders.should.not.have.been.called;
   next.should.have.been.called;
 });
