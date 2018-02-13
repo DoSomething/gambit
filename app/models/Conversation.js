@@ -286,19 +286,11 @@ conversationSchema.methods.createAndPostOutboundReplyMessage = function (text, t
  * Posts the Last Outbound Message to Twilio for SMS conversations.
  */
 conversationSchema.methods.postLastOutboundMessageToPlatform = function () {
-  const loggerMessage = 'conversation.postLastOutboundMessageToPlatform';
   const messageText = this.lastOutboundMessage.text;
-  const resolve = Promise.resolve();
 
   // This could be blank for noReply templates.
-  if (!messageText) {
-    return resolve;
-  }
-
-  logger.debug(loggerMessage);
-
-  if (this.platform !== 'sms') {
-    return resolve;
+  if (!messageText || this.platform !== 'sms') {
+    return Promise.resolve();
   }
 
   return twilio.postMessage(this.platformUserId, messageText);
