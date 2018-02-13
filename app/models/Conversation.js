@@ -5,7 +5,6 @@ const logger = require('../../lib/logger');
 const Message = require('./Message');
 const helpers = require('../../lib/helpers');
 const northstar = require('../../lib/northstar');
-const slack = require('../../lib/slack');
 const twilio = require('../../lib/twilio');
 
 const campaignTopic = 'campaign';
@@ -29,7 +28,6 @@ const conversationSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Message',
   },
-  slackChannel: String,
 }, { timestamps: true });
 
 conversationSchema.index({ createdAt: 1 });
@@ -46,10 +44,6 @@ conversationSchema.statics.createFromReq = function (req) {
     paused: false,
     topic: defaultTopic,
   };
-
-  if (req.slackChannel) {
-    data.slackChannel = req.slackChannel;
-  }
 
   return this.create(data);
 };
@@ -289,28 +283,25 @@ conversationSchema.methods.createAndPostOutboundReplyMessage = function (text, t
 };
 
 /**
- * Posts the Last Outbound Message to the platform.
- * TODO: Promisify, look for request success status when posting to platforms
+ * Posts the Last Outbound Message to Twilio for SMS conversations.
  */
 conversationSchema.methods.postLastOutboundMessageToPlatform = function () {
   const loggerMessage = 'conversation.postLastOutboundMessageToPlatform';
   const messageText = this.lastOutboundMessage.text;
+  const resolve = Promise.resolve();
+
   // This could be blank for noReply templates.
   if (!messageText) {
-    return;
+    return resolve;
   }
 
   logger.debug(loggerMessage);
 
-  if (this.platform === 'slack') {
-    slack.postMessage(this.slackChannel, messageText);
+  if (this.platform !== 'sms') {
+    return resolve;
   }
 
-  if (this.platform === 'sms') {
-    twilio.postMessage(this.platformUserId, messageText)
-      .then(res => logger.debug(loggerMessage, { status: res.status }))
-      .catch(err => logger.error(loggerMessage, err));
-  }
+  return twilio.postMessage(this.platformUserId, messageText);
 };
 
 /**
@@ -318,9 +309,7 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function () {
  */
 conversationSchema.methods.getNorthstarUser = function () {
   if (this.platform === 'slack') {
-    return slack.fetchSlackUserBySlackId(this.platformUserId)
-      .then(slackUser => northstar.fetchUserByEmail(slackUser.profile.email))
-      .catch(err => err);
+    return northstar.fetchUserByEmail(this.platformUserId);
   }
 
   return northstar.fetchUserByMobile(this.platformUserId);
