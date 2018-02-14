@@ -231,16 +231,15 @@ curl -X "POST" "http://localhost:5100/api/v2/messages?origin=signup" \
 POST /v2/messages?origin=slack
 ```
 
-Receives direct messages from DS staff to internal [Gambit Slack](https://github.com/dosomething/gambit-slack) app, and either posts back a reply or forwards the message to Front.
+Receives and replies to direct messages from DS staffers to our internal [Gambit Slack](https://github.com/dosomething/gambit-slack) app.
 
 ### Input
 
 Name | Type | Description
 --- | --- | ---
-`slackId` | `string` | Sender's Slack User ID
-`slackChannel` | `string` |  Direct message channel from Slack User to Gambit Slack app
-`text` | `string` | Incoming message
-`mediaUrl` | `string` | Media attachment URL (hardcoded to an image set in Gambit Slack).
+`email` | `string` | Slack user's email
+`text` | `string` | Incoming message text
+`mediaUrl` | `string` | Incoming message attachment URL
 
 ## Twilio
 
@@ -248,7 +247,7 @@ Name | Type | Description
 POST /v2/messages?origin=twilio
 ```
 
-Receives SMS/MMS messages from DS members to our Twilio messaging service, and either posts back a reply or forwards the message to Front.
+Receives and replies to SMS/MMS messages from DS members to our shortcode, 38383.
 
 ### Input
 
