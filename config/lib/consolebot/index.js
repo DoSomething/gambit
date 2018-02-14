@@ -16,8 +16,7 @@ const configVars = {
   prompt: process.env.DS_CONSOLEBOT_PROMPT || 'You>',
   replyPrefix: process.env.DS_CONSOLEBOT_REPLY_PREFIX || 'Bot>',
   replyColor: process.env.DS_CONSOLEBOT_REPLY_COLOR || 'magenta',
-  // TODO: Mock Twilio origin, to help User address updates.
-  url: `http://${basicAuthString}@localhost:${appConfig.port}/api/v2/messages?origin=api`,
+  url: `http://${basicAuthString}@localhost:${appConfig.port}/api/v2/messages?origin=twilio`,
   photoUrl: process.env.DS_CONSOLEBOT_PHOTO_URL || photoUrl,
 };
 

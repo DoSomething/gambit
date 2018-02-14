@@ -278,8 +278,14 @@ conversationSchema.methods.createLastOutboundMessage = function (direction, text
  * @return {Promise}
  */
 conversationSchema.methods.createAndPostOutboundReplyMessage = function (text, template, req) {
+  const suppressReply = helpers.request.suppressOutboundReply(req);
+
   return this.createLastOutboundMessage('outbound-reply', text, template, req)
-    .then(() => this.postLastOutboundMessageToPlatform());
+    .then(() => {
+      if (suppressReply) return Promise.resolve();
+
+      return this.postLastOutboundMessageToPlatform();
+    });
 };
 
 /**
