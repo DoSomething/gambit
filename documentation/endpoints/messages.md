@@ -225,19 +225,19 @@ curl -X "POST" "http://localhost:5100/api/v2/messages?origin=signup" \
 
 </details>
 
-### Slack
+### Custom
 
 ```
-POST /v2/messages?origin=slack
+POST /v2/messages?origin=:customPlatform
 ```
 
-Receives and replies to direct messages from DS staffers to our internal [Gambit Slack](https://github.com/dosomething/gambit-slack) app.
+Receives a message from member via specified platform, and returns the reply via HTTP response.
 
 ### Input
 
 Name | Type | Description
 --- | --- | ---
-`email` | `string` | Slack user's email
+`northstarId` | `string` | Sender's Northstar ID
 `text` | `string` | Incoming message text
 `mediaUrl` | `string` | Incoming message attachment URL
 

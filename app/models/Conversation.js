@@ -306,11 +306,11 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function () {
  * @return {Promise}
  */
 conversationSchema.methods.getNorthstarUser = function () {
-  if (this.platform === 'slack') {
-    return northstar.fetchUserByEmail(this.platformUserId);
+  if (this.platform === 'sms') {
+    return northstar.fetchUserByMobile(this.platformUserId);
   }
 
-  return northstar.fetchUserByMobile(this.platformUserId);
+  return northstar.fetchUserById(this.platformUserId);
 };
 
 module.exports = mongoose.model('Conversation', conversationSchema);
