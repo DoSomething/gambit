@@ -2,7 +2,7 @@
 
 # Gambit Conversations
 
-Gambit Conversations handles SMS and Slack conversations with DoSomething.org members, integrating with a number of services:
+Gambit Conversations handles SMS conversations with DoSomething.org members, integrating with a number of services:
 
 #### Internal 
 * [Northstar](https://github.com/dosomething/northstar)
@@ -10,7 +10,6 @@ Gambit Conversations handles SMS and Slack conversations with DoSomething.org me
 
 #### External 
 * Twilio
-* Slack
 * Front
 * Contentful
 
@@ -47,7 +46,7 @@ PuppetSloth-MacBook-Pro-2:gambit-conversations puppetsloth$ node shell
 You> 
 ```
 
-Input is posted to your localhost `api/v1/receive-message` endpoint on behalf of the Northstar User  with mobile number matching your  `DS_CONSOLEBOT_MOBILE` config variable. A new Northstar User is created for the mobile number if it doesn't exist.
+Input is posted to your localhost `api/v2/messages?origin=twilio` endpoint on behalf of the Northstar User with mobile number matching your  `DS_CONSOLEBOT_USER_MOBILE` config variable. A new Northstar User is created for the mobile number if it doesn't exist.
 
 
 ## Development
