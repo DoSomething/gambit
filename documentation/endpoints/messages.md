@@ -76,7 +76,10 @@ curl -X "POST" "http://localhost:5100/api/v2/messages?origin=broadcast" \
 POST /v2/messages?origin=front
 ```
 
-Sends a Front message from an Agent to a Member, and unpauses the Conversation (if archived in Front).
+Receives a Front message from an Agent to a member, and creates an outbound support message for the User Conversation.
+
+* Unpauses the Conversation (if archived in Front).
+* Sends the message to User if Conversation platform is SMS.
 
 ### Input
 
@@ -171,14 +174,17 @@ curl -X "POST" "http://localhost:5100/api/v2/messages?origin=front" \
 POST /v2/messages?origin=signup
 ```
 
-Sends a Campaign Signup Menu message to a Member.
+Creates an outbound Campaign Signup menu message in given User's Conversation.
 
-### Input
+* Sends the message if given platform is SMS.
+
+### Input 
 
 Name | Type | Description
---- | --- | ---
+--- | --- |
 `northstarId` | `string` | User Id to send externalSignupMenuMessage to
 `campaignId` | `string` | Campaign Id to send externalSignupMenuMessage for
+`platform` | `string` | Optional, defaults to `'sms'`.
 
 <details>
 <summary><strong>Example Request</strong></summary>
