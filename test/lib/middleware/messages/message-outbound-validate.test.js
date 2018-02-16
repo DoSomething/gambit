@@ -10,6 +10,7 @@ const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 
 const helpers = require('../../../../lib/helpers');
+const stubs = require('../../../helpers/stubs');
 const userFactory = require('../../../helpers/factories/user');
 
 // setup "x.should.y" assertion style
@@ -40,6 +41,7 @@ test.beforeEach((t) => {
   // setup req, res mocks
   t.context.req = httpMocks.createRequest();
   t.context.req.user = mockUser;
+  t.context.req.platform = stubs.getPlatform();
   t.context.res = httpMocks.createResponse();
 });
 
