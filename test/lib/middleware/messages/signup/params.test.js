@@ -41,7 +41,7 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-test('paramsMiddleware should call sendErrorResponse if body.northstarId not found', async (t) => {
+test('paramsMiddleware should call sendErrorResponse if body.campaignId not found', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = paramsMiddleware();
@@ -52,7 +52,7 @@ test('paramsMiddleware should call sendErrorResponse if body.northstarId not fou
   next.should.not.have.been.called;
 });
 
-test('paramsMiddleware should call sendErrorResponse if body.campaignId not found', async (t) => {
+test('paramsMiddleware should call sendErrorResponse if body.northstarId not found', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = paramsMiddleware();
@@ -75,6 +75,39 @@ test('paramsMiddleware should call next if northstarId and campaignId were found
 
   // test
   await middleware(t.context.req, t.context.res, next);
+  helpers.sendErrorResponse.should.not.have.been.called;
+  next.should.have.been.called;
+});
+
+test('paramsMiddleware should set not platformUserId if platform is passed', async (t) => {
+  // setup
+  const next = sinon.stub();
+  const middleware = paramsMiddleware();
+  t.context.req.body = {
+    northstarId: userId,
+    campaignId,
+  };
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  t.context.req.should.not.have.property('platformUserId');
+  helpers.sendErrorResponse.should.not.have.been.called;
+  next.should.have.been.called;
+});
+
+test('paramsMiddleware should set platformUserId if platform is passed', async (t) => {
+  // setup
+  const next = sinon.stub();
+  const middleware = paramsMiddleware();
+  t.context.req.body = {
+    northstarId: userId,
+    campaignId,
+    platform: stubs.getPlatform(),
+  };
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  t.context.req.platformUserId.should.equal(userId);
   helpers.sendErrorResponse.should.not.have.been.called;
   next.should.have.been.called;
 });
