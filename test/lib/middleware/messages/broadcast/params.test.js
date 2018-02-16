@@ -33,6 +33,7 @@ test.beforeEach((t) => {
 
   // setup req, res mocks
   t.context.req = httpMocks.createRequest();
+  t.context.req.body = {};
   t.context.res = httpMocks.createResponse();
 });
 
@@ -58,6 +59,7 @@ test('paramsMiddleware should call sendErrorResponse if body.broadcastId not fou
   // setup
   const next = sinon.stub();
   const middleware = paramsMiddleware();
+  t.context.req.body.northstarId = userId;
 
   // test
   await middleware(t.context.req, t.context.res, next);
