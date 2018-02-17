@@ -50,7 +50,6 @@ test('paramsMiddleware should call sendErrorResponse if body.northstarId not fou
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  helpers.analytics.addParameters.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
   next.should.not.have.been.called;
 });
@@ -63,7 +62,6 @@ test('paramsMiddleware should call sendErrorResponse if body.broadcastId not fou
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  helpers.analytics.addParameters.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
   next.should.not.have.been.called;
 });
@@ -80,7 +78,6 @@ test('paramsMiddleware should call next if body.northstarId found', async (t) =>
   // test
   await middleware(t.context.req, t.context.res, next);
   helpers.sendErrorResponse.should.not.have.been.called;
-  helpers.analytics.addParameters.should.have.been.called;
   t.context.req.userId.should.equal(userId);
   t.context.req.broadcastId.should.equal(broadcastId);
   next.should.have.been.called;
