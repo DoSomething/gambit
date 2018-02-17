@@ -181,7 +181,7 @@ Creates an outbound Campaign Signup menu message in given User's Conversation.
 ### Input 
 
 Name | Type | Description
---- | --- |
+--- | --- | ---
 `northstarId` | `string` | User Id to send externalSignupMenuMessage to
 `campaignId` | `string` | Campaign Id to send externalSignupMenuMessage for
 `platform` | `string` | Optional, defaults to `'sms'`.
