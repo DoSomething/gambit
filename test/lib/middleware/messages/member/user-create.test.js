@@ -61,8 +61,8 @@ test('createUser should inject a user into the req object when created in Norths
   // setup
   const next = sinon.stub();
   const middleware = createUser();
-  sandbox.stub(requestHelper, 'isSlack')
-    .returns(false);
+  sandbox.stub(requestHelper, 'isTwilio')
+    .returns(true);
   sandbox.stub(userHelper, 'getDefaultCreatePayloadFromReq')
     .returns(defaultPayloadStub);
   sandbox.stub(northstar, 'createUser')
@@ -90,12 +90,12 @@ test('createUser should call next if req.user exists', async (t) => {
   next.should.have.been.called;
 });
 
-test('createUser should call next if helpers.request.isSlack', async (t) => {
+test('createUser should call next if !helpers.request.isTwilio', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = createUser();
-  sandbox.stub(requestHelper, 'isSlack')
-    .returns(true);
+  sandbox.stub(requestHelper, 'isTwilio')
+    .returns(false);
 
   // test
   await middleware(t.context.req, t.context.res, next);
@@ -107,6 +107,8 @@ test('createUser should call sendErrorResponse if userHelper.getDefaultCreatePay
   // setup
   const next = sinon.stub();
   const middleware = createUser();
+  sandbox.stub(requestHelper, 'isTwilio')
+    .returns(true);
   sandbox.stub(userHelper, 'getDefaultCreatePayloadFromReq')
     .throws();
   sandbox.stub(northstar, 'createUser')
@@ -125,6 +127,8 @@ test('createUser should call sendErrorResponse if northstar.createUser fails', a
   // setup
   const next = sinon.stub();
   const middleware = createUser();
+  sandbox.stub(requestHelper, 'isTwilio')
+    .returns(true);
   sandbox.stub(userHelper, 'getDefaultCreatePayloadFromReq')
     .returns(defaultPayloadStub);
   sandbox.stub(northstar, 'createUser')

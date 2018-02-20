@@ -5,7 +5,6 @@ const logger = require('../../lib/logger');
 const Message = require('./Message');
 const helpers = require('../../lib/helpers');
 const northstar = require('../../lib/northstar');
-const slack = require('../../lib/slack');
 const twilio = require('../../lib/twilio');
 
 const campaignTopic = 'campaign';
@@ -29,7 +28,6 @@ const conversationSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Message',
   },
-  slackChannel: String,
 }, { timestamps: true });
 
 conversationSchema.index({ createdAt: 1 });
@@ -46,10 +44,6 @@ conversationSchema.statics.createFromReq = function (req) {
     paused: false,
     topic: defaultTopic,
   };
-
-  if (req.slackChannel) {
-    data.slackChannel = req.slackChannel;
-  }
 
   return this.create(data);
 };
@@ -284,46 +278,39 @@ conversationSchema.methods.createLastOutboundMessage = function (direction, text
  * @return {Promise}
  */
 conversationSchema.methods.createAndPostOutboundReplyMessage = function (text, template, req) {
+  const suppressReply = helpers.request.shouldSuppressOutboundReply(req);
+
   return this.createLastOutboundMessage('outbound-reply', text, template, req)
-    .then(() => this.postLastOutboundMessageToPlatform());
+    .then(() => {
+      if (suppressReply) return Promise.resolve();
+
+      return this.postLastOutboundMessageToPlatform();
+    });
 };
 
 /**
- * Posts the Last Outbound Message to the platform.
- * TODO: Promisify, look for request success status when posting to platforms
+ * Posts the Last Outbound Message to Twilio for SMS conversations.
  */
 conversationSchema.methods.postLastOutboundMessageToPlatform = function () {
-  const loggerMessage = 'conversation.postLastOutboundMessageToPlatform';
   const messageText = this.lastOutboundMessage.text;
+
   // This could be blank for noReply templates.
-  if (!messageText) {
-    return;
+  if (!messageText || this.platform !== 'sms') {
+    return Promise.resolve();
   }
 
-  logger.debug(loggerMessage);
-
-  if (this.platform === 'slack') {
-    slack.postMessage(this.slackChannel, messageText);
-  }
-
-  if (this.platform === 'sms') {
-    twilio.postMessage(this.platformUserId, messageText)
-      .then(res => logger.debug(loggerMessage, { status: res.status }))
-      .catch(err => logger.error(loggerMessage, err));
-  }
+  return twilio.postMessage(this.platformUserId, messageText);
 };
 
 /**
  * @return {Promise}
  */
 conversationSchema.methods.getNorthstarUser = function () {
-  if (this.platform === 'slack') {
-    return slack.fetchSlackUserBySlackId(this.platformUserId)
-      .then(slackUser => northstar.fetchUserByEmail(slackUser.profile.email))
-      .catch(err => err);
+  if (this.platform === 'sms') {
+    return northstar.fetchUserByMobile(this.platformUserId);
   }
 
-  return northstar.fetchUserByMobile(this.platformUserId);
+  return northstar.fetchUserById(this.platformUserId);
 };
 
 module.exports = mongoose.model('Conversation', conversationSchema);

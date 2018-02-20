@@ -7,9 +7,9 @@ POST /v2/messages
 The v2 POST Messages resource requires an `origin` query parameter, with possible values:
 * [Broadcast](#broadcast)
 * [Front](#front)
-* [Slack](#slack)
 * [Signup](#signup)
 * [Twilio](#twilio)
+* [A custom messaging platform](#custom)
 
 ## Broadcast
 
@@ -17,7 +17,7 @@ The v2 POST Messages resource requires an `origin` query parameter, with possibl
 POST /v2/messages?origin=broadcast
 ```
 
-Sends a Broadcast message to a User.
+Sends a Broadcast message to a Member.
 
 ### Input
 
@@ -76,7 +76,10 @@ curl -X "POST" "http://localhost:5100/api/v2/messages?origin=broadcast" \
 POST /v2/messages?origin=front
 ```
 
-Sends a direct message to a member and unpauses their Conversation (if archived).
+Receives a Front message from an Agent to a member, and creates an outbound support message for the User Conversation.
+
+* Unpauses the Conversation (if archived in Front).
+* Sends the message to User if Conversation platform is SMS.
 
 ### Input
 
@@ -171,14 +174,17 @@ curl -X "POST" "http://localhost:5100/api/v2/messages?origin=front" \
 POST /v2/messages?origin=signup
 ```
 
-Sends a Campaign Signup Confirmation Menu message to a User.
+Creates an outbound Campaign Signup menu message in given User's Conversation.
 
-### Input
+* Sends the message if given platform is SMS.
+
+### Input 
 
 Name | Type | Description
 --- | --- | ---
 `northstarId` | `string` | User Id to send externalSignupMenuMessage to
 `campaignId` | `string` | Campaign Id to send externalSignupMenuMessage for
+`platform` | `string` | Optional, defaults to `'sms'`.
 
 <details>
 <summary><strong>Example Request</strong></summary>
@@ -225,22 +231,6 @@ curl -X "POST" "http://localhost:5100/api/v2/messages?origin=signup" \
 
 </details>
 
-### Slack
-
-```
-POST /v2/messages?origin=slack
-```
-
-Receives direct messages from DS staff to internal [Gambit Slack](https://github.com/dosomething/gambit-slack) app, and either posts back a reply or forwards the message to Front.
-
-### Input
-
-Name | Type | Description
---- | --- | ---
-`slackId` | `string` | Sender's Slack User ID
-`slackChannel` | `string` |  Direct message channel from Slack User to Gambit Slack app
-`text` | `string` | Incoming message
-`mediaUrl` | `string` | Media attachment URL (hardcoded to an image set in Gambit Slack).
 
 ## Twilio
 
@@ -248,7 +238,10 @@ Name | Type | Description
 POST /v2/messages?origin=twilio
 ```
 
-Receives SMS/MMS messages from DS members to our Twilio messaging service, and either posts back a reply or forwards the message to Front.
+Receives inbound SMS/MMS messages from Members, and sends replies back by posting to Twilio.
+
+* Creates a new Northstar User if it doesn't exist for the sender.
+
 
 ### Input
 
@@ -318,3 +311,83 @@ curl -X "POST" "http://localhost:5100/api/v2/messages?origin=twilio" \
   }
 }
 ```
+</details>
+
+## Custom
+
+```
+POST /v2/messages?origin=:customPlatform
+```
+
+Receives inbound messages from Members via specified origin, and returns the replies.
+
+### Input
+
+Name | Type | Description
+--- | --- | ---
+`northstarId` | `string` | Sender's Northstar ID
+`text` | `string` | Incoming message text
+`mediaUrl` | `string` | Incoming message attachment URL
+`messageId` | `string` | Optional. Incoming message ID (e.g. Slack message ID)
+
+<details>
+<summary><strong>Example Request</strong></summary>
+
+```
+curl -X "POST" "http://localhost:5100/api/v2/messages?origin=gambit-slack" \
+     -H 'Content-Type: application/json; charset=utf-8' \
+     -u 'puppet:totallysecret' \
+     -d $'{
+  "northstarId": "5547be89429c64ec7e8b518d",
+  "text": "menu"
+}'
+```
+</details>
+
+<details>
+<summary><strong>Example Response</strong></summary>
+
+```
+{
+  "data": {
+    "messages": {
+      "inbound": [
+        {
+          "__v": 0,
+          "updatedAt": "2017-09-31T19:21:47.556Z",
+          "createdAt": "2017-09-31T19:21:47.556Z",
+          "conversationId": "59a7asd03fc731160d31cfdad2",
+          "campaignId": 2710,
+          "topic": "campaign",
+          "text": "menu",
+          "direction": "inbound",
+          "_id": "59a861cbf64c3e0902d956e7",
+          "attachments": [
+            {
+              "contentType": "image/png",
+              "url": "http://placekitten.com/g/800/600"
+            }
+          ]
+        }
+      ],
+      "outbound": [
+        {
+          "__v": 0,
+          "updatedAt": "2017-09-31T19:21:47.597Z",
+          "createdAt": "2017-09-31T19:21:47.597Z",
+          "conversationId": "59a7asd03fc731160d31cfdad2",
+          "campaignId": 7656,
+          "topic": "campaign_7656",
+          "text": "Help us send letters of support to every mosque in the United States. \n\nWant to join Sincerely, Us?\n\nYes or No",
+          "template": "askSignupMessage",
+          "direction": "outbound-reply",
+          "_id": "59a861cbf64c3e0902d956e8",
+          "attachments": []
+        }
+      ]
+    }
+  }
+}
+```
+</details>
+
