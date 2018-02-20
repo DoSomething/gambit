@@ -152,6 +152,7 @@ test('validateOutbound calls next if user is paused and config is shouldSendWhen
     .returns(true);
   sandbox.stub(helpers.user, 'isPaused')
     .returns(true);
+  t.context.req.platform = 'alexa';
 
   // test
   middleware(t.context.req, t.context.res, next);
