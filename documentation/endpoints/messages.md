@@ -328,7 +328,7 @@ Name | Type | Description
 `northstarId` | `string` | Sender's Northstar ID
 `text` | `string` | Incoming message text
 `mediaUrl` | `string` | Incoming message attachment URL
-`messageId` | `string` | Incoming message ID (e.g. Twilio or Slack message ID)
+`messageId` | `string` | Optional. Incoming message ID (e.g. Slack message ID)
 
 <details>
 <summary><strong>Example Request</strong></summary>
