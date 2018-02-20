@@ -19,6 +19,7 @@ const requestHelper = require('../../../lib/helpers/request');
 
 const campaignId = stubs.getCampaignId();
 const userId = stubs.getUserId();
+const platform = stubs.getPlatform();
 
 const sandbox = sinon.sandbox.create();
 
@@ -53,6 +54,12 @@ test('setCampaignId should inject a campaignId property to req', (t) => {
   requestHelper.setCampaignId(t.context.req, campaignId);
   t.context.req.campaignId.should.equal(campaignId);
   helpers.analytics.addParameters.should.have.been.calledWith({ campaignId });
+});
+
+test('setPlatform should inject a platform property to req', (t) => {
+  requestHelper.setPlatform(t.context.req, platform);
+  t.context.req.platform.should.equal(platform);
+  helpers.analytics.addParameters.should.have.been.calledWith({ platform });
 });
 
 test('setUserId should inject a userId property to req', (t) => {

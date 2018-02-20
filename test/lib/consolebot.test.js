@@ -87,7 +87,7 @@ test('post should call reply on success', async () => {
   sandbox.spy(consolebot, 'reply');
 
   const text = 'hello!';
-  nock(config.url)
+  nock(config.request.url)
     .post('', {})
     .query(true)
     .reply(200, {
@@ -106,7 +106,7 @@ test('consolebot post should call reply on error', async () => {
   sandbox.spy(consolebot, 'reply');
 
   const text = 'hi!';
-  nock(config.url)
+  nock(config.request.url)
     .post('', {})
     .query(true)
     .reply(500, {
