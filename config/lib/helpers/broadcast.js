@@ -1,7 +1,10 @@
 'use strict';
 
 module.exports = {
-  defaultPlatform: 'sms',
+  defaults: {
+    platform: 'sms',
+    template: 'askSignup',
+  },
   customerIo: {
     userIdField: '{{customer.id}}',
     userPhoneField: '{{customer.phone}}',

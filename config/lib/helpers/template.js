@@ -36,6 +36,7 @@ const templatesMap = {
     invalidQuantity: 'invalidQuantity',
     invalidSignupMenuCommand: 'invalidSignupMenuCommand',
     invalidWhyParticipated: 'invalidWhyParticipated',
+    signupMenu: 'signupMenu',
   },
   gambitConversationsTemplates: {
     badWords: {

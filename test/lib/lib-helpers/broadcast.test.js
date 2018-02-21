@@ -182,5 +182,5 @@ test('getWebhook v2 should return an object with body of a POST Broadcast Messag
 });
 
 test('getDefaultPlatform should return string', (t) => {
-  t.deepEqual(broadcastHelper.getDefaultPlatform(), config.defaultPlatform);
+  t.deepEqual(broadcastHelper.getDefaultPlatform(), config.defaults.platform);
 });
