@@ -81,3 +81,14 @@ test('parseBroadcast should call sendErrorResponse on error', async (t) => {
   helpers.sendErrorResponse.should.have.been.called;
   next.should.not.have.been.called;
 });
+
+test('parseBroadcast should call sendErrorResponse if campaignId and topic undefined', async (t) => {
+  const next = sinon.stub();
+  const middleware = parseBroadcast();
+  t.context.req.broadcast = broadcastFactory.getInvalidBroadcast();
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  helpers.sendErrorResponse.should.have.been.called;
+  next.should.not.have.been.called;
+});

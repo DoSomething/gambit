@@ -29,5 +29,13 @@ module.exports.getValidCampaignBroadcast = function getValidCampaignBroadcast(da
 module.exports.getValidTopicBroadcast = function getValidTopicBroadcast(date = Date.now()) {
   const broadcast = module.exports.getValidCampaignBroadcast(date);
   broadcast.fields.topic = stubs.getTopic();
+  broadcast.fields.campaign = null;
   return broadcast;
 };
+
+module.exports.getInvalidBroadcast = function getInvalidBroadcast(date = Date.now()) {
+  const broadcast = module.exports.getValidCampaignBroadcast(date);
+  broadcast.fields.campaign = null;
+  return broadcast;
+};
+
