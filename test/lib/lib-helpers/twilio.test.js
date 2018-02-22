@@ -7,6 +7,7 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
 
+const helpers = require('../../../lib/helpers');
 const stubs = require('../../helpers/stubs');
 
 chai.should();
@@ -31,8 +32,10 @@ test.afterEach(() => {
 
 // parseBody
 test('parseBody should inject vars into req', (t) => {
+  sandbox.spy(helpers.request, 'setPlatformToSms');
   sandbox.spy(twilioHelper, 'parseUserAddressFromReq');
   twilioHelper.parseBody(t.context.req);
+  helpers.request.setPlatformToSms.should.have.been.calledWith(t.context.req);
   twilioHelper.parseUserAddressFromReq.should.have.been.called;
   t.context.req.platformUserId.should.equal(mockTwilioRequestBody.From);
   t.context.req.should.have.property('platformUserAddress');
