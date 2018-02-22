@@ -25,7 +25,7 @@ const broadcastHelper = require('../../../lib/helpers/broadcast');
 // stubs
 const broadcastId = stubs.getBroadcastId();
 const date = Date.now();
-const broadcast = broadcastFactory.getValidBroadcast(date);
+const broadcast = broadcastFactory.getValidCampaignBroadcast(date);
 const campaignId = stubs.getCampaignId();
 const platform = stubs.getPlatform();
 const topic = stubs.getTopic();
