@@ -47,7 +47,6 @@ test('parseBroadcast should inject vars into the req object for Campaign Broadca
   await middleware(t.context.req, t.context.res, next);
 
   helpers.broadcast.parseBroadcast.should.have.been.called;
-  t.context.req.platform.should.equal(stubs.getPlatform());
   t.context.req.campaignId.should.equal(stubs.getCampaignId());
   t.context.req.should.not.have.property('topic');
   t.context.req.outboundMessageText.should.equal(stubs.getBroadcastMessageText());
@@ -64,7 +63,6 @@ test('parseBroadcast should inject vars into the req object for Topic Broadcasts
   await middleware(t.context.req, t.context.res, next);
 
   helpers.broadcast.parseBroadcast.should.have.been.called;
-  t.context.req.platform.should.equal(stubs.getPlatform());
   t.context.req.topic.should.equal(stubs.getTopic());
   t.context.req.should.not.have.property('campaignId');
   t.context.req.outboundMessageText.should.equal(stubs.getBroadcastMessageText());
