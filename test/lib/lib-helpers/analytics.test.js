@@ -30,7 +30,7 @@ const sandbox = sinon.sandbox.create();
 // Setup!
 test.beforeEach(() => {
   stubs.stubLogger(sandbox, logger);
-  sandbox.stub(newrelic, 'addCustomParameters')
+  sandbox.stub(newrelic, 'addCustomAttributes')
     .returns(underscore.noop);
 });
 
@@ -40,9 +40,9 @@ test.afterEach(() => {
   sandbox.restore();
 });
 
-test('addParameters should call newrelic.addCustomParameters', () => {
+test('addParameters should call newrelic.addCustomAttributes', () => {
   analyticsHelper.addParameters(mockPayload);
-  newrelic.addCustomParameters.should.have.been.called;
+  newrelic.addCustomAttributes.should.have.been.called;
 });
 
 test('addParameters should call logger.debug', () => {
