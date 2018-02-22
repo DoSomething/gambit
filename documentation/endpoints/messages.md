@@ -25,6 +25,7 @@ Name | Type | Description
 --- | --- | ---
 `northstarId` | `string` | User Id to send Broadcast message to
 `broadcastId` | `string` | Broadcast Id to send
+`platform` | `string` | Optional, defaults to `'sms'`.
 
 <details>
 <summary><strong>Example Request</strong></summary>
