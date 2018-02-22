@@ -41,13 +41,15 @@ test('parseBroadcast should inject vars into the req object for Campaign Broadca
   const next = sinon.stub();
   const middleware = parseBroadcast();
   sandbox.spy(helpers.broadcast, 'parseBroadcast');
-  t.context.req.broadcast = broadcastFactory.getValidCampaignBroadcast();
+  sandbox.spy(helpers.request, 'setCampaignId');
+  const broadcast = broadcastFactory.getValidCampaignBroadcast();
+  t.context.req.broadcast = broadcast;
 
   // test
   await middleware(t.context.req, t.context.res, next);
 
-  helpers.broadcast.parseBroadcast.should.have.been.called;
-  t.context.req.campaignId.should.equal(stubs.getCampaignId());
+  helpers.broadcast.parseBroadcast.should.have.been.calledWith(t.context.req.broadcast);
+  helpers.request.setCampaignId.should.have.been.calledWith(t.context.req, stubs.getCampaignId());
   t.context.req.should.not.have.property('topic');
   t.context.req.outboundMessageText.should.equal(stubs.getBroadcastMessageText());
   next.should.have.been.called;
