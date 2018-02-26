@@ -17,6 +17,7 @@ const getCampaignMiddleware = require('../../../lib/middleware/messages/signup/c
 const updateConversationMiddleware = require('../../../lib/middleware/messages/signup/conversation-update');
 const loadOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-load');
 const createOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-create');
+const sendOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-send');
 
 router.use(paramsMiddleware());
 
@@ -31,8 +32,8 @@ router.use(createConversationMiddleware());
 router.use(getCampaignMiddleware());
 router.use(updateConversationMiddleware());
 
-// Load/create outbound message
 router.use(loadOutboundMessageMiddleware(outboundMessageConfig));
 router.use(createOutboundMessageMiddleware(outboundMessageConfig));
+router.use(sendOutboundMessageMiddleware());
 
 module.exports = router;
