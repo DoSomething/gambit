@@ -295,7 +295,7 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function () {
   const messageText = this.lastOutboundMessage.text;
 
   // This could be blank for noReply templates.
-  if (!messageText || this.platform !== 'sms') {
+  if (!messageText || !this.isSms()) {
     return Promise.resolve();
   }
 
@@ -306,11 +306,18 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function () {
  * @return {Promise}
  */
 conversationSchema.methods.getNorthstarUser = function () {
-  if (this.platform === 'sms') {
+  if (this.isSms()) {
     return northstar.fetchUserByMobile(this.platformUserId);
   }
 
   return northstar.fetchUserById(this.platformUserId);
+};
+
+/**
+ * @return {boolean}
+ */
+conversationSchema.methods.isSms = function () {
+  return this.platform === 'sms';
 };
 
 module.exports = mongoose.model('Conversation', conversationSchema);
