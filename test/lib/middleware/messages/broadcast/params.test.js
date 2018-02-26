@@ -24,10 +24,13 @@ const sandbox = sinon.sandbox.create();
 
 const userId = stubs.getUserId();
 const broadcastId = stubs.getBroadcastId();
+const platform = stubs.getPlatform();
 
 test.beforeEach((t) => {
-  sandbox.stub(helpers.analytics, 'addParameters')
-    .returns(underscore.noop);
+  sandbox.spy(helpers.request, 'setUserId');
+  sandbox.spy(helpers.request, 'setBroadcastId');
+  sandbox.spy(helpers.request, 'setPlatform');
+  sandbox.spy(helpers.request, 'setPlatformToSms');
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(underscore.noop);
 
@@ -66,7 +69,7 @@ test('paramsMiddleware should call sendErrorResponse if body.broadcastId not fou
   next.should.not.have.been.called;
 });
 
-test('paramsMiddleware should call next if body.northstarId found', async (t) => {
+test('paramsMiddleware should call setPlatformToSms if body.platform not found', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = paramsMiddleware();
@@ -78,7 +81,27 @@ test('paramsMiddleware should call next if body.northstarId found', async (t) =>
   // test
   await middleware(t.context.req, t.context.res, next);
   helpers.sendErrorResponse.should.not.have.been.called;
-  t.context.req.userId.should.equal(userId);
-  t.context.req.broadcastId.should.equal(broadcastId);
+  helpers.request.setUserId.should.have.been.called;
+  helpers.request.setBroadcastId.should.have.been.called;
+  helpers.request.setPlatformToSms.should.have.been.calledWith(t.context.req);
+  t.context.req.should.not.have.property('platformUserId');
+  next.should.have.been.called;
+});
+
+test('paramsMiddleware should call setPlatform to body.platform if exists', async (t) => {
+  // setup
+  const next = sinon.stub();
+  const middleware = paramsMiddleware();
+  t.context.req.body = {
+    northstarId: userId,
+    broadcastId,
+    platform,
+  };
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  helpers.sendErrorResponse.should.not.have.been.called;
+  helpers.request.setPlatform.should.have.been.calledWith(t.context.req, platform);
+  t.context.req.platformUserId.should.equal(userId);
   next.should.have.been.called;
 });

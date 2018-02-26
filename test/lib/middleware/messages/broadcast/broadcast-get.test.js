@@ -21,7 +21,7 @@ const broadcastFactory = require('../../../../helpers/factories/broadcast');
 const broadcastId = stubs.getBroadcastId();
 const cache = cacheHelper.broadcasts;
 const sendErrorResponseStub = underscore.noop;
-const mockBroadcast = broadcastFactory.getValidBroadcast();
+const mockBroadcast = broadcastFactory.getValidCampaignBroadcast();
 const broadcastLookupStub = () => Promise.resolve(mockBroadcast);
 const broadcastLookupFailStub = () => Promise.reject({ message: 'Epic fail' });
 const broadcastLookupNotFoundStub = () => Promise.reject({ status: 404 });

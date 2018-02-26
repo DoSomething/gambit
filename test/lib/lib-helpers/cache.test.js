@@ -20,7 +20,7 @@ const cacheHelper = rewire('../../../lib/helpers/cache');
 
 // stubs
 const broadcastId = stubs.getBroadcastId();
-const broadcast = broadcastFactory.getValidBroadcast();
+const broadcast = broadcastFactory.getValidCampaignBroadcast();
 const broadcastStats = stubs.getBroadcastStats();
 const campaignId = stubs.getCampaignId();
 const campaign = { id: campaignId, title: 'Winter' };

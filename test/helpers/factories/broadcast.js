@@ -2,7 +2,7 @@
 
 const stubs = require('../stubs');
 
-module.exports.getValidBroadcast = function getValidBroadcast(date = Date.now()) {
+module.exports.getValidCampaignBroadcast = function getValidCampaignBroadcast(date = Date.now()) {
   return {
     sys: {
       id: stubs.getBroadcastId(),
@@ -12,7 +12,7 @@ module.exports.getValidBroadcast = function getValidBroadcast(date = Date.now())
     fields: {
       name: stubs.getBroadcastName(),
       platform: stubs.getPlatform(),
-      topic: stubs.getTopic(),
+      topic: null,
       message: stubs.getBroadcastMessageText(),
       campaign: {
         sys: {
@@ -25,3 +25,17 @@ module.exports.getValidBroadcast = function getValidBroadcast(date = Date.now())
     },
   };
 };
+
+module.exports.getValidTopicBroadcast = function getValidTopicBroadcast(date = Date.now()) {
+  const broadcast = module.exports.getValidCampaignBroadcast(date);
+  broadcast.fields.topic = stubs.getTopic();
+  broadcast.fields.campaign = null;
+  return broadcast;
+};
+
+module.exports.getInvalidBroadcast = function getInvalidBroadcast(date = Date.now()) {
+  const broadcast = module.exports.getValidCampaignBroadcast(date);
+  broadcast.fields.campaign = null;
+  return broadcast;
+};
+

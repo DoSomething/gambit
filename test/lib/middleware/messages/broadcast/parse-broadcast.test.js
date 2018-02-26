@@ -10,8 +10,6 @@ const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 
 const helpers = require('../../../../../lib/helpers');
-const analyticsHelper = require('../../../../../lib/helpers/analytics');
-const contentful = require('../../../../../lib/contentful');
 const stubs = require('../../../../helpers/stubs');
 const broadcastFactory = require('../../../../helpers/factories/broadcast');
 
@@ -25,54 +23,74 @@ const parseBroadcast = require('../../../../../lib/middleware/messages/broadcast
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();
 
-// Setup!
+
 test.beforeEach((t) => {
-  sandbox.stub(analyticsHelper, 'addParameters')
-    .returns(underscore.noop);
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(underscore.noop);
-
-  // setup req, res mocks
   t.context.req = httpMocks.createRequest();
-  t.context.req.broadcast = broadcastFactory.getValidBroadcast();
   t.context.res = httpMocks.createResponse();
 });
 
-// Cleanup!
 test.afterEach((t) => {
-  // reset stubs, spies, and mocks
   sandbox.restore();
   t.context = {};
 });
 
-test('parseBroadcast should inject vars into the req object when they exist', async (t) => {
-  // setup
+
+test('parseBroadcast should inject vars into the req object for Campaign Broadcasts', async (t) => {
   const next = sinon.stub();
   const middleware = parseBroadcast();
   sandbox.spy(helpers.broadcast, 'parseBroadcast');
+  sandbox.spy(helpers.request, 'setCampaignId');
+  const broadcast = broadcastFactory.getValidCampaignBroadcast();
+  t.context.req.broadcast = broadcast;
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  analyticsHelper.addParameters.should.have.been.called;
+
+  helpers.broadcast.parseBroadcast.should.have.been.calledWith(t.context.req.broadcast);
+  helpers.request.setCampaignId.should.have.been.calledWith(t.context.req, stubs.getCampaignId());
+  t.context.req.should.not.have.property('topic');
+  t.context.req.outboundMessageText.should.equal(stubs.getBroadcastMessageText());
+  next.should.have.been.called;
+});
+
+test('parseBroadcast should inject vars into the req object for Topic Broadcasts', async (t) => {
+  const next = sinon.stub();
+  const middleware = parseBroadcast();
+  sandbox.spy(helpers.broadcast, 'parseBroadcast');
+  t.context.req.broadcast = broadcastFactory.getValidTopicBroadcast();
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+
   helpers.broadcast.parseBroadcast.should.have.been.called;
-  t.context.req.platform.should.equal(stubs.getPlatform());
-  t.context.req.campaignId.should.equal(stubs.getCampaignId());
   t.context.req.topic.should.equal(stubs.getTopic());
+  t.context.req.should.not.have.property('campaignId');
   t.context.req.outboundMessageText.should.equal(stubs.getBroadcastMessageText());
   next.should.have.been.called;
 });
 
 test('parseBroadcast should call sendErrorResponse on error', async (t) => {
-  // setup
   const next = sinon.stub();
   const middleware = parseBroadcast();
   t.context.req.broadcastId = 'notFound';
-  sandbox.stub(contentful, 'getCampaignIdFromBroadcast')
-    .callsFake(new Error());
+  sandbox.stub(helpers.broadcast, 'parseBroadcast')
+    .throws();
 
   // test
   await middleware(t.context.req, t.context.res, next);
   helpers.sendErrorResponse.should.have.been.called;
-  t.context.req.should.not.have.property('campaignId');
+  next.should.not.have.been.called;
+});
+
+test('parseBroadcast should call sendErrorResponse if campaignId and topic undefined', async (t) => {
+  const next = sinon.stub();
+  const middleware = parseBroadcast();
+  t.context.req.broadcast = broadcastFactory.getInvalidBroadcast();
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  helpers.sendErrorResponse.should.have.been.called;
   next.should.not.have.been.called;
 });

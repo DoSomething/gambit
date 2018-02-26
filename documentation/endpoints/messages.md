@@ -25,6 +25,7 @@ Name | Type | Description
 --- | --- | ---
 `northstarId` | `string` | User Id to send Broadcast message to
 `broadcastId` | `string` | Broadcast Id to send
+`platform` | `string` | Optional, defaults to `'sms'`.
 
 <details>
 <summary><strong>Example Request</strong></summary>
@@ -256,9 +257,9 @@ curl -X "POST" "http://localhost:5100/api/v2/messages?origin=twilio" \
      -u puppet:totallysecret \
      -d $'{
   "MessageSid": "MM09a8f657567f807443191c1e7exxxxxx",
-  "MediaUrl0": "http://bit.ly/2wkfrep",
+  "MediaUrl0": "http://www.fillmurray.com/g/200/300",
   "From":  "+5555555555",
-  "Body": "uhh",
+  "Body": "hi",
   "MediaContentType0": "image/png"
 }'
 
