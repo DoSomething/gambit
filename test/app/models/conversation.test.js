@@ -70,13 +70,15 @@ test('createMessage should not call helpers.tag.render if direction is inbound',
 
 // getNorthstarUser
 test('getNorthstarUser should return northstar.fetchUserByMobile for SMS', async () => {
-  await conversation.getNorthstarUser();
+  const result = await conversation.getNorthstarUser();
   helpers.user.fetchByMobile.should.have.been.called;
+  result.should.equal(mockUser);
 });
 
 test('getNorthstarUser should return northstar.fetchById for non SMS', async () => {
-  await alexaConversation.getNorthstarUser();
+  const result = await alexaConversation.getNorthstarUser();
   helpers.user.fetchById.should.have.been.called;
+  result.should.equal(mockUser);
 });
 
 // isSms
