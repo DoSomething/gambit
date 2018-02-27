@@ -78,6 +78,7 @@ test('createOutboundMessage calls Conversation.createLastOutboundMessage', async
   // test
   await middleware(t.context.req, t.context.res, next);
   t.context.req.conversation.createLastOutboundMessage.should.have.been.called;
+  t.context.req.should.have.property('outboundMessage');
   next.should.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
 });

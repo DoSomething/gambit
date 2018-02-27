@@ -14,6 +14,12 @@ const totalInboundDeclinedCampaign = 10;
 const totalInboundNoMacro = 19;
 
 module.exports = {
+  config: {
+    getMessageOutbound: function getMessageOutbound(direction) {
+      const messageDirection = direction || 'outbound-api-send';
+      return { messageDirection };
+    },
+  },
   gambitCampaigns: {
     getSignupId: function getSignupId() {
       return 8496477;
@@ -109,6 +115,30 @@ module.exports = {
   getKeyword: function getKeyword() {
     return chance.word();
   },
+  getRandomMessageText: function getRandomMessageText() {
+    return chance.paragraph({ sentences: 2 });
+  },
+  getMobileNumber: function getMobileNumber() {
+    return mobileNumber;
+  },
+  getPlatform: function getPlatform() {
+    return 'sms';
+  },
+  getPlatformUserId: function getPlatformUserId() {
+    return mobileNumber;
+  },
+  getRequestId: function getRequestId() {
+    return '2512b2e5-76b1-4efb-916b-5d14bbb2555f';
+  },
+  getTemplate: function getTemplate() {
+    return 'askSignup';
+  },
+  getTopic: function getTopic() {
+    return 'random';
+  },
+  getUserId: function getUserId() {
+    return '597b9ef910707d07c84b00aa';
+  },
   twilio: {
     getSmsMessageSid: function getSmsMessageSid() {
       return 'SMe62bd767ea4438d7f7f307ff9d3212e0';
@@ -138,26 +168,5 @@ module.exports = {
         status: 'queued',
       };
     },
-  },
-  getRandomMessageText: function getRandomMessageText() {
-    return chance.paragraph({ sentences: 2 });
-  },
-  getMobileNumber: function getMobileNumber() {
-    return mobileNumber;
-  },
-  getPlatform: function getPlatform() {
-    return 'sms';
-  },
-  getPlatformUserId: function getPlatformUserId() {
-    return mobileNumber;
-  },
-  getTemplate: function getTemplate() {
-    return 'askSignup';
-  },
-  getTopic: function getTopic() {
-    return 'random';
-  },
-  getUserId: function getUserId() {
-    return '597b9ef910707d07c84b00aa';
   },
 };
