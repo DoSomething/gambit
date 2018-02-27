@@ -109,23 +109,35 @@ module.exports = {
   getKeyword: function getKeyword() {
     return chance.word();
   },
-  getMockInboundTwilioRequestBody: function getMockInboundTwilioRequestBody() {
-    return {
-      Body: this.getRandomMessageText(),
-      From: this.getMobileNumber(),
-      FromCity: chance.city(),
-      FromCountry: country,
-      FromState: chance.state(),
-      FromZip: chance.zip(),
-      NumMedia: 0,
-      ToCity: chance.city(),
-      ToCountry: country,
-      ToState: chance.state(),
-      ToZip: chance.zip(),
-      SmsMessageSid: 'SMe62bd767ea4438d7f7f307ff9d3212e0',
-      SmsSid: 'SMe62bd767ea4438d7f7f307ff9d3212e0',
-      SmsStatus: 'received',
-    };
+  twilio: {
+    getSmsMessageSid: function getSmsMessageSid() {
+      return 'SMe62bd767ea4438d7f7f307ff9d3212e0';
+    },
+    getInboundRequestBody: function getInboundRequestBody() {
+      const sid = this.getSmsMessageSid();
+      return {
+        Body: module.exports.getRandomMessageText(),
+        From: module.exports.getMobileNumber(),
+        FromCity: chance.city(),
+        FromCountry: country,
+        FromState: chance.state(),
+        FromZip: chance.zip(),
+        NumMedia: 0,
+        ToCity: chance.city(),
+        ToCountry: country,
+        ToState: chance.state(),
+        ToZip: chance.zip(),
+        SmsMessageSid: sid,
+        SmsSid: sid,
+        SmsStatus: 'received',
+      };
+    },
+    getPostMessageSuccessBody: function getPostMessageSuccessBody() {
+      return {
+        sid: this.getSmsMessageSid(),
+        status: 'queued',
+      };
+    },
   },
   getRandomMessageText: function getRandomMessageText() {
     return chance.paragraph({ sentences: 2 });

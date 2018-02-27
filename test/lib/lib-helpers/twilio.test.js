@@ -19,7 +19,7 @@ const twilioHelper = require('../../../lib/helpers/twilio');
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();
 
-const mockTwilioRequestBody = stubs.getMockInboundTwilioRequestBody();
+const mockTwilioRequestBody = stubs.twilio.getInboundRequestBody();
 
 test.beforeEach((t) => {
   t.context.req = httpMocks.createRequest();
