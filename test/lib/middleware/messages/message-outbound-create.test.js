@@ -30,11 +30,7 @@ const mockConversation = conversationFactory.getValidConversation();
 const mockMessage = messageFactory.getValidMessage();
 const messageCreateStub = Promise.resolve(mockMessage);
 const messageCreateFailStub = Promise.reject(new Error());
-
-const sendConfigStub = {
-  messageDirection: 'outbound-api-send',
-  shouldPostToPlatform: true,
-};
+const configStub = stubs.config.getMessageOutbound();
 
 test.beforeEach((t) => {
   sandbox.stub(helpers, 'sendErrorResponse')
@@ -59,7 +55,7 @@ test('createOutboundMessage calls next if req.outboundMessage exists', async (t)
     .returns(messageCreateStub);
   t.context.req.conversation = mockConversation;
   t.context.req.outboundMessage = mockMessage;
-  const middleware = createOutboundMessage(sendConfigStub);
+  const middleware = createOutboundMessage(configStub);
 
   // test
   await middleware(t.context.req, t.context.res, next);
@@ -73,7 +69,7 @@ test('createOutboundMessage calls Conversation.createLastOutboundMessage', async
   sandbox.stub(mockConversation, 'createLastOutboundMessage')
     .returns(messageCreateStub);
   t.context.req.conversation = mockConversation;
-  const middleware = createOutboundMessage(sendConfigStub);
+  const middleware = createOutboundMessage(configStub);
 
   // test
   await middleware(t.context.req, t.context.res, next);
@@ -88,7 +84,7 @@ test('createOutboundMessage calls sendErrorResponse if createLastOutboundMessage
   sandbox.stub(mockConversation, 'createLastOutboundMessage')
     .returns(messageCreateFailStub);
   t.context.req.conversation = mockConversation;
-  const middleware = createOutboundMessage(sendConfigStub);
+  const middleware = createOutboundMessage(configStub);
 
   // test
   await middleware(t.context.req, t.context.res, next);

@@ -16,9 +16,6 @@ const stubs = require('../../../helpers/stubs');
 const conversationFactory = require('../../../helpers/factories/conversation');
 const messageFactory = require('../../../helpers/factories/message');
 
-const stubTrueIsARetryRequest = () => true;
-const stubFalseIsARetryRequest = () => false;
-
 // setup "x.should.y" assertion style
 chai.should();
 chai.use(sinonChai);
@@ -30,7 +27,9 @@ const loadOutbound = require('../../../../lib/middleware/messages/message-outbou
 const sandbox = sinon.sandbox.create();
 
 // stubs
-const stubConfig = stubs.config.getMessageOutbound();
+const configStub = stubs.config.getMessageOutbound();
+const stubTrueIsARetryRequest = () => true;
+const stubFalseIsARetryRequest = () => false;
 const conversation = conversationFactory.getValidConversation();
 const outboundMessage = messageFactory.getValidMessage();
 
@@ -56,7 +55,7 @@ test('loadOutbound does not call updateMessageByRequestIdAndDirection if not ret
   t.context.req.isARetryRequest = stubFalseIsARetryRequest;
   sandbox.stub(Message, 'updateMessageByRequestIdAndDirection')
     .returns(Promise.resolve(outboundMessage));
-  const middleware = loadOutbound(stubConfig);
+  const middleware = loadOutbound(configStub);
 
   // test
   await middleware(t.context.req, t.context.res, next);
@@ -71,7 +70,7 @@ test('loadOutbound calls updateMessageByRequestIdAndDirection if retry', async (
     .returns(Promise.resolve(outboundMessage));
   sandbox.stub(t.context.req.conversation, 'setLastOutboundMessage')
     .returns(Promise.resolve(outboundMessage));
-  const middleware = loadOutbound(stubConfig);
+  const middleware = loadOutbound(configStub);
 
   // test
   await middleware(t.context.req, t.context.res, next);

@@ -15,9 +15,11 @@ const totalInboundNoMacro = 19;
 
 module.exports = {
   config: {
-    getMessageOutbound: function getMessageOutbound(direction) {
-      const messageDirection = direction || 'outbound-api-send';
-      return { messageDirection };
+    getMessageOutbound: function getMessageOutbound(shouldSendWhenPaused = false) {
+      return {
+        messageDirection: 'outbound-api-send',
+        shouldSendWhenPaused,
+      };
     },
   },
   gambitCampaigns: {
