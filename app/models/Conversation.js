@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const logger = require('../../lib/logger');
 const Message = require('./Message');
 const helpers = require('../../lib/helpers');
-const northstar = require('../../lib/northstar');
 const twilio = require('../../lib/twilio');
 
 const campaignTopic = 'campaign';
@@ -307,10 +306,10 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function () {
  */
 conversationSchema.methods.getNorthstarUser = function () {
   if (this.isSms()) {
-    return northstar.fetchUserByMobile(this.platformUserId);
+    return helpers.user.fetchByMobile(this.platformUserId);
   }
 
-  return northstar.fetchUserById(this.platformUserId);
+  return helpers.user.fetchById(this.platformUserId);
 };
 
 /**
