@@ -170,5 +170,13 @@ module.exports = {
         status: 'queued',
       };
     },
+    getPostMessageError: function getPostMessageError() {
+      return {
+        status: 400,
+        message: 'The From phone number 38383 is not a valid, SMS-capable inbound phone number or short code for your account.',
+        code: 21606,
+        moreInfo: 'https://www.twilio.com/docs/errors/21606',
+      };
+    },
   },
 };

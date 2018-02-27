@@ -41,11 +41,19 @@ test('parseBody should inject vars into req', (t) => {
   t.context.req.should.have.property('platformUserAddress');
 });
 
-// hasLocation
+// parseUserAddressFromReq
 test('parseUserAddressFromReq should return an object', (t) => {
   const result = twilioHelper.parseUserAddressFromReq(t.context.req);
   result.addr_city.should.equal(mockTwilioRequestBody.FromCity);
   result.addr_state.should.equal(mockTwilioRequestBody.FromState);
   result.addr_zip.should.equal(mockTwilioRequestBody.FromZip);
   result.country.should.equal(mockTwilioRequestBody.FromCountry);
+});
+
+// isBadRequestError
+test('isBadRequestError should return boolean', (t) => {
+  const badRequestError = { status: 400 };
+  t.truthy(twilioHelper.isBadRequestError(badRequestError));
+  const unauthorizedError = { status: 401 };
+  t.falsy(twilioHelper.isBadRequestError(unauthorizedError));
 });
