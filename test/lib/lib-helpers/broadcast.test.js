@@ -120,26 +120,11 @@ test('formatStats should return default object when array without _id property i
   result.should.deep.equal(defaultStats);
 });
 
-test('getWebhook v1 should return an object with body of a Twilio POST Messages request', () => {
-  const messageText = stubs.getRandomMessageText();
-  const mockRequest = {
-    data: {
-      message: messageText,
-    },
-  };
-  const result = broadcastHelper.getWebhook(false, mockRequest);
-  result.headers['Content-Type'].should.equal(webhookContentTypeHeader);
-  result.body.To.should.equal(config.customerIo.userPhoneField);
-  result.body.Body.should.equal(messageText);
-  result.body.should.have.property('StatusCallback');
-  result.url.should.equal(config.blink.v1WebhookUrl);
-});
-
-test('getWebhook v2 should return an object with body of a POST Broadcast Message request', () => {
+test('getWebhook should return an object with body of a POST Broadcast Message request', () => {
   const mockRequest = {
     broadcastId,
   };
-  const result = broadcastHelper.getWebhook(true, mockRequest);
+  const result = broadcastHelper.getWebhook(mockRequest);
   result.headers['Content-Type'].should.equal(webhookContentTypeHeader);
   result.body.northstarId.should.equal(config.customerIo.userIdField);
   result.body.broadcastId.should.equal(broadcastId);

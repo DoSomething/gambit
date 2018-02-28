@@ -25,7 +25,7 @@ Endpoint | Functionality
 -------- | -------------
 `POST /api/v2/messages` | [Create a Message](endpoints/messages.md).
 
-### Query paramters
+### Query parameters
 
 The GET Conversation and Messages are served via the Express Restify Mongoose package. [Docs](https://florianholzapfel.github.io/express-restify-mongoose/)
 
