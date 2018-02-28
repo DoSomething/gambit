@@ -62,6 +62,12 @@ test('setPlatform should inject a platform property to req', (t) => {
   helpers.analytics.addParameters.should.have.been.calledWith({ platform });
 });
 
+test('setPlatformToSms should call setPlatform', (t) => {
+  sandbox.spy(requestHelper, 'setPlatform');
+  requestHelper.setPlatformToSms(t.context.req);
+  requestHelper.setPlatform.should.have.been.calledWith(t.context.req, 'sms');
+});
+
 test('setUserId should inject a userId property to req', (t) => {
   requestHelper.setUserId(t.context.req, userId);
   t.context.req.userId.should.equal(userId);

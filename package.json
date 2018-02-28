@@ -1,6 +1,6 @@
 {
   "name": "gambit-conversations",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "The DoSomething.org chatbot service for multi-platform conversations.",
   "author": "DoSomething.org",
   "license": "MIT",
@@ -50,7 +50,7 @@
     "heroku-logger": "^0.1.1",
     "mongoose": "^4.10.6",
     "mustache": "^2.3.0",
-    "newrelic": "^2.0.2",
+    "newrelic": "2.8.x",
     "request": "^2.81.0",
     "request-promise": "^4.2.1",
     "rivescript": "^1.17.2",

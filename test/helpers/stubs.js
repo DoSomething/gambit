@@ -14,6 +14,14 @@ const totalInboundDeclinedCampaign = 10;
 const totalInboundNoMacro = 19;
 
 module.exports = {
+  config: {
+    getMessageOutbound: function getMessageOutbound(shouldSendWhenPaused = false) {
+      return {
+        messageDirection: 'outbound-api-send',
+        shouldSendWhenPaused,
+      };
+    },
+  },
   gambitCampaigns: {
     getSignupId: function getSignupId() {
       return 8496477;
@@ -109,24 +117,6 @@ module.exports = {
   getKeyword: function getKeyword() {
     return chance.word();
   },
-  getMockInboundTwilioRequestBody: function getMockInboundTwilioRequestBody() {
-    return {
-      Body: this.getRandomMessageText(),
-      From: this.getMobileNumber(),
-      FromCity: chance.city(),
-      FromCountry: country,
-      FromState: chance.state(),
-      FromZip: chance.zip(),
-      NumMedia: 0,
-      ToCity: chance.city(),
-      ToCountry: country,
-      ToState: chance.state(),
-      ToZip: chance.zip(),
-      SmsMessageSid: 'SMe62bd767ea4438d7f7f307ff9d3212e0',
-      SmsSid: 'SMe62bd767ea4438d7f7f307ff9d3212e0',
-      SmsStatus: 'received',
-    };
-  },
   getRandomMessageText: function getRandomMessageText() {
     return chance.paragraph({ sentences: 2 });
   },
@@ -139,6 +129,9 @@ module.exports = {
   getPlatformUserId: function getPlatformUserId() {
     return mobileNumber;
   },
+  getRequestId: function getRequestId() {
+    return '2512b2e5-76b1-4efb-916b-5d14bbb2555f';
+  },
   getTemplate: function getTemplate() {
     return 'askSignup';
   },
@@ -147,5 +140,43 @@ module.exports = {
   },
   getUserId: function getUserId() {
     return '597b9ef910707d07c84b00aa';
+  },
+  twilio: {
+    getSmsMessageSid: function getSmsMessageSid() {
+      return 'SMe62bd767ea4438d7f7f307ff9d3212e0';
+    },
+    getInboundRequestBody: function getInboundRequestBody() {
+      const sid = this.getSmsMessageSid();
+      return {
+        Body: module.exports.getRandomMessageText(),
+        From: module.exports.getMobileNumber(),
+        FromCity: chance.city(),
+        FromCountry: country,
+        FromState: chance.state(),
+        FromZip: chance.zip(),
+        NumMedia: 0,
+        ToCity: chance.city(),
+        ToCountry: country,
+        ToState: chance.state(),
+        ToZip: chance.zip(),
+        SmsMessageSid: sid,
+        SmsSid: sid,
+        SmsStatus: 'received',
+      };
+    },
+    getPostMessageSuccessBody: function getPostMessageSuccessBody() {
+      return {
+        sid: this.getSmsMessageSid(),
+        status: 'queued',
+      };
+    },
+    getPostMessageError: function getPostMessageError() {
+      return {
+        status: 400,
+        message: 'The From phone number 38383 is not a valid, SMS-capable inbound phone number or short code for your account.',
+        code: 21606,
+        moreInfo: 'https://www.twilio.com/docs/errors/21606',
+      };
+    },
   },
 };

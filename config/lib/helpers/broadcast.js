@@ -1,7 +1,12 @@
 'use strict';
 
 module.exports = {
-  defaultPlatform: 'sms',
+  default: {
+    templates: {
+      campaign: 'askSignup',
+      topic: 'rivescript',
+    },
+  },
   customerIo: {
     userIdField: '{{customer.id}}',
     userPhoneField: '{{customer.phone}}',

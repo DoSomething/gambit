@@ -16,6 +16,7 @@ const updateConversationMiddleware = require('../../../lib/middleware/messages/s
 // Note: we're not adding Load Outbound Message middleware, because Front messages are posted
 // directly to Gambit Conversations -- no retryCount to check.
 const createOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-create');
+const sendOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-send');
 
 router.use(paramsMiddleware());
 router.use(getConversationMiddleware());
@@ -25,5 +26,6 @@ router.use(validateOutboundMessageMiddleware(outboundMessageConfig));
 
 router.use(updateConversationMiddleware());
 router.use(createOutboundMessageMiddleware(outboundMessageConfig));
+router.use(sendOutboundMessageMiddleware());
 
 module.exports = router;

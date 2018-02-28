@@ -25,9 +25,8 @@ const broadcastHelper = require('../../../lib/helpers/broadcast');
 // stubs
 const broadcastId = stubs.getBroadcastId();
 const date = Date.now();
-const broadcast = broadcastFactory.getValidBroadcast(date);
+const broadcast = broadcastFactory.getValidCampaignBroadcast(date);
 const campaignId = stubs.getCampaignId();
-const platform = stubs.getPlatform();
 const topic = stubs.getTopic();
 const message = stubs.getBroadcastMessageText();
 const name = stubs.getBroadcastName();
@@ -52,8 +51,6 @@ test.afterEach(() => {
 test('parseBroadcast should return an object', () => {
   sandbox.stub(contentful, 'getCampaignIdFromBroadcast')
     .returns(campaignId);
-  sandbox.stub(contentful, 'getPlatformFromBroadcast')
-    .returns(platform);
   sandbox.stub(broadcastHelper, 'getDefaultPlatform')
     .returns(null);
   sandbox.stub(contentful, 'getTopicFromBroadcast')
@@ -65,9 +62,6 @@ test('parseBroadcast should return an object', () => {
   result.id.should.equal(broadcastId);
   contentful.getCampaignIdFromBroadcast.should.have.been.called;
   result.campaignId.should.equal(campaignId);
-  contentful.getPlatformFromBroadcast.should.have.been.called;
-  broadcastHelper.getDefaultPlatform.should.not.have.been.called;
-  result.platform.should.equal(platform);
   contentful.getTopicFromBroadcast.should.have.been.called;
   result.topic.should.equal(topic);
   contentful.getMessageTextFromBroadcast.should.have.been.called;
@@ -76,35 +70,6 @@ test('parseBroadcast should return an object', () => {
   result.createdAt.should.equal(date);
   result.updatedAt.should.equal(date);
 });
-
-test('parseBroadcast platform should return defaultPlatform if broadcast.platform is not set', () => {
-  sandbox.stub(contentful, 'getCampaignIdFromBroadcast')
-    .returns(campaignId);
-  sandbox.stub(contentful, 'getPlatformFromBroadcast')
-    .returns(null);
-  sandbox.stub(broadcastHelper, 'getDefaultPlatform')
-    .returns(platform);
-  sandbox.stub(contentful, 'getTopicFromBroadcast')
-    .returns(topic);
-  sandbox.stub(contentful, 'getMessageTextFromBroadcast')
-    .returns(message);
-
-  const result = broadcastHelper.parseBroadcast(broadcast);
-  result.id.should.equal(broadcastId);
-  contentful.getCampaignIdFromBroadcast.should.have.been.called;
-  result.campaignId.should.equal(campaignId);
-  contentful.getPlatformFromBroadcast.should.have.been.called;
-  broadcastHelper.getDefaultPlatform.should.have.been.called;
-  result.platform.should.equal(platform);
-  contentful.getTopicFromBroadcast.should.have.been.called;
-  result.topic.should.equal(topic);
-  contentful.getMessageTextFromBroadcast.should.have.been.called;
-  result.message.should.equal(message);
-  result.name.should.equal(name);
-  result.createdAt.should.equal(date);
-  result.updatedAt.should.equal(date);
-});
-
 
 test('aggregateMessagesForBroadcastId should call Messages.aggregate and return array', async () => {
   sandbox.stub(Message, 'aggregate')
@@ -179,8 +144,4 @@ test('getWebhook v2 should return an object with body of a POST Broadcast Messag
   result.body.northstarId.should.equal(config.customerIo.userIdField);
   result.body.broadcastId.should.equal(broadcastId);
   result.should.have.property('url');
-});
-
-test('getDefaultPlatform should return string', (t) => {
-  t.deepEqual(broadcastHelper.getDefaultPlatform(), config.defaultPlatform);
 });
