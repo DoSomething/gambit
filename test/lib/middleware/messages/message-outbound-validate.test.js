@@ -26,12 +26,8 @@ const sandbox = sinon.sandbox.create();
 // stubs
 const sendErrorResponseStub = underscore.noop;
 const mockUser = userFactory.getValidUser();
-const defaultConfigStub = {
-  shouldSendWhenPaused: false,
-};
-const supportConfigStub = {
-  shouldSendWhenPaused: true,
-};
+const defaultConfigStub = stubs.config.getMessageOutbound();
+const supportConfigStub = stubs.config.getMessageOutbound(true);
 
 // Setup!
 test.beforeEach((t) => {

@@ -4,14 +4,18 @@ const ObjectID = require('mongoose').Types.ObjectId;
 const Conversation = require('../../../app/models/Conversation');
 const stubs = require('../stubs');
 
-module.exports.getValidConversation = function getValidConversation(phoneNumber) {
+module.exports.getValidConversation = function getValidConversation(platformString) {
+  let platform = platformString;
+  if (!platform) {
+    platform = stubs.getPlatform();
+  }
   const id = new ObjectID();
   const date = new Date();
   return new Conversation({
     id,
     _id: id,
-    platform: stubs.getPlatform(),
-    platformUserId: phoneNumber || stubs.getMobileNumber(),
+    platform,
+    platformUserId: stubs.getMobileNumber(),
     topic: stubs.getTopic(),
     paused: false,
     createdAt: date,

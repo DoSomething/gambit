@@ -50,6 +50,15 @@ test('fetchById calls northstar.fetchUserById', async () => {
   result.should.deep.equal(userLookupStub);
 });
 
+test('fetchByMobile calls northstar.fetchUserById', async () => {
+  const mockUser = userFactory.getValidUser();
+  const userLookupStub = () => Promise.resolve(mockUser);
+  sandbox.stub(northstar, 'fetchUserByMobile')
+    .returns(userLookupStub);
+  const result = await userHelper.fetchByMobile(mockUser.mobile);
+  northstar.fetchUserByMobile.should.have.been.called;
+  result.should.deep.equal(userLookupStub);
+});
 // createPassword
 test('generatePassword', () => {
   const opts = config.createOptions;

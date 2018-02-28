@@ -18,6 +18,7 @@ const createConvoMiddleware = require('../../../lib/middleware/messages/conversa
 const updateConvoMiddleware = require('../../../lib/middleware/messages/broadcast/conversation-update');
 const loadOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-load');
 const createOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-create');
+const sendOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-send');
 
 router.use(paramsMiddleware());
 router.use(getBroadcastMiddleware());
@@ -25,14 +26,13 @@ router.use(parseBroadcastMiddleware());
 router.use(getUserMiddleware());
 router.use(validateOutboundMessageMiddleware(outboundMessageConfig));
 
-// Load or create conversation
 router.use(getConvoMiddleware());
 router.use(createConvoMiddleware());
 
 router.use(updateConvoMiddleware());
 
-// Load/create outbound message
 router.use(loadOutboundMessageMiddleware(outboundMessageConfig));
 router.use(createOutboundMessageMiddleware(outboundMessageConfig));
+router.use(sendOutboundMessageMiddleware());
 
 module.exports = router;

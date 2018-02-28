@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const logger = require('../../lib/logger');
 const Message = require('./Message');
 const helpers = require('../../lib/helpers');
-const northstar = require('../../lib/northstar');
 const twilio = require('../../lib/twilio');
 
 const campaignTopic = 'campaign';
@@ -295,7 +294,7 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function () {
   const messageText = this.lastOutboundMessage.text;
 
   // This could be blank for noReply templates.
-  if (!messageText || this.platform !== 'sms') {
+  if (!messageText || !this.isSms()) {
     return Promise.resolve();
   }
 
@@ -306,11 +305,18 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function () {
  * @return {Promise}
  */
 conversationSchema.methods.getNorthstarUser = function () {
-  if (this.platform === 'sms') {
-    return northstar.fetchUserByMobile(this.platformUserId);
+  if (this.isSms()) {
+    return helpers.user.fetchByMobile(this.platformUserId);
   }
 
-  return northstar.fetchUserById(this.platformUserId);
+  return helpers.user.fetchById(this.platformUserId);
+};
+
+/**
+ * @return {boolean}
+ */
+conversationSchema.methods.isSms = function () {
+  return this.platform === 'sms';
 };
 
 module.exports = mongoose.model('Conversation', conversationSchema);

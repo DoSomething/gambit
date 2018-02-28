@@ -49,3 +49,11 @@ test('addParameters should call logger.debug', () => {
   analyticsHelper.addParameters(mockPayload);
   logger.debug.should.have.been.called;
 });
+
+test('addTwilioError should call addParameters', () => {
+  sandbox.stub(analyticsHelper, 'addParameters')
+    .returns(underscore.noop);
+  const error = stubs.twilio.getPostMessageError();
+  analyticsHelper.addTwilioError(error);
+  analyticsHelper.addParameters.should.have.been.called;
+});
