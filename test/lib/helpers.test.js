@@ -76,7 +76,7 @@ test('helpers.sendResponseWithStatusCode(res, code, msg): should call res.status
   const res = httpMocks.createResponse();
   sandbox.spy(res, 'status');
   sandbox.spy(res, 'send');
-  sandbox.stub(analyticsHelper, 'addParameters').returns(true);
+  sandbox.stub(analyticsHelper, 'addCustomAttributes').returns(true);
   const statusCode = 501;
   const message = 'Epic fail :-(';
 
@@ -86,14 +86,14 @@ test('helpers.sendResponseWithStatusCode(res, code, msg): should call res.status
   res.statusCode.should.be.equal(statusCode);
   const body = res._getData(); // eslint-disable-line no-underscore-dangle
   body.message.should.be.equal(message);
-  analyticsHelper.addParameters.should.have.been.called;
+  analyticsHelper.addCustomAttributes.should.have.been.called;
 });
 
 test('helpers.sendResponseWithStatusCode(res, code, msg): should call logger.error for errors', () => {
   const res = httpMocks.createResponse();
   sandbox.stub(logger, 'debug').returns(true);
   sandbox.stub(logger, 'error').returns(true);
-  sandbox.stub(analyticsHelper, 'addParameters').returns(true);
+  sandbox.stub(analyticsHelper, 'addCustomAttributes').returns(true);
   const statusCode = 501;
   const message = 'Oh noes another epic fail D:';
 
@@ -106,7 +106,7 @@ test('helpers.sendResponseWithStatusCode(res, code, msg): should call logger.deb
   const res = httpMocks.createResponse();
   sandbox.stub(logger, 'debug').returns(true);
   sandbox.stub(logger, 'error').returns(true);
-  sandbox.stub(analyticsHelper, 'addParameters').returns(true);
+  sandbox.stub(analyticsHelper, 'addCustomAttributes').returns(true);
   const statusCode = 201;
   const message = 'Great job';
 

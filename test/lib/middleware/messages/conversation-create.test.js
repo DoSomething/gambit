@@ -37,7 +37,7 @@ test.beforeEach((t) => {
   // setup req, res mocks
   t.context.req = httpMocks.createRequest();
   t.context.res = httpMocks.createResponse();
-  sandbox.stub(analyticsHelper, 'addParameters')
+  sandbox.stub(analyticsHelper, 'addCustomAttributes')
     .returns(underscore.noop);
 
   // add params
@@ -68,7 +68,7 @@ test('createConversation should inject a conversation into the req object when s
   properties.forEach(property => conversation.should.have.property(property));
   conversation.platform.should.be.equal(t.context.req.platform);
   conversation.platformUserId.should.be.equal(t.context.req.platformUserId);
-  analyticsHelper.addParameters.should.have.been.called;
+  analyticsHelper.addCustomAttributes.should.have.been.called;
   next.should.have.been.called;
 });
 
@@ -83,6 +83,6 @@ test('createConversation should call sendErrorResponse when posting new users fa
   // test
   await middleware(t.context.req, t.context.res, next);
   helpers.sendErrorResponse.should.have.been.called;
-  analyticsHelper.addParameters.should.not.have.been.called;
+  analyticsHelper.addCustomAttributes.should.not.have.been.called;
   next.should.not.have.been.called;
 });

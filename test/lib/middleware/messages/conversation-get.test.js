@@ -42,7 +42,7 @@ test.beforeEach((t) => {
     .withArgs('notFound')
     .callsFake(conversationLookupNotFoundStub);
 
-  sandbox.stub(analyticsHelper, 'addParameters')
+  sandbox.stub(analyticsHelper, 'addCustomAttributes')
     .returns(underscore.noop);
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(sendErrorResponseStub);
@@ -74,7 +74,7 @@ test('getConversation should inject a conversation into the req object when foun
   t.context.req.should.have.property('conversation');
   const conversation = t.context.req.conversation;
   conversation.should.deep.equal(mockConversation);
-  analyticsHelper.addParameters.should.have.been.called;
+  analyticsHelper.addCustomAttributes.should.have.been.called;
   next.should.have.been.called;
 });
 
@@ -85,7 +85,7 @@ test('getConversation should call next if Conversation.getFromReq response is nu
 
   // test
   await middleware('notFound', t.context.res, next);
-  analyticsHelper.addParameters.should.not.have.been.called;
+  analyticsHelper.addCustomAttributes.should.not.have.been.called;
   next.should.have.been.called;
 });
 
@@ -97,6 +97,6 @@ test('getConversation should call sendErrorResponse if Conversation.getFromReq f
   // test
   await middleware('fail', t.context.res, next);
   helpers.sendErrorResponse.should.have.been.called;
-  analyticsHelper.addParameters.should.not.have.been.called;
+  analyticsHelper.addCustomAttributes.should.not.have.been.called;
   next.should.not.have.been.called;
 });
