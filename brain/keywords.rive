@@ -27,8 +27,5 @@
 + @unsubscribe
 @ stop
 
-+ @unsubscribe @messaging [to] [me]
-@ stop
-
-+ shut up
++ [*] @unsubscribe [*] @messaging [*]
 @ stop
