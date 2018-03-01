@@ -15,6 +15,7 @@ module.exports.getValidConversation = function getValidConversation(platformStri
     id,
     _id: id,
     platform,
+    userId: stubs.getUserId(),
     platformUserId: stubs.getMobileNumber(),
     topic: stubs.getTopic(),
     paused: false,

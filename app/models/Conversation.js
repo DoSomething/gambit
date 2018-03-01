@@ -14,7 +14,12 @@ const supportTopic = 'support';
  * Schema.
  */
 const conversationSchema = new mongoose.Schema({
+  userId: {
+    type: String,
+    index: true,
+  },
   platform: String,
+  // platformUserId will one day be deprecated, was added before userId.
   platformUserId: {
     type: String,
     index: true,
@@ -31,15 +36,16 @@ const conversationSchema = new mongoose.Schema({
 
 conversationSchema.index({ createdAt: 1 });
 conversationSchema.index({ updatedAt: 1 });
+conversationSchema.index({ userId: 1, platform: 1 });
 
 /**
  * @param {Object} req - Express request
  * @return {Promise}
  */
-conversationSchema.statics.createFromReq = function (req) {
+conversationSchema.statics.createForUserIdAndPlatform = function (userId, platform) {
   const data = {
-    platformUserId: req.platformUserId,
-    platform: req.platform,
+    userId,
+    platform,
     paused: false,
     topic: defaultTopic,
   };
@@ -52,9 +58,26 @@ conversationSchema.statics.createFromReq = function (req) {
  * @return {Promise}
  */
 conversationSchema.statics.getFromReq = function (req) {
-  const query = { platformUserId: req.platformUserId };
-  logger.debug('Conversation.getFromReq', query, req);
+  let query = { userId: req.userId, platform: req.platform };
 
+  return this.findOneAndPopulateLastOutboundMessage(query, req)
+    .then((conversation) => {
+      if (conversation) {
+        return Promise.resolve(conversation);
+      }
+      // Have we already saved a Conversation for this User by their mobile?
+      query = { platformUserId: req.userMobile };
+      return this.findOneAndPopulateLastOutboundMessage(query, req);
+    });
+};
+
+/**
+ * @param {Object} query - Mongoose query object
+ * @param {Object} req - Express request
+ * @return {Promise}
+ */
+conversationSchema.statics.findOneAndPopulateLastOutboundMessage = function (query, req) {
+  logger.debug('Conversation.findOneAndPopulateLastOutboundMessage', query, req);
   return this.findOne(query).populate('lastOutboundMessage');
 };
 

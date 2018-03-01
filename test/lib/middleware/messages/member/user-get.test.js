@@ -12,7 +12,6 @@ const Promise = require('bluebird');
 
 const helpers = require('../../../../../lib/helpers');
 const analyticsHelper = require('../../../../../lib/helpers/analytics');
-const Conversation = require('../../../../../app/models/Conversation');
 const userFactory = require('../../../../helpers/factories/user');
 
 // setup "x.should.y" assertion style
@@ -24,7 +23,6 @@ const getUser = require('../../../../../lib/middleware/messages/member/user-get'
 
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();
-const conversation = new Conversation();
 
 // stubs
 const sendErrorResponseStub = underscore.noop;
@@ -42,7 +40,6 @@ test.beforeEach((t) => {
 
   // setup req, res mocks
   t.context.req = httpMocks.createRequest();
-  t.context.req.conversation = conversation;
   t.context.res = httpMocks.createResponse();
 });
 
@@ -57,7 +54,7 @@ test('getUser should inject a user into the req object when found in Northstar',
   // setup
   const next = sinon.stub();
   const middleware = getUser();
-  sandbox.stub(conversation, 'getNorthstarUser')
+  sandbox.stub(helpers.user, 'fetchFromReq')
     .callsFake(userLookupStub);
 
   // test
@@ -71,11 +68,11 @@ test('getUser should inject a user into the req object when found in Northstar',
   next.should.have.been.called;
 });
 
-test('getUser should call next if Conversation.getNorthstarUser response is null', async (t) => {
+test('getUser should call next if Northstar user not found', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = getUser();
-  sandbox.stub(conversation, 'getNorthstarUser')
+  sandbox.stub(helpers.user, 'fetchFromReq')
     .callsFake(userLookupNotFoundStub);
 
   // test
@@ -85,11 +82,11 @@ test('getUser should call next if Conversation.getNorthstarUser response is null
   next.should.have.been.called;
 });
 
-test('getUser should call sendErrorResponse if Conversation.getNorthstarUser fails', async (t) => {
+test('getUser should call sendErrorResponse if fetchUser fails', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = getUser();
-  sandbox.stub(conversation, 'getNorthstarUser')
+  sandbox.stub(helpers.user, 'fetchFromReq')
     .callsFake(userLookupFailStub);
 
   // test

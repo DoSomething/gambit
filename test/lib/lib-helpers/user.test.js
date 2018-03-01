@@ -72,7 +72,7 @@ test('getDefaultCreatePayloadFromReq should return object', () => {
   const req = {
     platform: stubs.getPlatform(),
     platformUserAddress: platformUserAddressStub,
-    platformUserId: stubs.getMobileNumber(),
+    userMobile: stubs.getMobileNumber(),
   };
   const mockDefaultPayload = { last_messaged_at: Date.now() };
   sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
@@ -83,7 +83,7 @@ test('getDefaultCreatePayloadFromReq should return object', () => {
     .returns('taco');
   const result = userHelper.getDefaultCreatePayloadFromReq(req);
   result.source.should.equal(req.platform);
-  result.mobile.should.equal(req.platformUserId);
+  result.mobile.should.equal(req.userMobile);
   userHelper.getDefaultUpdatePayloadFromReq.should.have.been.calledWith(req);
   underscore.extend.should.have.been.calledWith(mockDefaultPayload, req.platformUserAddress);
   userHelper.generatePassword.should.have.been.called;
