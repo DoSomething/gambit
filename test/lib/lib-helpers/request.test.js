@@ -24,7 +24,7 @@ const platform = stubs.getPlatform();
 const sandbox = sinon.sandbox.create();
 
 test.beforeEach((t) => {
-  sandbox.stub(helpers.analytics, 'addParameters')
+  sandbox.stub(helpers.analytics, 'addCustomAttributes')
     .returns(underscore.noop);
   t.context.req = httpMocks.createRequest();
 });
@@ -53,13 +53,13 @@ test('parseCampaignKeyword should return null when req.inboundMessageText undefi
 test('setCampaignId should inject a campaignId property to req', (t) => {
   requestHelper.setCampaignId(t.context.req, campaignId);
   t.context.req.campaignId.should.equal(campaignId);
-  helpers.analytics.addParameters.should.have.been.calledWith({ campaignId });
+  helpers.analytics.addCustomAttributes.should.have.been.calledWith({ campaignId });
 });
 
 test('setPlatform should inject a platform property to req', (t) => {
   requestHelper.setPlatform(t.context.req, platform);
   t.context.req.platform.should.equal(platform);
-  helpers.analytics.addParameters.should.have.been.calledWith({ platform });
+  helpers.analytics.addCustomAttributes.should.have.been.calledWith({ platform });
 });
 
 test('setPlatformToSms should call setPlatform', (t) => {
@@ -71,5 +71,5 @@ test('setPlatformToSms should call setPlatform', (t) => {
 test('setUserId should inject a userId property to req', (t) => {
   requestHelper.setUserId(t.context.req, userId);
   t.context.req.userId.should.equal(userId);
-  helpers.analytics.addParameters.should.have.been.calledWith({ userId });
+  helpers.analytics.addCustomAttributes.should.have.been.calledWith({ userId });
 });

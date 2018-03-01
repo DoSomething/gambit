@@ -40,20 +40,20 @@ test.afterEach(() => {
   sandbox.restore();
 });
 
-test('addParameters should call newrelic.addCustomAttributes', () => {
-  analyticsHelper.addParameters(mockPayload);
+test('addCustomAttributes should call newrelic.addCustomAttributes', () => {
+  analyticsHelper.addCustomAttributes(mockPayload);
   newrelic.addCustomAttributes.should.have.been.called;
 });
 
-test('addParameters should call logger.debug', () => {
-  analyticsHelper.addParameters(mockPayload);
+test('addCustomAttributes should call logger.debug', () => {
+  analyticsHelper.addCustomAttributes(mockPayload);
   logger.debug.should.have.been.called;
 });
 
-test('addTwilioError should call addParameters', () => {
-  sandbox.stub(analyticsHelper, 'addParameters')
+test('addTwilioError should call addCustomAttributes', () => {
+  sandbox.stub(analyticsHelper, 'addCustomAttributes')
     .returns(underscore.noop);
   const error = stubs.twilio.getPostMessageError();
   analyticsHelper.addTwilioError(error);
-  analyticsHelper.addParameters.should.have.been.called;
+  analyticsHelper.addCustomAttributes.should.have.been.called;
 });

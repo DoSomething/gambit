@@ -35,7 +35,7 @@ const userLookupNotFoundStub = () => Promise.reject({ status: 404 });
 
 // Setup!
 test.beforeEach((t) => {
-  sandbox.stub(analyticsHelper, 'addParameters')
+  sandbox.stub(analyticsHelper, 'addCustomAttributes')
     .returns(underscore.noop);
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(sendErrorResponseStub);
@@ -67,7 +67,7 @@ test('getUser should inject a user into the req object when found in Northstar',
   const user = t.context.req.user;
 
   user.should.deep.equal(mockUser);
-  analyticsHelper.addParameters.should.have.been.called;
+  analyticsHelper.addCustomAttributes.should.have.been.called;
   next.should.have.been.called;
 });
 
@@ -80,7 +80,7 @@ test('getUser should call next if Conversation.getNorthstarUser response is null
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  analyticsHelper.addParameters.should.not.have.been.called;
+  analyticsHelper.addCustomAttributes.should.not.have.been.called;
   t.context.req.should.not.have.property('user');
   next.should.have.been.called;
 });
@@ -95,7 +95,7 @@ test('getUser should call sendErrorResponse if Conversation.getNorthstarUser fai
   // test
   await middleware(t.context.req, t.context.res, next);
   helpers.sendErrorResponse.should.have.been.called;
-  analyticsHelper.addParameters.should.not.have.been.called;
+  analyticsHelper.addCustomAttributes.should.not.have.been.called;
   t.context.req.should.not.have.property('user');
   next.should.not.have.been.called;
 });
