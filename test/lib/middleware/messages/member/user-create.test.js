@@ -39,7 +39,7 @@ const userCreateFailStub = () => Promise.reject({ message: 'Epic fail' });
 
 // Setup!
 test.beforeEach((t) => {
-  sandbox.stub(analyticsHelper, 'addParameters')
+  sandbox.stub(analyticsHelper, 'addCustomAttributes')
     .returns(underscore.noop);
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(sendErrorResponseStub);
@@ -86,7 +86,7 @@ test('createUser should call next if req.user exists', async (t) => {
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  analyticsHelper.addParameters.should.not.have.been.called;
+  analyticsHelper.addCustomAttributes.should.not.have.been.called;
   next.should.have.been.called;
 });
 
@@ -99,7 +99,7 @@ test('createUser should call next if !helpers.request.isTwilio', async (t) => {
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  analyticsHelper.addParameters.should.not.have.been.called;
+  analyticsHelper.addCustomAttributes.should.not.have.been.called;
   next.should.have.been.called;
 });
 
@@ -118,7 +118,7 @@ test('createUser should call sendErrorResponse if userHelper.getDefaultCreatePay
   await middleware(t.context.req, t.context.res, next);
   helpers.sendErrorResponse.should.have.been.called;
   northstar.createUser.should.not.have.been.called;
-  analyticsHelper.addParameters.should.not.have.been.called;
+  analyticsHelper.addCustomAttributes.should.not.have.been.called;
   t.context.req.should.not.have.property('user');
   next.should.not.have.been.called;
 });
@@ -137,7 +137,7 @@ test('createUser should call sendErrorResponse if northstar.createUser fails', a
   // test
   await middleware(t.context.req, t.context.res, next);
   helpers.sendErrorResponse.should.have.been.called;
-  analyticsHelper.addParameters.should.not.have.been.called;
+  analyticsHelper.addCustomAttributes.should.not.have.been.called;
   t.context.req.should.not.have.property('user');
   next.should.not.have.been.called;
 });
