@@ -325,17 +325,6 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function () {
 };
 
 /**
- * @return {Promise}
- */
-conversationSchema.methods.getNorthstarUser = function () {
-  if (this.isSms()) {
-    return helpers.user.fetchByMobile(this.platformUserId);
-  }
-
-  return helpers.user.fetchById(this.platformUserId);
-};
-
-/**
  * @return {boolean}
  */
 conversationSchema.methods.isSms = function () {
