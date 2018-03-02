@@ -10,6 +10,7 @@ const underscore = require('underscore');
 const helpers = require('../../../lib/helpers');
 
 const stubs = require('../../helpers/stubs');
+const conversationFactory = require('../../helpers/factories/conversation');
 
 chai.should();
 chai.use(sinonChai);
@@ -54,6 +55,24 @@ test('setCampaignId should inject a campaignId property to req', (t) => {
   requestHelper.setCampaignId(t.context.req, campaignId);
   t.context.req.campaignId.should.equal(campaignId);
   helpers.analytics.addCustomAttributes.should.have.been.calledWith({ campaignId });
+});
+
+test('setConversation should inject a conversation property to req', (t) => {
+  const conversation = conversationFactory.getValidConversation();
+  requestHelper.setConversation(t.context.req, conversation);
+  t.context.req.conversation.should.equal(conversation);
+  const conversationId = conversation.id;
+  helpers.analytics.addCustomAttributes.should.have.been.calledWith({ conversationId });
+  t.context.req.should.have.property('lastOutboundTemplate');
+  t.context.req.should.have.property('lastOutboundBroadcastId');
+});
+
+test('setConversation should not inject lastOutbound properties for new Conversations', (t) => {
+  const newConversation = conversationFactory.getValidConversation();
+  newConversation.lastOutboundMessage = null;
+  requestHelper.setConversation(t.context.req, newConversation);
+  t.context.req.should.not.have.property('lastOutboundTemplate');
+  t.context.req.should.not.have.property('lastOutboundBroadcastId');
 });
 
 test('setPlatform should inject a platform property to req', (t) => {

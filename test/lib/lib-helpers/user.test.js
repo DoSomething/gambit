@@ -7,6 +7,7 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const crypto = require('crypto');
 const underscore = require('underscore');
+const httpMocks = require('node-mocks-http');
 const northstar = require('../../../lib/northstar');
 const macroHelper = require('../../../lib/helpers/macro');
 const subscriptionHelper = require('../../../lib/helpers/subscription');
@@ -27,6 +28,8 @@ const conversationFactory = require('../../helpers/factories/conversation');
 const messageFactory = require('../../helpers/factories/message');
 const userFactory = require('../../helpers/factories/user');
 
+const mockUser = userFactory.getValidUser();
+const userLookupStub = () => Promise.resolve(mockUser);
 const cryptoCreateHmacStub = {
   update() { return this; },
   digest() { return this; },
@@ -36,29 +39,60 @@ const platformUserAddressStub = {
   country: 'US',
 };
 
-test.afterEach(() => {
+test.beforeEach((t) => {
+  t.context.req = httpMocks.createRequest();
+});
+
+test.afterEach((t) => {
+  t.context = {};
   sandbox.restore();
 });
 
+// fetchById
 test('fetchById calls northstar.fetchUserById', async () => {
-  const mockUser = userFactory.getValidUser();
-  const userLookupStub = () => Promise.resolve(mockUser);
   sandbox.stub(northstar, 'fetchUserById')
     .returns(userLookupStub);
+
   const result = await userHelper.fetchById(mockUser.id);
   northstar.fetchUserById.should.have.been.called;
   result.should.deep.equal(userLookupStub);
 });
 
+// fetchByMobile
 test('fetchByMobile calls northstar.fetchUserById', async () => {
-  const mockUser = userFactory.getValidUser();
-  const userLookupStub = () => Promise.resolve(mockUser);
   sandbox.stub(northstar, 'fetchUserByMobile')
     .returns(userLookupStub);
+
   const result = await userHelper.fetchByMobile(mockUser.mobile);
   northstar.fetchUserByMobile.should.have.been.called;
   result.should.deep.equal(userLookupStub);
 });
+
+// fetchFromReq
+test('fetchFromReq calls fetchById if !req.userMobile', async (t) => {
+  sandbox.stub(userHelper, 'fetchById')
+    .returns(userLookupStub);
+  sandbox.stub(userHelper, 'fetchByMobile')
+    .returns(userLookupStub);
+  t.context.req.userId = stubs.getUserId();
+
+  await userHelper.fetchFromReq(t.context.req);
+  userHelper.fetchById.should.not.have.been.calledWith(t.context.req, t.context.req.userId);
+  userHelper.fetchByMobile.should.not.have.been.called;
+});
+
+test('fetchFromReq calls fetchByMobile if req.userMobile', async (t) => {
+  sandbox.stub(userHelper, 'fetchById')
+    .returns(userLookupStub);
+  sandbox.stub(userHelper, 'fetchByMobile')
+    .returns(userLookupStub);
+  t.context.req.userMobile = stubs.getMobileNumber();
+
+  await userHelper.fetchFromReq(t.context.req);
+  userHelper.fetchByMobile.should.have.been.called;
+  userHelper.fetchById.should.not.have.been.called;
+});
+
 // createPassword
 test('generatePassword', () => {
   const opts = config.createOptions;
@@ -67,7 +101,7 @@ test('generatePassword', () => {
   crypto.createHmac.should.have.been.calledWithExactly(opts.passwordAlgorithm, opts.passwordKey);
 });
 
-// getDefaultCreatePayloadFromReq
+// getCreatePayloadFromReq
 test('getCreatePayloadFromReq should return object', () => {
   const req = {
     platform: stubs.getPlatform(),

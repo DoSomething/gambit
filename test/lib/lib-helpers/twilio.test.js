@@ -26,7 +26,8 @@ test.beforeEach((t) => {
   t.context.req.body = mockTwilioRequestBody;
 });
 
-test.afterEach(() => {
+test.afterEach((t) => {
+  t.context = {};
   sandbox.restore();
 });
 
