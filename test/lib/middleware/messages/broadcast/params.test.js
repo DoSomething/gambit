@@ -102,6 +102,5 @@ test('paramsMiddleware should call setPlatform to body.platform if exists', asyn
   await middleware(t.context.req, t.context.res, next);
   helpers.sendErrorResponse.should.not.have.been.called;
   helpers.request.setPlatform.should.have.been.calledWith(t.context.req, platform);
-  t.context.req.platformUserId.should.equal(userId);
   next.should.have.been.called;
 });

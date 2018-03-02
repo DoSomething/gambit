@@ -57,16 +57,19 @@ conversationSchema.statics.createForUserIdAndPlatform = function (userId, platfo
  * @return {Promise}
  */
 conversationSchema.statics.getFromReq = function (req) {
-  let query = { userId: req.userId, platform: req.platform };
+  const queryByUserId = { userId: req.userId, platform: req.platform };
 
-  return this.findOneAndPopulateLastOutboundMessage(query, req)
+  return this.findOneAndPopulateLastOutboundMessage(queryByUserId, req)
     .then((conversation) => {
       if (conversation) {
         return Promise.resolve(conversation);
       }
+      if (!helpers.request.isTwilio(req)) {
+        return Promise.resolve(null);
+      }
       // Have we already saved a Conversation for this User by their mobile?
-      query = { platformUserId: req.userMobile };
-      return this.findOneAndPopulateLastOutboundMessage(query, req);
+      const queryByUserMobile = { platformUserId: req.userMobile };
+      return this.findOneAndPopulateLastOutboundMessage(queryByUserMobile, req);
     });
 };
 

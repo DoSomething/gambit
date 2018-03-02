@@ -107,7 +107,6 @@ test('paramsMiddleware should set platformUserId if platform is passed', async (
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  t.context.req.platformUserId.should.equal(userId);
   helpers.sendErrorResponse.should.not.have.been.called;
   next.should.have.been.called;
 });
