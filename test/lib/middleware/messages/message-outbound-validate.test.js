@@ -79,25 +79,6 @@ test('validateOutbound sends error if user is paused and config is not shouldSen
   next.should.not.have.been.called;
 });
 
-test('validateOutbound calls sendErrorResponseWithSuppressHeaders if formatMobileNumber throws', (t) => {
-  // setup
-  const next = sinon.stub();
-  const middleware = validateOutbound(defaultConfigStub);
-  sandbox.stub(helpers.user, 'isSubscriber')
-    .returns(true);
-  sandbox.stub(helpers.user, 'isPaused')
-    .returns(false);
-  sandbox.stub(helpers, 'formatMobileNumber')
-    .throws();
-
-  // test
-  middleware(t.context.req, t.context.res, next);
-  helpers.user.isSubscriber.should.have.been.called;
-  helpers.user.isPaused.should.have.been.called;
-  helpers.formatMobileNumber.should.have.been.called;
-  helpers.sendErrorResponseWithSuppressHeaders.should.have.been.called;
-  next.should.not.have.been.called;
-});
 
 test('validateOutbound calls next if user validates', (t) => {
   // setup
@@ -107,35 +88,11 @@ test('validateOutbound calls next if user validates', (t) => {
     .returns(true);
   sandbox.stub(helpers.user, 'isPaused')
     .returns(false);
-  sandbox.stub(helpers, 'formatMobileNumber')
-    .returns(mockUser.mobile);
 
   // test
   middleware(t.context.req, t.context.res, next);
   helpers.user.isSubscriber.should.have.been.called;
   helpers.user.isPaused.should.have.been.called;
-  helpers.formatMobileNumber.should.have.been.called;
-  helpers.sendErrorResponseWithSuppressHeaders.should.not.have.been.called;
-  next.should.have.been.called;
-});
-
-test('validateOutbound does not call formatMobileNumber if platform is not SMS', (t) => {
-  // setup
-  const next = sinon.stub();
-  const middleware = validateOutbound(defaultConfigStub);
-  sandbox.stub(helpers.user, 'isSubscriber')
-    .returns(true);
-  sandbox.stub(helpers.user, 'isPaused')
-    .returns(false);
-  sandbox.stub(helpers, 'formatMobileNumber')
-    .returns(mockUser.mobile);
-  t.context.req.platform = 'alexa';
-
-  // test
-  middleware(t.context.req, t.context.res, next);
-  helpers.user.isSubscriber.should.have.been.called;
-  helpers.user.isPaused.should.have.been.called;
-  helpers.formatMobileNumber.should.not.have.been.called;
   helpers.sendErrorResponseWithSuppressHeaders.should.not.have.been.called;
   next.should.have.been.called;
 });

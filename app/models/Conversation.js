@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const logger = require('../../lib/logger');
 const Message = require('./Message');
 const helpers = require('../../lib/helpers');
-const twilio = require('../../lib/twilio');
 
 const campaignTopic = 'campaign';
 const defaultTopic = 'random';
@@ -306,14 +305,14 @@ conversationSchema.methods.createAndPostOutboundReplyMessage = function (text, t
     .then(() => {
       if (suppressReply) return Promise.resolve();
 
-      return this.postLastOutboundMessageToPlatform();
+      return this.postLastOutboundMessageToPlatform(req);
     });
 };
 
 /**
  * Posts the Last Outbound Message to Twilio for SMS conversations.
  */
-conversationSchema.methods.postLastOutboundMessageToPlatform = function () {
+conversationSchema.methods.postLastOutboundMessageToPlatform = function (req) {
   const messageText = this.lastOutboundMessage.text;
 
   // This could be blank for noReply templates.
@@ -321,7 +320,7 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function () {
     return Promise.resolve();
   }
 
-  return twilio.postMessage(this.platformUserId, messageText);
+  return helpers.user.sendTwilioMessage(req.user, messageText);
 };
 
 /**
