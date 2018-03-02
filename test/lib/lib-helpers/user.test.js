@@ -68,24 +68,19 @@ test('generatePassword', () => {
 });
 
 // getDefaultCreatePayloadFromReq
-test('getDefaultCreatePayloadFromReq should return object', () => {
+test('getCreatePayloadFromReq should return object', () => {
   const req = {
     platform: stubs.getPlatform(),
     platformUserAddress: platformUserAddressStub,
     userMobile: stubs.getMobileNumber(),
   };
-  const mockDefaultPayload = { last_messaged_at: Date.now() };
-  sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
-    .returns(mockDefaultPayload);
   sandbox.stub(underscore, 'extend')
     .returns(platformUserAddressStub);
   sandbox.stub(userHelper, 'generatePassword')
     .returns('taco');
-  const result = userHelper.getDefaultCreatePayloadFromReq(req);
+  const result = userHelper.getCreatePayloadFromReq(req);
   result.source.should.equal(req.platform);
   result.mobile.should.equal(req.userMobile);
-  userHelper.getDefaultUpdatePayloadFromReq.should.have.been.calledWith(req);
-  underscore.extend.should.have.been.calledWith(mockDefaultPayload, req.platformUserAddress);
   userHelper.generatePassword.should.have.been.called;
 });
 

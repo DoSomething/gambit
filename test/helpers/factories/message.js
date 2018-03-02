@@ -13,6 +13,7 @@ module.exports.getValidMessage = function getValidMessage(direction) {
     updatedAt: date,
     text: stubs.getRandomMessageText(),
     direction: direction || 'inbound',
+    template: stubs.getTemplate(),
   });
 };
 

@@ -2,6 +2,7 @@
 
 const ObjectID = require('mongoose').Types.ObjectId;
 const Conversation = require('../../../app/models/Conversation');
+const messageFactory = require('./message');
 const stubs = require('../stubs');
 
 module.exports.getValidConversation = function getValidConversation(platformString) {
@@ -21,5 +22,6 @@ module.exports.getValidConversation = function getValidConversation(platformStri
     paused: false,
     createdAt: date,
     updatedAt: date,
+    lastOutboundMessage: messageFactory.getValidMessage(),
   });
 };

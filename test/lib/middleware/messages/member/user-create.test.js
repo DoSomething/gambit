@@ -11,7 +11,6 @@ const underscore = require('underscore');
 const Promise = require('bluebird');
 const northstar = require('../../../../../lib/northstar');
 const helpers = require('../../../../../lib/helpers');
-const analyticsHelper = require('../../../../../lib/helpers/analytics');
 const requestHelper = require('../../../../../lib/helpers/request');
 const userHelper = require('../../../../../lib/helpers/user');
 
@@ -39,7 +38,7 @@ const userCreateFailStub = () => Promise.reject({ message: 'Epic fail' });
 
 // Setup!
 test.beforeEach((t) => {
-  sandbox.stub(analyticsHelper, 'addCustomAttributes')
+  sandbox.stub(helpers.request, 'setUser')
     .returns(underscore.noop);
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(sendErrorResponseStub);
@@ -63,18 +62,16 @@ test('createUser should inject a user into the req object when created in Norths
   const middleware = createUser();
   sandbox.stub(requestHelper, 'isTwilio')
     .returns(true);
-  sandbox.stub(userHelper, 'getDefaultCreatePayloadFromReq')
+  sandbox.stub(userHelper, 'getCreatePayloadFromReq')
     .returns(defaultPayloadStub);
   sandbox.stub(northstar, 'createUser')
     .callsFake(userCreateStub);
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  const user = t.context.req.user;
-
-  user.should.deep.equal(mockUser);
-  userHelper.getDefaultCreatePayloadFromReq.should.have.been.called;
+  userHelper.getCreatePayloadFromReq.should.have.been.called;
   northstar.createUser.should.have.been.calledWith(t.context.req.userCreateData);
+  helpers.request.setUser.should.have.been.calledWith(t.context.req, mockUser);
   next.should.have.been.called;
 });
 
@@ -83,10 +80,13 @@ test('createUser should call next if req.user exists', async (t) => {
   const next = sinon.stub();
   const middleware = createUser();
   t.context.req.user = mockUser;
+  sandbox.stub(northstar, 'createUser')
+    .callsFake(userCreateStub);
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  analyticsHelper.addCustomAttributes.should.not.have.been.called;
+  northstar.createUser.should.not.have.been.called;
+  helpers.request.setUser.should.not.have.been.called;
   next.should.have.been.called;
 });
 
@@ -96,20 +96,23 @@ test('createUser should call next if !helpers.request.isTwilio', async (t) => {
   const middleware = createUser();
   sandbox.stub(requestHelper, 'isTwilio')
     .returns(false);
+  sandbox.stub(northstar, 'createUser')
+    .callsFake(userCreateStub);
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  analyticsHelper.addCustomAttributes.should.not.have.been.called;
+  helpers.request.setUser.should.not.have.been.called;
+  northstar.createUser.should.not.have.been.called;
   next.should.have.been.called;
 });
 
-test('createUser should call sendErrorResponse if userHelper.getDefaultCreatePayloadFromReq throws', async (t) => {
+test('createUser should call sendErrorResponse if userHelper.getCreatePayloadFromReq throws', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = createUser();
   sandbox.stub(requestHelper, 'isTwilio')
     .returns(true);
-  sandbox.stub(userHelper, 'getDefaultCreatePayloadFromReq')
+  sandbox.stub(userHelper, 'getCreatePayloadFromReq')
     .throws();
   sandbox.stub(northstar, 'createUser')
     .callsFake(userCreateStub);
@@ -118,8 +121,7 @@ test('createUser should call sendErrorResponse if userHelper.getDefaultCreatePay
   await middleware(t.context.req, t.context.res, next);
   helpers.sendErrorResponse.should.have.been.called;
   northstar.createUser.should.not.have.been.called;
-  analyticsHelper.addCustomAttributes.should.not.have.been.called;
-  t.context.req.should.not.have.property('user');
+  helpers.request.setUser.should.not.have.been.called;
   next.should.not.have.been.called;
 });
 
@@ -129,7 +131,7 @@ test('createUser should call sendErrorResponse if northstar.createUser fails', a
   const middleware = createUser();
   sandbox.stub(requestHelper, 'isTwilio')
     .returns(true);
-  sandbox.stub(userHelper, 'getDefaultCreatePayloadFromReq')
+  sandbox.stub(userHelper, 'getCreatePayloadFromReq')
     .returns(defaultPayloadStub);
   sandbox.stub(northstar, 'createUser')
     .callsFake(userCreateFailStub);
@@ -137,7 +139,6 @@ test('createUser should call sendErrorResponse if northstar.createUser fails', a
   // test
   await middleware(t.context.req, t.context.res, next);
   helpers.sendErrorResponse.should.have.been.called;
-  analyticsHelper.addCustomAttributes.should.not.have.been.called;
-  t.context.req.should.not.have.property('user');
+  helpers.request.setUser.should.not.have.been.called;
   next.should.not.have.been.called;
 });

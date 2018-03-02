@@ -77,7 +77,7 @@ conversationSchema.statics.getFromReq = function (req) {
  * @return {Promise}
  */
 conversationSchema.statics.findOneAndPopulateLastOutboundMessage = function (query, req) {
-  logger.debug('Conversation.findOneAndPopulateLastOutboundMessage', query, req);
+  logger.debug('Conversation.findOne', query, req);
   return this.findOne(query).populate('lastOutboundMessage');
 };
 
