@@ -9,7 +9,8 @@ const crypto = require('crypto');
 const underscore = require('underscore');
 const httpMocks = require('node-mocks-http');
 const northstar = require('../../../lib/northstar');
-const macroHelper = require('../../../lib/helpers/macro');
+const helpers = require('../../../lib/helpers');
+
 const subscriptionHelper = require('../../../lib/helpers/subscription');
 const config = require('../../../config/lib/helpers/user');
 
@@ -144,14 +145,14 @@ test('hasAddress should return false if user does not have address properties se
 // updateSubscriptionStatus
 test('getSubscriptionStatusUpdate should return stop value if stop macro is passed', () => {
   const user = userFactory.getValidUser();
-  const stopMacro = macroHelper.macros.subscriptionStatusStop();
+  const stopMacro = helpers.macro.macros.subscriptionStatusStop();
   const result = userHelper.getSubscriptionStatusUpdate(user, stopMacro);
   result.should.equal(subscriptionHelper.statuses.stop());
 });
 
 test('getSubscriptionStatusUpdate should return less value if less macro is passed', () => {
   const user = userFactory.getValidUser();
-  const lessMacro = macroHelper.macros.subscriptionStatusLess();
+  const lessMacro = helpers.macro.macros.subscriptionStatusLess();
   const result = userHelper.getSubscriptionStatusUpdate(user, lessMacro);
   result.should.equal(subscriptionHelper.statuses.less());
 });

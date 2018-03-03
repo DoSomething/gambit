@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const logger = require('../../lib/logger');
 const Message = require('./Message');
 const helpers = require('../../lib/helpers');
+const twilio = require('../../lib/twilio');
 
 const campaignTopic = 'campaign';
 const defaultTopic = 'random';
@@ -323,7 +324,7 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function (req) {
     return Promise.resolve();
   }
 
-  return helpers.user.sendTwilioMessage(req.user, messageText);
+  return twilio.postMessage(req.userMobile, messageText);
 };
 
 /**
