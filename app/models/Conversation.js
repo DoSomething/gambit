@@ -294,7 +294,17 @@ conversationSchema.methods.setLastOutboundMessage = function (outboundMessage) {
  */
 conversationSchema.methods.createLastOutboundMessage = function (direction, text, template, req) {
   return this.createMessage(direction, text, template, req)
-    .then(message => this.setLastOutboundMessage(message));
+    .then(message => this.setLastOutboundMessage(message))
+    // Backfill Conversations that may not have userId set.
+    .then(() => {
+      if (this.userId) return Promise.resolve(true);
+      logger.debug('Backfilling Conversation.userId', {
+        userId: req.userId,
+        conversationId: this.id,
+      }, req);
+      this.userId = req.userId;
+      return this.save();
+    });
 };
 
 /**
