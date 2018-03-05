@@ -55,7 +55,7 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-test('sendOutbound does not call helpers.user.sendTwilioMessage if not SMS', async (t) => {
+test('sendOutbound does not call postLastOutboundMessageToPlatform if not SMS', async (t) => {
   const next = sinon.stub();
   sandbox.stub(conversation, 'isSms')
     .returns(false);
