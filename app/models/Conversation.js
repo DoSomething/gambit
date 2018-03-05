@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const logger = require('../../lib/logger');
 const Message = require('./Message');
 const helpers = require('../../lib/helpers');
-const twilioClient = require('../../lib/twilio');
+const twilio = require('../../lib/twilio');
 
 const campaignTopic = 'campaign';
 const defaultTopic = 'random';
@@ -313,9 +313,8 @@ conversationSchema.methods.createAndSetLastOutboundMessage = function (direction
  */
 conversationSchema.methods.postLastOutboundMessageToPlatform = function (req) {
   const messageText = this.lastOutboundMessage.text;
-  const shouldPost = messageText && !helpers.request.shouldSuppressOutbound(req);
-  if (shouldPost && this.isSms()) {
-    return twilioClient.postMessage(req.userMobile, messageText);
+  if (messageText && this.isSms()) {
+    return twilio.postMessage(req.userMobile, messageText);
   }
   return Promise.resolve();
 };
