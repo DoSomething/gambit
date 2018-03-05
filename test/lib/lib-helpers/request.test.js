@@ -7,8 +7,8 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
-const helpers = require('../../../lib/helpers');
 
+const helpers = require('../../../lib/helpers');
 const stubs = require('../../helpers/stubs');
 const conversationFactory = require('../../helpers/factories/conversation');
 
@@ -18,11 +18,11 @@ chai.use(sinonChai);
 // module to be tested
 const requestHelper = require('../../../lib/helpers/request');
 
+const sandbox = sinon.sandbox.create();
+
 const campaignId = stubs.getCampaignId();
 const userId = stubs.getUserId();
 const platform = stubs.getPlatform();
-
-const sandbox = sinon.sandbox.create();
 
 test.beforeEach((t) => {
   sandbox.stub(helpers.analytics, 'addCustomAttributes')

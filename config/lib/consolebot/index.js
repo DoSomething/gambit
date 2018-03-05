@@ -24,6 +24,9 @@ const configVars = {
       FromZip: process.env.DS_CONSOLEBOT_USER_ZIP || '07302',
       FromCountry: process.env.DS_CONSOLEBOT_USER_COUNTRY || 'US',
     },
+    headers: {
+      suppressOutbound: process.env.DS_CONSOLEBOT_SUPPRESS_OUTBOUND || 'true',
+    },
   },
 };
 

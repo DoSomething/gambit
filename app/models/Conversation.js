@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const logger = require('../../lib/logger');
 const Message = require('./Message');
 const helpers = require('../../lib/helpers');
-const twilio = require('../../lib/twilio');
+const twilioClient = require('../../lib/twilio');
 
 const campaignTopic = 'campaign';
 const defaultTopic = 'random';
@@ -292,34 +292,19 @@ conversationSchema.methods.setLastOutboundMessage = function (outboundMessage) {
  * @param {string} template
  * @return {Promise}
  */
-conversationSchema.methods.createLastOutboundMessage = function (direction, text, template, req) {
+conversationSchema.methods.createAndSetLastOutboundMessage = function (direction, text, template, req) { // eslint-disable-line max-len
   return this.createMessage(direction, text, template, req)
-    .then(message => this.setLastOutboundMessage(message))
-    // Backfill Conversations that may not have userId set.
-    .then(() => {
-      if (this.userId) return Promise.resolve(true);
-      logger.debug('Backfilling Conversation.userId', {
-        userId: req.userId,
-        conversationId: this.id,
-      }, req);
-      this.userId = req.userId;
-      return this.save();
-    });
-};
-
-/**
- * @param {string} text
- * @param {string} template
- * @return {Promise}
- */
-conversationSchema.methods.createAndPostOutboundReplyMessage = function (text, template, req) {
-  const suppressReply = helpers.request.shouldSuppressOutboundReply(req);
-
-  return this.createLastOutboundMessage('outbound-reply', text, template, req)
-    .then(() => {
-      if (suppressReply) return Promise.resolve();
-
-      return this.postLastOutboundMessageToPlatform(req);
+    .then((message) => {
+      logger.debug('created message', { messageId: message.id }, req);
+      // Backfill Conversations that may not have userId set.
+      if (!this.userId) {
+        logger.debug('Backfilling Conversation.userId', {
+          userId: req.userId,
+          conversationId: this.id,
+        }, req);
+        this.userId = req.userId;
+      }
+      return this.setLastOutboundMessage(message);
     });
 };
 
@@ -328,13 +313,11 @@ conversationSchema.methods.createAndPostOutboundReplyMessage = function (text, t
  */
 conversationSchema.methods.postLastOutboundMessageToPlatform = function (req) {
   const messageText = this.lastOutboundMessage.text;
-
-  // This could be blank for noReply templates.
-  if (!messageText || !this.isSms()) {
-    return Promise.resolve();
+  const shouldPost = messageText && !helpers.request.shouldSuppressOutbound(req);
+  if (shouldPost && this.isSms()) {
+    return twilioClient.postMessage(req.userMobile, messageText);
   }
-
-  return twilio.postMessage(req.userMobile, messageText);
+  return Promise.resolve();
 };
 
 /**

@@ -11,6 +11,7 @@ const underscore = require('underscore');
 
 const Message = require('../../../app/models/Message');
 const helpers = require('../../../lib/helpers');
+const twilioClient = require('../../../lib/twilio');
 const stubs = require('../../helpers/stubs');
 const conversationFactory = require('../../helpers/factories/conversation');
 const userFactory = require('../../helpers/factories/user');
@@ -20,6 +21,7 @@ const conversation = conversationFactory.getValidConversation();
 const alexaConversation = conversationFactory.getValidConversation('alexa');
 const mockMessageText = stubs.getRandomMessageText();
 const mockUser = userFactory.getValidUser();
+const resolvedPromise = Promise.resolve({});
 
 // setup "x.should.y" assertion style
 chai.should();
@@ -66,6 +68,17 @@ test('createMessage should not call helpers.tag.render if direction is inbound',
   await conversation.createMessage('inbound', mockMessageText, 'temp', t.context.req);
   tagsHelper.render.should.not.have.been.called;
   Message.create.should.have.been.called;
+});
+
+test('postLastOutboundMessageToPlatform returns resolved Promise if outbound text undefined', async (t) => {
+  sandbox.stub(twilioClient, 'postMessage')
+    .returns(resolvedPromise);
+  const supportConversation = conversationFactory.getValidConversation();
+  supportConversation.lastOutboundMessage.text = '';
+  t.context.req.conversation = supportConversation;
+
+  await supportConversation.postLastOutboundMessageToPlatform(t.context.req);
+  twilioClient.postMessage.should.not.have.been.called;
 });
 
 // isSms

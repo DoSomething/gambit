@@ -11,7 +11,6 @@ const underscore = require('underscore');
 const Promise = require('bluebird');
 
 const helpers = require('../../../../lib/helpers');
-const twilio = require('../../../../lib/twilio');
 const stubs = require('../../../helpers/stubs');
 const conversationFactory = require('../../../helpers/factories/conversation');
 const messageFactory = require('../../../helpers/factories/message');
@@ -62,7 +61,7 @@ test('sendOutbound does not call helpers.user.sendTwilioMessage if not SMS', asy
     .returns(false);
   sandbox.stub(helpers, 'formatMobileNumber')
     .returns(mobileNumber);
-  sandbox.stub(twilio, 'postMessage')
+  sandbox.stub(conversation, 'postLastOutboundMessageToPlatform')
     .returns(Promise.resolve(twilioSuccessStub));
   const middleware = sendOutbound();
 
@@ -70,7 +69,7 @@ test('sendOutbound does not call helpers.user.sendTwilioMessage if not SMS', asy
   await middleware(t.context.req, t.context.res, next);
   conversation.isSms.should.have.been.called;
   helpers.formatMobileNumber.should.not.have.been.called;
-  twilio.postMessage.should.not.have.been.called;
+  conversation.postLastOutboundMessageToPlatform.should.not.have.been.called;
   helpers.sendResponseWithMessage.should.have.been.calledWith(t.context.res, outboundMessage);
 });
 
@@ -82,13 +81,13 @@ test('sendOutbound calls sendErrorResponseWithSuppressHeaders if formatMobileNum
     .returns(true);
   sandbox.stub(helpers, 'formatMobileNumber')
     .throws();
-  sandbox.stub(twilio, 'postMessage')
+  sandbox.stub(conversation, 'postLastOutboundMessageToPlatform')
     .returns(Promise.resolve(twilioSuccessStub));
 
   // test
   middleware(t.context.req, t.context.res, next);
   conversation.isSms.should.have.been.called;
-  twilio.postMessage.should.not.have.been.called;
+  conversation.postLastOutboundMessageToPlatform.should.not.have.been.called;
   helpers.sendErrorResponseWithSuppressHeaders.should.have.been.called;
 });
 
@@ -98,7 +97,7 @@ test('sendOutbound calls twilio.postMessage for SMS', async (t) => {
     .returns(true);
   sandbox.stub(helpers, 'formatMobileNumber')
     .returns(mobileNumber);
-  sandbox.stub(twilio, 'postMessage')
+  sandbox.stub(conversation, 'postLastOutboundMessageToPlatform')
     .returns(Promise.resolve(twilioSuccessStub));
   const middleware = sendOutbound();
 
@@ -106,7 +105,7 @@ test('sendOutbound calls twilio.postMessage for SMS', async (t) => {
   await middleware(t.context.req, t.context.res, next);
   conversation.isSms.should.have.been.called;
   helpers.formatMobileNumber.should.have.been.called;
-  twilio.postMessage.should.have.have.been.called;
+  conversation.postLastOutboundMessageToPlatform.should.have.have.been.called;
   helpers.sendResponseWithMessage.should.have.been.calledWith(t.context.res, outboundMessage);
 });
 
@@ -116,7 +115,7 @@ test('sendOutbound calls sendErrorResponseWithSuppressHeaders if Twilio bad requ
     .returns(true);
   sandbox.stub(helpers, 'formatMobileNumber')
     .returns(mobileNumber);
-  sandbox.stub(twilio, 'postMessage')
+  sandbox.stub(conversation, 'postLastOutboundMessageToPlatform')
     .returns(Promise.reject(twilioErrorStub));
   sandbox.stub(helpers.twilio, 'isBadRequestError')
     .returns(true);
@@ -127,7 +126,7 @@ test('sendOutbound calls sendErrorResponseWithSuppressHeaders if Twilio bad requ
   // test
   await middleware(t.context.req, t.context.res, next);
   conversation.isSms.should.have.been.called;
-  twilio.postMessage.should.have.have.been.called;
+  conversation.postLastOutboundMessageToPlatform.should.have.have.been.called;
   helpers.analytics.addTwilioError.should.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
   helpers.sendErrorResponseWithSuppressHeaders.should.have.been.called;
@@ -140,7 +139,7 @@ test('sendOutbound calls sendErrorResponse if error is not Twilio bad request', 
     .returns(true);
   sandbox.stub(helpers, 'formatMobileNumber')
     .returns(mobileNumber);
-  sandbox.stub(twilio, 'postMessage')
+  sandbox.stub(conversation, 'postLastOutboundMessageToPlatform')
     .returns(Promise.reject(twilioErrorStub));
   sandbox.stub(helpers.twilio, 'isBadRequestError')
     .returns(false);
@@ -151,7 +150,7 @@ test('sendOutbound calls sendErrorResponse if error is not Twilio bad request', 
   // test
   await middleware(t.context.req, t.context.res, next);
   conversation.isSms.should.have.been.called;
-  twilio.postMessage.should.have.been.called;
+  conversation.postLastOutboundMessageToPlatform.should.have.been.called;
   helpers.analytics.addTwilioError.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
   helpers.sendErrorResponseWithSuppressHeaders.should.not.have.been.called;
