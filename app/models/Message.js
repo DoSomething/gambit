@@ -18,7 +18,7 @@ const messageSchema = new mongoose.Schema({
     enum: ['inbound', 'outbound-reply', 'outbound-api-send', 'outbound-api-import'],
     required: true,
   },
-  platformMessageId: { type: String, index: true },
+  userId: { type: String, index: true },
   campaignId: Number,
   template: String,
   text: String,

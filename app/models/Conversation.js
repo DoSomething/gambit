@@ -188,6 +188,7 @@ conversationSchema.methods.getDefaultMessagePayload = function (text, template) 
     conversationId: this,
     campaignId: this.campaignId,
     topic: this.topic,
+    userId: this.userId,
   };
   if (text) {
     data.text = text;
@@ -313,10 +314,19 @@ conversationSchema.methods.createAndSetLastOutboundMessage = function (direction
  */
 conversationSchema.methods.postLastOutboundMessageToPlatform = function (req) {
   const messageText = this.lastOutboundMessage.text;
-  if (messageText && this.isSms()) {
-    return twilio.postMessage(req.userMobile, messageText);
+
+  if (!(messageText && this.isSms())) {
+    return Promise.resolve();
   }
-  return Promise.resolve();
+
+  return twilio.postMessage(req.userMobile, messageText)
+    .then((twilioRes) => {
+      // TODO: Store this metadata on our lastOutboundMessage:
+      const sid = twilioRes.sid;
+      const status = twilioRes.status;
+      logger.debug('twilio.postMessage', { sid, status }, req);
+      return twilioRes;
+    });
 };
 
 /**
