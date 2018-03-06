@@ -19,7 +19,6 @@ const conversationSchema = new mongoose.Schema({
     index: true,
   },
   platform: String,
-  // platformUserId will one day be deprecated, was added before userId.
   platformUserId: {
     type: String,
     index: true,
@@ -68,9 +67,10 @@ conversationSchema.statics.getFromReq = function (req) {
       if (!helpers.request.isTwilio(req)) {
         return Promise.resolve(null);
       }
-      // Have we already saved a Conversation for this User by their mobile?
-      const queryByUserMobile = { platformUserId: req.userMobile };
-      return this.findOneAndPopulateLastOutboundMessage(queryByUserMobile, req);
+      // Have we already saved a Conversation for this User before we added userId?
+      // TODO: Remove this when all Conversations are be backfilled with userId.
+      const queryByPlatformUserId = { platformUserId: req.platformUserId };
+      return this.findOneAndPopulateLastOutboundMessage(queryByPlatformUserId, req);
     });
 };
 
@@ -189,6 +189,7 @@ conversationSchema.methods.getDefaultMessagePayload = function (text, template) 
     campaignId: this.campaignId,
     topic: this.topic,
     userId: this.userId,
+    platformUserId: this.platformUserId,
   };
   if (text) {
     data.text = text;
@@ -319,7 +320,7 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function (req) {
     return Promise.resolve();
   }
 
-  return twilio.postMessage(req.userMobile, messageText)
+  return twilio.postMessage(req.platformUserId, messageText)
     .then((twilioRes) => {
       // TODO: Store this metadata on our lastOutboundMessage:
       const sid = twilioRes.sid;

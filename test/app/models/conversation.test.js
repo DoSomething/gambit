@@ -71,7 +71,7 @@ test('createMessage should not call helpers.tag.render if direction is inbound',
 });
 
 // postLastOutboundMessageToPlatform
-test('postLastOutboundMessageToPlatform returns resolved Promise if outbound text undefined', async (t) => {
+test('postLastOutboundMessageToPlatform does not call twilio.postMessage if text undefined', async (t) => {
   sandbox.stub(twilio, 'postMessage')
     .returns(resolvedPromise);
   const supportConversation = conversationFactory.getValidConversation();
@@ -82,7 +82,7 @@ test('postLastOutboundMessageToPlatform returns resolved Promise if outbound tex
   twilio.postMessage.should.not.have.been.called;
 });
 
-test('postLastOutboundMessageToPlatform returns resolved Promise if conversation is not SMS', async (t) => {
+test('postLastOutboundMessageToPlatform does not call twilio.postMessage if conversation is not SMS', async (t) => {
   sandbox.stub(twilio, 'postMessage')
     .returns(resolvedPromise);
   t.context.req.conversation = alexaConversation;
@@ -91,7 +91,7 @@ test('postLastOutboundMessageToPlatform returns resolved Promise if conversation
   twilio.postMessage.should.not.have.been.called;
 });
 
-test('postLastOutboundMessageToPlatform returns twilio.postMessage if conversation is SMS', async (t) => {
+test('postLastOutboundMessageToPlatform calls twilio.postMessage if conversation is SMS', async (t) => {
   sandbox.stub(twilio, 'postMessage')
     .returns(resolvedPromise);
   t.context.req.conversation = conversation;

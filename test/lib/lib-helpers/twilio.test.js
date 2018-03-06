@@ -38,7 +38,7 @@ test('parseBody should inject vars into req', (t) => {
   twilioHelper.parseBody(t.context.req);
   helpers.request.setPlatformToSms.should.have.been.calledWith(t.context.req);
   twilioHelper.parseUserAddressFromReq.should.have.been.called;
-  t.context.req.userMobile.should.equal(mockTwilioRequestBody.From);
+  t.context.req.platformUserId.should.equal(mockTwilioRequestBody.From);
   t.context.req.should.have.property('platformUserAddress');
 });
 

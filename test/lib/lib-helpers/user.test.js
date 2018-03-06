@@ -70,7 +70,7 @@ test('fetchByMobile calls northstar.fetchUserById', async () => {
 });
 
 // fetchFromReq
-test('fetchFromReq calls fetchById if !req.userMobile', async (t) => {
+test('fetchFromReq calls fetchById if !req.platformUserId', async (t) => {
   sandbox.stub(userHelper, 'fetchById')
     .returns(userLookupStub);
   sandbox.stub(userHelper, 'fetchByMobile')
@@ -82,12 +82,12 @@ test('fetchFromReq calls fetchById if !req.userMobile', async (t) => {
   userHelper.fetchByMobile.should.not.have.been.called;
 });
 
-test('fetchFromReq calls fetchByMobile if req.userMobile', async (t) => {
+test('fetchFromReq calls fetchByMobile if req.platformUserId', async (t) => {
   sandbox.stub(userHelper, 'fetchById')
     .returns(userLookupStub);
   sandbox.stub(userHelper, 'fetchByMobile')
     .returns(userLookupStub);
-  t.context.req.userMobile = stubs.getMobileNumber();
+  t.context.req.platformUserId = stubs.getMobileNumber();
 
   await userHelper.fetchFromReq(t.context.req);
   userHelper.fetchByMobile.should.have.been.called;
@@ -107,7 +107,7 @@ test('getCreatePayloadFromReq should return object', () => {
   const req = {
     platform: stubs.getPlatform(),
     platformUserAddress: platformUserAddressStub,
-    userMobile: stubs.getMobileNumber(),
+    platformUserId: stubs.getMobileNumber(),
   };
   sandbox.stub(underscore, 'extend')
     .returns(platformUserAddressStub);
@@ -115,7 +115,7 @@ test('getCreatePayloadFromReq should return object', () => {
     .returns('taco');
   const result = userHelper.getCreatePayloadFromReq(req);
   result.source.should.equal(req.platform);
-  result.mobile.should.equal(req.userMobile);
+  result.mobile.should.equal(req.platformUserId);
   userHelper.generatePassword.should.have.been.called;
 });
 
