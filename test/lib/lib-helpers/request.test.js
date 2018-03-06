@@ -23,6 +23,8 @@ const sandbox = sinon.sandbox.create();
 const campaignId = stubs.getCampaignId();
 const userId = stubs.getUserId();
 const platform = stubs.getPlatform();
+const conversation = conversationFactory.getValidConversation();
+const message = conversation.lastOutboundMessage;
 
 test.beforeEach((t) => {
   sandbox.stub(helpers.analytics, 'addCustomAttributes')
@@ -58,21 +60,30 @@ test('setCampaignId should inject a campaignId property to req', (t) => {
 });
 
 test('setConversation should inject a conversation property to req', (t) => {
-  const conversation = conversationFactory.getValidConversation();
+  sandbox.stub(requestHelper, 'setLastOutboundMessage')
+    .returns(underscore.noop);
   requestHelper.setConversation(t.context.req, conversation);
   t.context.req.conversation.should.equal(conversation);
   const conversationId = conversation.id;
   helpers.analytics.addCustomAttributes.should.have.been.calledWith({ conversationId });
-  t.context.req.should.have.property('lastOutboundTemplate');
-  t.context.req.should.have.property('lastOutboundBroadcastId');
+  requestHelper.setLastOutboundMessage.should.have.been.calledWith(t.context.req, message);
 });
 
-test('setConversation should not inject lastOutbound properties for new Conversations', (t) => {
+test('setConversation should not call setLastOutboundMessage does not exist', (t) => {
   const newConversation = conversationFactory.getValidConversation();
   newConversation.lastOutboundMessage = null;
+  sandbox.stub(requestHelper, 'setLastOutboundMessage')
+    .returns(underscore.noop);
+
   requestHelper.setConversation(t.context.req, newConversation);
-  t.context.req.should.not.have.property('lastOutboundTemplate');
-  t.context.req.should.not.have.property('lastOutboundBroadcastId');
+  requestHelper.setLastOutboundMessage.should.not.have.been.called;
+});
+
+test('setPlatform should inject lastOutbound properties to req', (t) => {
+  requestHelper.setLastOutboundMessage(t.context.req, message);
+  t.context.req.lastOutboundTemplate.should.equal(message.template);
+  t.context.req.lastOutboundBroadcastId.should.equal(message.broadcastId);
+  helpers.analytics.addCustomAttributes.should.have.been.called;
 });
 
 test('setPlatform should inject a platform property to req', (t) => {

@@ -14,6 +14,7 @@ module.exports.getValidMessage = function getValidMessage(direction) {
     text: stubs.getRandomMessageText(),
     direction: direction || 'inbound',
     template: stubs.getTemplate(),
+    broadcastId: stubs.getBroadcastId(),
   });
 };
 
