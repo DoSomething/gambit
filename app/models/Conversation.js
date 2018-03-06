@@ -315,7 +315,7 @@ conversationSchema.methods.createAndSetLastOutboundMessage = function (direction
 conversationSchema.methods.postLastOutboundMessageToPlatform = function (req) {
   const messageText = this.lastOutboundMessage.text;
 
-  if (!(messageText && this.isSms())) {
+  if (!messageText || !this.isSms()) {
     return Promise.resolve();
   }
 
