@@ -11,7 +11,7 @@ const underscore = require('underscore');
 
 const Message = require('../../../app/models/Message');
 const helpers = require('../../../lib/helpers');
-const twilioClient = require('../../../lib/twilio');
+const twilio = require('../../../lib/twilio');
 const stubs = require('../../helpers/stubs');
 const conversationFactory = require('../../helpers/factories/conversation');
 const userFactory = require('../../helpers/factories/user');
@@ -70,15 +70,34 @@ test('createMessage should not call helpers.tag.render if direction is inbound',
   Message.create.should.have.been.called;
 });
 
+// postLastOutboundMessageToPlatform
 test('postLastOutboundMessageToPlatform returns resolved Promise if outbound text undefined', async (t) => {
-  sandbox.stub(twilioClient, 'postMessage')
+  sandbox.stub(twilio, 'postMessage')
     .returns(resolvedPromise);
   const supportConversation = conversationFactory.getValidConversation();
   supportConversation.lastOutboundMessage.text = '';
   t.context.req.conversation = supportConversation;
 
   await supportConversation.postLastOutboundMessageToPlatform(t.context.req);
-  twilioClient.postMessage.should.not.have.been.called;
+  twilio.postMessage.should.not.have.been.called;
+});
+
+test('postLastOutboundMessageToPlatform returns resolved Promise if conversation is not SMS', async (t) => {
+  sandbox.stub(twilio, 'postMessage')
+    .returns(resolvedPromise);
+  t.context.req.conversation = alexaConversation;
+
+  await alexaConversation.postLastOutboundMessageToPlatform(t.context.req);
+  twilio.postMessage.should.not.have.been.called;
+});
+
+test('postLastOutboundMessageToPlatform returns twilio.postMessage if conversation is SMS', async (t) => {
+  sandbox.stub(twilio, 'postMessage')
+    .returns(resolvedPromise);
+  t.context.req.conversation = conversation;
+
+  await conversation.postLastOutboundMessageToPlatform(t.context.req);
+  twilio.postMessage.should.have.been.called;
 });
 
 // isSms
