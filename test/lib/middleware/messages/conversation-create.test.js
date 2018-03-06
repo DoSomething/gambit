@@ -50,7 +50,7 @@ test.afterEach((t) => {
 test('createConversation should call next if req.conversation exists', async (t) => {
   const next = sinon.stub();
   t.context.req.conversation = mockConversation;
-  sandbox.stub(Conversation, 'createForUserIdAndPlatform')
+  sandbox.stub(Conversation, 'createFromReq')
     .returns(conversationCreateStub);
   const middleware = createConversation();
 
@@ -63,7 +63,7 @@ test('createConversation should call next if req.conversation exists', async (t)
 
 test('createConversation should inject a conversation into the req object when successfully creating a new conversation', async (t) => {
   const next = sinon.stub();
-  sandbox.stub(Conversation, 'createForUserIdAndPlatform')
+  sandbox.stub(Conversation, 'createFromReq')
     .returns(conversationCreateStub);
   const middleware = createConversation();
 
@@ -76,7 +76,7 @@ test('createConversation should inject a conversation into the req object when s
 
 test('createConversation sends sendErrorResponse on create Conversation error', async (t) => {
   const next = sinon.stub();
-  sandbox.stub(Conversation, 'createForUserIdAndPlatform')
+  sandbox.stub(Conversation, 'createFromReq')
     .returns(conversationCreateFailStub);
   const middleware = createConversation();
 

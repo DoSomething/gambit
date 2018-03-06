@@ -41,10 +41,11 @@ conversationSchema.index({ userId: 1, platform: 1 });
  * @param {Object} req - Express request
  * @return {Promise}
  */
-conversationSchema.statics.createForUserIdAndPlatform = function (userId, platform) {
+conversationSchema.statics.createFromReq = function (req) {
   const data = {
-    userId,
-    platform,
+    userId: req.userId,
+    platform: req.platform,
+    platformUserId: req.platformUserId,
     paused: false,
     topic: defaultTopic,
   };
