@@ -190,7 +190,6 @@ conversationSchema.methods.getDefaultMessagePayload = function (text, template) 
     campaignId: this.campaignId,
     topic: this.topic,
     userId: this.userId,
-    platformUserId: this.platformUserId,
   };
   if (text) {
     data.text = text;
