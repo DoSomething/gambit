@@ -83,7 +83,7 @@ test('getUser calls sendErrorResponse if helpers.user.fetchFromReq fails', async
   helpers.sendErrorResponseWithSuppressHeaders.should.not.have.been.called;
 });
 
-test('getUser calls sendErrorResponse if helpers.user.fetchFromReq response is status 404', async (t) => {
+test('getUser calls sendErrorResponse if User not found and config.shouldSendError', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = getUser(defaultConfig);
@@ -97,3 +97,19 @@ test('getUser calls sendErrorResponse if helpers.user.fetchFromReq response is s
   helpers.sendErrorResponseWithSuppressHeaders.should.have.been.called;
   next.should.not.have.been.called;
 });
+
+test('getUser calls next if User not found and config.shouldSendError is false', async (t) => {
+  // setup
+  const next = sinon.stub();
+  const middleware = getUser(stubs.config.getUser(false));
+  sandbox.stub(helpers.user, 'fetchFromReq')
+    .callsFake(userLookupNotFoundStub);
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  helpers.request.setUser.should.not.have.been.called;
+  helpers.sendErrorResponse.should.not.have.been.called;
+  helpers.sendErrorResponseWithSuppressHeaders.should.not.have.been.called;
+  next.should.have.been.called;
+});
+
