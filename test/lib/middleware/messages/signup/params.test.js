@@ -26,87 +26,62 @@ const userId = stubs.getUserId();
 const campaignId = stubs.getCampaignId();
 
 test.beforeEach((t) => {
+  sandbox.spy(helpers.request, 'setCampaignId');
+  sandbox.spy(helpers.request, 'setUserId');
+  sandbox.spy(helpers.request, 'setPlatform');
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(underscore.noop);
-
-  // setup req, res mocks
   t.context.req = httpMocks.createRequest();
   t.context.req.body = {};
   t.context.res = httpMocks.createResponse();
 });
 
 test.afterEach((t) => {
-  // reset stubs, spies, and mocks
   sandbox.restore();
   t.context = {};
 });
 
-test('paramsMiddleware should call sendErrorResponse if body.campaignId not found', async (t) => {
+test('paramsMiddleware should call sendErrorResponse if campaignId undefined', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = paramsMiddleware();
 
   // test
   await middleware(t.context.req, t.context.res, next);
+  helpers.request.setCampaignId.should.have.been.called;
+  helpers.request.setUserId.should.not.have.been.called;
+  helpers.request.setPlatform.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
   next.should.not.have.been.called;
 });
 
-test('paramsMiddleware should call sendErrorResponse if body.northstarId not found', async (t) => {
+test('paramsMiddleware should call sendErrorResponse if northstarId undefined', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = paramsMiddleware();
+  t.context.req.body.campaignId = campaignId;
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  helpers.request.setCampaignId.should.have.been.called;
+  helpers.request.setUserId.should.have.been.called;
+  helpers.request.setPlatform.should.not.have.been.called;
+  helpers.sendErrorResponse.should.have.been.called;
+  next.should.not.have.been.called;
+});
+
+test('paramsMiddleware should call next if northstarId and campaignId defined', async (t) => {
+  // setup
+  const next = sinon.stub();
+  const middleware = paramsMiddleware();
+  t.context.req.body.campaignId = campaignId;
   t.context.req.body.northstarId = userId;
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  helpers.sendErrorResponse.should.have.been.called;
-  next.should.not.have.been.called;
-});
-
-test('paramsMiddleware should call next if northstarId and campaignId were found', async (t) => {
-  // setup
-  const next = sinon.stub();
-  const middleware = paramsMiddleware();
-  t.context.req.body = {
-    northstarId: userId,
-    campaignId,
-  };
-
-  // test
-  await middleware(t.context.req, t.context.res, next);
-  helpers.sendErrorResponse.should.not.have.been.called;
+  helpers.request.setCampaignId.should.have.been.called;
+  helpers.request.setUserId.should.have.been.called;
+  helpers.request.setPlatform.should.have.been.called;
   next.should.have.been.called;
-});
-
-test('paramsMiddleware should set not platformUserId if platform is passed', async (t) => {
-  // setup
-  const next = sinon.stub();
-  const middleware = paramsMiddleware();
-  t.context.req.body = {
-    northstarId: userId,
-    campaignId,
-  };
-
-  // test
-  await middleware(t.context.req, t.context.res, next);
-  t.context.req.should.not.have.property('platformUserId');
   helpers.sendErrorResponse.should.not.have.been.called;
-  next.should.have.been.called;
-});
-
-test('paramsMiddleware should set platformUserId if platform is passed', async (t) => {
-  // setup
-  const next = sinon.stub();
-  const middleware = paramsMiddleware();
-  t.context.req.body = {
-    northstarId: userId,
-    campaignId,
-    platform: stubs.getPlatform(),
-  };
-
-  // test
-  await middleware(t.context.req, t.context.res, next);
-  helpers.sendErrorResponse.should.not.have.been.called;
-  next.should.have.been.called;
 });

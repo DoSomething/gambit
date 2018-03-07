@@ -22,7 +22,6 @@ const sandbox = sinon.sandbox.create();
 
 const campaignId = stubs.getCampaignId();
 const userId = stubs.getUserId();
-const platform = stubs.getPlatform();
 const conversation = conversationFactory.getValidConversation();
 const message = conversation.lastOutboundMessage;
 
@@ -79,23 +78,26 @@ test('setConversation should not call setLastOutboundMessage does not exist', (t
   requestHelper.setLastOutboundMessage.should.not.have.been.called;
 });
 
-test('setPlatform should inject lastOutbound properties to req', (t) => {
+test('setLastOutboundMessage should inject lastOutbound properties to req', (t) => {
   requestHelper.setLastOutboundMessage(t.context.req, message);
   t.context.req.lastOutboundTemplate.should.equal(message.template);
   t.context.req.lastOutboundBroadcastId.should.equal(message.broadcastId);
   helpers.analytics.addCustomAttributes.should.have.been.called;
 });
 
-test('setPlatform should inject a platform property to req', (t) => {
-  requestHelper.setPlatform(t.context.req, platform);
-  t.context.req.platform.should.equal(platform);
-  helpers.analytics.addCustomAttributes.should.have.been.calledWith({ platform });
+test('setPlatform should set req.platform to platform parameter', (t) => {
+  const alexaPlatform = 'alexa';
+  requestHelper.setPlatform(t.context.req, alexaPlatform);
+  t.context.req.platform.should.equal(alexaPlatform);
+  helpers.analytics.addCustomAttributes.should.have.been.calledWith({ platform: alexaPlatform });
 });
 
-test('setPlatformToSms should call setPlatform', (t) => {
+test('setPlatform should set req.platform to sms if platform parameter undefined ', (t) => {
   sandbox.spy(requestHelper, 'setPlatform');
-  requestHelper.setPlatformToSms(t.context.req);
-  requestHelper.setPlatform.should.have.been.calledWith(t.context.req, 'sms');
+  requestHelper.setPlatform(t.context.req);
+  const smsPlatform = stubs.getPlatform();
+  t.context.req.platform.should.equal(smsPlatform);
+  helpers.analytics.addCustomAttributes.should.have.been.calledWith({ platform: smsPlatform });
 });
 
 test('setUserId should inject a userId property to req', (t) => {
