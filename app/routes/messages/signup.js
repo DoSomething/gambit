@@ -21,6 +21,9 @@ const sendOutboundMessageMiddleware = require('../../../lib/middleware/messages/
 
 router.use(paramsMiddleware());
 
+// Validate Campaign Signup should send a Signup Menu message.
+router.use(getCampaignMiddleware());
+
 // Fetch Northstar User.
 router.use(getUserMiddleware());
 router.use(validateOutboundMessageMiddleware(outboundMessageConfig));
@@ -29,7 +32,6 @@ router.use(validateOutboundMessageMiddleware(outboundMessageConfig));
 router.use(getConversationMiddleware());
 router.use(createConversationMiddleware());
 
-router.use(getCampaignMiddleware());
 router.use(updateConversationMiddleware());
 
 router.use(loadOutboundMessageMiddleware(outboundMessageConfig));

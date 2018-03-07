@@ -26,16 +26,17 @@ test.beforeEach((t) => {
   t.context.req.body = mockTwilioRequestBody;
 });
 
-test.afterEach(() => {
+test.afterEach((t) => {
+  t.context = {};
   sandbox.restore();
 });
 
 // parseBody
 test('parseBody should inject vars into req', (t) => {
-  sandbox.spy(helpers.request, 'setPlatformToSms');
+  sandbox.spy(helpers.request, 'setPlatform');
   sandbox.spy(twilioHelper, 'parseUserAddressFromReq');
   twilioHelper.parseBody(t.context.req);
-  helpers.request.setPlatformToSms.should.have.been.calledWith(t.context.req);
+  helpers.request.setPlatform.should.have.been.calledWith(t.context.req);
   twilioHelper.parseUserAddressFromReq.should.have.been.called;
   t.context.req.platformUserId.should.equal(mockTwilioRequestBody.From);
   t.context.req.should.have.property('platformUserAddress');

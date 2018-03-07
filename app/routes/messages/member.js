@@ -29,6 +29,12 @@ const continueCampaignMiddleware = require('../../../lib/middleware/messages/mem
 
 router.use(paramsMiddleware());
 
+// Fetch User for Conversation.
+router.use(getUserMiddleware());
+
+// Creates User if doesn't exist.
+router.use(createUserIfNotFoundMiddleware());
+
 // Load/create conversation.
 router.use(getConversationMiddleware());
 router.use(createConversationMiddleware());
@@ -40,13 +46,8 @@ router.use(getRivescriptReplyMiddleware());
 router.use(loadInboundMessageMiddleware());
 router.use(createInboundMessageMiddleware());
 
-// Fetch User for Conversation.
-router.use(getUserMiddleware());
 // Updates Last Messaged At, Subscription Status, Paused.
 router.use(updateUserMiddleware());
-
-// Creates User if doesn't exist.
-router.use(createUserIfNotFoundMiddleware());
 
 // Sends macro reply if exists.
 router.use(macroReplyMiddleware());
