@@ -65,12 +65,9 @@ conversationSchema.statics.getFromReq = function (req) {
       if (conversation) {
         return Promise.resolve(conversation);
       }
-      if (!helpers.request.isTwilio(req)) {
-        return Promise.resolve(null);
-      }
       // Have we already saved a Conversation for this User before we added userId?
-      // TODO: Remove this when all Conversations are be backfilled with userId.
-      const queryByPlatformUserId = { platformUserId: req.platformUserId };
+      // TODO: Remove this when all Conversations have been backfilled with userId.
+      const queryByPlatformUserId = { platform: 'sms', platformUserId: req.platformUserId };
       return this.findOneAndPopulateLastOutboundMessage(queryByPlatformUserId, req);
     });
 };
