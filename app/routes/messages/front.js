@@ -20,12 +20,13 @@ const createOutboundMessageMiddleware = require('../../../lib/middleware/message
 const sendOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-send');
 
 router.use(paramsMiddleware());
-router.use(getConversationMiddleware());
 
 router.use(getUserMiddleware(getUserConfig));
 router.use(validateOutboundMessageMiddleware(outboundMessageConfig));
 
+router.use(getConversationMiddleware());
 router.use(updateConversationMiddleware());
+
 router.use(createOutboundMessageMiddleware(outboundMessageConfig));
 router.use(sendOutboundMessageMiddleware());
 
