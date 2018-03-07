@@ -4,10 +4,14 @@ const express = require('express');
 
 const router = express.Router();
 
+// Middleware configs
+const getUserConfig = require('../../../config/lib/middleware/messages/member/user-get');
+
+// Middleware
 const paramsMiddleware = require('../../../lib/middleware/messages/member/params');
 const getConversationMiddleware = require('../../../lib/middleware/messages/conversation-get');
 const createConversationMiddleware = require('../../../lib/middleware/messages/conversation-create');
-const getUserMiddleware = require('../../../lib/middleware/messages/member/user-get');
+const getUserMiddleware = require('../../../lib/middleware/messages/user-get');
 const createUserIfNotFoundMiddleware = require('../../../lib/middleware/messages/member/user-create');
 const loadInboundMessageMiddleware = require('../../../lib/middleware/messages/member/message-inbound-load');
 const createInboundMessageMiddleware = require('../../../lib/middleware/messages/member/message-inbound-create');
@@ -30,7 +34,7 @@ const continueCampaignMiddleware = require('../../../lib/middleware/messages/mem
 router.use(paramsMiddleware());
 
 // Fetch User for Conversation.
-router.use(getUserMiddleware());
+router.use(getUserMiddleware(getUserConfig));
 
 // Creates User if doesn't exist.
 router.use(createUserIfNotFoundMiddleware());
