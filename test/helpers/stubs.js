@@ -21,6 +21,11 @@ module.exports = {
         shouldSendWhenPaused,
       };
     },
+    getUser: function getUser(shouldSendErrorIfNotFound = true) {
+      return {
+        shouldSendErrorIfNotFound,
+      };
+    },
   },
   gambitCampaigns: {
     getSignupId: function getSignupId() {

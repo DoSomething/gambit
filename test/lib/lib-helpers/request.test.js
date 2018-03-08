@@ -22,6 +22,7 @@ const sandbox = sinon.sandbox.create();
 
 const campaignId = stubs.getCampaignId();
 const userId = stubs.getUserId();
+const platformUserId = stubs.getMobileNumber();
 const conversation = conversationFactory.getValidConversation();
 const message = conversation.lastOutboundMessage;
 
@@ -85,6 +86,19 @@ test('setLastOutboundMessage should inject lastOutbound properties to req', (t) 
   helpers.analytics.addCustomAttributes.should.have.been.called;
 });
 
+test('setOutboundMessageTemplate should inject a outboundMessageTemplate property to req', (t) => {
+  const outboundMessageTemplate = message.template;
+  requestHelper.setOutboundMessageTemplate(t.context.req, outboundMessageTemplate);
+  t.context.req.outboundMessageTemplate.should.equal(outboundMessageTemplate);
+  helpers.analytics.addCustomAttributes.should.have.been.calledWith({ outboundMessageTemplate });
+});
+
+test('setOutboundMessageText should inject a outboundMessageTextproperty to req', (t) => {
+  const text = message.text;
+  requestHelper.setOutboundMessageText(t.context.req, text);
+  t.context.req.outboundMessageText.should.equal(text);
+});
+
 test('setPlatform should set req.platform to platform parameter', (t) => {
   const alexaPlatform = 'alexa';
   requestHelper.setPlatform(t.context.req, alexaPlatform);
@@ -98,6 +112,12 @@ test('setPlatform should set req.platform to sms if platform parameter undefined
   const smsPlatform = stubs.getPlatform();
   t.context.req.platform.should.equal(smsPlatform);
   helpers.analytics.addCustomAttributes.should.have.been.calledWith({ platform: smsPlatform });
+});
+
+test('setPlatformUserId should inject a platformUserId property to req', (t) => {
+  requestHelper.setPlatformUserId(t.context.req, platformUserId);
+  t.context.req.platformUserId.should.equal(platformUserId);
+  helpers.analytics.addCustomAttributes.should.have.been.calledWith({ platformUserId });
 });
 
 test('setUserId should inject a userId property to req', (t) => {
