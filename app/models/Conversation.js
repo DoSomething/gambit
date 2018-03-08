@@ -24,7 +24,6 @@ const conversationSchema = new mongoose.Schema({
     type: String,
     index: true,
   },
-  paused: Boolean,
   topic: String,
   campaignId: Number,
   signupStatus: String,
@@ -47,7 +46,6 @@ conversationSchema.statics.createFromReq = function (req) {
     userId: req.userId,
     platform: req.platform,
     platformUserId: req.platformUserId,
-    paused: false,
     topic: defaultTopic,
   };
 
@@ -84,47 +82,39 @@ conversationSchema.statics.findOneAndPopulateLastOutboundMessage = function (que
 };
 
 /**
- * Update topic and check whether to toggle paused.
- * @return {boolean}
+ * Set topic property.
+ * @param {String} topic
+ * @return {Promise}
  */
-conversationSchema.methods.setTopic = function (newTopic) {
-  if (this.topic === newTopic) {
-    return this.save();
-  }
-
-  if (this.topic === supportTopic && newTopic !== supportTopic) {
-    this.paused = false;
-  }
-
-  if (this.topic !== supportTopic && newTopic === supportTopic) {
-    this.paused = true;
-  }
-
-  this.topic = newTopic;
-  logger.debug('Conversation.setTopic', { newTopic });
-
+conversationSchema.methods.setTopic = function (topic) {
+  this.topic = topic;
   return this.save();
 };
 
 /**
- * Set topic to support to pause Conversation.
+ * @return {Promise}
  */
-conversationSchema.methods.supportRequested = function () {
-  return this.setTopic(supportTopic);
-};
-
-/**
- * Set topic to our default to unpause Conversation.
- */
-conversationSchema.methods.supportResolved = function () {
-  // TODO: We should update Northstar User's sms_status here. It currently won't get updated until
-  // the User sends a message back to Gambit, after receiving the support message from an agent.
+conversationSchema.methods.setDefaultTopic = function () {
   return this.setTopic(defaultTopic);
 };
 
 /**
+ * @return {Promise}
+ */
+conversationSchema.methods.setCampaignTopic = function () {
+  return this.setTopic(campaignTopic);
+};
+
+/**
+ * @return {Promise}
+ */
+conversationSchema.methods.setSupportTopic = function () {
+  return this.setTopic(supportTopic);
+};
+
+/**
  * Returns save of User for updating given Campaign and its topic.
- * TODO: We may want to refactor to just pass a campaignId. We were initially passing a campaign
+ * TODO: Refactor to just pass a campaignId. We were initially passing a campaign
  * model to set Conversation.topic (if Campaign had its own Rivescript topic defined).
  *
  * @param {Campaign} campaign
@@ -151,9 +141,7 @@ conversationSchema.methods.setCampaign = function (campaign) {
 /**
  * Sets the Conversation topic to campaignTopic to enable Campaign Rivescript triggers.
  */
-conversationSchema.methods.setCampaignTopic = function () {
-  return this.setTopic(campaignTopic);
-};
+
 
 /**
  * Prompt signup for current campaign.
@@ -349,6 +337,13 @@ conversationSchema.methods.postMessageToSupport = function (req, message) {
  */
 conversationSchema.methods.isSms = function () {
   return this.platform === 'sms';
+};
+
+/**
+ * @return {boolean}
+ */
+conversationSchema.methods.isSupportTopic = function () {
+  return this.topic === supportTopic;
 };
 
 module.exports = mongoose.model('Conversation', conversationSchema);
