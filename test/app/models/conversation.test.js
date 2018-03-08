@@ -16,37 +16,30 @@ const twilio = require('../../../lib/twilio');
 const stubs = require('../../helpers/stubs');
 const conversationFactory = require('../../helpers/factories/conversation');
 const messageFactory = require('../../helpers/factories/message');
-const userFactory = require('../../helpers/factories/user');
+
+const config = require('../../../config/app/models/conversation');
 
 const tagsHelper = helpers.tags;
-const conversation = conversationFactory.getValidConversation();
+const topics = config.topics;
+const smsConversation = conversationFactory.getValidConversation();
 const alexaConversation = conversationFactory.getValidConversation('alexa');
+const supportConversation = conversationFactory.getValidSupportConversation();
 const message = messageFactory.getValidMessage();
 const mockMessageText = stubs.getRandomMessageText();
-const mockUser = userFactory.getValidUser();
 const resolvedPromise = Promise.resolve({});
 
-// setup "x.should.y" assertion style
 chai.should();
 chai.use(sinonChai);
 
-// module to be tested
-// const Conversation = require('../../../app/models/Conversation');
-
-// sinon sandbox object
 const sandbox = sinon.sandbox.create();
 
 test.beforeEach((t) => {
-  sandbox.stub(helpers.user, 'fetchById')
-    .returns(mockUser);
-  sandbox.stub(helpers.user, 'fetchByMobile')
-    .returns(mockUser);
   t.context.req = httpMocks.createRequest();
   t.context.res = httpMocks.createResponse();
 });
 
-test.afterEach(() => {
-  // reset stubs, spies, and mocks
+test.afterEach((t) => {
+  t.context = {};
   sandbox.restore();
 });
 
@@ -57,7 +50,7 @@ test('createMessage should call helpers.tag.render if direction is not inbound',
   sandbox.stub(Message, 'create')
     .returns(underscore.noop);
 
-  await conversation.createMessage('outbound-api-send', mockMessageText, 'temp', t.context.req);
+  await smsConversation.createMessage('outbound-api-send', mockMessageText, 'temp', t.context.req);
   tagsHelper.render.should.have.been.called;
   Message.create.should.have.been.called;
 });
@@ -68,17 +61,33 @@ test('createMessage should not call helpers.tag.render if direction is inbound',
   sandbox.stub(Message, 'create')
     .returns(underscore.noop);
 
-  await conversation.createMessage('inbound', mockMessageText, 'temp', t.context.req);
+  await smsConversation.createMessage('inbound', mockMessageText, 'temp', t.context.req);
   tagsHelper.render.should.not.have.been.called;
   Message.create.should.have.been.called;
+});
+
+// isSms
+test('isSms should return boolean', (t) => {
+  let result = smsConversation.isSms();
+  t.truthy(result);
+
+  result = alexaConversation.isSms();
+  t.falsy(result);
+});
+
+// isSupportTopic
+test('isSupportTopic should return boolean', (t) => {
+  let result = smsConversation.isSupportTopic();
+  t.falsy(result);
+
+  result = supportConversation.isSupportTopic();
+  t.truthy(result);
 });
 
 // postLastOutboundMessageToPlatform
 test('postLastOutboundMessageToPlatform does not call twilio.postMessage if text undefined', async (t) => {
   sandbox.stub(twilio, 'postMessage')
     .returns(resolvedPromise);
-  const supportConversation = conversationFactory.getValidConversation();
-  supportConversation.lastOutboundMessage.text = '';
   t.context.req.conversation = supportConversation;
 
   await supportConversation.postLastOutboundMessageToPlatform(t.context.req);
@@ -97,9 +106,9 @@ test('postLastOutboundMessageToPlatform does not call twilio.postMessage if conv
 test('postLastOutboundMessageToPlatform calls twilio.postMessage if conversation is SMS', async (t) => {
   sandbox.stub(twilio, 'postMessage')
     .returns(resolvedPromise);
-  t.context.req.conversation = conversation;
+  t.context.req.conversation = smsConversation;
 
-  await conversation.postLastOutboundMessageToPlatform(t.context.req);
+  await smsConversation.postLastOutboundMessageToPlatform(t.context.req);
   twilio.postMessage.should.have.been.called;
 });
 
@@ -116,17 +125,34 @@ test('postMessageToSupport does not call front.postMessage if conversation is no
 test('postMessageToSupport calls front.postMessage if conversation is SMS', async (t) => {
   sandbox.stub(front, 'postMessage')
     .returns(resolvedPromise);
-  t.context.req.conversation = conversation;
+  t.context.req.conversation = smsConversation;
 
-  await conversation.postMessageToSupport(t.context.req, message);
+  await smsConversation.postMessageToSupport(t.context.req, message);
   front.postMessage.should.have.been.called;
 });
 
-// isSms
-test('isSms should return boolean', (t) => {
-  let result = conversation.isSms();
-  t.truthy(result);
+// setTopic
+test('setTopic calls save', async () => {
+  const mockConversation = conversationFactory.getValidConversation();
+  const mockTopic = 'lannisters';
+  sandbox.stub(mockConversation, 'save')
+    .returns(Promise.resolve(mockConversation));
 
-  result = alexaConversation.isSms();
-  t.falsy(result);
+  await mockConversation.setTopic(mockTopic);
+  mockConversation.save.should.have.been.called;
+});
+
+test('setDefaultTopic, setSupportTopic, setCampaignTopic call setTopic', async () => {
+  const mockConversation = conversationFactory.getValidConversation();
+  sandbox.stub(mockConversation, 'setTopic')
+    .returns(Promise.resolve(mockConversation));
+
+  await mockConversation.setDefaultTopic();
+  mockConversation.setTopic.should.have.been.calledWith(topics.default);
+
+  await mockConversation.setCampaignTopic();
+  mockConversation.setTopic.should.have.been.calledWith(topics.campaign);
+
+  await mockConversation.setSupportTopic();
+  mockConversation.setTopic.should.have.been.calledWith(topics.support);
 });

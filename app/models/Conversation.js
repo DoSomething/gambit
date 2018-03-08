@@ -7,9 +7,7 @@ const helpers = require('../../lib/helpers');
 const front = require('../../lib/front');
 const twilio = require('../../lib/twilio');
 
-const campaignTopic = 'campaign';
-const defaultTopic = 'random';
-const supportTopic = 'support';
+const config = require('../../config/app/models/conversation');
 
 /**
  * Schema.
@@ -46,7 +44,7 @@ conversationSchema.statics.createFromReq = function (req) {
     userId: req.userId,
     platform: req.platform,
     platformUserId: req.platformUserId,
-    topic: defaultTopic,
+    topic: config.topics.default,
   };
 
   return this.create(data);
@@ -95,21 +93,21 @@ conversationSchema.methods.setTopic = function (topic) {
  * @return {Promise}
  */
 conversationSchema.methods.setDefaultTopic = function () {
-  return this.setTopic(defaultTopic);
+  return this.setTopic(config.topics.default);
 };
 
 /**
  * @return {Promise}
  */
 conversationSchema.methods.setCampaignTopic = function () {
-  return this.setTopic(campaignTopic);
+  return this.setTopic(config.topics.campaign);
 };
 
 /**
  * @return {Promise}
  */
 conversationSchema.methods.setSupportTopic = function () {
-  return this.setTopic(supportTopic);
+  return this.setTopic(config.topics.support);
 };
 
 /**
@@ -343,7 +341,7 @@ conversationSchema.methods.isSms = function () {
  * @return {boolean}
  */
 conversationSchema.methods.isSupportTopic = function () {
-  return this.topic === supportTopic;
+  return this.topic === config.topics.support;
 };
 
 module.exports = mongoose.model('Conversation', conversationSchema);
