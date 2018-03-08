@@ -5,7 +5,8 @@ const express = require('express');
 const router = express.Router();
 
 // Middleware configs
-const outboundMessageConfig = require('../../../config/lib/middleware/messages/signup/message-outbound');
+const getUserConfig = require('../../../config/lib/middleware/messages/user-get');
+const outboundMessageConfig = require('../../../config/lib/middleware/messages/message-outbound');
 
 // Middleware
 const paramsMiddleware = require('../../../lib/middleware/messages/signup/params');
@@ -21,15 +22,17 @@ const sendOutboundMessageMiddleware = require('../../../lib/middleware/messages/
 
 router.use(paramsMiddleware());
 
+// Validate Campaign Signup should send a Signup Menu message.
+router.use(getCampaignMiddleware());
+
 // Fetch Northstar User.
-router.use(getUserMiddleware());
+router.use(getUserMiddleware(getUserConfig));
 router.use(validateOutboundMessageMiddleware(outboundMessageConfig));
 
 // Find or create Conversation.
 router.use(getConversationMiddleware());
 router.use(createConversationMiddleware());
 
-router.use(getCampaignMiddleware());
 router.use(updateConversationMiddleware());
 
 router.use(loadOutboundMessageMiddleware(outboundMessageConfig));

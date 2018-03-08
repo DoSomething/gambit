@@ -40,7 +40,7 @@ test.beforeEach((t) => {
   t.context.res = httpMocks.createResponse();
   // add params
   t.context.req.outboundMessageText = stubs.getRandomMessageText();
-  t.context.req.outboundTemplate = stubs.getTemplate();
+  t.context.req.outboundMessageTemplate = stubs.getTemplate();
 });
 
 test.afterEach((t) => {
@@ -51,7 +51,7 @@ test.afterEach((t) => {
 
 test('createOutboundMessage calls next if req.outboundMessage exists', async (t) => {
   const next = sinon.stub();
-  sandbox.stub(mockConversation, 'createLastOutboundMessage')
+  sandbox.stub(mockConversation, 'createAndSetLastOutboundMessage')
     .returns(messageCreateStub);
   t.context.req.conversation = mockConversation;
   t.context.req.outboundMessage = mockMessage;
@@ -60,35 +60,35 @@ test('createOutboundMessage calls next if req.outboundMessage exists', async (t)
   // test
   await middleware(t.context.req, t.context.res, next);
   next.should.have.been.called;
-  t.context.req.conversation.createLastOutboundMessage.should.not.have.been.called;
+  t.context.req.conversation.createAndSetLastOutboundMessage.should.not.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 
-test('createOutboundMessage calls Conversation.createLastOutboundMessage', async (t) => {
+test('createOutboundMessage calls Conversation.createAndSetLastOutboundMessage', async (t) => {
   const next = sinon.stub();
-  sandbox.stub(mockConversation, 'createLastOutboundMessage')
+  sandbox.stub(mockConversation, 'createAndSetLastOutboundMessage')
     .returns(messageCreateStub);
   t.context.req.conversation = mockConversation;
   const middleware = createOutboundMessage(configStub);
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  t.context.req.conversation.createLastOutboundMessage.should.have.been.called;
+  t.context.req.conversation.createAndSetLastOutboundMessage.should.have.been.called;
   t.context.req.should.have.property('outboundMessage');
   next.should.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 
-test('createOutboundMessage calls sendErrorResponse if createLastOutboundMessage fails', async (t) => {
+test('createOutboundMessage calls sendErrorResponse if createAndSetLastOutboundMessage fails', async (t) => {
   const next = sinon.stub();
-  sandbox.stub(mockConversation, 'createLastOutboundMessage')
+  sandbox.stub(mockConversation, 'createAndSetLastOutboundMessage')
     .returns(messageCreateFailStub);
   t.context.req.conversation = mockConversation;
   const middleware = createOutboundMessage(configStub);
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  t.context.req.conversation.createLastOutboundMessage.should.have.been.called;
+  t.context.req.conversation.createAndSetLastOutboundMessage.should.have.been.called;
   next.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
 });

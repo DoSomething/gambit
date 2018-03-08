@@ -11,15 +11,20 @@ const underscore = require('underscore');
 
 const Message = require('../../../app/models/Message');
 const helpers = require('../../../lib/helpers');
+const front = require('../../../lib/front');
+const twilio = require('../../../lib/twilio');
 const stubs = require('../../helpers/stubs');
 const conversationFactory = require('../../helpers/factories/conversation');
+const messageFactory = require('../../helpers/factories/message');
 const userFactory = require('../../helpers/factories/user');
 
 const tagsHelper = helpers.tags;
 const conversation = conversationFactory.getValidConversation();
 const alexaConversation = conversationFactory.getValidConversation('alexa');
+const message = messageFactory.getValidMessage();
 const mockMessageText = stubs.getRandomMessageText();
 const mockUser = userFactory.getValidUser();
+const resolvedPromise = Promise.resolve({});
 
 // setup "x.should.y" assertion style
 chai.should();
@@ -68,17 +73,53 @@ test('createMessage should not call helpers.tag.render if direction is inbound',
   Message.create.should.have.been.called;
 });
 
-// getNorthstarUser
-test('getNorthstarUser should return northstar.fetchUserByMobile for SMS', async () => {
-  const result = await conversation.getNorthstarUser();
-  helpers.user.fetchByMobile.should.have.been.called;
-  result.should.equal(mockUser);
+// postLastOutboundMessageToPlatform
+test('postLastOutboundMessageToPlatform does not call twilio.postMessage if text undefined', async (t) => {
+  sandbox.stub(twilio, 'postMessage')
+    .returns(resolvedPromise);
+  const supportConversation = conversationFactory.getValidConversation();
+  supportConversation.lastOutboundMessage.text = '';
+  t.context.req.conversation = supportConversation;
+
+  await supportConversation.postLastOutboundMessageToPlatform(t.context.req);
+  twilio.postMessage.should.not.have.been.called;
 });
 
-test('getNorthstarUser should return northstar.fetchById for non SMS', async () => {
-  const result = await alexaConversation.getNorthstarUser();
-  helpers.user.fetchById.should.have.been.called;
-  result.should.equal(mockUser);
+test('postLastOutboundMessageToPlatform does not call twilio.postMessage if conversation is not SMS', async (t) => {
+  sandbox.stub(twilio, 'postMessage')
+    .returns(resolvedPromise);
+  t.context.req.conversation = alexaConversation;
+
+  await alexaConversation.postLastOutboundMessageToPlatform(t.context.req);
+  twilio.postMessage.should.not.have.been.called;
+});
+
+test('postLastOutboundMessageToPlatform calls twilio.postMessage if conversation is SMS', async (t) => {
+  sandbox.stub(twilio, 'postMessage')
+    .returns(resolvedPromise);
+  t.context.req.conversation = conversation;
+
+  await conversation.postLastOutboundMessageToPlatform(t.context.req);
+  twilio.postMessage.should.have.been.called;
+});
+
+// postMessageToSupport
+test('postMessageToSupport does not call front.postMessage if conversation is not SMS', async (t) => {
+  sandbox.stub(front, 'postMessage')
+    .returns(resolvedPromise);
+  t.context.req.conversation = alexaConversation;
+
+  await alexaConversation.postMessageToSupport(t.context.req, message);
+  front.postMessage.should.not.have.been.called;
+});
+
+test('postMessageToSupport calls front.postMessage if conversation is SMS', async (t) => {
+  sandbox.stub(front, 'postMessage')
+    .returns(resolvedPromise);
+  t.context.req.conversation = conversation;
+
+  await conversation.postMessageToSupport(t.context.req, message);
+  front.postMessage.should.have.been.called;
 });
 
 // isSms

@@ -97,7 +97,9 @@ test('sendReply(): responds with the inbound and outbound messages', async (t) =
     inboundMessage,
     outboundMessage,
   });
-  sandbox.stub(req.conversation, 'createAndPostOutboundReplyMessage')
+  sandbox.stub(req.conversation, 'createAndSetLastOutboundMessage')
+    .returns(resolvedPromise);
+  sandbox.stub(req.conversation, 'postLastOutboundMessageToPlatform')
     .returns(resolvedPromise);
   sandbox.spy(t.context.res, 'send');
 
@@ -107,7 +109,8 @@ test('sendReply(): responds with the inbound and outbound messages', async (t) =
 
   // asserts
   t.context.res.send.should.have.been.called;
-  req.conversation.createAndPostOutboundReplyMessage.should.have.been.called;
+  req.conversation.createAndSetLastOutboundMessage.should.have.been.called;
+  req.conversation.postLastOutboundMessageToPlatform.should.have.been.called;
   responseMessages.inbound[0].should.be.equal(inboundMessage);
   responseMessages.outbound[0].should.be.equal(outboundMessage);
 });
@@ -142,7 +145,7 @@ test('sendReply(): should create and post the outbound message if there is no la
     .returns(resolvedPromise);
   sandbox.stub(Message, 'updateMessageByRequestIdAndDirection')
     .returns(resolvedPromise);
-  sandbox.stub(req.conversation, 'createAndPostOutboundReplyMessage')
+  sandbox.stub(req.conversation, 'createAndSetLastOutboundMessage')
     .returns(resolvedPromise);
 
   // test
@@ -150,14 +153,14 @@ test('sendReply(): should create and post the outbound message if there is no la
 
   // asserts
   Message.updateMessageByRequestIdAndDirection.should.not.have.been.called;
-  req.conversation.postLastOutboundMessageToPlatform.should.not.have.been.called;
-  req.conversation.createAndPostOutboundReplyMessage.should.have.been.called;
+  req.conversation.createAndSetLastOutboundMessage.should.have.been.called;
+  req.conversation.postLastOutboundMessageToPlatform.should.have.been.called;
 });
 
 test('sendReply(): should call sendErrorResponse on failure', async (t) => {
   // setup
   const req = getReqWithProps();
-  sandbox.stub(req.conversation, 'createAndPostOutboundReplyMessage')
+  sandbox.stub(req.conversation, 'createAndSetLastOutboundMessage')
     .returns(rejectedPromise);
 
   // test

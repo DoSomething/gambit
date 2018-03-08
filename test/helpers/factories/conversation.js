@@ -2,6 +2,7 @@
 
 const ObjectID = require('mongoose').Types.ObjectId;
 const Conversation = require('../../../app/models/Conversation');
+const messageFactory = require('./message');
 const stubs = require('../stubs');
 
 module.exports.getValidConversation = function getValidConversation(platformString) {
@@ -15,10 +16,12 @@ module.exports.getValidConversation = function getValidConversation(platformStri
     id,
     _id: id,
     platform,
+    userId: stubs.getUserId(),
     platformUserId: stubs.getMobileNumber(),
     topic: stubs.getTopic(),
     paused: false,
     createdAt: date,
     updatedAt: date,
+    lastOutboundMessage: messageFactory.getValidMessage(),
   });
 };

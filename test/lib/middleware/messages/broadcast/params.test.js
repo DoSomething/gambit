@@ -30,7 +30,6 @@ test.beforeEach((t) => {
   sandbox.spy(helpers.request, 'setUserId');
   sandbox.spy(helpers.request, 'setBroadcastId');
   sandbox.spy(helpers.request, 'setPlatform');
-  sandbox.spy(helpers.request, 'setPlatformToSms');
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(underscore.noop);
 
@@ -83,8 +82,7 @@ test('paramsMiddleware should call setPlatformToSms if body.platform not found',
   helpers.sendErrorResponse.should.not.have.been.called;
   helpers.request.setUserId.should.have.been.called;
   helpers.request.setBroadcastId.should.have.been.called;
-  helpers.request.setPlatformToSms.should.have.been.calledWith(t.context.req);
-  t.context.req.should.not.have.property('platformUserId');
+  helpers.request.setPlatform.should.have.been.called;
   next.should.have.been.called;
 });
 
@@ -102,6 +100,5 @@ test('paramsMiddleware should call setPlatform to body.platform if exists', asyn
   await middleware(t.context.req, t.context.res, next);
   helpers.sendErrorResponse.should.not.have.been.called;
   helpers.request.setPlatform.should.have.been.calledWith(t.context.req, platform);
-  t.context.req.platformUserId.should.equal(userId);
   next.should.have.been.called;
 });

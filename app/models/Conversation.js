@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const logger = require('../../lib/logger');
 const Message = require('./Message');
 const helpers = require('../../lib/helpers');
+const front = require('../../lib/front');
 const twilio = require('../../lib/twilio');
 
 const campaignTopic = 'campaign';
@@ -14,6 +15,10 @@ const supportTopic = 'support';
  * Schema.
  */
 const conversationSchema = new mongoose.Schema({
+  userId: {
+    type: String,
+    index: true,
+  },
   platform: String,
   platformUserId: {
     type: String,
@@ -31,6 +36,7 @@ const conversationSchema = new mongoose.Schema({
 
 conversationSchema.index({ createdAt: 1 });
 conversationSchema.index({ updatedAt: 1 });
+conversationSchema.index({ userId: 1, platform: 1 });
 
 /**
  * @param {Object} req - Express request
@@ -38,8 +44,9 @@ conversationSchema.index({ updatedAt: 1 });
  */
 conversationSchema.statics.createFromReq = function (req) {
   const data = {
-    platformUserId: req.platformUserId,
+    userId: req.userId,
     platform: req.platform,
+    platformUserId: req.platformUserId,
     paused: false,
     topic: defaultTopic,
   };
@@ -52,9 +59,27 @@ conversationSchema.statics.createFromReq = function (req) {
  * @return {Promise}
  */
 conversationSchema.statics.getFromReq = function (req) {
-  const query = { platformUserId: req.platformUserId };
-  logger.debug('Conversation.getFromReq', query, req);
+  const queryByUserId = { userId: req.userId, platform: req.platform };
 
+  return this.findOneAndPopulateLastOutboundMessage(queryByUserId, req)
+    .then((conversation) => {
+      if (conversation) {
+        return Promise.resolve(conversation);
+      }
+      // Have we already saved a Conversation for this User before we added userId?
+      // TODO: Remove this when all Conversations have been backfilled with userId.
+      const queryByPlatformUserId = { platform: 'sms', platformUserId: req.platformUserId };
+      return this.findOneAndPopulateLastOutboundMessage(queryByPlatformUserId, req);
+    });
+};
+
+/**
+ * @param {Object} query - Mongoose query object
+ * @param {Object} req - Express request
+ * @return {Promise}
+ */
+conversationSchema.statics.findOneAndPopulateLastOutboundMessage = function (query, req) {
+  logger.debug('Conversation.findOne', query, req);
   return this.findOne(query).populate('lastOutboundMessage');
 };
 
@@ -162,6 +187,7 @@ conversationSchema.methods.getDefaultMessagePayload = function (text, template) 
     conversationId: this,
     campaignId: this.campaignId,
     topic: this.topic,
+    userId: this.userId,
   };
   if (text) {
     data.text = text;
@@ -266,50 +292,56 @@ conversationSchema.methods.setLastOutboundMessage = function (outboundMessage) {
  * @param {string} template
  * @return {Promise}
  */
-conversationSchema.methods.createLastOutboundMessage = function (direction, text, template, req) {
+conversationSchema.methods.createAndSetLastOutboundMessage = function (direction, text, template, req) { // eslint-disable-line max-len
   return this.createMessage(direction, text, template, req)
-    .then(message => this.setLastOutboundMessage(message));
-};
-
-/**
- * @param {string} text
- * @param {string} template
- * @return {Promise}
- */
-conversationSchema.methods.createAndPostOutboundReplyMessage = function (text, template, req) {
-  const suppressReply = helpers.request.shouldSuppressOutboundReply(req);
-
-  return this.createLastOutboundMessage('outbound-reply', text, template, req)
-    .then(() => {
-      if (suppressReply) return Promise.resolve();
-
-      return this.postLastOutboundMessageToPlatform();
+    .then((message) => {
+      logger.debug('created message', { messageId: message.id }, req);
+      // Backfill Conversations that may not have userId set.
+      if (!this.userId) {
+        logger.debug('Backfilling Conversation.userId', {
+          userId: req.userId,
+          conversationId: this.id,
+        }, req);
+        this.userId = req.userId;
+      }
+      return this.setLastOutboundMessage(message);
     });
 };
 
 /**
  * Posts the Last Outbound Message to Twilio for SMS conversations.
  */
-conversationSchema.methods.postLastOutboundMessageToPlatform = function () {
+conversationSchema.methods.postLastOutboundMessageToPlatform = function (req) {
   const messageText = this.lastOutboundMessage.text;
 
-  // This could be blank for noReply templates.
   if (!messageText || !this.isSms()) {
     return Promise.resolve();
   }
 
-  return twilio.postMessage(this.platformUserId, messageText);
+  return twilio.postMessage(req.platformUserId, messageText)
+    .then((twilioRes) => {
+      // TODO: Store this metadata on our lastOutboundMessage:
+      const sid = twilioRes.sid;
+      const status = twilioRes.status;
+      logger.debug('twilio.postMessage', { sid, status }, req);
+      return twilioRes;
+    });
 };
 
 /**
- * @return {Promise}
+ * Posts the given Message from User to Support inbox for SMS conversations.
  */
-conversationSchema.methods.getNorthstarUser = function () {
-  if (this.isSms()) {
-    return helpers.user.fetchByMobile(this.platformUserId);
+conversationSchema.methods.postMessageToSupport = function (req, message) {
+  if (!this.isSms()) {
+    logger.debug('Support not available for platform.', { platform: this.platform }, req);
+    return Promise.resolve();
   }
 
-  return helpers.user.fetchById(this.platformUserId);
+  return front.postMessage(req.platformUserId, message.text)
+    .then((res) => {
+      logger.debug('front.postMessage response', { body: res.body }, req);
+      return res;
+    });
 };
 
 /**

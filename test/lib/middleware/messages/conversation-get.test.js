@@ -41,7 +41,8 @@ test.beforeEach((t) => {
     .callsFake(conversationLookupFailStub)
     .withArgs('notFound')
     .callsFake(conversationLookupNotFoundStub);
-
+  sandbox.stub(helpers.request, 'setConversation')
+    .returns(underscore.noop);
   sandbox.stub(analyticsHelper, 'addCustomAttributes')
     .returns(underscore.noop);
   sandbox.stub(helpers, 'sendErrorResponse')
@@ -54,7 +55,7 @@ test.beforeEach((t) => {
 
   // add params
   t.context.req.platform = stubs.getPlatform();
-  t.context.req.platformUserId = stubs.getPlatformUserId();
+  t.context.req.userId = stubs.getUserId();
 });
 
 // Cleanup!
@@ -64,17 +65,14 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-test('getConversation should inject a conversation into the req object when found in DB', async (t) => {
+test('getConversation should inject req.conversation when found in DB', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = getConversation();
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  t.context.req.should.have.property('conversation');
-  const conversation = t.context.req.conversation;
-  conversation.should.deep.equal(mockConversation);
-  analyticsHelper.addCustomAttributes.should.have.been.called;
+  helpers.request.setConversation.should.have.been.calledWith(t.context.req, mockConversation);
   next.should.have.been.called;
 });
 
@@ -85,7 +83,8 @@ test('getConversation should call next if Conversation.getFromReq response is nu
 
   // test
   await middleware('notFound', t.context.res, next);
-  analyticsHelper.addCustomAttributes.should.not.have.been.called;
+  helpers.request.setConversation.should.not.have.been.called;
+  t.context.req.should.not.have.property('conversation');
   next.should.have.been.called;
 });
 
@@ -97,6 +96,6 @@ test('getConversation should call sendErrorResponse if Conversation.getFromReq f
   // test
   await middleware('fail', t.context.res, next);
   helpers.sendErrorResponse.should.have.been.called;
-  analyticsHelper.addCustomAttributes.should.not.have.been.called;
+  helpers.request.setConversation.should.not.have.been.called;
   next.should.not.have.been.called;
 });
