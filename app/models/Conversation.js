@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const logger = require('../../lib/logger');
 const Message = require('./Message');
 const helpers = require('../../lib/helpers');
+const front = require('../../lib/front');
 const twilio = require('../../lib/twilio');
 
 const campaignTopic = 'campaign';
@@ -324,6 +325,22 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function (req) {
       const status = twilioRes.status;
       logger.debug('twilio.postMessage', { sid, status }, req);
       return twilioRes;
+    });
+};
+
+/**
+ * Posts the given Message from User to Support inbox for SMS conversations.
+ */
+conversationSchema.methods.postMessageToSupport = function (req, message) {
+  if (!this.isSms()) {
+    logger.debug('Support not available for platform.', { platform: this.platform }, req);
+    return Promise.resolve();
+  }
+
+  return front.postMessage(req.platformUserId, message.text)
+    .then((res) => {
+      logger.debug('front.postMessage response', { body: res.body }, req);
+      return res;
     });
 };
 
