@@ -40,7 +40,7 @@ test.beforeEach((t) => {
   t.context.res = httpMocks.createResponse();
   // add params
   t.context.req.outboundMessageText = stubs.getRandomMessageText();
-  t.context.req.outboundTemplate = stubs.getTemplate();
+  t.context.req.outboundMessageTemplate = stubs.getTemplate();
 });
 
 test.afterEach((t) => {
