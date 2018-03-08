@@ -22,6 +22,7 @@ const sandbox = sinon.sandbox.create();
 
 const campaignId = stubs.getCampaignId();
 const userId = stubs.getUserId();
+const platformUserId = stubs.getMobileNumber();
 const conversation = conversationFactory.getValidConversation();
 const message = conversation.lastOutboundMessage;
 
@@ -98,6 +99,12 @@ test('setPlatform should set req.platform to sms if platform parameter undefined
   const smsPlatform = stubs.getPlatform();
   t.context.req.platform.should.equal(smsPlatform);
   helpers.analytics.addCustomAttributes.should.have.been.calledWith({ platform: smsPlatform });
+});
+
+test('setPlatformUserId should inject a platformUserId property to req', (t) => {
+  requestHelper.setPlatformUserId(t.context.req, platformUserId);
+  t.context.req.platformUserId.should.equal(platformUserId);
+  helpers.analytics.addCustomAttributes.should.have.been.calledWith({ platformUserId });
 });
 
 test('setUserId should inject a userId property to req', (t) => {

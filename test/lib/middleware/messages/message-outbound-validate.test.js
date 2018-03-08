@@ -31,6 +31,8 @@ const supportConfigStub = stubs.config.getMessageOutbound(true);
 
 // Setup!
 test.beforeEach((t) => {
+  sandbox.stub(helpers.request, 'setPlatformUserId')
+    .returns(underscore.noop);
   sandbox.stub(helpers, 'sendErrorResponseWithSuppressHeaders')
     .returns(sendErrorResponseStub);
 
@@ -62,7 +64,7 @@ test('validateOutbound calls sendErrorResponseWithSuppressHeaders if user is not
   next.should.not.have.been.called;
 });
 
-test('validateOutbound sends error if user is paused and config is not shouldSendWhenPaused', (t) => {
+test('validateOutbound sends error if user is paused and config.shouldSendWhenPaused is false', (t) => {
   // setup
   const next = sinon.stub();
   const middleware = validateOutbound(defaultConfigStub);
@@ -115,6 +117,7 @@ test('validateOutbound calls next if user validates', (t) => {
   helpers.user.isSubscriber.should.have.been.called;
   helpers.user.isPaused.should.have.been.called;
   helpers.formatMobileNumber.should.have.been.called;
+  helpers.request.setPlatformUserId.should.have.been.called;
   helpers.sendErrorResponseWithSuppressHeaders.should.not.have.been.called;
   next.should.have.been.called;
 });
@@ -136,11 +139,12 @@ test('validateOutbound does not call formatMobileNumber if platform is not SMS',
   helpers.user.isSubscriber.should.have.been.called;
   helpers.user.isPaused.should.have.been.called;
   helpers.formatMobileNumber.should.not.have.been.called;
+  helpers.request.setPlatformUserId.should.not.have.been.called;
   helpers.sendErrorResponseWithSuppressHeaders.should.not.have.been.called;
   next.should.have.been.called;
 });
 
-test('validateOutbound calls next if user is paused and config is shouldSendWhenPaused', (t) => {
+test('validateOutbound calls next if user is paused and config.shouldSendWhenPaused is true', (t) => {
   // setup
   const next = sinon.stub();
   const middleware = validateOutbound(supportConfigStub);
