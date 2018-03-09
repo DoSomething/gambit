@@ -7,9 +7,7 @@ const helpers = require('../../lib/helpers');
 const front = require('../../lib/front');
 const twilio = require('../../lib/twilio');
 
-const campaignTopic = 'campaign';
-const defaultTopic = 'random';
-const supportTopic = 'support';
+const config = require('../../config/app/models/conversation');
 
 /**
  * Schema.
@@ -24,7 +22,6 @@ const conversationSchema = new mongoose.Schema({
     type: String,
     index: true,
   },
-  paused: Boolean,
   topic: String,
   campaignId: Number,
   signupStatus: String,
@@ -47,8 +44,7 @@ conversationSchema.statics.createFromReq = function (req) {
     userId: req.userId,
     platform: req.platform,
     platformUserId: req.platformUserId,
-    paused: false,
-    topic: defaultTopic,
+    topic: config.topics.default,
   };
 
   return this.create(data);
@@ -84,47 +80,43 @@ conversationSchema.statics.findOneAndPopulateLastOutboundMessage = function (que
 };
 
 /**
- * Update topic and check whether to toggle paused.
- * @return {boolean}
+ * Set topic property.
+ * @param {String} topic
+ * @return {Promise}
  */
-conversationSchema.methods.setTopic = function (newTopic) {
-  if (this.topic === newTopic) {
-    return this.save();
+conversationSchema.methods.setTopic = function (topic) {
+  if (topic === this.topic) {
+    return Promise.resolve();
   }
-
-  if (this.topic === supportTopic && newTopic !== supportTopic) {
-    this.paused = false;
-  }
-
-  if (this.topic !== supportTopic && newTopic === supportTopic) {
-    this.paused = true;
-  }
-
-  this.topic = newTopic;
-  logger.debug('Conversation.setTopic', { newTopic });
-
+  logger.debug('Conversation.setTopic', { topic });
+  this.topic = topic;
   return this.save();
 };
 
 /**
- * Set topic to support to pause Conversation.
+ * @return {Promise}
  */
-conversationSchema.methods.supportRequested = function () {
-  return this.setTopic(supportTopic);
+conversationSchema.methods.setDefaultTopic = function () {
+  return this.setTopic(config.topics.default);
 };
 
 /**
- * Set topic to our default to unpause Conversation.
+ * @return {Promise}
  */
-conversationSchema.methods.supportResolved = function () {
-  // TODO: We should update Northstar User's sms_status here. It currently won't get updated until
-  // the User sends a message back to Gambit, after receiving the support message from an agent.
-  return this.setTopic(defaultTopic);
+conversationSchema.methods.setCampaignTopic = function () {
+  return this.setTopic(config.topics.campaign);
+};
+
+/**
+ * @return {Promise}
+ */
+conversationSchema.methods.setSupportTopic = function () {
+  return this.setTopic(config.topics.support);
 };
 
 /**
  * Returns save of User for updating given Campaign and its topic.
- * TODO: We may want to refactor to just pass a campaignId. We were initially passing a campaign
+ * TODO: Refactor to just pass a campaignId. We were initially passing a campaign
  * model to set Conversation.topic (if Campaign had its own Rivescript topic defined).
  *
  * @param {Campaign} campaign
@@ -146,13 +138,6 @@ conversationSchema.methods.setCampaignWithSignupStatus = function (campaign, sig
  */
 conversationSchema.methods.setCampaign = function (campaign) {
   return this.setCampaignWithSignupStatus(campaign, 'doing');
-};
-
-/**
- * Sets the Conversation topic to campaignTopic to enable Campaign Rivescript triggers.
- */
-conversationSchema.methods.setCampaignTopic = function () {
-  return this.setTopic(campaignTopic);
 };
 
 /**
@@ -349,6 +334,13 @@ conversationSchema.methods.postMessageToSupport = function (req, message) {
  */
 conversationSchema.methods.isSms = function () {
   return this.platform === 'sms';
+};
+
+/**
+ * @return {boolean}
+ */
+conversationSchema.methods.isSupportTopic = function () {
+  return this.topic === config.topics.support;
 };
 
 module.exports = mongoose.model('Conversation', conversationSchema);

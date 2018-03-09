@@ -146,6 +146,19 @@ module.exports = {
   getUserId: function getUserId() {
     return '597b9ef910707d07c84b00aa';
   },
+  front: {
+    // @see https://dev.frontapp.com/#get-conversation
+    getConversationUrl: function getConversationUrl() {
+      return 'https://api2.frontapp.com/conversations/cnv_55c8c149';
+    },
+    getConversationSuccessBody: function getConversationSuccessBody(status = 'archived') {
+      return {
+        id: 'cnv_55c8c149',
+        subject: 'You broke my heart, Hubert.',
+        status,
+      };
+    },
+  },
   twilio: {
     getSmsMessageSid: function getSmsMessageSid() {
       return 'SMe62bd767ea4438d7f7f307ff9d3212e0';
