@@ -132,7 +132,7 @@ test('postMessageToSupport calls front.postMessage if conversation is SMS', asyn
 });
 
 // setTopic
-test('setTopic calls save', async () => {
+test('setTopic calls save for new topic', async () => {
   const mockConversation = conversationFactory.getValidConversation();
   const mockTopic = 'lannisters';
   sandbox.stub(mockConversation, 'save')
@@ -140,6 +140,15 @@ test('setTopic calls save', async () => {
 
   await mockConversation.setTopic(mockTopic);
   mockConversation.save.should.have.been.called;
+});
+
+test('setTopic does not call save for same topic', async () => {
+  const mockConversation = conversationFactory.getValidConversation();
+  sandbox.stub(mockConversation, 'save')
+    .returns(Promise.resolve(mockConversation));
+
+  await mockConversation.setTopic(mockConversation.topic);
+  mockConversation.save.should.not.have.been.called;
 });
 
 test('setDefaultTopic, setSupportTopic, setCampaignTopic call setTopic', async () => {

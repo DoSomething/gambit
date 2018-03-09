@@ -85,6 +85,10 @@ conversationSchema.statics.findOneAndPopulateLastOutboundMessage = function (que
  * @return {Promise}
  */
 conversationSchema.methods.setTopic = function (topic) {
+  if (topic === this.topic) {
+    return Promise.resolve();
+  }
+  logger.debug('Conversation.setTopic', { topic });
   this.topic = topic;
   return this.save();
 };
