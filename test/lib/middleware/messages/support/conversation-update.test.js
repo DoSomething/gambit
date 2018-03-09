@@ -79,3 +79,22 @@ test('updateConversation should call setDefaultTopic if Front Conversation is ar
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 
+test('updateConversation should not call setDefaultTopic if Front Conversation is not archived', async (t) => {
+  // setup
+  const next = sinon.stub();
+  const middleware = updateConversation();
+  sandbox.stub(helpers.front, 'getConversationByUrl')
+    .returns(frontSuccessStub);
+  sandbox.stub(helpers.front, 'isConversationArchived')
+    .returns(false);
+  sandbox.stub(conversation, 'setDefaultTopic')
+    .returns(resolvedPromise);
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  helpers.front.getConversationByUrl.should.have.been.called;
+  helpers.front.isConversationArchived.should.have.been.called;
+  conversation.setDefaultTopic.should.not.have.been.called;
+  next.should.have.been.called;
+  helpers.sendErrorResponse.should.not.have.been.called;
+});
