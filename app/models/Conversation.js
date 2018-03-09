@@ -137,11 +137,6 @@ conversationSchema.methods.setCampaign = function (campaign) {
 };
 
 /**
- * Sets the Conversation topic to campaignTopic to enable Campaign Rivescript triggers.
- */
-
-
-/**
  * Prompt signup for current campaign.
  * @param {Campaign} campaign
  * @param {string} source
