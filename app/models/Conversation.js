@@ -297,13 +297,18 @@ conversationSchema.methods.createAndSetLastOutboundMessage = function (direction
  * Posts the Last Outbound Message to Twilio for SMS conversations.
  */
 conversationSchema.methods.postLastOutboundMessageToPlatform = function (req) {
-  const messageText = this.lastOutboundMessage.text;
+  const message = this.lastOutboundMessage;
 
-  if (!messageText || !this.isSms()) {
+  if (!message.text || !this.isSms()) {
     return Promise.resolve();
   }
 
-  return twilio.postMessage(req.platformUserId, messageText)
+  let mediaUrl = null;
+  if (message.attachments.length) {
+    mediaUrl = message.attachments.map(attachment => attachment.url);
+  }
+
+  return twilio.postMessage(req.platformUserId, message.text, mediaUrl)
     .then((twilioRes) => {
       // TODO: Store this metadata on our lastOutboundMessage:
       const sid = twilioRes.sid;

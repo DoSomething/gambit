@@ -10,6 +10,7 @@ const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 
 const helpers = require('../../../../../lib/helpers');
+const contentful = require('../../../../../lib/contentful');
 const stubs = require('../../../../helpers/stubs');
 const broadcastFactory = require('../../../../helpers/factories/broadcast');
 
@@ -25,6 +26,8 @@ const sandbox = sinon.sandbox.create();
 
 
 test.beforeEach((t) => {
+  sandbox.stub(contentful, 'parseAttachmentsFromBroadcast')
+    .returns(underscore.noop);
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(underscore.noop);
   t.context.req = httpMocks.createRequest();
@@ -51,7 +54,6 @@ test('parseBroadcast should inject vars into the req object for Campaign Broadca
   helpers.broadcast.parseBroadcast.should.have.been.calledWith(t.context.req.broadcast);
   helpers.request.setCampaignId.should.have.been.calledWith(t.context.req, stubs.getCampaignId());
   t.context.req.should.not.have.property('topic');
-  t.context.req.outboundMessageText.should.equal(stubs.getBroadcastMessageText());
   next.should.have.been.called;
 });
 
@@ -67,7 +69,6 @@ test('parseBroadcast should inject vars into the req object for Topic Broadcasts
   helpers.broadcast.parseBroadcast.should.have.been.called;
   t.context.req.topic.should.equal(stubs.getTopic());
   t.context.req.should.not.have.property('campaignId');
-  t.context.req.outboundMessageText.should.equal(stubs.getBroadcastMessageText());
   next.should.have.been.called;
 });
 

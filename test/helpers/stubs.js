@@ -75,6 +75,13 @@ module.exports = {
 
     return req;
   },
+  getAttachment: function getAttachment() {
+    return {
+      url: '//images.ctfassets.net/owik07lyerdj/55kiwuII4oWWG2OiWM2E6e/fb93ab4a76c2f4a5d6c6afb1a2fc810f/doge-code.png',
+      fileName: 'doge-code.png',
+      contentType: 'image/png',
+    };
+  },
   getBroadcastId: function getBroadcastId() {
     return '72mon4jUeQOaokEIkQMaoa';
   },
