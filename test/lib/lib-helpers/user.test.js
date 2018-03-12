@@ -123,12 +123,15 @@ test('getCreatePayloadFromReq should return object', () => {
 test('getDefaultUpdatePayloadFromReq should return object', () => {
   const inboundMessage = messageFactory.getValidMessage();
   const conversation = conversationFactory.getValidConversation();
+  const isSupportTopic = true;
+  sandbox.stub(conversation, 'isSupportTopic')
+    .returns(isSupportTopic);
   const result = userHelper.getDefaultUpdatePayloadFromReq({
     inboundMessage,
     conversation,
   });
   result.last_messaged_at.should.equal(inboundMessage.createdAt.toISOString());
-  result.sms_paused.should.equal(conversation.paused);
+  result.sms_paused.should.equal(isSupportTopic);
 });
 
 // hasAddress

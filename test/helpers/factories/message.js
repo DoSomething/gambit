@@ -21,3 +21,10 @@ module.exports.getValidMessage = function getValidMessage(direction) {
 module.exports.getValidOutboundReplyMessage = function getValidOutboundReplyMessage() {
   return exports.getValidMessage('outbound-reply');
 };
+
+module.exports.getValidOutboundNoReplyMessage = function getValidOutboundReplyMessage() {
+  const message = exports.getValidOutboundReplyMessage();
+  message.template = 'noReply';
+  message.text = '';
+  return message;
+};
