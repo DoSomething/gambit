@@ -303,7 +303,9 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function (req) {
     return Promise.resolve();
   }
 
-  return twilio.postMessage(req.platformUserId, messageText)
+  const mediaUrl = this.lastOutboundMessage.attachments.map(attachment => attachment.url);
+
+  return twilio.postMessage(req.platformUserId, messageText, mediaUrl)
     .then((twilioRes) => {
       // TODO: Store this metadata on our lastOutboundMessage:
       const sid = twilioRes.sid;
