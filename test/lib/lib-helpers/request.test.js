@@ -120,6 +120,13 @@ test('setPlatformUserId should inject a platformUserId property to req', (t) => 
   helpers.analytics.addCustomAttributes.should.have.been.calledWith({ platformUserId });
 });
 
+test('setTopic should inject a topic property to req', (t) => {
+  const topic = conversation.topic;
+  requestHelper.setTopic(t.context.req, topic);
+  t.context.req.topic.should.equal(topic);
+  helpers.analytics.addCustomAttributes.should.have.been.calledWith({ topic });
+});
+
 test('setUserId should inject a userId property to req', (t) => {
   requestHelper.setUserId(t.context.req, userId);
   t.context.req.userId.should.equal(userId);

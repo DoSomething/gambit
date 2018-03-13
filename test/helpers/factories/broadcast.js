@@ -14,7 +14,16 @@ module.exports.getValidCampaignBroadcast = function getValidCampaignBroadcast(da
       platform: stubs.getPlatform(),
       topic: null,
       message: stubs.getBroadcastMessageText(),
-      attachments: null,
+      attachments: [
+        {
+          sys: {
+            id: '55kiwuII4oWWG2OiWM2E6e',
+          },
+          fields: {
+            file: stubs.getAttachment(),
+          },
+        },
+      ],
       campaign: {
         sys: {
           id: '4wg9DK69oAiak446OyAuWA',
