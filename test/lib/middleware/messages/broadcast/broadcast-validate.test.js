@@ -42,7 +42,7 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-test('validateBroadcast should call sendErroResponse if req.topic and req.campaignId undefined', async (t) => {
+test('validateBroadcast should call sendErrorResponse if req.topic and req.campaignId undefined', async (t) => {
   const next = sinon.stub();
   const middleware = validateBroadcast();
   sandbox.stub(conversation, 'setTopic')
@@ -99,7 +99,7 @@ test('validateBroadcast should call getCampaignId if req.topic undefined and req
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 
-test('validateBroadcast should call sendErroResponse if getCampaignById throws', async (t) => {
+test('validateBroadcast should call sendErrorResponse if getCampaignById throws', async (t) => {
   const next = sinon.stub();
   const middleware = validateBroadcast();
   t.context.req.campaignId = stubs.getCampaignId();
@@ -119,7 +119,7 @@ test('validateBroadcast should call sendErroResponse if getCampaignById throws',
   next.should.not.have.been.called;
 });
 
-test('validateBroadcast should call sendErroResponse if promptSignupForCampaign throws', async (t) => {
+test('validateBroadcast should call sendErrorResponse if promptSignupForCampaign throws', async (t) => {
   const next = sinon.stub();
   const middleware = validateBroadcast();
   t.context.req.campaignId = stubs.getCampaignId();
