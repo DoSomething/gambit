@@ -42,10 +42,3 @@ module.exports.getValidTopicBroadcast = function getValidTopicBroadcast(date = D
   broadcast.fields.campaign = null;
   return broadcast;
 };
-
-module.exports.getInvalidBroadcast = function getInvalidBroadcast(date = Date.now()) {
-  const broadcast = module.exports.getValidCampaignBroadcast(date);
-  broadcast.fields.campaign = null;
-  return broadcast;
-};
-
