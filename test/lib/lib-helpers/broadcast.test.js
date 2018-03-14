@@ -23,6 +23,7 @@ chai.use(sinonChai);
 const broadcastHelper = require('../../../lib/helpers/broadcast');
 
 // stubs
+const attachments = [stubs.getAttachment()];
 const broadcastId = stubs.getBroadcastId();
 const date = Date.now();
 const broadcast = broadcastFactory.getValidCampaignBroadcast(date);
@@ -51,6 +52,8 @@ test.afterEach(() => {
 test('parseBroadcast should return an object', () => {
   sandbox.stub(contentful, 'getCampaignIdFromBroadcast')
     .returns(campaignId);
+  sandbox.stub(contentful, 'getAttachmentsFromBroadcast')
+    .returns(attachments);
   sandbox.stub(broadcastHelper, 'getDefaultPlatform')
     .returns(null);
   sandbox.stub(contentful, 'getTopicFromBroadcast')
@@ -62,6 +65,8 @@ test('parseBroadcast should return an object', () => {
   result.id.should.equal(broadcastId);
   contentful.getCampaignIdFromBroadcast.should.have.been.called;
   result.campaignId.should.equal(campaignId);
+  contentful.getAttachmentsFromBroadcast.should.have.been.called;
+  result.attachments.should.equal(attachments);
   contentful.getTopicFromBroadcast.should.have.been.called;
   result.topic.should.equal(topic);
   contentful.getMessageTextFromBroadcast.should.have.been.called;

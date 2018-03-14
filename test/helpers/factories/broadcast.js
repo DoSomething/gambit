@@ -14,6 +14,16 @@ module.exports.getValidCampaignBroadcast = function getValidCampaignBroadcast(da
       platform: stubs.getPlatform(),
       topic: null,
       message: stubs.getBroadcastMessageText(),
+      attachments: [
+        {
+          sys: {
+            id: '55kiwuII4oWWG2OiWM2E6e',
+          },
+          fields: {
+            file: stubs.getAttachment(),
+          },
+        },
+      ],
       campaign: {
         sys: {
           id: '4wg9DK69oAiak446OyAuWA',
@@ -32,10 +42,3 @@ module.exports.getValidTopicBroadcast = function getValidTopicBroadcast(date = D
   broadcast.fields.campaign = null;
   return broadcast;
 };
-
-module.exports.getInvalidBroadcast = function getInvalidBroadcast(date = Date.now()) {
-  const broadcast = module.exports.getValidCampaignBroadcast(date);
-  broadcast.fields.campaign = null;
-  return broadcast;
-};
-
