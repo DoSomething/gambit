@@ -32,6 +32,19 @@ const messageSchema = new mongoose.Schema({
   metadata: {
     requestId: { type: String, index: true },
     retryCount: Number,
+    // // Will be set through an instance method `setStatus()`
+    // status: {
+    //   type: String, enum: ['queued', 'delivered', 'failed'], default: 'queued', index: true,
+    // },
+    // // Will be set through an instance method on status update.
+    // statusChanges: [{
+    //   from: String,
+    //   to: String,
+    //   // It will contain `code` and `message` properties when set if status = failed
+    //   error: { type: mongoose.Schema.Types.Mixed, default: null },
+    //   updatedAt: { type: Date, default: Date.now },
+    // }],
+    // totalSegments: Number,
   },
 }, { timestamps: true });
 
@@ -40,6 +53,14 @@ messageSchema.index({ updatedAt: 1 });
 messageSchema.index({ createdAt: -1, campaignId: 1 });
 messageSchema.index({ createdAt: -1, broadcastId: 1, direction: 1, macro: 1 });
 messageSchema.index({ broadcastId: -1, direction: 1, macro: 1 });
+
+/**
+ * Instance Methods
+ */
+
+/**
+ * Static Methods
+ */
 
 /**
  * Gets the message that matches this metadata.requestId and direction.
