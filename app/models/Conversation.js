@@ -324,7 +324,7 @@ conversationSchema.methods.postMessageToSupport = function (req, message) {
     return Promise.resolve();
   }
 
-  return front.postMessage(req.platformUserId, message.text)
+  return front.postMessage(req.userId, message.text)
     .then((res) => {
       logger.debug('front.postMessage response', { body: res.body }, req);
       return res;
