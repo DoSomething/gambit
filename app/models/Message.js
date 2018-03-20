@@ -32,19 +32,13 @@ const messageSchema = new mongoose.Schema({
   metadata: {
     requestId: { type: String, index: true },
     retryCount: Number,
-    // // Will be set through an instance method `setStatus()`
-    // status: {
-    //   type: String, enum: ['queued', 'delivered', 'failed'], default: 'queued', index: true,
-    // },
-    // // Will be set through an instance method on status update.
-    // statusChanges: [{
-    //   from: String,
-    //   to: String,
-    //   // It will contain `code` and `message` properties when set if status = failed
-    //   error: { type: mongoose.Schema.Types.Mixed, default: null },
-    //   updatedAt: { type: Date, default: Date.now },
-    // }],
-    // totalSegments: Number,
+    delivery: {
+      queuedAt: Date,
+      deliveredAt: Date,
+      failedAt: Date,
+      failureData: { type: mongoose.Schema.Types.Mixed },
+      totalSegments: Number,
+    },
   },
 }, { timestamps: true });
 
@@ -55,12 +49,45 @@ messageSchema.index({ createdAt: -1, broadcastId: 1, direction: 1, macro: 1 });
 messageSchema.index({ broadcastId: -1, direction: 1, macro: 1 });
 
 /**
- * Instance Methods
- */
-
-/**
  * Static Methods
  */
+
+
+/**
+ * updateMedatadaDeliveredAtByPlatformMessageId - It saves the deliveredAt ISO-8601 timestamp
+ * in the messages delivery metadata.
+ *
+ * @param {string} platformMessageId
+ * @param {Date} deliveredAt
+ * @return {Promise}
+ */
+messageSchema.statics.updateMedatadaDeliveredAtByPlatformMessageId = function (
+  platformMessageId, deliveredAt) {
+  const query = { platformMessageId };
+  const update = { 'metadata.delivery.deliveredAt': deliveredAt };
+  const options = { new: true };
+  return this.findOneAndUpdate(query, update, options);
+};
+
+/**
+ * updateMedatadaFailedAtByPlatformMessageId - It saves the failedAt ISO-8601 timestamp
+ * in the messages delivery metadata.
+ *
+ * @param {string} platformMessageId
+ * @param {Date} failedAt
+ * @param {Object} failureData
+ * @return {Promise}
+ */
+messageSchema.statics.updateMedatadaFailedAtByPlatformMessageId = function (
+  platformMessageId, failedAt, failureData) {
+  const query = { platformMessageId };
+  const update = {
+    'metadata.delivery.failedAt': failedAt,
+    'metadata.delivery.failureData': failureData,
+  };
+  const options = { new: true };
+  return this.findOneAndUpdate(query, update, options);
+};
 
 /**
  * Gets the message that matches this metadata.requestId and direction.

@@ -1,6 +1,7 @@
 'use strict';
 
 const mongoose = require('mongoose');
+
 const logger = require('../../lib/logger');
 const Message = require('./Message');
 const helpers = require('../../lib/helpers');
@@ -307,11 +308,14 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function (req) {
 
   return twilio.postMessage(req.platformUserId, messageText, mediaUrl)
     .then((twilioRes) => {
-      // TODO: Store this metadata on our lastOutboundMessage:
       const sid = twilioRes.sid;
       const status = twilioRes.status;
       logger.debug('twilio.postMessage', { sid, status }, req);
-      return twilioRes;
+
+      this.lastOutboundMessage.platformMessageId = sid;
+      this.lastOutboundMessage.metadata.delivery.queuedAt = twilioRes.dateCreated;
+      this.lastOutboundMessage.metadata.delivery.totalSegments = twilioRes.numSegments;
+      return this.lastOutboundMessage.save();
     });
 };
 

@@ -106,6 +106,8 @@ test('postLastOutboundMessageToPlatform does not call twilio.postMessage if conv
 test('postLastOutboundMessageToPlatform calls twilio.postMessage if conversation is SMS', async (t) => {
   sandbox.stub(twilio, 'postMessage')
     .returns(resolvedPromise);
+  sandbox.stub(smsConversation.lastOutboundMessage, 'save')
+    .returns(resolvedPromise);
   t.context.req.conversation = smsConversation;
 
   await smsConversation.postLastOutboundMessageToPlatform(t.context.req);
