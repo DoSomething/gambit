@@ -165,6 +165,34 @@ module.exports = {
         status,
       };
     },
+    getInboundRequestBody: function getInboundRequestBody() {
+      const data = {
+        _links: {
+          self: 'https://api2.frontapp.com/messages/msg_55c8c149',
+          related: {
+            conversation: 'https://api2.frontapp.com/conversations/cnv_55c8c149',
+            message_replied_to: 'https://api2.frontapp.com/messages/msg_1ab23cd4',
+          },
+        },
+        id: 'msg_55c8c149',
+        type: 'custom',
+        recipients: [
+          {
+            handle: 'calculon@momsbot.com',
+            role: 'to',
+          },
+          {
+            handle: 'puppet@puppetsloth.com',
+            role: 'from',
+          },
+        ],
+        body: 'A Lannister always pays his debts.',
+        text: 'A Lannister always pays his debts.',
+        attachments: [],
+        metadata: {},
+      };
+      return data;
+    },
   },
   twilio: {
     getSmsMessageSid: function getSmsMessageSid() {
