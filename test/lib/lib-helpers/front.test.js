@@ -25,6 +25,10 @@ const noop = underscore.noop;
 const resolvedPromise = Promise.resolve();
 
 test.beforeEach((t) => {
+  sandbox.stub(helpers.request, 'setUserId')
+    .returns(noop);
+  sandbox.stub(helpers.request, 'setPlatformUserId')
+    .returns(noop);
   t.context.req = httpMocks.createRequest();
 });
 
@@ -53,14 +57,32 @@ test('isConversationArchived should return boolean', (t) => {
 test('parseBody should inject vars into req', (t) => {
   sandbox.stub(helpers.request, 'setOutboundMessageText')
     .returns(noop);
-  sandbox.stub(helpers.request, 'setUserId')
-    .returns(noop);
+  sandbox.stub(helpers.util, 'formatMobileNumber')
+    .throws();
   t.context.req.body = stubs.front.getInboundRequestBody();
 
   frontHelper.parseBody(t.context.req);
   helpers.request.setOutboundMessageText.should.have.been.called;
-  // TODO: Add test for setPlatformUserId when Front Conversation is saved by mobile number.
+  helpers.util.formatMobileNumber.should.have.been.called;
   helpers.request.setUserId.should.have.been.called;
+  helpers.request.setPlatformUserId.should.not.have.been.called;
+  t.context.req.should.have.property('agentId');
+  t.context.req.should.have.property('frontConversationUrl');
+});
+
+test('parseBody should call setPlatformUserId if Front message is sent to a mobile number', (t) => {
+  sandbox.stub(helpers.request, 'setOutboundMessageText')
+    .returns(noop);
+  const mobile = stubs.getMobileNumber();
+  sandbox.stub(helpers.util, 'formatMobileNumber')
+    .returns(mobile);
+  t.context.req.body = stubs.front.getInboundRequestBody();
+
+  frontHelper.parseBody(t.context.req);
+  helpers.request.setOutboundMessageText.should.have.been.called;
+  helpers.util.formatMobileNumber.should.have.been.called;
+  helpers.request.setUserId.should.not.have.been.called;
+  helpers.request.setPlatformUserId.should.have.been.calledWith(t.context.req, mobile);
   t.context.req.should.have.property('agentId');
   t.context.req.should.have.property('frontConversationUrl');
 });
