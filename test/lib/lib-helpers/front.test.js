@@ -59,8 +59,8 @@ test('parseBody should inject vars into req', (t) => {
 
   frontHelper.parseBody(t.context.req);
   helpers.request.setOutboundMessageText.should.have.been.called;
+  // TODO: Add test for setPlatformUserId when Front Conversation is saved by mobile number.
   helpers.request.setUserId.should.have.been.called;
   t.context.req.should.have.property('agentId');
-  t.context.req.should.have.property('platformMessageId');
   t.context.req.should.have.property('frontConversationUrl');
 });
