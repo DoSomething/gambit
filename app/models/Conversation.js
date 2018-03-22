@@ -312,6 +312,7 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function (req) {
       const status = twilioRes.status;
       logger.debug('twilio.postMessage', { sid, status }, req);
 
+      // @see https://www.twilio.com/docs/api/messaging/message#resource-properties
       this.lastOutboundMessage.platformMessageId = sid;
       this.lastOutboundMessage.metadata.delivery.queuedAt = twilioRes.dateCreated;
       this.lastOutboundMessage.metadata.delivery.totalSegments = twilioRes.numSegments;

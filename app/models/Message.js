@@ -52,43 +52,6 @@ messageSchema.index({ broadcastId: -1, direction: 1, macro: 1 });
  * Static Methods
  */
 
-
-/**
- * updateMedatadaDeliveredAtByPlatformMessageId - It saves the deliveredAt ISO-8601 timestamp
- * in the messages delivery metadata.
- *
- * @param {string} platformMessageId
- * @param {Date} deliveredAt
- * @return {Promise}
- */
-messageSchema.statics.updateMedatadaDeliveredAtByPlatformMessageId = function (
-  platformMessageId, deliveredAt) {
-  const query = { platformMessageId };
-  const update = { 'metadata.delivery.deliveredAt': deliveredAt };
-  const options = { new: true };
-  return this.findOneAndUpdate(query, update, options);
-};
-
-/**
- * updateMedatadaFailedAtByPlatformMessageId - It saves the failedAt ISO-8601 timestamp
- * in the messages delivery metadata.
- *
- * @param {string} platformMessageId
- * @param {Date} failedAt
- * @param {Object} failureData
- * @return {Promise}
- */
-messageSchema.statics.updateMedatadaFailedAtByPlatformMessageId = function (
-  platformMessageId, failedAt, failureData) {
-  const query = { platformMessageId };
-  const update = {
-    'metadata.delivery.failedAt': failedAt,
-    'metadata.delivery.failureData': failureData,
-  };
-  const options = { new: true };
-  return this.findOneAndUpdate(query, update, options);
-};
-
 /**
  * Gets the message that matches this metadata.requestId and direction.
  * Updates it with the new properties passed in the update object.
