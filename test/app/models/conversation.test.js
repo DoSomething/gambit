@@ -127,10 +127,11 @@ test('postMessageToSupport does not call front.postMessage if conversation is no
 test('postMessageToSupport calls front.postMessage if conversation is SMS', async (t) => {
   sandbox.stub(front, 'postMessage')
     .returns(resolvedPromise);
+  t.context.req.userId = stubs.getUserId();
   t.context.req.conversation = smsConversation;
 
   await smsConversation.postMessageToSupport(t.context.req, message);
-  front.postMessage.should.have.been.called;
+  front.postMessage.should.have.been.calledWith(t.context.req.userId, message.text);
 });
 
 // setTopic
