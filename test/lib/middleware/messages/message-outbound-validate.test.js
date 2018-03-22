@@ -89,14 +89,14 @@ test('validateOutbound calls sendErrorResponseWithSuppressHeaders if formatMobil
     .returns(true);
   sandbox.stub(helpers.user, 'isPaused')
     .returns(false);
-  sandbox.stub(helpers, 'formatMobileNumber')
+  sandbox.stub(helpers.util, 'formatMobileNumber')
     .throws();
 
   // test
   middleware(t.context.req, t.context.res, next);
   helpers.user.isSubscriber.should.have.been.called;
   helpers.user.isPaused.should.have.been.called;
-  helpers.formatMobileNumber.should.have.been.called;
+  helpers.util.formatMobileNumber.should.have.been.called;
   helpers.sendErrorResponseWithSuppressHeaders.should.have.been.called;
   next.should.not.have.been.called;
 });
@@ -109,14 +109,14 @@ test('validateOutbound calls next if user validates', (t) => {
     .returns(true);
   sandbox.stub(helpers.user, 'isPaused')
     .returns(false);
-  sandbox.stub(helpers, 'formatMobileNumber')
+  sandbox.stub(helpers.util, 'formatMobileNumber')
     .returns(mockUser.mobile);
 
   // test
   middleware(t.context.req, t.context.res, next);
   helpers.user.isSubscriber.should.have.been.called;
   helpers.user.isPaused.should.have.been.called;
-  helpers.formatMobileNumber.should.have.been.called;
+  helpers.util.formatMobileNumber.should.have.been.called;
   helpers.request.setPlatformUserId.should.have.been.called;
   helpers.sendErrorResponseWithSuppressHeaders.should.not.have.been.called;
   next.should.have.been.called;
@@ -130,7 +130,7 @@ test('validateOutbound does not call formatMobileNumber if platform is not SMS',
     .returns(true);
   sandbox.stub(helpers.user, 'isPaused')
     .returns(false);
-  sandbox.stub(helpers, 'formatMobileNumber')
+  sandbox.stub(helpers.util, 'formatMobileNumber')
     .returns(mockUser.mobile);
   t.context.req.platform = 'alexa';
 
@@ -138,7 +138,7 @@ test('validateOutbound does not call formatMobileNumber if platform is not SMS',
   middleware(t.context.req, t.context.res, next);
   helpers.user.isSubscriber.should.have.been.called;
   helpers.user.isPaused.should.have.been.called;
-  helpers.formatMobileNumber.should.not.have.been.called;
+  helpers.util.formatMobileNumber.should.not.have.been.called;
   helpers.request.setPlatformUserId.should.not.have.been.called;
   helpers.sendErrorResponseWithSuppressHeaders.should.not.have.been.called;
   next.should.have.been.called;
