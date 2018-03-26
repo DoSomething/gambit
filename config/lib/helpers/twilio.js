@@ -11,9 +11,9 @@ module.exports = {
   //        Example: https://www.twilio.com/console/sms/logs/SM4367f21c9cfb40e2b87216227a20a109
   undeliverableErrorCodes: {
     30006: 'Landline or unreachable carrier',
-    30004: 'Message blocked',
+    30008: 'Unknown error',
     // TODO: Not sure about these ones yet
-    // 30008: 'Unknown error',
+    // 30004: 'Message blocked',
     // 30003: 'Unreachable destination handset',
   },
 };
