@@ -9,16 +9,12 @@ const broadcastMessagesRoute = require('./broadcast');
 const frontMessagesRoute = require('./front');
 const memberMessagesRoute = require('./member');
 const signupMessagesRoute = require('./signup');
+const updateMessageRoute = require('./update');
 
-// Middleware
-const { middleware: statusParamsMiddleware } = require('../../../lib/middleware/messages/status/params');
-const { middleware: messageUpdateMiddleware } = require('../../../lib/middleware/messages/message-update');
-
-router.patch('/:messageId',
-  statusParamsMiddleware(),
-  messageUpdateMiddleware(),
-  /* TODO: Update user if req.undeliverableError is true */
-  (req, res) => res.sendStatus(204));
+/**
+ * Nested router that will handle PATCH requests to /messages/:messageId
+ */
+router.patch('/:messageId', updateMessageRoute);
 
 router.post('/', (req, res, next) => {
   const origin = req.query.origin;
