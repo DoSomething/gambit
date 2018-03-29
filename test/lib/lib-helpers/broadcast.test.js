@@ -54,8 +54,6 @@ test('parseBroadcast should return an object', () => {
     .returns(campaignId);
   sandbox.stub(contentful, 'getAttachmentsFromBroadcast')
     .returns(attachments);
-  sandbox.stub(broadcastHelper, 'getDefaultPlatform')
-    .returns(null);
   sandbox.stub(contentful, 'getTopicFromBroadcast')
     .returns(topic);
   sandbox.stub(contentful, 'getMessageTextFromBroadcast')
