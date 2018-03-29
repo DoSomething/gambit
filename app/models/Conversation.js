@@ -186,6 +186,7 @@ conversationSchema.methods.getDefaultMessagePayload = function (text, template) 
 
 /**
  * Gets data from a req object for a Conversation Message.
+ * TODO: refactor to use the req.inbound and req.outbound properties
  * @param {string} text
  * @param {string} template
  * @return {object}
