@@ -197,8 +197,10 @@ conversationSchema.methods.getMessagePayloadFromReq = function (req = {}, direct
   // Attachments are stored in sub objects named according to the direction of the message
   // 'inbound' or 'outbound'
   const isOutbound = direction.includes('outbound');
+  const isInbound = !isOutbound;
   const attachmentDirection = isOutbound ? 'outbound' : 'inbound';
 
+  // Should only exist in outbound broadcast messages
   if (req.broadcastId) {
     broadcastId = req.broadcastId;
   // Set broadcastId when this is an inbound message responding to an outbound broadcast:
@@ -214,7 +216,9 @@ conversationSchema.methods.getMessagePayloadFromReq = function (req = {}, direct
   };
 
   // Add extras if present.
-  if (req.platformMessageId) {
+
+  // If inbound message and includes platformMessageId
+  if (isInbound && req.platformMessageId) {
     data.platformMessageId = req.platformMessageId;
   }
   if (req.agentId) {
