@@ -24,6 +24,7 @@ Endpoint | Functionality
 Endpoint | Functionality                                           
 -------- | -------------
 `POST /api/v2/messages` | [Create a Message](endpoints/messages.md).
+`PATCH /api/v2/messages/:messageId` | [Update a Message](endpoints/messages.md).
 
 ### Query parameters
 

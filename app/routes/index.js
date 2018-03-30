@@ -3,10 +3,7 @@
 const broadcastsIndexRoute = require('./broadcasts/index');
 const broadcastsSingleRoute = require('./broadcasts/single');
 const mongooseRoutes = require('./mongoose');
-const broadcastMessagesRoute = require('./messages/broadcast');
-const frontMessagesRoute = require('./messages/front');
-const memberMessagesRoute = require('./messages/member');
-const signupMessagesRoute = require('./messages/signup');
+const v2MessagesRoute = require('./messages');
 
 // middleware
 const authenticateMiddleware = require('../../lib/middleware/authenticate');
@@ -33,16 +30,5 @@ module.exports = function init(app) {
   app.use(parseMessageMetadataMiddleware());
 
   // v2
-  app.use('/api/v2/messages', (req, res, next) => {
-    const origin = req.query.origin;
-    if (origin === 'broadcast') {
-      broadcastMessagesRoute(req, res, next);
-    } else if (origin === 'front') {
-      frontMessagesRoute(req, res, next);
-    } else if (origin === 'signup') {
-      signupMessagesRoute(req, res, next);
-    } else {
-      memberMessagesRoute(req, res, next);
-    }
-  });
+  app.use('/api/v2/messages', v2MessagesRoute);
 };

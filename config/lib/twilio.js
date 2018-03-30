@@ -20,4 +20,5 @@ module.exports = {
   testFromNumber,
   testToNumber,
   useTwilioTestCreds,
+  statusCallbackUrl: process.env.TWILIO_STATUS_CALLBACK_URL,
 };

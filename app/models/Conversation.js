@@ -1,6 +1,7 @@
 'use strict';
 
 const mongoose = require('mongoose');
+
 const logger = require('../../lib/logger');
 const Message = require('./Message');
 const helpers = require('../../lib/helpers');
@@ -185,6 +186,7 @@ conversationSchema.methods.getDefaultMessagePayload = function (text, template) 
 
 /**
  * Gets data from a req object for a Conversation Message.
+ * TODO: refactor to use the req.inbound and req.outbound properties
  * @param {string} text
  * @param {string} template
  * @return {object}
@@ -195,8 +197,10 @@ conversationSchema.methods.getMessagePayloadFromReq = function (req = {}, direct
   // Attachments are stored in sub objects named according to the direction of the message
   // 'inbound' or 'outbound'
   const isOutbound = direction.includes('outbound');
+  const isInbound = !isOutbound;
   const attachmentDirection = isOutbound ? 'outbound' : 'inbound';
 
+  // Should only exist in outbound broadcast messages
   if (req.broadcastId) {
     broadcastId = req.broadcastId;
   // Set broadcastId when this is an inbound message responding to an outbound broadcast:
@@ -212,7 +216,9 @@ conversationSchema.methods.getMessagePayloadFromReq = function (req = {}, direct
   };
 
   // Add extras if present.
-  if (req.platformMessageId) {
+
+  // If inbound message and includes platformMessageId
+  if (isInbound && req.platformMessageId) {
     data.platformMessageId = req.platformMessageId;
   }
   if (req.agentId) {
@@ -307,11 +313,15 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function (req) {
 
   return twilio.postMessage(req.platformUserId, messageText, mediaUrl)
     .then((twilioRes) => {
-      // TODO: Store this metadata on our lastOutboundMessage:
       const sid = twilioRes.sid;
       const status = twilioRes.status;
       logger.debug('twilio.postMessage', { sid, status }, req);
-      return twilioRes;
+
+      // @see https://www.twilio.com/docs/api/messaging/message#resource-properties
+      this.lastOutboundMessage.platformMessageId = sid;
+      this.lastOutboundMessage.metadata.delivery.queuedAt = twilioRes.dateCreated;
+      this.lastOutboundMessage.metadata.delivery.totalSegments = twilioRes.numSegments;
+      return this.lastOutboundMessage.save();
     });
 };
 

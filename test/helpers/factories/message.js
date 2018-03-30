@@ -15,6 +15,7 @@ module.exports.getValidMessage = function getValidMessage(direction) {
     direction: direction || 'inbound',
     template: stubs.getTemplate(),
     broadcastId: stubs.getBroadcastId(),
+    userId: stubs.getUserId(),
   });
 };
 
@@ -22,7 +23,7 @@ module.exports.getValidOutboundReplyMessage = function getValidOutboundReplyMess
   return exports.getValidMessage('outbound-reply');
 };
 
-module.exports.getValidOutboundNoReplyMessage = function getValidOutboundReplyMessage() {
+module.exports.getValidOutboundNoReplyMessage = function getValidOutboundNoReplyMessage() {
   const message = exports.getValidOutboundReplyMessage();
   message.template = 'noReply';
   message.text = '';
