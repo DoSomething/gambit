@@ -1,6 +1,37 @@
 # Messages
 
 ```
+PATCH /v2/messages/:messageId
+```
+
+<details>
+<summary><strong>Example Request</strong></summary>
+
+```
+curl -X "PATCH" "http://localhost:5100/api/v2/messages/5abe56bc2fe4f00004389028" \
+     -H 'Content-Type: application/json; charset=utf-8' \
+     -u 'puppet:totallysecret' \
+     -d $'{
+  "metadata": {
+    "delivery": {
+      "deliveredAt": "2018-03-30T15:24:45.000Z"
+    }
+  }
+}'
+```
+
+</details>
+
+<details>
+<summary><strong>Example Response</strong></summary>
+
+204 No Content
+
+</details>
+
+---
+
+```
 POST /v2/messages
 ```
 
@@ -179,7 +210,7 @@ Creates an outbound Campaign Signup menu message in given User's Conversation.
 
 * Sends the message if given platform is SMS.
 
-### Input 
+### Input
 
 Name | Type | Description
 --- | --- | ---
@@ -391,4 +422,3 @@ curl -X "POST" "http://localhost:5100/api/v2/messages?origin=gambit-slack" \
 }
 ```
 </details>
-
