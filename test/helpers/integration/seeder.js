@@ -34,7 +34,14 @@ exports.seed.conversations = async function conversations(qty = 1) {
   return Conversation.create(conversationObjects);
 };
 
-exports.seed.generalConvoInteraction = async function generalConvoInteraction() {
+
+/**
+ * conversationMessages - Creates a conversation with it's corresponding inbound and outbound
+ * messages.
+ *
+ * @return {Object}  Object with conversation, inboundMessage, and outboundMessage properties.
+ */
+exports.seed.conversationMessages = async function conversationMessages() {
   const conversation = conversationFactory.getValidConversation();
   const inboundMessage = messageFactory.getValidMessage();
   const outboundMessage = messageFactory.getValidOutboundReplyMessage();
@@ -46,7 +53,7 @@ exports.seed.generalConvoInteraction = async function generalConvoInteraction() 
   inboundMessage.conversationId = conversation;
   outboundMessage.conversationId = conversation;
 
-  // Make sure outbound has a default metadata
+  // Make sure outbound has a queuedAt metadata property
   // TODO: I think this should be done directly in the factory
   outboundMessage.metadata = {
     delivery: {

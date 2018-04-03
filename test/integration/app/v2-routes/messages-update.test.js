@@ -42,7 +42,7 @@ test('PATCH /api/v2/messages/:id should return 401 if not using valid credential
 
 test('PATCH /api/v2/messages/:id should update the message deliveredAt delivery metadata', async (t) => {
   // setup
-  const { outboundMessage } = await seederHelper.seed.generalConvoInteraction();
+  const { outboundMessage } = await seederHelper.seed.conversationMessages();
   const updateBody = stubs.twilio.getDeliveredMessageUpdate();
 
   // test
@@ -58,16 +58,21 @@ test('PATCH /api/v2/messages/:id should update the message deliveredAt delivery 
 
 test('PATCH /api/v2/messages/:id should update the message failedAt and failureData metadata', async (t) => {
   // setup
-  const { outboundMessage } = await seederHelper.seed.generalConvoInteraction();
+  const { outboundMessage } = await seederHelper.seed.conversationMessages();
   const updateBody = stubs.twilio.getFailedMessageUpdate(true);
 
-  // intercept request to get Northstar user by mobile
-  // TODO: Use the Node.js url module to set in houtes helper instead.
+  /**
+   * intercept request to get Northstar user by mobile.
+   * TODO: Should be using routes integration helper
+   */
   nock(integrationHelper.routes.northstar.baseURI)
     .get(`/users/mobile/${stubs.getMobileNumber()}`)
     .reply(200, stubs.northstar.getUser());
 
-  // intercept request to update Northstar user with new undeliverable sms_status
+  /**
+   * intercept request to update Northstar user with new undeliverable sms_status
+   * TODO: Should be using routes integration helper
+   */
   nock(integrationHelper.routes.northstar.baseURI)
     .put(`/users/_id/${stubs.getUserId()}`)
     .reply((uri, body) => {

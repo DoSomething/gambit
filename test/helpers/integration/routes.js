@@ -4,6 +4,12 @@ const querystring = require('querystring');
 
 const northstarConfig = require('../../../config/lib/northstar');
 
+/**
+ * TODO: Use the Node.js url module to standarize the return of all the methods
+ * in the helper. This way, the returned URL could be easily parsed based on
+ * implementation requirements.
+ */
+
 const basePaths = {
   v1: '/api/v1',
   v2: '/api/v2',
