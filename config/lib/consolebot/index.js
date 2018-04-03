@@ -14,7 +14,6 @@ const configVars = {
   prompt: process.env.DS_CONSOLEBOT_PROMPT || 'You>',
   replyPrefix: process.env.DS_CONSOLEBOT_REPLY_PREFIX || 'Bot>',
   replyColor: process.env.DS_CONSOLEBOT_REPLY_COLOR || 'magenta',
-  photoUrl: process.env.DS_CONSOLEBOT_PHOTO_URL || photoUrl,
   request: {
     url: `http://${basicAuthString}@localhost:${appConfig.port}/api/v2/messages?origin=twilio`,
     body: {
@@ -23,6 +22,10 @@ const configVars = {
       FromState: process.env.DS_CONSOLEBOT_USER_STATE || 'NJ',
       FromZip: process.env.DS_CONSOLEBOT_USER_ZIP || '07302',
       FromCountry: process.env.DS_CONSOLEBOT_USER_COUNTRY || 'US',
+    },
+    media: {
+      url: process.env.DS_CONSOLEBOT_USER_MEDIA_URL || photoUrl,
+      type: process.env.DS_CONSOLEBOT_USER_MEDIA_TYPE || 'image/jpg',
     },
     headers: {
       suppressReply: process.env.DS_CONSOLEBOT_SUPPRESS_REPLY || 'true',
