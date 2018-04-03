@@ -7,6 +7,7 @@ module.exports = {
         'allow': [
           '__set__',
           '__get__',
+          '_id',
         ]
       }
     ],

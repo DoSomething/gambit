@@ -5,6 +5,7 @@ const url = require('url');
 const Chance = require('chance');
 
 const twilioHelperConfig = require('../../config/lib/helpers/twilio');
+const subscriptionHelper = require('../../config/lib/helpers/subscription');
 
 const chance = new Chance();
 const country = 'US';
@@ -263,6 +264,22 @@ module.exports = {
         code: 21606,
         moreInfo: 'https://www.twilio.com/docs/errors/21606',
       };
+    },
+  },
+  northstar: {
+    getUser: function getUser() {
+      return {
+        data: {
+          id: module.exports.getUserId(),
+          _id: module.exports.getUserId(),
+          mobile: module.exports.getMobileNumber(),
+        },
+      };
+    },
+    getUserWithUndeliverableSmsStatus: function getUserWithUndeliverableSmsStatus() {
+      const user = module.exports.northstar.getUser();
+      user.data.sms_status = subscriptionHelper.subscriptionStatuses.undeliverable;
+      return user;
     },
   },
 };
