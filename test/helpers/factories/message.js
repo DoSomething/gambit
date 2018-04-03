@@ -4,10 +4,10 @@ const ObjectID = require('mongoose').Types.ObjectId;
 const Message = require('../../../app/models/Message');
 const stubs = require('../stubs');
 
-module.exports.getValidMessage = function getValidMessage(direction) {
+module.exports.getRawMessageData = function getRawMessageData(direction) {
   const id = new ObjectID();
   const date = new Date();
-  return new Message({
+  return {
     _id: id,
     createdAt: date,
     updatedAt: date,
@@ -16,7 +16,11 @@ module.exports.getValidMessage = function getValidMessage(direction) {
     template: stubs.getTemplate(),
     broadcastId: stubs.getBroadcastId(),
     userId: stubs.getUserId(),
-  });
+  };
+};
+
+module.exports.getValidMessage = function getValidMessage(direction) {
+  return new Message(exports.getRawMessageData(direction));
 };
 
 module.exports.getValidOutboundReplyMessage = function getValidOutboundReplyMessage() {
