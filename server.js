@@ -6,17 +6,11 @@ require('dotenv').config();
 // @see https://docs.newrelic.com/docs/agents/nodejs-agent/installation-configuration
 require('newrelic');
 
+const config = require('./config');
+require('./config/mongoose')(config.dbUri);
+
 const app = require('./app');
 const mongoose = require('mongoose');
-const config = require('./config');
-
-mongoose.Promise = global.Promise;
-// http://mongoosejs.com/docs/connections.html#use-mongo-client
-// TODO: what happens if database doesnt connect?
-mongoose.connect(config.dbUri, {
-  useMongoClient: true,
-});
-
 const logger = require('heroku-logger');
 const fs = require('fs');
 const contentful = require('./lib/contentful');
