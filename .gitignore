@@ -19,8 +19,5 @@ node_modules
 .nyc_output
 coverage
 
-#local nvm configuration
-.nvmrc
-
 # External Rivescript
 brain/contentful

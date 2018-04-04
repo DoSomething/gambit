@@ -1,4 +1,4 @@
-box: node:6.12
+box: node:6.13.1
 services:
   - id: mongo
 build:
@@ -6,7 +6,7 @@ build:
     - npm-install
     - script:
       name: run all tests
-      code: npm run all-tests
+      code: npm run test:full
     - script:
       name: publish coverage report to codecov
       code: npm run publish-coverage-report

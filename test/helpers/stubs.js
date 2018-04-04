@@ -4,6 +4,9 @@ const httpMocks = require('node-mocks-http');
 const url = require('url');
 const Chance = require('chance');
 
+const twilioHelperConfig = require('../../config/lib/helpers/twilio');
+const subscriptionHelper = require('../../config/lib/helpers/subscription');
+
 const chance = new Chance();
 const country = 'US';
 const mobileNumber = '+1555910832';
@@ -195,6 +198,37 @@ module.exports = {
     },
   },
   twilio: {
+    getDeliveredMessageUpdate: function getDeliveredMessageUpdate() {
+      return {
+        metadata: {
+          delivery: {
+            deliveredAt: chance.date({ year: chance.year({ min: 2017, max: 2018 }) }).toISOString(),
+          },
+        },
+      };
+    },
+    getFailedMessageUpdate: function getFailedMessageUpdate(undeliverable) {
+      const undeliverableErrorCodes = Object.keys(twilioHelperConfig.undeliverableErrorCodes);
+      const failedAt = chance.date({ year: chance.year({ min: 2017, max: 2018 }) }).toISOString();
+      const failureData = {
+        code: '1234',
+        message: 'error!',
+      };
+
+      if (undeliverable) {
+        failureData.code = chance.pickone(undeliverableErrorCodes);
+        failureData.message = twilioHelperConfig.undeliverableErrorCodes[failureData.code];
+      }
+
+      return {
+        metadata: {
+          delivery: {
+            failedAt,
+            failureData,
+          },
+        },
+      };
+    },
     getSmsMessageSid: function getSmsMessageSid() {
       return 'SMe62bd767ea4438d7f7f307ff9d3212e0';
     },
@@ -230,6 +264,22 @@ module.exports = {
         code: 21606,
         moreInfo: 'https://www.twilio.com/docs/errors/21606',
       };
+    },
+  },
+  northstar: {
+    getUser: function getUser() {
+      return {
+        data: {
+          id: module.exports.getUserId(),
+          _id: module.exports.getUserId(),
+          mobile: module.exports.getMobileNumber(),
+        },
+      };
+    },
+    getUserWithUndeliverableSmsStatus: function getUserWithUndeliverableSmsStatus() {
+      const user = module.exports.northstar.getUser();
+      user.data.sms_status = subscriptionHelper.subscriptionStatuses.undeliverable;
+      return user;
     },
   },
 };

@@ -7,14 +7,12 @@ const stubs = require('../stubs');
 
 const config = require('../../../config/app/models/conversation');
 
-module.exports.getValidConversation = function getValidConversation(platformString) {
-  let platform = platformString;
-  if (!platform) {
-    platform = stubs.getPlatform();
-  }
+module.exports.getRawConversationData = function getRawConversationData(platformString) {
+  const platform = platformString || stubs.getPlatform();
   const id = new ObjectID();
   const date = new Date();
-  return new Conversation({
+
+  return {
     id,
     _id: id,
     platform,
@@ -24,7 +22,11 @@ module.exports.getValidConversation = function getValidConversation(platformStri
     createdAt: date,
     updatedAt: date,
     lastOutboundMessage: messageFactory.getValidMessage(),
-  });
+  };
+};
+
+module.exports.getValidConversation = function getValidConversation(platformString) {
+  return new Conversation(exports.getRawConversationData(platformString));
 };
 
 module.exports.getValidSupportConversation = function getValidSupportConversation() {

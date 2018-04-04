@@ -32,6 +32,13 @@ const messageSchema = new mongoose.Schema({
   metadata: {
     requestId: { type: String, index: true },
     retryCount: Number,
+    delivery: {
+      queuedAt: Date,
+      deliveredAt: Date,
+      failedAt: Date,
+      failureData: { type: mongoose.Schema.Types.Mixed },
+      totalSegments: Number,
+    },
   },
 }, { timestamps: true });
 
@@ -40,6 +47,10 @@ messageSchema.index({ updatedAt: 1 });
 messageSchema.index({ createdAt: -1, campaignId: 1 });
 messageSchema.index({ createdAt: -1, broadcastId: 1, direction: 1, macro: 1 });
 messageSchema.index({ broadcastId: -1, direction: 1, macro: 1 });
+
+/**
+ * Static Methods
+ */
 
 /**
  * Gets the message that matches this metadata.requestId and direction.
