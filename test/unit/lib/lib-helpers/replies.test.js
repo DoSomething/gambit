@@ -171,7 +171,7 @@ test('sendReply(): should call sendErrorResponse on failure', async (t) => {
 });
 
 test('continueCampaign(): sendReplyWithCampaignTemplate should be called', async (t) => {
-  sandbox.stub(gambitCampaigns, 'postReceiveMessage')
+  sandbox.stub(gambitCampaigns, 'postCampaignActivity')
     .returns(Promise.resolve(gCampResponse.data));
   sandbox.stub(repliesHelper, 'sendReplyWithCampaignTemplate')
     .returns(resolvedPromise);
@@ -181,7 +181,7 @@ test('continueCampaign(): sendReplyWithCampaignTemplate should be called', async
 });
 
 test('continueCampaign(): helpers.sendErrorResponse should be called if no campaign exists', async (t) => {
-  sandbox.stub(gambitCampaigns, 'postReceiveMessage')
+  sandbox.stub(gambitCampaigns, 'postCampaignActivity')
     .returns(Promise.reject(gCampResponse.data));
   sandbox.stub(repliesHelper, 'sendReplyWithCampaignTemplate')
     .returns(resolvedPromise);
