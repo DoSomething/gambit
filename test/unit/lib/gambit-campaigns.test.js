@@ -18,6 +18,7 @@ const sandbox = sinon.sandbox.create();
 const gambitCampaigns = require('../../../lib/gambit-campaigns');
 
 // stubs
+const stubs = require('../../helpers/stubs');
 const campaignFactory = require('../../helpers/factories/campaign');
 
 test.afterEach(() => {
@@ -50,4 +51,18 @@ test('hasKeywords should return false when campaign does not have keywords', (t)
   campaign.keywords = [];
   const result = gambitCampaigns.hasKeywords(campaign);
   t.falsy(result);
+});
+
+// getMessageTextFromMessageTemplate
+test('getMessageTextFromMessageTemplate returns a string when template exists', () => {
+  const campaign = campaignFactory.getValidCampaign();
+  const templateName = stubs.getTemplate();
+  const result = gambitCampaigns.getMessageTextFromMessageTemplate(campaign, templateName);
+  result.should.equal(campaign.botConfig.templates[templateName].rendered);
+});
+
+test('getMessageTextFromMessageTemplate throws when template undefined', (t) => {
+  const campaign = { id: stubs.getCampaignId() };
+  const templateName = stubs.getTemplate();
+  t.throws(() => gambitCampaigns.getMessageTextFromMessageTemplate(campaign, templateName));
 });

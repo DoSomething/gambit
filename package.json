@@ -1,6 +1,6 @@
 {
   "name": "gambit-conversations",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "The DoSomething.org chatbot service for multi-platform conversations.",
   "author": "DoSomething.org",
   "license": "MIT",
@@ -9,7 +9,7 @@
     "url": "git+https://github.com/DoSomething/gambit-conversations.git"
   },
   "scripts": {
-    "test-fast": "NODE=test ava --serial --fail-fast test/unit",
+    "test-fast": "NODE=test ava --serial --fail-fast",
     "test:unit": "NODE=test ava --serial test/unit",
     "test:integration": "NODE=test ava --serial test/integration",
     "test:full": "npm run lint && npm run coverage && npm run test:integration",

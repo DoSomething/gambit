@@ -87,6 +87,7 @@ test('getMessagePayload should return object with valid to/from numbers when not
   result.from.should.equal(config.fromNumber);
   result.to.should.equal(mockToNumber);
   result.body.should.equal(mockMessageText);
+  result.smartEncoded.should.equal(true);
 });
 
 test('getMessagePayload should return object with test to/from numbers when testing', () => {
@@ -95,6 +96,7 @@ test('getMessagePayload should return object with test to/from numbers when test
   result.from.should.equal(config.testFromNumber);
   result.to.should.equal(config.testToNumber);
   result.body.should.equal(mockMessageText);
+  result.smartEncoded.should.equal(true);
 });
 
 // postMessage
