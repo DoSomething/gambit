@@ -27,6 +27,7 @@ const templatesMap = {
     askPhoto: 'askPhoto',
     askQuantity: 'askQuantity',
     askWhyParticipated: 'askWhyParticipated',
+    botSignupConfirmed: 'botSignupConfirmed',
     completedMenu: 'completedMenu',
     externalSignupMenu: 'externalSignupMenu',
     gambitSignupMenu: 'gambitSignupMenu',
@@ -35,8 +36,11 @@ const templatesMap = {
     invalidPhoto: 'invalidPhoto',
     invalidQuantity: 'invalidQuantity',
     invalidSignupMenuCommand: 'invalidSignupMenuCommand',
+    invalidText: 'invalidText',
     invalidWhyParticipated: 'invalidWhyParticipated',
     signupMenu: 'signupMenu',
+    textPostCompleted: 'textPostCompleted',
+    webSignupConfirmed: 'webSignupConfirmed',
   },
   gambitConversationsTemplates: {
     badWords: {
