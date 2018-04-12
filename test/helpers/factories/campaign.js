@@ -13,7 +13,7 @@ const numericIdRange = {
 /**
  * @see https://github.com/DoSomething/gambit-campaigns/blob/master/documentation/endpoints/campaigns.md#retrieve-a-campaign
 */
-module.exports.getValidCampaign = function getValidCampaign() {
+module.exports.getValidCampaign = function getValidCampaign(postType) {
   const messageTemplate = stubs.getTemplate();
   const messageText = stubs.getRandomMessageText();
   const result = {
@@ -24,7 +24,7 @@ module.exports.getValidCampaign = function getValidCampaign() {
     },
     keywords: [stubs.getKeyword()],
     botConfig: {
-      postType: stubs.getPostType(),
+      postType: postType || stubs.getPostType(),
       templates: {},
     },
   };
@@ -34,4 +34,12 @@ module.exports.getValidCampaign = function getValidCampaign() {
     override: true,
   };
   return result;
+};
+
+module.exports.getValidTextPostCampaign = function getValidTextPostCampaign() {
+  return module.exports.getValidCampaign();
+};
+
+module.exports.getValidPhotoPostCampaign = function getValidPhotoPostCampaign() {
+  return module.exports.getValidCampaign('photo');
 };

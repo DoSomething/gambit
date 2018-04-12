@@ -66,3 +66,9 @@ test('getMessageTextFromMessageTemplate throws when template undefined', (t) => 
   const templateName = stubs.getTemplate();
   t.throws(() => gambitCampaigns.getMessageTextFromMessageTemplate(campaign, templateName));
 });
+
+// isTextPostType
+test('isTextPostType returns whether campaign postType is set to text', (t) => {
+  t.truthy(gambitCampaigns.isTextPostType(campaignFactory.getValidTextPostCampaign()));
+  t.falsy(gambitCampaigns.isTextPostType(campaignFactory.getValidPhotoPostCampaign()));
+});
