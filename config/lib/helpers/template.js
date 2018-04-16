@@ -38,6 +38,8 @@ const templatesMap = {
     completedTextPost: 'completedTextPost',
     startPhotoPost: 'startPhotoPost',
     startPhotoPostAutoReply: 'startPhotoPostAutoReply',
+    webAskText: 'webAskText',
+    webStartPhotoPost: 'webStartPhotoPost',
     // To be deprecated:
     // @see https://github.com/DoSomething/gambit-campaigns/issues/1037
     completedMenu: 'completedMenu',
