@@ -50,7 +50,7 @@ test.afterEach((t) => {
 test('parseCampaign calls request helper functions with campaign helper results', async (t) => {
   const next = sinon.stub();
   const middleware = parseCampaign();
-  sandbox.stub(helpers.campaign, 'getSignupMessageTemplateNameFromCampaign')
+  sandbox.stub(helpers.campaign, 'getWebSignupMessageTemplateNameFromCampaign')
     .returns(templateStub);
   sandbox.stub(gambitCampaigns, 'getMessageTextFromMessageTemplate')
     .returns(textStub);
@@ -67,7 +67,7 @@ test('parseCampaign calls request helper functions with campaign helper results'
 test('parseCampaign sends sendErrorResponse if getSignupMessageTemplateName throws', async (t) => {
   const next = sinon.stub();
   const middleware = parseCampaign();
-  sandbox.stub(helpers.campaign, 'getSignupMessageTemplateNameFromCampaign')
+  sandbox.stub(helpers.campaign, 'getWebSignupMessageTemplateNameFromCampaign')
     .throws();
 
   // test

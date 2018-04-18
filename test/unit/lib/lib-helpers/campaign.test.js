@@ -46,9 +46,9 @@ test('getPostTypeFromCampaign should return a string', () => {
   result.should.equal(postTypeStub);
 });
 
-// getSignupMessageTemplateNameFromCampaign
-test('getSignupMessageTemplateNameFromCampaign returns string from config.signupMessageTemplateNamesByPostType', () => {
-  const result = campaignHelper.getSignupMessageTemplateNameFromCampaign(campaignStub);
+// getWebSignupMessageTemplateNameFromCampaign
+test('getWebSignupMessageTemplateNameFromCampaign returns string from config.signupMessageTemplateNamesByPostType', () => {
+  const result = campaignHelper.getWebSignupMessageTemplateNameFromCampaign(campaignStub);
   const templateName = campaignHelperConfig.signupMessageTemplateNamesByPostType[postTypeStub];
   result.should.equal(templateName);
 });
