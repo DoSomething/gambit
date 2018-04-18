@@ -246,7 +246,7 @@ curl -X "POST" "http://localhost:5100/api/v2/messages?origin=signup" \
         "createdAt": "2018-02-07T21:34:44.382Z",
         "text": "Hey - this is Freddie from DoSomething. Thanks for joining Two Books Blue Books!\n\nIn some low-income neighborhoods, there is only one book for every 300 children.\n\nThe solution is simple: Host a Dr. Seuss book drive to benefit kids in family shelters.\n\nMake sure to take a photo of what you did! When you have Collected some Books, text START to share your photo.",
         "direction": "outbound-api-send",
-        "template": "externalSignupMenu",
+        "template": "webStartPhotoPost",
         "conversationId": "59b0de57e9f1ae00126cd731",
         "campaignId": 2299,
         "topic": "campaign",
