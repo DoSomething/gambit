@@ -64,7 +64,7 @@ test('parseCampaign calls request helper functions with campaign helper results'
   helpers.request.setOutboundMessageText.should.have.been.calledWith(t.context.req, textStub);
 });
 
-test('parseCampaign calls request helper functions with campaign helper results', async (t) => {
+test('parseCampaign sends sendErrorResponse if getSignupMessageTemplateName throws', async (t) => {
   const next = sinon.stub();
   const middleware = parseCampaign();
   sandbox.stub(helpers.campaign, 'getSignupMessageTemplateNameFromCampaign')
