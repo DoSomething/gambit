@@ -9,6 +9,7 @@ const Message = require('../../../../app/models/Message');
 const stubs = require('../../../helpers/stubs');
 const subscriptionHelper = require('../../../../config/lib/helpers/subscription');
 const seederHelper = require('../../../helpers/integration/seeder');
+const northstarConfig = require('../../../../config/lib/northstar');
 
 const should = chai.should();
 const expect = chai.expect;
@@ -66,7 +67,7 @@ test('PATCH /api/v2/messages/:id should update the message failedAt and failureD
    * TODO: Should be using routes integration helper
    */
   nock(integrationHelper.routes.northstar.baseURI)
-    .get(`/users/mobile/${stubs.getMobileNumber()}`)
+    .get(`/users/${northstarConfig.getUserFields.id}/${stubs.getUserId()}`)
     .reply(200, stubs.northstar.getUser());
 
   /**
