@@ -1,6 +1,8 @@
 'use strict';
 
 const mongoose = require('mongoose');
+const Promise = require('bluebird');
+const moment = require('moment');
 
 const logger = require('../../lib/logger');
 const Message = require('./Message');
@@ -311,18 +313,35 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function (req) {
 
   const mediaUrl = this.lastOutboundMessage.attachments.map(attachment => attachment.url);
 
-  return twilio.postMessage(req.platformUserId, messageText, mediaUrl)
-    .then((twilioRes) => {
-      const sid = twilioRes.sid;
-      const status = twilioRes.status;
-      logger.debug('twilio.postMessage', { sid, status }, req);
+  return new Promise((resolve, reject) => {
+    twilio.postMessage(req.platformUserId, messageText, mediaUrl)
+      .then((twilioRes) => {
+        const sid = twilioRes.sid;
+        const status = twilioRes.status;
+        logger.debug('twilio.postMessage', { sid, status }, req);
 
-      // @see https://www.twilio.com/docs/api/messaging/message#resource-properties
-      this.lastOutboundMessage.platformMessageId = sid;
-      this.lastOutboundMessage.metadata.delivery.queuedAt = twilioRes.dateCreated;
-      this.lastOutboundMessage.metadata.delivery.totalSegments = twilioRes.numSegments;
-      return this.lastOutboundMessage.save();
-    });
+        // @see https://www.twilio.com/docs/api/messaging/message#resource-properties
+        this.lastOutboundMessage.platformMessageId = sid;
+        this.lastOutboundMessage.metadata.delivery.queuedAt = twilioRes.dateCreated;
+        this.lastOutboundMessage.metadata.delivery.totalSegments = twilioRes.numSegments;
+        return resolve(this.lastOutboundMessage.save());
+      })
+      .catch((error) => {
+        if (error.status < 500) {
+          this.lastOutboundMessage.metadata.delivery.failedAt = moment().format();
+          this.lastOutboundMessage.metadata.delivery.failureData = {
+            code: error.code,
+            message: error.message,
+          };
+          this.lastOutboundMessage.save()
+            .catch(saveError => logger.error(
+              'twilio.postMessage error: this.lastOutboundMessage.save() failed',
+              saveError
+            ), req);
+        }
+        return reject(error);
+      });
+  });
 };
 
 /**
