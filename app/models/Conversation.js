@@ -327,7 +327,11 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function (req) {
         return resolve(this.lastOutboundMessage.save());
       })
       .catch((error) => {
-        if (error.status < 500) {
+        /**
+         * Save failure metadata before bubbling the error up the Promise chain when the error is
+         * an unrecoverable error, since retries are suppressed when they are detected.
+         */
+        if (helpers.twilio.isBadRequestError(error)) {
           this.lastOutboundMessage.metadata.delivery.failedAt = moment().format();
           this.lastOutboundMessage.metadata.delivery.failureData = {
             code: error.code,
@@ -339,6 +343,9 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function (req) {
               saveError
             ), req);
         }
+        /**
+         * Bubble up error so we can either suppress (unrecoverable error) or retry.
+         */
         return reject(error);
       });
   });
