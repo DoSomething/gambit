@@ -30,6 +30,7 @@ const resolvedPromise = Promise.resolve({});
 
 chai.should();
 chai.use(sinonChai);
+const expect = chai.expect;
 
 const sandbox = sinon.sandbox.create();
 
@@ -112,6 +113,21 @@ test('postLastOutboundMessageToPlatform calls twilio.postMessage if conversation
 
   await smsConversation.postLastOutboundMessageToPlatform(t.context.req);
   twilio.postMessage.should.have.been.called;
+});
+
+test('postLastOutboundMessageToPlatform should save metadata conversation when POST to Twilio is successful', async (t) => {
+  const postMessageResponse = Promise.resolve(stubs.twilio.getPostMessageSuccessBody());
+  sandbox.stub(twilio, 'postMessage')
+    .returns(postMessageResponse);
+  sandbox.stub(smsConversation.lastOutboundMessage, 'save')
+    .returns(resolvedPromise);
+  t.context.req.conversation = smsConversation;
+
+  await smsConversation.postLastOutboundMessageToPlatform(t.context.req);
+  twilio.postMessage.should.have.been.called;
+  smsConversation.lastOutboundMessage.save.should.have.been.called;
+  expect(smsConversation.lastOutboundMessage.metadata.delivery.queuedAt).to.exist;
+  expect(smsConversation.lastOutboundMessage.metadata.delivery.totalSegments).to.exist;
 });
 
 // postMessageToSupport

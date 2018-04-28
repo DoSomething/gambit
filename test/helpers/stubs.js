@@ -3,6 +3,7 @@
 const httpMocks = require('node-mocks-http');
 const url = require('url');
 const Chance = require('chance');
+const moment = require('moment');
 
 const twilioHelperConfig = require('../../config/lib/helpers/twilio');
 const subscriptionHelper = require('../../config/lib/helpers/subscription');
@@ -261,6 +262,8 @@ module.exports = {
       return {
         sid: this.getSmsMessageSid(),
         status: 'queued',
+        numSegments: 1,
+        dateCreated: moment().format(),
       };
     },
     getPostMessageError: function getPostMessageError() {
