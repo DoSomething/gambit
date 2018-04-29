@@ -338,15 +338,19 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = function (req) {
             message: error.message,
           };
           this.lastOutboundMessage.save()
-            .catch(saveError => logger.error(
-              'twilio.postMessage error: this.lastOutboundMessage.save() failed',
-              saveError
-            ), req);
+            .then(() => reject(error))
+            .catch((saveError) => {
+              logger.error(
+                'twilio.postMessage error: this.lastOutboundMessage.save() failed',
+                saveError, req);
+              reject(error);
+            });
+        } else {
+          /**
+           * Bubble up error so we can either suppress (unrecoverable error) or retry.
+           */
+          reject(error);
         }
-        /**
-         * Bubble up error so we can either suppress (unrecoverable error) or retry.
-         */
-        return reject(error);
       });
   });
 };
