@@ -258,7 +258,7 @@ module.exports = {
         SmsStatus: 'received',
       };
     },
-    getPostMessageSuccessBody: function getPostMessageSuccessBody() {
+    getPostMessageSuccess: function getPostMessageSuccess() {
       return {
         sid: this.getSmsMessageSid(),
         status: 'queued',
