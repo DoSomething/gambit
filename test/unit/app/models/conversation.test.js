@@ -8,6 +8,7 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
+const Promise = require('bluebird');
 
 const Message = require('../../../../app/models/Message');
 const helpers = require('../../../../lib/helpers');
@@ -116,7 +117,7 @@ test('postLastOutboundMessageToPlatform calls twilio.postMessage if conversation
 });
 
 test('postLastOutboundMessageToPlatform should save metadata conversation when POST to Twilio is successful', async (t) => {
-  const postMessageResponse = Promise.resolve(stubs.twilio.getPostMessageSuccessBody());
+  const postMessageResponse = Promise.resolve(stubs.twilio.getPostMessageSuccess());
   sandbox.stub(twilio, 'postMessage')
     .returns(postMessageResponse);
   sandbox.stub(smsConversation.lastOutboundMessage, 'save')
@@ -128,6 +129,31 @@ test('postLastOutboundMessageToPlatform should save metadata conversation when P
   smsConversation.lastOutboundMessage.save.should.have.been.called;
   expect(smsConversation.lastOutboundMessage.metadata.delivery.queuedAt).to.exist;
   expect(smsConversation.lastOutboundMessage.metadata.delivery.totalSegments).to.exist;
+});
+
+test('postLastOutboundMessageToPlatform should save metadata conversation when Twilio responds with an error', async (t) => {
+  const postMessageResponse = Promise.reject(stubs.twilio.getPostMessageError());
+  sandbox.stub(twilio, 'postMessage')
+    .returns(postMessageResponse);
+  sandbox.stub(smsConversation.lastOutboundMessage, 'save')
+    .returns(resolvedPromise);
+  t.context.req.conversation = smsConversation;
+
+  try {
+    await smsConversation.postLastOutboundMessageToPlatform(t.context.req);
+  } catch (error) {
+    /**
+     * We don't do anything here. IRL this error would bubble up the catch chain and
+     * trigger a retry by Blink or would suppress the error is it's an unrecoverable Twilio
+     * error.
+     */
+  }
+  twilio.postMessage.should.have.been.called;
+  smsConversation.lastOutboundMessage.save.should.have.been.called;
+  expect(smsConversation.lastOutboundMessage.metadata.delivery.failedAt).to.exist;
+  expect(smsConversation.lastOutboundMessage.metadata.delivery.failureData).to.exist;
+  expect(smsConversation.lastOutboundMessage.metadata.delivery.failureData.code).to.exist;
+  expect(smsConversation.lastOutboundMessage.metadata.delivery.failureData.message).to.exist;
 });
 
 // postMessageToSupport
