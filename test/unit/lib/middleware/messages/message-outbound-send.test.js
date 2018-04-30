@@ -16,7 +16,7 @@ const conversationFactory = require('../../../../helpers/factories/conversation'
 const messageFactory = require('../../../../helpers/factories/message');
 const userFactory = require('../../../../helpers/factories/user');
 
-const twilioSuccessStub = stubs.twilio.getPostMessageSuccessBody();
+const twilioSuccessStub = stubs.twilio.getPostMessageSuccess();
 const twilioErrorStub = stubs.twilio.getPostMessageError();
 
 // setup "x.should.y" assertion style
