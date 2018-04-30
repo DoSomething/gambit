@@ -1,6 +1,6 @@
 {
   "name": "gambit-conversations",
-  "version": "2.5.6",
+  "version": "2.5.7",
   "description": "The DoSomething.org chatbot service for multi-platform conversations.",
   "author": "DoSomething.org",
   "license": "MIT",
@@ -34,7 +34,7 @@
   },
   "engines": {
     "node": "6.13.1",
-    "npm": "5.8.0"
+    "npm": "5.7.1"
   },
   "dependencies": {
     "@dosomething/northstar-js": "git://github.com/DoSomething/northstar-js.git",
