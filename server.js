@@ -15,6 +15,7 @@ const logger = require('heroku-logger');
 const fs = require('fs');
 const contentful = require('./lib/contentful');
 const rivescript = require('./lib/rivescript');
+const rivescriptHelper = require('./lib/helpers/rivescript');
 
 const dir = './brain/contentful';
 if (!fs.existsSync(dir)) {
@@ -26,23 +27,19 @@ if (!fs.existsSync(dir)) {
  * TODO: Page through results.
  * @see https://github.com/DoSomething/gambit-conversations/issues/197
  */
-contentful.fetchRivescripts()
-  .then((entries) => {
-    entries.forEach((entry) => {
-      const id = entry.sys.id;
-      const script = entry.fields.rivescript;
-      const filename = `${dir}/${id}.rive`;
-      // Write them.
-      fs.writeFile(filename, script, ((err) => {
-        logger.debug('writeFile', { filename });
-        if (err) logger.error('writeFile', { err });
-      }));
-    });
-    logger.info('fetchRivescripts success', { count: entries.length });
+rivescriptHelper.fetchDefaultRivescriptTopicTriggers()
+  .then((rivescriptTriggers) => {
+    const filename = `${dir}/default.rive`;
+    const data = rivescriptTriggers.join('\n');
+    fs.writeFile(filename, data, ((err) => {
+      logger.debug('writeFile', { filename });
+      if (err) logger.error('writeFile', { err });
+    }));
+    logger.info('fetchDefaultRivescriptTopicTriggers success', { count: rivescriptTriggers.length });
     // Load the Rivescript bot.
     rivescript.getBot();
   })
-  .catch(err => logger.error('fetchRivescripts', { err }));
+  .catch(err => logger.error('fetchDefaultRivescriptTopicTriggers', { err }));
 
 
 const db = mongoose.connection;
