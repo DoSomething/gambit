@@ -13,7 +13,7 @@ const app = require('./app');
 const mongoose = require('mongoose');
 const logger = require('heroku-logger');
 const fs = require('fs');
-const contentful = require('./lib/contentful');
+
 const rivescript = require('./lib/rivescript');
 const rivescriptHelper = require('./lib/helpers/rivescript');
 
@@ -23,9 +23,7 @@ if (!fs.existsSync(dir)) {
 }
 
 /**
- * Fetch rivescript files from Contentful.
- * TODO: Page through results.
- * @see https://github.com/DoSomething/gambit-conversations/issues/197
+ * Fetch default Rivescrippt topic triggers from Contentful to write chatbot Rivescript.
  */
 rivescriptHelper.fetchDefaultRivescriptTopicTriggers()
   .then((rivescriptTriggers) => {
