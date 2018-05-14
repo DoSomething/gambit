@@ -148,6 +148,9 @@ module.exports = {
   getPostType: function getPostType() {
     return 'text';
   },
+  getRandomWord: function getRandomWord() {
+    return chance.word();
+  },
   getRequestId: function getRequestId() {
     return '2512b2e5-76b1-4efb-916b-5d14bbb2555f';
   },
