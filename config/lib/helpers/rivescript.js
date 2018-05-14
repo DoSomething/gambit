@@ -1,12 +1,17 @@
 'use strict';
 
+/**
+ * @see @see https://www.rivescript.com/docs/tutorial#the-code-explained
+ */
 module.exports = {
   commands: {
-    // @see https://www.rivescript.com/docs/tutorial#the-code-explained
     trigger: '+',
     // @see https://www.rivescript.com/docs/tutorial#redirections
     redirect: '@',
-    // @see https://www.rivescript.com/docs/tutorial#the-code-explained
     response: '-',
+  },
+  separators: {
+    command: ' ',
+    line: '\n',
   },
 };

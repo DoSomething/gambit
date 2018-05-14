@@ -15,56 +15,52 @@ const stubs = require('../../../helpers/stubs');
 // module to be tested
 const rivescriptHelper = require('../../../../lib/helpers/rivescript');
 
+const mockWord = stubs.getRandomWord();
+const mockRivescriptCommandOperator = config.commands.trigger;
+const mockRivescriptCommand = `${mockRivescriptCommandOperator}${config.separators.command}${mockWord}`;
+const mockRivescriptLine = `${mockRivescriptCommand}${config.separators.line}`;
+
 const sandbox = sinon.sandbox.create();
 
 test.afterEach(() => {
   sandbox.restore();
 });
 
-// formatRivescriptCommand
-test('formatRivescriptCommand should return a trimmed, concatted string', () => {
-  const command = config.commands.trigger;
-  const word = stubs.getRandomWord();
+// getRedirectCommandFromText
+test('getRedirectCommandFromText should return formatRivescriptLine with response command and text', () => {
+  sandbox.stub(rivescriptHelper, 'formatRivescriptLine')
+    .returns(mockRivescriptLine);
+  const redirectCommand = config.commands.redirect;
 
-  const result = rivescriptHelper.formatRivescriptCommand(command, `${word}   `);
-  result.should.equal(`${command} ${word}`);
+  const result = rivescriptHelper.getRedirectCommandFromText(mockWord);
+  rivescriptHelper.formatRivescriptLine.should.have.been.calledWith(redirectCommand, mockWord);
+  result.should.equal(mockRivescriptLine);
 });
 
-// formatTextAsRivescriptRedirect
-test('formatTextAsRivescriptRedirect should return formatRivescriptCommand with redirect command and text', () => {
-  const command = config.commands.redirect;
-  const word = stubs.getRandomWord();
-  const mockResult = stubs.getRandomWord();
-  sandbox.stub(rivescriptHelper, 'formatRivescriptCommand')
-    .returns(mockResult);
+// getResponseCommandFromText
+test('getResponseCommandFromText should return formatRivescriptLine with response command and text', () => {
+  sandbox.stub(rivescriptHelper, 'formatRivescriptLine')
+    .returns(mockRivescriptLine);
+  const responseCommand = config.commands.response;
 
-  const result = rivescriptHelper.formatTextAsRivescriptRedirect(word);
-  rivescriptHelper.formatRivescriptCommand.should.have.been.calledWith(command, word);
-  result.should.equal(mockResult);
+  const result = rivescriptHelper.getResponseCommandFromText(mockWord);
+  rivescriptHelper.formatRivescriptLine.should.have.been.calledWith(responseCommand, mockWord);
+  result.should.equal(mockRivescriptLine);
 });
 
-// formatTextAsRivescriptReply
-test('formatTextAsRivescriptReply should return formatRivescriptCommand with response command and text', () => {
-  const command = config.commands.response;
-  const word = stubs.getRandomWord();
-  const mockResult = stubs.getRandomWord();
-  sandbox.stub(rivescriptHelper, 'formatRivescriptCommand')
-    .returns(mockResult);
+// getTriggerCommandFromText
+test('getTriggerCommandFromText should return formatRivescriptLine with trigger command and text', () => {
+  sandbox.stub(rivescriptHelper, 'formatRivescriptLine')
+    .returns(mockRivescriptLine);
+  const triggerCommand = config.commands.trigger;
 
-  const result = rivescriptHelper.formatTextAsRivescriptReply(word);
-  rivescriptHelper.formatRivescriptCommand.should.have.been.calledWith(command, word);
-  result.should.equal(mockResult);
+  const result = rivescriptHelper.getTriggerCommandFromText(mockWord);
+  rivescriptHelper.formatRivescriptLine.should.have.been.calledWith(triggerCommand, mockWord);
+  result.should.equal(mockRivescriptLine);
 });
 
-// formatTextAsRivescriptTrigger
-test('formatTextAsRivescriptTrigger should return formatRivescriptCommand with response command and text', () => {
-  const command = config.commands.trigger;
-  const word = stubs.getRandomWord();
-  const mockResult = stubs.getRandomWord();
-  sandbox.stub(rivescriptHelper, 'formatRivescriptCommand')
-    .returns(mockResult);
-
-  const result = rivescriptHelper.formatTextAsRivescriptTrigger(word);
-  rivescriptHelper.formatRivescriptCommand.should.have.been.calledWith(command, word);
-  result.should.equal(mockResult);
+// formatRivescriptLine
+test('formatRivescriptLine should return a trimmed concat of operator and value args', () => {
+  const result = rivescriptHelper.formatRivescriptLine(mockRivescriptCommandOperator, `${mockWord}   `);
+  result.should.equal(mockRivescriptLine);
 });

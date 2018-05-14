@@ -133,9 +133,6 @@ module.exports = {
   getKeyword: function getKeyword() {
     return chance.word();
   },
-  getRandomMessageText: function getRandomMessageText() {
-    return chance.paragraph({ sentences: 2 });
-  },
   getMobileNumber: function getMobileNumber() {
     return mobileNumber;
   },
@@ -147,6 +144,9 @@ module.exports = {
   },
   getPostType: function getPostType() {
     return 'text';
+  },
+  getRandomMessageText: function getRandomMessageText() {
+    return chance.paragraph({ sentences: 2 });
   },
   getRandomWord: function getRandomWord() {
     return chance.word();
