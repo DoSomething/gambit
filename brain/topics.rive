@@ -19,3 +19,57 @@
 - declinedCampaign
 
 < topic
+
+// The survey_response topic is commonly used by broadcast entries. This will eventually be
+// deprecated by a content type like an AutoReplyBroadcast that sends a generic auto reply message
+// and changes conversation topic back to random so user gets prompted to continue a campaign.
+> topic survey_response includes random
+
++ [*]
+- I'm sorry I didn't understand that! Text Q if you have a question.{topic=random}
+
+< topic
+
+/**
+ * Replies we maintain for DoSomething Strategic.
+ * These may eventually get deprecated by defaultTopicTriggers if we add a new changeTopicMessage
+ * content type to use as the defaultTopicTrigger.response.
+ */
+
+/**
+ * Footlocker Scholarship Application topic should reply with link and *not* prompt user to join DS,
+ * just auto reply with the link.
+ */
++ flsa
+- Foot Locker is awarding $20,000 scholarship to student athletes. Visit http://bit.ly/1vyEsZB to apply or nominate a friend. (Txt Stop to quit, Msg&DataRatesMayApply){topic=flsa}
+
+> topic flsa includes random
+
++ [*]
+- Visit http://bit.ly/1vyEsZB to apply or nominate a friend.
+ 
+< topic
+
+/**
+ * DoSomething Strategic newsletter topics. Our data team queries inbound messages with these topics
+ * to add subscribers to the DoSomething Strategic email newsletter.
+ */
++ tmi
+- Thanks for your interest in DoSomething Strategic's newsletter, 'Til Next Tuesday! Trust us, it's way less boring than the other ones you get. Text back your email to sign up now.{topic=tmi_level1}
+
++ dss
+@ tmi
+
+> topic tmi_level1 includes random
+
++ [*]
+- Perfect. You'll start receiving TNT on Tuesday. One last question: what company do you work for? We're sure it's awesome, so don't be shy. Give 'em a shout out!{topic=tmi_completed}
+
+< topic
+
+> topic tmi_completed includes random
+
++ [*]
+- Great. You've got yourself on the list. See you in your inbox on Tuesday!{topic=random}
+
+< topic
