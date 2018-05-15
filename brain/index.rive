@@ -67,9 +67,9 @@
 ! array die       = die|kill myself|killing myself
   ^ commit suicide|committing suicide|commiting suicide
 ! array dosomething = dosomething|dosomethingorg|do something
-! array hello     = hello | howdy | hola
+! array greetings     = hola|howdy
   ^ hi|hii|hiii|hiiii|hiiiii|hiiiiii
-  ^ helloo|hellooo|hellloooo
+  ^ hello|helloo|hellooo|hellloooo
   ^ hey|heyy|heyyy|heyyyy|heyyyy|heyyyyyy 
 ! array human     = human person real
 ! array is        = is|will not stop|keeps|was|was being|gets|am|am being|have been
