@@ -19,6 +19,8 @@ const rivescriptHelper = require('../../../../lib/helpers/rivescript');
 
 const mockDefaultTopicTrigger = defaultRivescriptTopicTriggerFactory
   .getValidDefaultRivescriptTopicTrigger();
+const mockDefaultTopicTriggerResponse = defaultRivescriptTopicTriggerFactory
+  .getValidDefaultRivescriptTopicTrigger();
 const mockRivescriptCommandOperator = config.commands.trigger;
 const mockWord = stubs.getRandomWord();
 const mockRivescriptCommand = `${mockRivescriptCommandOperator}${config.separators.command}${mockWord}`;
@@ -88,6 +90,74 @@ test('getResponseCommandFromText should return formatRivescriptLine with respons
   const result = rivescriptHelper.getResponseCommandFromText(mockWord);
   rivescriptHelper.formatRivescriptLine.should.have.been.calledWith(responseCommand, mockWord);
   result.should.equal(mockRivescriptLine);
+});
+
+// getResponseFromDefaultRivescriptTopicTrigger
+test('getResponseFromDefaultRivescriptTopicTrigger should return getRedirectCommandFromText if response entry isDefaultRivescriptTopicTrigger', () => {
+  sandbox.stub(contentful, 'getResponseFromDefaultRivescriptTopicTrigger')
+    .returns(mockDefaultTopicTriggerResponse);
+  sandbox.stub(contentful, 'isDefaultRivescriptTopicTrigger')
+    .returns(true);
+  sandbox.stub(contentful, 'getTriggerFromDefaultRivescriptTopicTrigger')
+    .returns(mockWord);
+  sandbox.stub(rivescriptHelper, 'getRedirectCommandFromText')
+    .returns(mockRivescriptLine);
+
+  const result = rivescriptHelper
+    .getResponseFromDefaultRivescriptTopicTrigger(mockDefaultTopicTrigger);
+  contentful.getResponseFromDefaultRivescriptTopicTrigger
+    .should.have.been.calledWith(mockDefaultTopicTrigger);
+  contentful.isDefaultRivescriptTopicTrigger
+    .should.have.been.calledWith(mockDefaultTopicTriggerResponse);
+  contentful.getTriggerFromDefaultRivescriptTopicTrigger
+    .should.have.been.calledWith(mockDefaultTopicTriggerResponse);
+  rivescriptHelper.getRedirectCommandFromText
+    .should.have.been.calledWith(mockWord);
+  result.should.equal(mockRivescriptLine);
+});
+
+
+test('getResponseFromDefaultRivescriptTopicTrigger should return getResponseCommandFromText if response entry isMessage', () => {
+  sandbox.stub(contentful, 'getResponseFromDefaultRivescriptTopicTrigger')
+    .returns(mockDefaultTopicTriggerResponse);
+  sandbox.stub(contentful, 'isDefaultRivescriptTopicTrigger')
+    .returns(false);
+  sandbox.stub(contentful, 'isMessage')
+    .returns(true);
+  sandbox.stub(contentful, 'getTextFromMessage')
+    .returns(mockWord);
+  sandbox.stub(rivescriptHelper, 'getRedirectCommandFromText')
+    .returns(stubs.getRandomWord());
+  sandbox.stub(rivescriptHelper, 'getResponseCommandFromText')
+    .returns(mockRivescriptLine);
+
+  const result = rivescriptHelper
+    .getResponseFromDefaultRivescriptTopicTrigger(mockDefaultTopicTrigger);
+  contentful.getResponseFromDefaultRivescriptTopicTrigger
+    .should.have.been.calledWith(mockDefaultTopicTrigger);
+  contentful.isDefaultRivescriptTopicTrigger
+    .should.have.been.calledWith(mockDefaultTopicTriggerResponse);
+  contentful.isMessage
+    .should.have.been.calledWith(mockDefaultTopicTriggerResponse);
+  contentful.getTextFromMessage
+    .should.have.been.calledWith(mockDefaultTopicTriggerResponse);
+  rivescriptHelper.getRedirectCommandFromText.should.not.have.been.called;
+  rivescriptHelper.getResponseCommandFromText
+    .should.have.been.calledWith(mockWord);
+  result.should.equal(mockRivescriptLine);
+});
+
+test('getResponseFromDefaultRivescriptTopicTrigger throws if response entry not isMessage and not isDefaultRivescriptTopicTrigger', (t) => {
+  sandbox.stub(contentful, 'getResponseFromDefaultRivescriptTopicTrigger')
+    .returns(mockDefaultTopicTriggerResponse);
+  sandbox.stub(contentful, 'isDefaultRivescriptTopicTrigger')
+    .returns(false);
+  sandbox.stub(contentful, 'isMessage')
+    .returns(false);
+
+  t.throws(() => {
+    rivescriptHelper.getResponseFromDefaultRivescriptTopicTrigger(mockDefaultTopicTrigger);
+  });
 });
 
 // getTriggerFromDefaultRivescriptTopicTrigger
