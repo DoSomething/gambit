@@ -17,8 +17,10 @@ chai.use(sinonChai);
 // module to be tested
 const rivescriptHelper = require('../../../../lib/helpers/rivescript');
 
-const mockWord = stubs.getRandomWord();
+const mockDefaultTopicTrigger = defaultRivescriptTopicTriggerFactory
+  .getValidDefaultRivescriptTopicTrigger();
 const mockRivescriptCommandOperator = config.commands.trigger;
+const mockWord = stubs.getRandomWord();
 const mockRivescriptCommand = `${mockRivescriptCommandOperator}${config.separators.command}${mockWord}`;
 const mockRivescriptLine = `${mockRivescriptCommand}${config.separators.line}`;
 
@@ -95,12 +97,29 @@ test('getTriggerFromDefaultRivescriptTopicTrigger should return formatRivescript
   sandbox.stub(rivescriptHelper, 'formatRivescriptLine')
     .returns(mockRivescriptLine);
   const triggerCommand = config.commands.trigger;
-  const defaultTopicTrigger = defaultRivescriptTopicTriggerFactory
-    .getValidDefaultRivescriptTopicTrigger();
 
-  const result = rivescriptHelper.getTriggerFromDefaultRivescriptTopicTrigger(defaultTopicTrigger);
+
+  const result = rivescriptHelper
+    .getTriggerFromDefaultRivescriptTopicTrigger(mockDefaultTopicTrigger);
   contentful.getTriggerFromDefaultRivescriptTopicTrigger
-    .should.have.been.calledWith(defaultTopicTrigger);
+    .should.have.been.calledWith(mockDefaultTopicTrigger);
   rivescriptHelper.formatRivescriptLine.should.have.been.calledWith(triggerCommand, mockWord);
   result.should.equal(mockRivescriptLine);
+});
+
+// parseDefaultRivescriptTopicTrigger
+test('parseDefaultRivescriptTopicTrigger should concat getTriggerFromDefaultRivescriptTopicTrigger and getResponseFromDefaultRivescriptTopicTrigger', () => {
+  const mockTrigger = stubs.getRandomWord();
+  sandbox.stub(rivescriptHelper, 'getTriggerFromDefaultRivescriptTopicTrigger')
+    .returns(mockTrigger);
+  const mockResponse = stubs.getRandomWord();
+  sandbox.stub(rivescriptHelper, 'getResponseFromDefaultRivescriptTopicTrigger')
+    .returns(mockResponse);
+
+  const result = rivescriptHelper.parseDefaultRivescriptTopicTrigger(mockDefaultTopicTrigger);
+  rivescriptHelper.getTriggerFromDefaultRivescriptTopicTrigger
+    .should.have.been.calledWith(mockDefaultTopicTrigger);
+  rivescriptHelper.getResponseFromDefaultRivescriptTopicTrigger
+    .should.have.been.calledWith(mockDefaultTopicTrigger);
+  result.should.equal(`${mockTrigger}${mockResponse}`);
 });
