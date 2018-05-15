@@ -2,7 +2,7 @@
 
 const stubs = require('../../stubs');
 
-function getValidDefaultRivescriptTopicTrigger() {
+function getValidDefaultTopicTrigger() {
   const data = {
     fields: {
       trigger: stubs.getRandomWord(),
@@ -12,5 +12,5 @@ function getValidDefaultRivescriptTopicTrigger() {
 }
 
 module.exports = {
-  getValidDefaultRivescriptTopicTrigger,
+  getValidDefaultTopicTrigger,
 };

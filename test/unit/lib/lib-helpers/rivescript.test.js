@@ -9,7 +9,7 @@ const sinonChai = require('sinon-chai');
 const contentful = require('../../../../lib/contentful');
 const config = require('../../../../config/lib/helpers/rivescript');
 const stubs = require('../../../helpers/stubs');
-const defaultRivescriptTopicTriggerFactory = require('../../../helpers/factories/contentful/defaultRivescriptTopicTrigger');
+const defaultTopicTriggerFactory = require('../../../helpers/factories/contentful/defaultTopicTrigger');
 
 chai.should();
 chai.use(sinonChai);
@@ -17,10 +17,10 @@ chai.use(sinonChai);
 // module to be tested
 const rivescriptHelper = require('../../../../lib/helpers/rivescript');
 
-const mockDefaultTopicTrigger = defaultRivescriptTopicTriggerFactory
-  .getValidDefaultRivescriptTopicTrigger();
-const mockDefaultTopicTriggerResponse = defaultRivescriptTopicTriggerFactory
-  .getValidDefaultRivescriptTopicTrigger();
+const mockDefaultTopicTrigger = defaultTopicTriggerFactory
+  .getValidDefaultTopicTrigger();
+const mockDefaultTopicTriggerResponse = defaultTopicTriggerFactory
+  .getValidDefaultTopicTrigger();
 const mockRivescriptCommandOperator = config.commands.trigger;
 const mockWord = stubs.getRandomWord();
 const mockRivescriptCommand = `${mockRivescriptCommandOperator}${config.separators.command}${mockWord}`;
@@ -33,34 +33,34 @@ test.afterEach(() => {
 });
 
 // fetchRivescript
-test('fetchRivescript should call parseDefaultRivescriptTopicTrigger on contentful.fetchDefaultRivescriptTopicTriggers success', async () => {
-  // TODO: Create a defaultRivescriptTopicTrigger factory to replace these objects.
+test('fetchRivescript should call parseDefaultTopicTrigger on contentful.fetchDefaultTopicTriggers success', async () => {
+  // TODO: Create a defaultTopicTrigger factory to replace these objects.
   const firstMockEntry = { trigger: stubs.getRandomWord() };
   const secondMockEntry = { trigger: stubs.getRandomWord() };
   const mockEntries = [firstMockEntry, secondMockEntry];
-  sandbox.stub(contentful, 'fetchDefaultRivescriptTopicTriggers')
+  sandbox.stub(contentful, 'fetchDefaultTopicTriggers')
     .returns(Promise.resolve(mockEntries));
-  sandbox.stub(rivescriptHelper, 'parseDefaultRivescriptTopicTrigger')
+  sandbox.stub(rivescriptHelper, 'parseDefaultTopicTrigger')
     .returns(mockRivescriptLine);
 
   const result = await rivescriptHelper.fetchRivescript();
   mockEntries.forEach((entry) => {
-    rivescriptHelper.parseDefaultRivescriptTopicTrigger.should.have.been.calledWith(entry);
+    rivescriptHelper.parseDefaultTopicTrigger.should.have.been.calledWith(entry);
   });
-  contentful.fetchDefaultRivescriptTopicTriggers.should.have.been.called;
+  contentful.fetchDefaultTopicTriggers.should.have.been.called;
   result.should.deep.equal([mockRivescriptLine, mockRivescriptLine]);
 });
 
-test('fetchRivescript should return contentful.fetchDefaultRivescriptTopicTriggers error on fail', async (t) => {
+test('fetchRivescript should return contentful.fetchDefaultTopicTriggers error on fail', async (t) => {
   const mockError = new Error('epic fail');
-  sandbox.stub(contentful, 'fetchDefaultRivescriptTopicTriggers')
+  sandbox.stub(contentful, 'fetchDefaultTopicTriggers')
     .returns(Promise.reject(mockError));
-  sandbox.stub(rivescriptHelper, 'parseDefaultRivescriptTopicTrigger')
+  sandbox.stub(rivescriptHelper, 'parseDefaultTopicTrigger')
     .returns(mockRivescriptLine);
 
   const result = await t.throws(rivescriptHelper.fetchRivescript());
-  contentful.fetchDefaultRivescriptTopicTriggers.should.have.been.called;
-  rivescriptHelper.parseDefaultRivescriptTopicTrigger.should.not.have.been.called;
+  contentful.fetchDefaultTopicTriggers.should.have.been.called;
+  rivescriptHelper.parseDefaultTopicTrigger.should.not.have.been.called;
   result.should.deep.equal(mockError);
 });
 
@@ -92,24 +92,24 @@ test('getResponseCommandFromText should return formatRivescriptLine with respons
   result.should.equal(mockRivescriptLine);
 });
 
-// getResponseFromDefaultRivescriptTopicTrigger
-test('getResponseFromDefaultRivescriptTopicTrigger should return getRedirectCommandFromText if response entry isDefaultRivescriptTopicTrigger', () => {
-  sandbox.stub(contentful, 'getResponseFromDefaultRivescriptTopicTrigger')
+// getResponseFromDefaultTopicTrigger
+test('getResponseFromDefaultTopicTrigger should return getRedirectCommandFromText if response entry isDefaultTopicTrigger', () => {
+  sandbox.stub(contentful, 'getResponseFromDefaultTopicTrigger')
     .returns(mockDefaultTopicTriggerResponse);
-  sandbox.stub(contentful, 'isDefaultRivescriptTopicTrigger')
+  sandbox.stub(contentful, 'isDefaultTopicTrigger')
     .returns(true);
-  sandbox.stub(contentful, 'getTriggerFromDefaultRivescriptTopicTrigger')
+  sandbox.stub(contentful, 'getTriggerFromDefaultTopicTrigger')
     .returns(mockWord);
   sandbox.stub(rivescriptHelper, 'getRedirectCommandFromText')
     .returns(mockRivescriptLine);
 
   const result = rivescriptHelper
-    .getResponseFromDefaultRivescriptTopicTrigger(mockDefaultTopicTrigger);
-  contentful.getResponseFromDefaultRivescriptTopicTrigger
+    .getResponseFromDefaultTopicTrigger(mockDefaultTopicTrigger);
+  contentful.getResponseFromDefaultTopicTrigger
     .should.have.been.calledWith(mockDefaultTopicTrigger);
-  contentful.isDefaultRivescriptTopicTrigger
+  contentful.isDefaultTopicTrigger
     .should.have.been.calledWith(mockDefaultTopicTriggerResponse);
-  contentful.getTriggerFromDefaultRivescriptTopicTrigger
+  contentful.getTriggerFromDefaultTopicTrigger
     .should.have.been.calledWith(mockDefaultTopicTriggerResponse);
   rivescriptHelper.getRedirectCommandFromText
     .should.have.been.calledWith(mockWord);
@@ -117,10 +117,10 @@ test('getResponseFromDefaultRivescriptTopicTrigger should return getRedirectComm
 });
 
 
-test('getResponseFromDefaultRivescriptTopicTrigger should return getResponseCommandFromText if response entry isMessage', () => {
-  sandbox.stub(contentful, 'getResponseFromDefaultRivescriptTopicTrigger')
+test('getResponseFromDefaultTopicTrigger should return getResponseCommandFromText if response entry isMessage', () => {
+  sandbox.stub(contentful, 'getResponseFromDefaultTopicTrigger')
     .returns(mockDefaultTopicTriggerResponse);
-  sandbox.stub(contentful, 'isDefaultRivescriptTopicTrigger')
+  sandbox.stub(contentful, 'isDefaultTopicTrigger')
     .returns(false);
   sandbox.stub(contentful, 'isMessage')
     .returns(true);
@@ -132,10 +132,10 @@ test('getResponseFromDefaultRivescriptTopicTrigger should return getResponseComm
     .returns(mockRivescriptLine);
 
   const result = rivescriptHelper
-    .getResponseFromDefaultRivescriptTopicTrigger(mockDefaultTopicTrigger);
-  contentful.getResponseFromDefaultRivescriptTopicTrigger
+    .getResponseFromDefaultTopicTrigger(mockDefaultTopicTrigger);
+  contentful.getResponseFromDefaultTopicTrigger
     .should.have.been.calledWith(mockDefaultTopicTrigger);
-  contentful.isDefaultRivescriptTopicTrigger
+  contentful.isDefaultTopicTrigger
     .should.have.been.calledWith(mockDefaultTopicTriggerResponse);
   contentful.isMessage
     .should.have.been.calledWith(mockDefaultTopicTriggerResponse);
@@ -147,22 +147,22 @@ test('getResponseFromDefaultRivescriptTopicTrigger should return getResponseComm
   result.should.equal(mockRivescriptLine);
 });
 
-test('getResponseFromDefaultRivescriptTopicTrigger throws if response entry not isMessage and not isDefaultRivescriptTopicTrigger', (t) => {
-  sandbox.stub(contentful, 'getResponseFromDefaultRivescriptTopicTrigger')
+test('getResponseFromDefaultTopicTrigger throws if response entry not isMessage and not isDefaultTopicTrigger', (t) => {
+  sandbox.stub(contentful, 'getResponseFromDefaultTopicTrigger')
     .returns(mockDefaultTopicTriggerResponse);
-  sandbox.stub(contentful, 'isDefaultRivescriptTopicTrigger')
+  sandbox.stub(contentful, 'isDefaultTopicTrigger')
     .returns(false);
   sandbox.stub(contentful, 'isMessage')
     .returns(false);
 
   t.throws(() => {
-    rivescriptHelper.getResponseFromDefaultRivescriptTopicTrigger(mockDefaultTopicTrigger);
+    rivescriptHelper.getResponseFromDefaultTopicTrigger(mockDefaultTopicTrigger);
   });
 });
 
-// getTriggerFromDefaultRivescriptTopicTrigger
-test('getTriggerFromDefaultRivescriptTopicTrigger should return formatRivescriptLine with trigger command and contentful.getTriggerFromDefaultRivescriptTopicTrigger', () => {
-  sandbox.stub(contentful, 'getTriggerFromDefaultRivescriptTopicTrigger')
+// getTriggerFromDefaultTopicTrigger
+test('getTriggerFromDefaultTopicTrigger should return formatRivescriptLine with trigger command and contentful.getTriggerFromDefaultTopicTrigger', () => {
+  sandbox.stub(contentful, 'getTriggerFromDefaultTopicTrigger')
     .returns(mockWord);
   sandbox.stub(rivescriptHelper, 'formatRivescriptLine')
     .returns(mockRivescriptLine);
@@ -170,26 +170,26 @@ test('getTriggerFromDefaultRivescriptTopicTrigger should return formatRivescript
 
 
   const result = rivescriptHelper
-    .getTriggerFromDefaultRivescriptTopicTrigger(mockDefaultTopicTrigger);
-  contentful.getTriggerFromDefaultRivescriptTopicTrigger
+    .getTriggerFromDefaultTopicTrigger(mockDefaultTopicTrigger);
+  contentful.getTriggerFromDefaultTopicTrigger
     .should.have.been.calledWith(mockDefaultTopicTrigger);
   rivescriptHelper.formatRivescriptLine.should.have.been.calledWith(triggerCommand, mockWord);
   result.should.equal(mockRivescriptLine);
 });
 
-// parseDefaultRivescriptTopicTrigger
-test('parseDefaultRivescriptTopicTrigger should concat getTriggerFromDefaultRivescriptTopicTrigger and getResponseFromDefaultRivescriptTopicTrigger', () => {
+// parseDefaultTopicTrigger
+test('parseDefaultTopicTrigger should concat getTriggerFromDefaultTopicTrigger and getResponseFromDefaultTopicTrigger', () => {
   const mockTrigger = stubs.getRandomWord();
-  sandbox.stub(rivescriptHelper, 'getTriggerFromDefaultRivescriptTopicTrigger')
+  sandbox.stub(rivescriptHelper, 'getTriggerFromDefaultTopicTrigger')
     .returns(mockTrigger);
   const mockResponse = stubs.getRandomWord();
-  sandbox.stub(rivescriptHelper, 'getResponseFromDefaultRivescriptTopicTrigger')
+  sandbox.stub(rivescriptHelper, 'getResponseFromDefaultTopicTrigger')
     .returns(mockResponse);
 
-  const result = rivescriptHelper.parseDefaultRivescriptTopicTrigger(mockDefaultTopicTrigger);
-  rivescriptHelper.getTriggerFromDefaultRivescriptTopicTrigger
+  const result = rivescriptHelper.parseDefaultTopicTrigger(mockDefaultTopicTrigger);
+  rivescriptHelper.getTriggerFromDefaultTopicTrigger
     .should.have.been.calledWith(mockDefaultTopicTrigger);
-  rivescriptHelper.getResponseFromDefaultRivescriptTopicTrigger
+  rivescriptHelper.getResponseFromDefaultTopicTrigger
     .should.have.been.calledWith(mockDefaultTopicTrigger);
   result.should.equal(`${mockTrigger}${mockResponse}`);
 });

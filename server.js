@@ -33,11 +33,11 @@ rivescriptHelper.fetchRivescript()
       logger.debug('writeFile', { filename });
       if (err) logger.error('writeFile', { err });
     }));
-    logger.info('fetchDefaultRivescriptTopicTriggers success', { count: rivescriptTriggers.length });
+    logger.info('fetchDefaultTopicTriggers success', { count: rivescriptTriggers.length });
     // Load the Rivescript bot.
     rivescript.getBot();
   })
-  .catch(err => logger.error('fetchDefaultRivescriptTopicTriggers', { err }));
+  .catch(err => logger.error('fetchDefaultTopicTriggers', { err }));
 
 
 const db = mongoose.connection;
