@@ -9,6 +9,7 @@ const sinonChai = require('sinon-chai');
 const contentful = require('../../../../lib/contentful');
 const config = require('../../../../config/lib/helpers/rivescript');
 const stubs = require('../../../helpers/stubs');
+const defaultRivescriptTopicTriggerFactory = require('../../../helpers/factories/contentful/defaultRivescriptTopicTrigger');
 
 chai.should();
 chai.use(sinonChai);
@@ -27,8 +28,8 @@ test.afterEach(() => {
   sandbox.restore();
 });
 
-// fetchDefaultRivescriptTopicTriggers
-test('fetchDefaultRivescriptTopicTriggers should call parseDefaultRivescriptTopicTrigger on contentful.fetchDefaultRivescriptTopicTriggers success', async () => {
+// fetchRivescript
+test('fetchRivescript should call parseDefaultRivescriptTopicTrigger on contentful.fetchDefaultRivescriptTopicTriggers success', async () => {
   // TODO: Create a defaultRivescriptTopicTrigger factory to replace these objects.
   const firstMockEntry = { trigger: stubs.getRandomWord() };
   const secondMockEntry = { trigger: stubs.getRandomWord() };
@@ -38,7 +39,7 @@ test('fetchDefaultRivescriptTopicTriggers should call parseDefaultRivescriptTopi
   sandbox.stub(rivescriptHelper, 'parseDefaultRivescriptTopicTrigger')
     .returns(mockRivescriptLine);
 
-  const result = await rivescriptHelper.fetchDefaultRivescriptTopicTriggers();
+  const result = await rivescriptHelper.fetchRivescript();
   mockEntries.forEach((entry) => {
     rivescriptHelper.parseDefaultRivescriptTopicTrigger.should.have.been.calledWith(entry);
   });
@@ -46,14 +47,14 @@ test('fetchDefaultRivescriptTopicTriggers should call parseDefaultRivescriptTopi
   result.should.deep.equal([mockRivescriptLine, mockRivescriptLine]);
 });
 
-test('fetchDefaultRivescriptTopicTriggers should return contentful.fetchDefaultRivescriptTopicTriggers error on fail', async (t) => {
+test('fetchRivescript should return contentful.fetchDefaultRivescriptTopicTriggers error on fail', async (t) => {
   const mockError = new Error('epic fail');
   sandbox.stub(contentful, 'fetchDefaultRivescriptTopicTriggers')
     .returns(Promise.reject(mockError));
   sandbox.stub(rivescriptHelper, 'parseDefaultRivescriptTopicTrigger')
     .returns(mockRivescriptLine);
 
-  const result = await t.throws(rivescriptHelper.fetchDefaultRivescriptTopicTriggers());
+  const result = await t.throws(rivescriptHelper.fetchRivescript());
   contentful.fetchDefaultRivescriptTopicTriggers.should.have.been.called;
   rivescriptHelper.parseDefaultRivescriptTopicTrigger.should.not.have.been.called;
   result.should.deep.equal(mockError);
@@ -87,13 +88,19 @@ test('getResponseCommandFromText should return formatRivescriptLine with respons
   result.should.equal(mockRivescriptLine);
 });
 
-// getTriggerCommandFromText
-test('getTriggerCommandFromText should return formatRivescriptLine with trigger command and text', () => {
+// getTriggerFromDefaultRivescriptTopicTrigger
+test('getTriggerFromDefaultRivescriptTopicTrigger should return formatRivescriptLine with trigger command and contentful.getTriggerFromDefaultRivescriptTopicTrigger', () => {
+  sandbox.stub(contentful, 'getTriggerFromDefaultRivescriptTopicTrigger')
+    .returns(mockWord);
   sandbox.stub(rivescriptHelper, 'formatRivescriptLine')
     .returns(mockRivescriptLine);
   const triggerCommand = config.commands.trigger;
+  const defaultTopicTrigger = defaultRivescriptTopicTriggerFactory
+    .getValidDefaultRivescriptTopicTrigger();
 
-  const result = rivescriptHelper.getTriggerCommandFromText(mockWord);
+  const result = rivescriptHelper.getTriggerFromDefaultRivescriptTopicTrigger(defaultTopicTrigger);
+  contentful.getTriggerFromDefaultRivescriptTopicTrigger
+    .should.have.been.calledWith(defaultTopicTrigger);
   rivescriptHelper.formatRivescriptLine.should.have.been.calledWith(triggerCommand, mockWord);
   result.should.equal(mockRivescriptLine);
 });

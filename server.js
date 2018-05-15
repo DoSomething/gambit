@@ -23,9 +23,9 @@ if (!fs.existsSync(dir)) {
 }
 
 /**
- * Fetch default Rivescrippt topic triggers from Contentful to write chatbot Rivescript.
+ * Fetch Rivescript from Contentful to load chatbot replies for member messages.
  */
-rivescriptHelper.fetchDefaultRivescriptTopicTriggers()
+rivescriptHelper.fetchRivescript()
   .then((rivescriptTriggers) => {
     const filename = `${dir}/default.rive`;
     const data = rivescriptTriggers.join('\n');
