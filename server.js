@@ -22,22 +22,31 @@ if (!fs.existsSync(dir)) {
   fs.mkdirSync(dir);
 }
 
+function writeFile(name, strings) {
+  const filename = `${dir}/${name}.rive`;
+  const data = strings.join('\n');
+  fs.writeFile(filename, data, ((err) => {
+    logger.debug('writeFile', { filename });
+    if (err) logger.error('writeFile', { err });
+  }));
+}
+
 /**
  * Fetch Rivescript from Contentful to load chatbot replies for member messages.
  */
-rivescriptHelper.fetchRivescript()
-  .then((rivescriptTriggers) => {
-    const filename = `${dir}/default.rive`;
-    const data = rivescriptTriggers.join('\n');
-    fs.writeFile(filename, data, ((err) => {
-      logger.debug('writeFile', { filename });
-      if (err) logger.error('writeFile', { err });
-    }));
-    logger.info('fetchDefaultTopicTriggers success', { count: rivescriptTriggers.length });
+rivescriptHelper.fetchDefaultTopicTriggers()
+  .then((triggers) => {
+    logger.info('fetchDefaultTopicTriggers', { count: triggers.length });
+    writeFile('default', triggers);
+    return rivescriptHelper.fetchTopics();
+  })
+  .then((topics) => {
+    logger.info('fetchTopics', { count: topics.length });
+    writeFile('topics', topics);
     // Load the Rivescript bot.
     rivescript.getBot();
   })
-  .catch(err => logger.error('fetchDefaultTopicTriggers', { err }));
+  .catch(err => logger.error('error writing rivescript', { err }));
 
 
 const db = mongoose.connection;
