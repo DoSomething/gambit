@@ -1,0 +1,73 @@
+// macros.rive
+
++ info
+- sendInfoMessage
+
++ help
+@ info
+
++ menu
+- campaignMenu
+
++ q
+- supportRequested
+
++ question
+@ q
+
++ less
+- subscriptionStatusLess
+
+/**
+ * Unsubscribe triggers.
+ */
++ stop
+- subscriptionStatusStop
+
++ @unsubscribe
+@ stop
+
++ [*] @unsubscribe [*] @messaging [*]
+@ stop
+
++ @please @unsubscribe [*]
+@ stop
+
++ leave me alone
+@ stop
+
++ (lose|erase|delete) [*] (number|phone) [*]
+@ stop
+
++ remove [*]
+@ stop
+
++ shut up
+@ stop
+
++ stop all
+@ stop
+
++ suck [*]
+@ stop
+
+/**
+ * Crisis triggers.
+ */
++ crisis
+- sendCrisisMessage
+
++ [*] (i|someone|who) [@is] @hurting [me] [*]
+@ crisis
+
++ [*] kill myself [*]
+@ crisis
+
++ [*] i @want [to] @die [*]
+@ crisis
+
++ i do not want to live
+@ crisis
+
++ [*] i am [feeling] (depressed|bipolar|freaking out) [*]
+@ crisis
