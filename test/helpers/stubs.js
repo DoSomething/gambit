@@ -133,9 +133,6 @@ module.exports = {
   getKeyword: function getKeyword() {
     return chance.word();
   },
-  getRandomMessageText: function getRandomMessageText() {
-    return chance.paragraph({ sentences: 2 });
-  },
   getMobileNumber: function getMobileNumber() {
     return mobileNumber;
   },
@@ -147,6 +144,12 @@ module.exports = {
   },
   getPostType: function getPostType() {
     return 'text';
+  },
+  getRandomMessageText: function getRandomMessageText() {
+    return chance.paragraph({ sentences: 2 });
+  },
+  getRandomWord: function getRandomWord() {
+    return chance.word();
   },
   getRequestId: function getRequestId() {
     return '2512b2e5-76b1-4efb-916b-5d14bbb2555f';
