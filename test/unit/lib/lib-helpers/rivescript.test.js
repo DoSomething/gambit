@@ -172,7 +172,8 @@ test('parseDefaultTopicTriggerFromContentfulEntry should concat getTriggerFromDe
   sandbox.stub(rivescriptHelper, 'getResponseFromDefaultTopicTrigger')
     .returns(mockResponse);
 
-  const result = rivescriptHelper.parseDefaultTopicTriggerFromContentfulEntry(mockDefaultTopicTrigger);
+  const result = rivescriptHelper
+    .parseDefaultTopicTriggerFromContentfulEntry(mockDefaultTopicTrigger);
   contentful.getTriggerFromDefaultTopicTrigger
     .should.have.been.calledWith(mockDefaultTopicTrigger);
   rivescriptHelper.getTriggerCommandFromText
