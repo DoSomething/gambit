@@ -39,7 +39,7 @@ test.afterEach(() => {
 });
 
 // changeTopic
-test('changeTopic should call req.conversation.setTopic', async (t) => {
+test('changeTopic should call req.conversation.updateTopicAndCampaignId', async (t) => {
   const topicId = stubs.getContentfulId();
   const topicCacheData = {
     id: topicId,
@@ -49,7 +49,7 @@ test('changeTopic should call req.conversation.setTopic', async (t) => {
   t.context.req.conversation = conversation;
   sandbox.stub(helpers.macro, 'getTopicIdFromChangeTopicMacro')
     .returns(topicId);
-  sandbox.stub(helpers.cache.topics, 'get')
+  sandbox.stub(helpers.topic, 'getById')
     .returns(Promise.resolve(topicCacheData));
   sandbox.stub(helpers.campaign, 'fetchById')
     .returns(Promise.resolve(campaignFactory.getValidCampaign()));
