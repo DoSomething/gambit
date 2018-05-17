@@ -14,8 +14,8 @@ const mongoose = require('mongoose');
 const logger = require('heroku-logger');
 const fs = require('fs');
 
+const helpers = require('./lib/helpers');
 const rivescript = require('./lib/rivescript');
-const rivescriptHelper = require('./lib/helpers/rivescript');
 
 const dir = './brain/contentful';
 if (!fs.existsSync(dir)) {
@@ -34,15 +34,16 @@ function writeFile(name, strings) {
 /**
  * Fetch Rivescript from Contentful to load chatbot replies for member messages.
  */
-rivescriptHelper.fetchDefaultTopicTriggers()
+helpers.rivescript.fetchDefaultTopicTriggers()
   .then((triggers) => {
     logger.info('fetchDefaultTopicTriggers', { count: triggers.length });
     writeFile('default', triggers);
-    return rivescriptHelper.fetchTopics();
+    return helpers.topic.fetchAllTopics();
   })
   .then((topics) => {
     logger.info('fetchTopics', { count: topics.length });
-    writeFile('topics', topics);
+    const topicRivescripts = topics.map(topic => helpers.rivescript.formatRivescriptTopic(topic));
+    writeFile('topics', topicRivescripts);
     // Load the Rivescript bot.
     rivescript.getBot();
   })
