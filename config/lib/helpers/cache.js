@@ -22,8 +22,4 @@ module.exports = {
     name: 'topics',
     ttl: ttl(process.env.DS_GAMBIT_CONVERSATIONS_TOPICS_CACHE_TTL),
   },
-  topicsByCampaignId: {
-    name: 'topicsByCampaignId',
-    ttl: ttl(process.env.DS_GAMBIT_CONVERSATIONS_TOPICS_BY_CAMPAIGN_ID_CACHE_TTL),
-  },
 };
