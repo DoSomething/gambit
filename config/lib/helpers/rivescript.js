@@ -8,7 +8,7 @@ module.exports = {
     trigger: '+',
     // @see https://www.rivescript.com/docs/tutorial#redirections
     redirect: '@',
-    response: '-',
+    reply: '-',
   },
   separators: {
     command: ' ',

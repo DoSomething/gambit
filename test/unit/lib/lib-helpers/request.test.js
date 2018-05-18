@@ -62,17 +62,17 @@ test('changeTopic should call req.conversation.updateTopicAndCampaignId', async 
   conversation.updateTopicAndCampaignId.should.have.been.called;
 });
 
-// isChangeTopicMacro
-test('isChangeTopicMacro should return false if req.macro is not set', (t) => {
-  t.falsy(requestHelper.isChangeTopicMacro(t.context.req));
+// isTopicChange
+test('isTopicChange should return false if req.macro is not set', (t) => {
+  t.falsy(requestHelper.isTopicChange(t.context.req));
 });
 
-test('isChangeTopicMacro should call isChangeTopicMacro with req.macro', (t) => {
+test('isTopicChange should call isChangeTopicMacro with req.macro if set', (t) => {
   t.context.req.macro = stubs.getRandomWord();
-  sandbox.stub(helpers.macro, 'isChangeTopicMacro')
+  sandbox.stub(helpers.macro, 'isChangeTopic')
     .returns(true);
-  t.truthy(requestHelper.isChangeTopicMacro(t.context.req));
-  helpers.macro.isChangeTopicMacro.should.have.been.calledWith(t.context.req.macro);
+  t.truthy(requestHelper.isTopicChange(t.context.req));
+  helpers.macro.isChangeTopic.should.have.been.calledWith(t.context.req.macro);
 });
 
 // parseCampaignKeyword

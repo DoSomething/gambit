@@ -22,9 +22,8 @@ if (!fs.existsSync(dir)) {
   fs.mkdirSync(dir);
 }
 
-function writeFile(name, strings) {
+function writeFile(name, data) {
   const filename = `${dir}/${name}.rive`;
-  const data = strings.join('\n');
   fs.writeFile(filename, data, ((err) => {
     logger.debug('writeFile', { filename });
     if (err) logger.error('writeFile', { err });
@@ -34,15 +33,17 @@ function writeFile(name, strings) {
 /**
  * Fetch Rivescript from Contentful to load chatbot replies for member messages.
  */
-helpers.rivescript.fetchDefaultTopicTriggers()
-  .then((triggers) => {
-    logger.info('fetchDefaultTopicTriggers', { count: triggers.length });
-    writeFile('default', triggers);
+helpers.topic.fetchAllDefaultTopicTriggers()
+  .then((defaultTopicTriggers) => {
+    logger.info('fetchAllDefaultTopicTriggers', { count: defaultTopicTriggers.length });
+    const defaultTopicRivescripts = helpers.rivescript
+      .getRivescriptFromDefaultTopicTriggers(defaultTopicTriggers);
+    writeFile('default', defaultTopicRivescripts);
     return helpers.topic.fetchAllTopics();
   })
   .then((topics) => {
     logger.info('fetchTopics', { count: topics.length });
-    const topicRivescripts = topics.map(topic => helpers.rivescript.formatRivescriptTopic(topic));
+    const topicRivescripts = helpers.rivescript.getRivescriptFromTopics(topics);
     writeFile('topics', topicRivescripts);
     // Load the Rivescript bot.
     rivescript.getBot();
