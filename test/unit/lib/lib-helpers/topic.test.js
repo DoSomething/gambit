@@ -109,6 +109,8 @@ test('parseDefaultTopicTriggerFromContentfulEntry should return reply if respons
 test('parseDefaultTopicTriggerFromContentfulEntry should return object with trigger and reply', () => {
   sandbox.stub(contentful, 'getTriggerTextFromDefaultTopicTrigger')
     .returns(mockWord);
+  sandbox.stub(contentful, 'getResponseEntryFromDefaultTopicTrigger')
+    .returns({});
   sandbox.stub(contentful, 'getContentfulIdFromContentfulEntry')
     .returns(stubs.getContentfulId());
   sandbox.stub(contentful, 'isDefaultTopicTrigger')

@@ -39,12 +39,7 @@ helpers.topic.fetchAllDefaultTopicTriggers()
     const defaultTopicRivescripts = helpers.rivescript
       .getRivescriptFromDefaultTopicTriggers(defaultTopicTriggers);
     writeFile('default', defaultTopicRivescripts);
-    return helpers.topic.fetchAllTopics();
-  })
-  .then((topics) => {
-    logger.info('fetchTopics', { count: topics.length });
-    const topicRivescripts = helpers.rivescript.getRivescriptFromTopics(topics);
-    writeFile('topics', topicRivescripts);
+    // TODO: Once Contentful topics contain triggers, fetch any topics that do to load here.
     // Load the Rivescript bot.
     rivescript.getBot();
   })
