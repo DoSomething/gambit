@@ -43,7 +43,7 @@ test('changeTopic should call req.conversation.updateTopicAndCampaignId', async 
   const topicId = stubs.getContentfulId();
   const topicCacheData = {
     id: topicId,
-    campaignId: stubs.getCampaignId(),
+    campaignId,
   };
   t.context.req.macro = stubs.getRandomWord();
   t.context.req.conversation = conversation;
@@ -59,7 +59,8 @@ test('changeTopic should call req.conversation.updateTopicAndCampaignId', async 
   await requestHelper.changeTopic(t.context.req);
   helpers.macro.getTopicIdFromChangeTopicMacro
     .should.have.been.calledWith(t.context.req.macro);
-  conversation.updateTopicAndCampaignId.should.have.been.called;
+  helpers.campaign.fetchById.should.have.been.calledWith(campaignId);
+  conversation.updateTopicAndCampaignId.should.have.been.calledWith(topicId, campaignId);
 });
 
 // isTopicChange
