@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const logger = require('heroku-logger');
 const Promise = require('bluebird');
 
-const helpers = require('../../lib/helpers');
+const utilHelper = require('../../lib/helpers/util');
 
 /**
  * Schema.
@@ -31,6 +31,7 @@ const messageSchema = new mongoose.Schema({
   agentId: String,
   match: String,
   macro: String,
+  // TODO: Add metadata.failureInjectionTestId when we implement that feature.
   metadata: {
     requestId: { type: String, index: true },
     retryCount: Number,
@@ -73,7 +74,7 @@ messageSchema.statics.updateMessageByRequestIdAndDirection = function (requestId
   };
   const options = { new: true };
 
-  return helpers.util.deepUpdateWithDotNotationParser(update)
+  return utilHelper.deepUpdateWithDotNotationParser(update)
     .then(parsedUpdate => this.findOneAndUpdate(query, parsedUpdate, options));
 };
 
