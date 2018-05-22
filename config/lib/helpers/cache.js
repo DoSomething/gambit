@@ -18,8 +18,4 @@ module.exports = {
     name: 'campaigns',
     ttl: ttl(process.env.DS_GAMBIT_CONVERSATIONS_CAMPAIGNS_CACHE_TTL),
   },
-  topics: {
-    name: 'topics',
-    ttl: ttl(process.env.DS_GAMBIT_CONVERSATIONS_TOPICS_CACHE_TTL),
-  },
 };
