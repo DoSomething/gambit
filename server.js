@@ -31,7 +31,7 @@ function writeFile(name, data) {
 }
 
 /**
- * Fetch Rivescript from Contentful to load chatbot replies for member messages.
+ * Fetch all default topic triggers and load as Rivescript for replies to member messages.
  */
 helpers.topic.fetchAllDefaultTopicTriggers()
   .then((defaultTopicTriggers) => {
@@ -39,8 +39,6 @@ helpers.topic.fetchAllDefaultTopicTriggers()
     const defaultTopicRivescripts = helpers.rivescript
       .getRivescriptFromDefaultTopicTriggers(defaultTopicTriggers);
     writeFile('default', defaultTopicRivescripts);
-    // TODO: Once Contentful topics contain triggers, fetch any topics that do to load here.
-    // Load the Rivescript bot.
     rivescript.getBot();
   })
   .catch(err => logger.error('error writing rivescript', { err }));
