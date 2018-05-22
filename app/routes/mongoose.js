@@ -17,7 +17,8 @@ router.use((req, res, next) => {
 
 const checkReqMethod = function checkReqMethod(req, res, next) {
   if (req.method !== 'GET') {
-    return res.sendStatus(401);
+    // @see https://httpstatuses.com/403
+    return res.sendStatus(403);
   }
   return next();
 };
