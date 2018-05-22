@@ -80,10 +80,10 @@ function getReqWithProps(opts = {}) {
   req.isARetryRequest = opts.isARetryRequest || function () { return false; };
   req.inboundMessage = opts.inboundMessage;
   req.conversation = opts.conversation || conversationFactory.getValidConversation();
-  req.conversation.lastOutboundMessage = opts.outboundMessage;
+  req.conversation.lastOutboundMessage = opts.lastOutboundMessage;
+  req.outboundMessage = opts.outboundMessage;
   return req;
 }
-
 
 /**
  * Tests --------------------------------------------------
@@ -92,10 +92,10 @@ function getReqWithProps(opts = {}) {
 test('sendReply(): responds with the inbound and outbound messages', async (t) => {
   // setup
   const inboundMessage = messageFactory.getValidMessage();
-  const outboundMessage = messageFactory.getValidOutboundReplyMessage();
+  const lastOutboundMessage = messageFactory.getValidOutboundReplyMessage();
   const req = getReqWithProps({
     inboundMessage,
-    outboundMessage,
+    lastOutboundMessage,
   });
   sandbox.stub(req.conversation, 'createAndSetLastOutboundMessage')
     .returns(resolvedPromise);
@@ -112,15 +112,19 @@ test('sendReply(): responds with the inbound and outbound messages', async (t) =
   req.conversation.createAndSetLastOutboundMessage.should.have.been.called;
   req.conversation.postLastOutboundMessageToPlatform.should.have.been.called;
   responseMessages.inbound[0].should.be.equal(inboundMessage);
-  responseMessages.outbound[0].should.be.equal(outboundMessage);
+  responseMessages.outbound[0].should.be.equal(lastOutboundMessage);
 });
 
-test('sendReply(): should update and post last outbound message on retry', async (t) => {
+test('sendReply(): should not call createAndSetLastOutboundMessage if outbound message has been loaded', async (t) => {
   // setup
+  const outboundMessage = messageFactory.getValidOutboundReplyMessage();
   const req = getReqWithProps({
-    outboundMessage: messageFactory.getValidOutboundReplyMessage(),
+    lastOutboundMessage: outboundMessage,
+    outboundMessage,
     isARetryRequest: () => true,
   });
+  sandbox.stub(req.conversation, 'createAndSetLastOutboundMessage')
+    .returns(resolvedPromise);
   sandbox.stub(req.conversation, 'postLastOutboundMessageToPlatform')
     .returns(resolvedPromise);
   sandbox.stub(Message, 'updateMessageByRequestIdAndDirection')
@@ -130,29 +134,28 @@ test('sendReply(): should update and post last outbound message on retry', async
   await repliesHelper.sendReply(req, t.context.res, 'text line', templates.campaignClosed);
 
   // asserts
-  Message.updateMessageByRequestIdAndDirection.should.have.been.called;
+  req.conversation.createAndSetLastOutboundMessage.should.not.have.been.called;
   req.conversation.postLastOutboundMessageToPlatform.should.have.been.called;
 });
 
-test('sendReply(): should create and post the outbound message if there is no lastOutboundMessage on a retry', async (t) => {
+test('sendReply(): should createAndSetLastOutboundMessage outbound message if no outboundMessage was loaded on a retry', async (t) => {
   // setup
   const inboundMessage = messageFactory.getValidMessage();
+  const lastOutboundMessage = messageFactory.getValidOutboundReplyMessage();
   const req = getReqWithProps({
     inboundMessage,
+    lastOutboundMessage,
     isARetryRequest: () => true,
   });
-  sandbox.stub(req.conversation, 'postLastOutboundMessageToPlatform')
-    .returns(resolvedPromise);
-  sandbox.stub(Message, 'updateMessageByRequestIdAndDirection')
-    .returns(resolvedPromise);
   sandbox.stub(req.conversation, 'createAndSetLastOutboundMessage')
+    .returns(resolvedPromise);
+  sandbox.stub(req.conversation, 'postLastOutboundMessageToPlatform')
     .returns(resolvedPromise);
 
   // test
   await repliesHelper.sendReply(req, t.context.res, 'text line', templates.campaignClosed);
 
   // asserts
-  Message.updateMessageByRequestIdAndDirection.should.not.have.been.called;
   req.conversation.createAndSetLastOutboundMessage.should.have.been.called;
   req.conversation.postLastOutboundMessageToPlatform.should.have.been.called;
 });
