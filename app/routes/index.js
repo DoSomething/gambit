@@ -26,9 +26,13 @@ module.exports = function init(app) {
   app.use('/api/v1/broadcasts',
     broadcastsIndexRoute);
 
-  // parse metadata like requestId and retryCount for all requests after this line
-  app.use(parseMessageMetadataMiddleware());
-
   // v2
-  app.use('/api/v2/messages', v2MessagesRoute);
+  app.use('/api/v2/messages',
+    /**
+     * parses Metadata like requestId and retryCount
+     * TODO: We should split parsing X-Request-Id, X-Blink-Retry-Count, and X-Failure-Injection-Test
+     * to a different middleware. That mw should intercept ALL requests, not just /messages.
+     */
+    parseMessageMetadataMiddleware(),
+    v2MessagesRoute);
 };
