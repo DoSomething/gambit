@@ -50,7 +50,7 @@ test.afterEach(() => {
 });
 
 test('parseBroadcast should return an object', () => {
-  sandbox.stub(contentful, 'getCampaignIdFromCampaignReferenceOnContentfulEntry')
+  sandbox.stub(contentful, 'getCampaignIdFromBroadcast')
     .returns(campaignId);
   sandbox.stub(contentful, 'getAttachmentsFromBroadcast')
     .returns(attachments);
@@ -61,7 +61,7 @@ test('parseBroadcast should return an object', () => {
 
   const result = broadcastHelper.parseBroadcast(broadcast);
   result.id.should.equal(broadcastId);
-  contentful.getCampaignIdFromCampaignReferenceOnContentfulEntry.should.have.been.called;
+  contentful.getCampaignIdFromBroadcast.should.have.been.called;
   result.campaignId.should.equal(campaignId);
   contentful.getAttachmentsFromBroadcast.should.have.been.called;
   result.attachments.should.equal(attachments);
