@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const logger = require('heroku-logger');
 const Promise = require('bluebird');
 
+const helpers = require('../../lib/helpers');
+
 /**
  * Schema.
  */
@@ -71,7 +73,8 @@ messageSchema.statics.updateMessageByRequestIdAndDirection = function (requestId
   };
   const options = { new: true };
 
-  return this.findOneAndUpdate(query, update, options);
+  return helpers.util.deepUpdateWithDotNotationParser(update)
+    .then(parsedUpdate => this.findOneAndUpdate(query, parsedUpdate, options));
 };
 
 /**
