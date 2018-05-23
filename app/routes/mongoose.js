@@ -11,14 +11,16 @@ const router = express.Router();
 const countHeader = config.countHeaderName;
 
 router.use((req, res, next) => {
-  res.header('Access-Control-Expose-Headers', countHeader);
+  res.header({
+    'Access-Control-Expose-Headers': countHeader,
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+  });
   return next();
 });
 
 const checkReqMethod = function checkReqMethod(req, res, next) {
   if (req.method !== 'GET') {
     // @see https://httpstatuses.com/405
-    res.set('Allow', 'GET,OPTIONS');
     return res.sendStatus(405);
   }
   return next();
