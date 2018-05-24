@@ -15,9 +15,16 @@ router.use((req, res, next) => {
   return next();
 });
 
+// @see https://florianholzapfel.github.io/express-restify-mongoose/#premiddleware
 const checkReqMethod = function checkReqMethod(req, res, next) {
   if (req.method !== 'GET') {
-    return res.sendStatus(401);
+    /**
+     * Per standards
+     * @see https://httpstatuses.com/405
+     * @see https://tools.ietf.org/html/rfc7231#section-6.5.5
+     */
+    res.header('Allow', 'GET, OPTIONS');
+    return res.sendStatus(405);
   }
   return next();
 };

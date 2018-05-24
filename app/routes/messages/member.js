@@ -6,6 +6,7 @@ const router = express.Router();
 
 // Middleware configs
 const getUserConfig = require('../../../config/lib/middleware/messages/member/user-get');
+const loadOutboundMessageConfig = require('../../../config/lib/middleware/messages/member/message-outbound');
 
 // Middleware
 const paramsMiddleware = require('../../../lib/middleware/messages/member/params');
@@ -15,6 +16,7 @@ const getUserMiddleware = require('../../../lib/middleware/messages/user-get');
 const createUserIfNotFoundMiddleware = require('../../../lib/middleware/messages/member/user-create');
 const loadInboundMessageMiddleware = require('../../../lib/middleware/messages/member/message-inbound-load');
 const createInboundMessageMiddleware = require('../../../lib/middleware/messages/member/message-inbound-create');
+const loadOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-load');
 const macroReplyMiddleware = require('../../../lib/middleware/messages/member/template-macro-reply');
 const badWordsMiddleware = require('../../../lib/middleware/messages/member/bad-words');
 const campaignKeywordMiddleware = require('../../../lib/middleware/messages/member/campaign-keyword');
@@ -49,6 +51,9 @@ router.use(getRivescriptReplyMiddleware());
 // Load/create inbound message.
 router.use(loadInboundMessageMiddleware());
 router.use(createInboundMessageMiddleware());
+
+// Load outbound message.
+router.use(loadOutboundMessageMiddleware(loadOutboundMessageConfig));
 
 // Updates Last Messaged At, Subscription Status, Paused.
 router.use(updateUserMiddleware());
