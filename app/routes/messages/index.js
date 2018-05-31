@@ -1,6 +1,7 @@
 'use strict';
 
 const express = require('express');
+const logger = require('../../../lib/logger');
 
 const router = express.Router();
 
@@ -18,6 +19,7 @@ router.patch('/:messageId', updateMessageRoute);
 
 router.post('/', (req, res, next) => {
   const origin = req.query.origin;
+  logger.debug('Origin', { origin }, req);
   analyticsHelper.addCustomAttributes({ origin });
   if (origin === 'broadcast') {
     broadcastMessagesRoute(req, res, next);

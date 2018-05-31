@@ -1,23 +1,28 @@
 'use strict';
 
+const metadataConfig = require('./middleware/metadata-parse');
 
-/**
- * requestIdInjector - This function gets the requestId property from the passed object.
- *                     The default behavior is to expect an object with a metadata nested object
- *                     which contains the requestId property. It can be overridden later by
- *                     cloning the logger with new options. @see https://github.com/ianstormtaylor
- *                     /heroku-logger#loggercloneoptions
- *
- * @param  {object} container = { metadata: {} } this is the object that contains the injectable
- *                                               value
- * @return {object}                              object containing the key to be injected with the
- *                                               value
- */
-function requestIdInjector(container = { metadata: {} }) {
-  const value = container.metadata ? container.metadata.requestId : undefined;
-  return { key: 'request_id', val: value };
-}
+const metadataKeys = metadataConfig.metadata.keys;
+const requestIdKey = metadataKeys.requestId;
+const retryCountKey = metadataKeys.retryCount;
+const failureInjectionTestIdKey = metadataKeys.failureInjectionTestId;
+
+const extraDataConfigs = [
+  {
+    // request_id is consistent with how is logged in other systems like Blink
+    key: 'request_id',
+    path: `metadata.${requestIdKey}`,
+  },
+  {
+    key: retryCountKey,
+    path: `metadata.${retryCountKey}`,
+  },
+  {
+    key: failureInjectionTestIdKey,
+    path: `metadata.${failureInjectionTestIdKey}`,
+  },
+];
 
 module.exports = {
-  requestIdInjector,
+  extraDataConfigs,
 };
