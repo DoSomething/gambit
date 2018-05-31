@@ -85,6 +85,19 @@ conversationSchema.statics.findOneAndPopulateLastOutboundMessage = function (que
 /**
  * Set topic property.
  * @param {String} topic
+ * @param {Number} campaignId
+ * @return {Promise}
+ */
+conversationSchema.methods.updateTopicAndCampaignId = function (topic, campaignId) {
+  logger.debug('updateTopicAndCampaignId', { topic, campaignId });
+  this.campaignId = campaignId;
+  this.topic = topic;
+  return this.save();
+};
+
+/**
+ * Set topic property.
+ * @param {String} topic
  * @return {Promise}
  */
 conversationSchema.methods.setTopic = function (topic) {

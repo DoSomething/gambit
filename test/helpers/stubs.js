@@ -17,6 +17,10 @@ const totalInboundConfirmedCampaign = 23;
 const totalInboundDeclinedCampaign = 10;
 const totalInboundNoMacro = 19;
 
+function getContentfulId() {
+  return '2Aq6ZrB5Y4gucmSYasq4O4';
+}
+
 module.exports = {
   config: {
     getMessageOutbound: function getMessageOutbound(shouldSendWhenPaused = false) {
@@ -130,6 +134,7 @@ module.exports = {
   getCampaignRunId: function getCampaignRunId() {
     return 6441;
   },
+  getContentfulId,
   getKeyword: function getKeyword() {
     return chance.word();
   },

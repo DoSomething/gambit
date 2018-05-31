@@ -61,7 +61,7 @@ test('getBroadcast should set broadcast from cache if cached', async (t) => {
   const middleware = getBroadcast();
   sandbox.stub(cache, 'get')
     .returns(Promise.resolve(mockBroadcast));
-  sandbox.stub(contentful, 'fetchBroadcast')
+  sandbox.stub(contentful, 'fetchByContentfulId')
     .callsFake(broadcastLookupStub);
   sandbox.stub(cache, 'set')
     .returns(Promise.resolve(mockBroadcast));
@@ -69,7 +69,7 @@ test('getBroadcast should set broadcast from cache if cached', async (t) => {
   // test
   await middleware(t.context.req, t.context.res, next);
   cache.get.should.have.been.called;
-  contentful.fetchBroadcast.should.not.have.been.called;
+  contentful.fetchByContentfulId.should.not.have.been.called;
   cache.set.should.not.have.been.called;
   t.context.req.broadcast.should.deep.equal(mockBroadcast);
   next.should.have.been.called;
@@ -81,7 +81,7 @@ test('getBroadcast should fetch from Contentful to set broadcast if not cached',
   const middleware = getBroadcast();
   sandbox.stub(cache, 'get')
     .returns(Promise.resolve(null));
-  sandbox.stub(contentful, 'fetchBroadcast')
+  sandbox.stub(contentful, 'fetchByContentfulId')
     .callsFake(broadcastLookupStub);
   sandbox.stub(cache, 'set')
     .returns(Promise.resolve(mockBroadcast));
@@ -89,7 +89,7 @@ test('getBroadcast should fetch from Contentful to set broadcast if not cached',
   // test
   await middleware(t.context.req, t.context.res, next);
   cache.get.should.have.been.called;
-  contentful.fetchBroadcast.should.have.been.called;
+  contentful.fetchByContentfulId.should.have.been.called;
   cache.set.should.have.been.called;
   t.context.req.broadcast.should.deep.equal(mockBroadcast);
   next.should.have.been.called;
@@ -99,7 +99,7 @@ test('getBroadcast should call sendErrorResponse if broadcastId not found', asyn
   // setup
   const next = sinon.stub();
   const middleware = getBroadcast();
-  sandbox.stub(contentful, 'fetchBroadcast')
+  sandbox.stub(contentful, 'fetchByContentfulId')
     .callsFake(broadcastLookupNotFoundStub);
 
   // test
@@ -123,12 +123,12 @@ test('getBroadcast should call sendErrorResponse if cache.get fails', async (t) 
   next.should.not.have.been.called;
 });
 
-test('getBroadcast should call sendErrorResponse if contentful.fetchBroadcast fails', async (t) => {
+test('getBroadcast should call sendErrorResponse if contentful.fetchByContentfulId fails', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = getBroadcast();
   t.context.req.broadcastId = 'fail';
-  sandbox.stub(contentful, 'fetchBroadcast')
+  sandbox.stub(contentful, 'fetchByContentfulId')
     .callsFake(broadcastLookupFailStub);
 
   // test
@@ -144,7 +144,7 @@ test('getBroadcast should call sendErrorResponse if cache.set fails', async (t) 
   const middleware = getBroadcast();
   sandbox.stub(cache, 'get')
     .returns(Promise.resolve(null));
-  sandbox.stub(contentful, 'fetchBroadcast')
+  sandbox.stub(contentful, 'fetchByContentfulId')
     .callsFake(broadcastLookupStub);
   sandbox.stub(cache, 'set')
     .returns(Promise.reject(new Error()));
@@ -152,7 +152,7 @@ test('getBroadcast should call sendErrorResponse if cache.set fails', async (t) 
   // test
   await middleware(t.context.req, t.context.res, next);
   cache.get.should.have.been.called;
-  contentful.fetchBroadcast.should.have.been.called;
+  contentful.fetchByContentfulId.should.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
 
   t.context.req.should.not.have.property('broadcast');

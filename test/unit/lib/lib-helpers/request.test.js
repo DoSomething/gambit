@@ -10,6 +10,7 @@ const underscore = require('underscore');
 
 const helpers = require('../../../../lib/helpers');
 const stubs = require('../../../helpers/stubs');
+const campaignFactory = require('../../../helpers/factories/campaign');
 const conversationFactory = require('../../../helpers/factories/conversation');
 
 chai.should();
@@ -37,6 +38,45 @@ test.afterEach(() => {
   sandbox.restore();
 });
 
+// changeTopic
+test('changeTopic should call req.conversation.updateTopicAndCampaignId', async (t) => {
+  const topicId = stubs.getContentfulId();
+  const topicCacheData = {
+    id: topicId,
+    campaignId,
+  };
+  t.context.req.macro = stubs.getRandomWord();
+  t.context.req.conversation = conversation;
+  sandbox.stub(helpers.macro, 'getTopicIdFromChangeTopicMacro')
+    .returns(topicId);
+  sandbox.stub(helpers.topic, 'getById')
+    .returns(Promise.resolve(topicCacheData));
+  sandbox.stub(helpers.campaign, 'fetchById')
+    .returns(Promise.resolve(campaignFactory.getValidCampaign()));
+  sandbox.stub(conversation, 'updateTopicAndCampaignId')
+    .returns(Promise.resolve(true));
+
+  await requestHelper.changeTopic(t.context.req);
+  helpers.macro.getTopicIdFromChangeTopicMacro
+    .should.have.been.calledWith(t.context.req.macro);
+  helpers.campaign.fetchById.should.have.been.calledWith(campaignId);
+  conversation.updateTopicAndCampaignId.should.have.been.calledWith(topicId, campaignId);
+});
+
+// isTopicChange
+test('isTopicChange should return false if req.macro is not set', (t) => {
+  t.falsy(requestHelper.isTopicChange(t.context.req));
+});
+
+test('isTopicChange should call isChangeTopicMacro with req.macro if set', (t) => {
+  t.context.req.macro = stubs.getRandomWord();
+  sandbox.stub(helpers.macro, 'isChangeTopic')
+    .returns(true);
+  t.truthy(requestHelper.isTopicChange(t.context.req));
+  helpers.macro.isChangeTopic.should.have.been.calledWith(t.context.req.macro);
+});
+
+// parseCampaignKeyword
 test('parseCampaignKeyword should return trimmed lowercase req.inboundMessageText', () => {
   const text = 'Winter ';
   const trimSpy = sandbox.spy(String.prototype, 'trim');
