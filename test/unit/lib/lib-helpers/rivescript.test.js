@@ -8,6 +8,7 @@ const sinonChai = require('sinon-chai');
 
 const config = require('../../../../config/lib/helpers/rivescript');
 const stubs = require('../../../helpers/stubs');
+const defaultTopicTriggerFactory = require('../../../helpers/factories/defaultTopicTrigger');
 
 chai.should();
 chai.use(sinonChai);
@@ -85,7 +86,6 @@ test('getReplyRivescript should return Rivescript with trigger and reply command
 
 // getRivescriptFromDefaultTopicTrigger
 test('getRivescriptFromDefaultTopicTrigger should return null if no defaultTopicTrigger', (t) => {
-  const mockReplyText = stubs.getRandomMessageText();
   sandbox.stub(rivescriptHelper, 'formatRivescriptLine')
     .returns(mockReplyLine);
   sandbox.stub(rivescriptHelper, 'getRivescriptFromTriggerTextAndRivescriptLine')
@@ -93,4 +93,63 @@ test('getRivescriptFromDefaultTopicTrigger should return null if no defaultTopic
 
   const result = rivescriptHelper.getRivescriptFromDefaultTopicTrigger();
   t.is(result, null);
+});
+
+test('getRivescriptFromDefaultTopicTrigger returns redirectRivescript if defaultTopicTrigger.redirect is set', () => {
+  sandbox.stub(rivescriptHelper, 'getRedirectRivescript')
+    .returns(mockRivescript);
+  sandbox.stub(rivescriptHelper, 'getReplyRivescript')
+    .returns(mockRivescript);
+  const redirectDefaultTopicTrigger = defaultTopicTriggerFactory
+    .getValidRedirectDefaultTopicTrigger();
+
+  const result = rivescriptHelper.getRivescriptFromDefaultTopicTrigger(redirectDefaultTopicTrigger);
+  rivescriptHelper.getReplyRivescript.should.not.have.been.called;
+  rivescriptHelper.getRedirectRivescript
+    .should.have.been
+    .calledWith(redirectDefaultTopicTrigger.trigger, redirectDefaultTopicTrigger.redirect);
+  result.should.equal(mockRivescript);
+});
+
+test('getRivescriptFromDefaultTopicTrigger returns replyRivescript if defaultTopicTrigger.redirect is not set', () => {
+  sandbox.stub(rivescriptHelper, 'getRedirectRivescript')
+    .returns(mockRivescript);
+  sandbox.stub(rivescriptHelper, 'getReplyRivescript')
+    .returns(mockRivescript);
+  const replyDefaultTopicTrigger = defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger();
+
+  const result = rivescriptHelper.getRivescriptFromDefaultTopicTrigger(replyDefaultTopicTrigger);
+  rivescriptHelper.getRedirectRivescript.should.not.have.been.called;
+  rivescriptHelper.getReplyRivescript.should.have.been
+    .calledWith(replyDefaultTopicTrigger.trigger, replyDefaultTopicTrigger.reply);
+  result.should.equal(mockRivescript);
+});
+
+// getRivescriptFromDefaultTopicTriggers
+test('getRivescriptFromDefaultTopicTriggers returns joined getRivescriptFromDefaultTopicTrigger results', () => {
+  const allRivescripts = [mockRivescript, mockRivescript, mockRivescript].join(lineBreak);
+  sandbox.stub(rivescriptHelper, 'getRivescriptFromDefaultTopicTrigger')
+    .returns(mockRivescript);
+  sandbox.stub(rivescriptHelper, 'joinRivescriptLines')
+    .returns(allRivescripts);
+  const defaultTopicTriggers = [
+    defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger(),
+    defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger(),
+    defaultTopicTriggerFactory.getValidRedirectDefaultTopicTrigger(),
+  ];
+
+  const result = rivescriptHelper.getRivescriptFromDefaultTopicTriggers(defaultTopicTriggers);
+  defaultTopicTriggers.forEach((item) => {
+    rivescriptHelper.getRivescriptFromDefaultTopicTrigger.should.have.been.calledWith(item);
+  });
+  rivescriptHelper.joinRivescriptLines
+    .should.have.been.calledWith([mockRivescript, mockRivescript, mockRivescript]);
+  result.should.equal(allRivescripts);
+});
+
+// joinRivescriptLines
+test('joinRivescriptLines returns input array joined by the config line separator', () => {
+  const lines = [mockRivescript, mockRivescript, mockRivescript];
+  const result = rivescriptHelper.joinRivescriptLines(lines);
+  result.should.equal(lines.join(lineBreak));
 });
