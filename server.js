@@ -14,30 +14,34 @@ const mongoose = require('mongoose');
 const logger = require('heroku-logger');
 const fs = require('fs');
 
+const helpers = require('./lib/helpers');
 const rivescript = require('./lib/rivescript');
-const rivescriptHelper = require('./lib/helpers/rivescript');
 
 const dir = './brain/contentful';
 if (!fs.existsSync(dir)) {
   fs.mkdirSync(dir);
 }
 
+function writeFile(name, data) {
+  const filename = `${dir}/${name}.rive`;
+  fs.writeFile(filename, data, ((err) => {
+    logger.debug('writeFile', { filename });
+    if (err) logger.error('writeFile', { err });
+  }));
+}
+
 /**
- * Fetch Rivescript from Contentful to load chatbot replies for member messages.
+ * Fetch all default topic triggers to create additional Rivescript for chatbot replies.
  */
-rivescriptHelper.fetchRivescript()
-  .then((rivescriptTriggers) => {
-    const filename = `${dir}/default.rive`;
-    const data = rivescriptTriggers.join('\n');
-    fs.writeFile(filename, data, ((err) => {
-      logger.debug('writeFile', { filename });
-      if (err) logger.error('writeFile', { err });
-    }));
-    logger.info('fetchDefaultTopicTriggers success', { count: rivescriptTriggers.length });
-    // Load the Rivescript bot.
+helpers.topic.fetchAllDefaultTopicTriggers()
+  .then((defaultTopicTriggers) => {
+    logger.info('fetchAllDefaultTopicTriggers', { count: defaultTopicTriggers.length });
+    const defaultTopicRivescripts = helpers.rivescript
+      .getRivescriptFromDefaultTopicTriggers(defaultTopicTriggers);
+    writeFile('default', defaultTopicRivescripts);
     rivescript.getBot();
   })
-  .catch(err => logger.error('fetchDefaultTopicTriggers', { err }));
+  .catch(err => logger.error('error writing rivescript', { err }));
 
 
 const db = mongoose.connection;
