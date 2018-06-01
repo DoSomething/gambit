@@ -23,7 +23,7 @@ test.afterEach(() => {
   sandbox.restore();
 });
 
-// fetchRivescript
+// fetchAllDefaultTopicTriggers
 test('fetchAllDefaultTopicTriggers should call parseDefaultTopicTrigger on gambitCampaigns.fetchDefaultTopicTriggers success', async () => {
   const mockResponse = [replyTrigger, redirectTrigger];
   sandbox.stub(gambitCampaigns, 'fetchDefaultTopicTriggers')
@@ -39,7 +39,7 @@ test('fetchAllDefaultTopicTriggers should call parseDefaultTopicTrigger on gambi
   result.should.deep.equal([replyTrigger, replyTrigger]);
 });
 
-test('fetchRivescript should throw on gambitCampaigns.fetchDefaultTopicTriggers fail', async (t) => {
+test('fetchAllDefaultTopicTriggers should throw on gambitCampaigns.fetchDefaultTopicTriggers fail', async (t) => {
   const mockError = new Error('epic fail');
   sandbox.stub(gambitCampaigns, 'fetchDefaultTopicTriggers')
     .returns(Promise.reject(mockError));

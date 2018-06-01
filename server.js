@@ -17,7 +17,7 @@ const fs = require('fs');
 const helpers = require('./lib/helpers');
 const rivescript = require('./lib/rivescript');
 
-const dir = './brain/contentful';
+const dir = './brain/content-api';
 if (!fs.existsSync(dir)) {
   fs.mkdirSync(dir);
 }
