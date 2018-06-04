@@ -3,19 +3,17 @@
 const stubs = require('../stubs');
 
 function getValidRedirectDefaultTopicTrigger() {
-  const data = {
+  return {
     trigger: stubs.getRandomWord(),
     redirect: stubs.getRandomWord(),
   };
-  return data;
 }
 
 function getValidReplyDefaultTopicTrigger() {
-  const data = {
+  return {
     trigger: stubs.getRandomWord(),
     reply: stubs.getRandomMessageText(),
   };
-  return data;
 }
 
 module.exports = {
