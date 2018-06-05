@@ -12,37 +12,27 @@ require('./config/mongoose')(config.dbUri);
 const app = require('./app');
 const mongoose = require('mongoose');
 const logger = require('heroku-logger');
-const fs = require('fs');
 
 const helpers = require('./lib/helpers');
 const rivescript = require('./lib/rivescript');
 
-const dir = './brain/content-api';
-if (!fs.existsSync(dir)) {
-  fs.mkdirSync(dir);
-}
-
-function writeFile(name, data) {
-  const filename = `${dir}/${name}.rive`;
-  fs.writeFile(filename, data, ((err) => {
-    logger.debug('writeFile', { filename });
-    if (err) logger.error('writeFile', { err });
-  }));
-}
-
 /**
- * Fetch all default topic triggers to create additional Rivescript for chatbot replies.
+ * Fetch additional Rivescript from Content API and load the Rivescript bot.
  */
 helpers.topic.fetchAllDefaultTopicTriggers()
   .then((defaultTopicTriggers) => {
-    logger.info('fetchAllDefaultTopicTriggers', { count: defaultTopicTriggers.length });
-    const defaultTopicRivescripts = helpers.rivescript
-      .getRivescriptFromDefaultTopicTriggers(defaultTopicTriggers);
-    writeFile('default', defaultTopicRivescripts);
+    logger.info('fetchAllDefaultTopicTriggers success', { count: defaultTopicTriggers.length });
+    return helpers.rivescript.writeRivescriptFromDefaultTopicTriggers(defaultTopicTriggers);
+  })
+  // Note: We plan to support topic-specific triggers by adding a triggers property to topics.
+  // Once the property/data exists, we'll make another query to the Content API to fetch all topics
+  // that contain their own triggers, and write them as Rivescript topics.
+  // @see https://github.com/DoSomething/gambit-conversations/blob/77ff4b13b71d73d7f2b286ad9691d6c79c3309da/lib/helpers/rivescript.js#L81
+  .then((opts) => {
+    logger.info('writeRivescriptFromDefaultTopicTriggers success', { opts });
     rivescript.getBot();
   })
-  .catch(err => logger.error('error writing rivescript', { err }));
-
+  .catch(error => logger.error('fetchAllDefaultTopicTriggers', { error }));
 
 const db = mongoose.connection;
 db.on('error', () => {
