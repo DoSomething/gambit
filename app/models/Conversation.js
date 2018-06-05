@@ -251,7 +251,7 @@ conversationSchema.methods.createMessage = async function (direction, text, temp
   if (direction !== 'inbound') {
     messageText = helpers.tags.render(text, req);
 
-    if (bertly.textHasLinks(messageText)) {
+    if (bertly.isEnabled() && bertly.textHasLinks(messageText)) {
       messageText = await bertly.parseLinksInTextIntoRedirects(messageText);
     }
   } else {
