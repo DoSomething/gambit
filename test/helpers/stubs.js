@@ -92,6 +92,9 @@ module.exports = {
   getBroadcastMessageText: function getBroadcastMessageText() {
     return 'Winter is coming, will you be prepared? Yes or No.';
   },
+  getBroadcastMessageTextWithLink: function getBroadcastMessageTextWithLink() {
+    return 'Winter is coming! https://78.media.tumblr.com/tumblr_m3vkxqpZ6N1qcrd6qo1_500.gif';
+  },
   getBroadcastName: function getBroadcastName() {
     return 'NightsWatch2017';
   },
