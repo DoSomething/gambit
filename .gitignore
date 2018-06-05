@@ -20,4 +20,4 @@ node_modules
 coverage
 
 # Rivescript loaded externally
-brain/content-api.rive
+brain/contentApi.rive
