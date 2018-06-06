@@ -21,7 +21,9 @@ const changeTopicMacro = require('../../../../../../lib/middleware/messages/memb
 const sandbox = sinon.sandbox.create();
 
 test.beforeEach((t) => {
-  sandbox.stub(helpers.replies, 'noCampaign')
+  sandbox.stub(helpers.request, 'executeChangeTopicMacro')
+    .returns(Promise.resolve({}));
+  sandbox.stub(helpers.replies, 'continueCampaign')
     .returns(underscore.noop);
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(underscore.noop);
@@ -35,31 +37,32 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-test('changeTopicMacro returns next if not macro.isChangeTopic', async (t) => {
+test('changeTopicMacro returns next if request not changeTopicMacro', async (t) => {
   const next = sinon.stub();
   const middleware = changeTopicMacro();
-  sandbox.stub(helpers.macro, 'isChangeTopic')
+  sandbox.stub(helpers.request, 'isChangeTopicMacro')
     .returns(false);
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  helpers.macro.isChangeTopic.should.have.been.called;
+  helpers.request.isChangeTopicMacro.should.have.been.called;
   next.should.have.been.called;
-  helpers.replies.noCampaign.should.not.have.been.called;
+  helpers.request.executeChangeTopicMacro.should.not.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 
-test('changeTopicMacro returns noCampaign reply if macro.isChangeTopic', async (t) => {
+test('changeTopicMacro executes chnageTopicMacro if request isChangeTopicMacro', async (t) => {
   const next = sinon.stub();
   const middleware = changeTopicMacro();
-  sandbox.stub(helpers.macro, 'isChangeTopic')
+  sandbox.stub(helpers.request, 'isChangeTopicMacro')
     .returns(true);
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  helpers.macro.isChangeTopic.should.have.been.called;
+  helpers.request.isChangeTopicMacro.should.have.been.called;
   next.should.not.have.been.called;
-  helpers.replies.noCampaign.should.have.been.calledWith(t.context.req, t.context.res);
+  helpers.request.executeChangeTopicMacro.should.have.been.calledWith(t.context.req);
+  helpers.replies.continueCampaign.should.have.been.calledWith(t.context.req, t.context.res);
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 
@@ -67,14 +70,13 @@ test('changeTopicMacro should call sendErrorResponse if postMessageToSupport fai
   const next = sinon.stub();
   const middleware = changeTopicMacro();
   const error = new Error('epic fail');
-  sandbox.stub(helpers.macro, 'isChangeTopic')
+  sandbox.stub(helpers.request, 'isChangeTopicMacro')
     .throws(error);
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  helpers.macro.isChangeTopic.should.have.been.called;
+  helpers.request.isChangeTopicMacro.should.have.been.called;
   next.should.not.have.been.called;
-  helpers.replies.noCampaign.should.not.have.been.called;
+  helpers.request.executeChangeTopicMacro.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.calledWith(t.context.res, error);
 });
-
