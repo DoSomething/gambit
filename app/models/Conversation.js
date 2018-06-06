@@ -9,6 +9,7 @@ const Message = require('./Message');
 const helpers = require('../../lib/helpers');
 const front = require('../../lib/front');
 const twilio = require('../../lib/twilio');
+const bertly = require('../../lib/bertly');
 
 const config = require('../../config/app/models/conversation');
 
@@ -244,11 +245,15 @@ conversationSchema.methods.getMessagePayloadFromReq = function (req = {}, direct
  * @param {array} attachments
  * @return {Promise}
  */
-conversationSchema.methods.createMessage = function (direction, text, template, req) {
+conversationSchema.methods.createMessage = async function (direction, text, template, req) {
   logger.debug('createMessage', { direction }, req);
   let messageText;
   if (direction !== 'inbound') {
     messageText = helpers.tags.render(text, req);
+
+    if (bertly.isEnabled() && bertly.textHasLinks(messageText)) {
+      messageText = await bertly.parseLinksInTextIntoRedirects(messageText);
+    }
   } else {
     messageText = text;
   }
