@@ -49,6 +49,14 @@ test('bertly.parseLinksInTextIntoRedirects should return same text if no links f
   parsedText.should.be.equal(textWithNoLink);
 });
 
+test('bertly.restClient.createRedirect should return a rejected promise if an url is no passed', async () => {
+  try {
+    await bertly.restClient.createRedirect();
+  } catch (error) {
+    error.should.be.an.instanceOf(TypeError);
+  }
+});
+
 test.serial('bertly.parseLinksInTextIntoRedirects should return same text if it cant create redirects', async () => {
   bertly.__set__('restClient', { createRedirect: () => Promise.reject(false) });
   const textWithLink = stubs.getBroadcastMessageTextWithLink();
