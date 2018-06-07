@@ -74,3 +74,24 @@ test('parseDefaultTopicTrigger should return object with a changeTopic macro rep
   const result = topicHelper.parseDefaultTopicTrigger(defaultTopicTrigger);
   result.reply.should.equal(mockChangeTopicMacro);
 });
+
+// getRenderedTextFromTopicAndTemplateName
+test('getRenderedTextFromTopicAndTemplateName returns a string when template exists', () => {
+  const templateName = stubs.getTemplate();
+  const templateText = stubs.getRandomMessageText();
+  // TODO: Add topic factory.
+  const topic = {
+    id: stubs.getContentfulId(),
+    templates: {},
+  };
+  topic.templates[templateName] = { rendered: templateText };
+
+  const result = topicHelper.getRenderedTextFromTopicAndTemplateName(topic, templateName);
+  result.should.equal(templateText);
+});
+
+test('getRenderedTextFromTopicAndTemplateName throws when template undefined', (t) => {
+  const topic = { id: stubs.getContentfulId() };
+  const templateName = stubs.getTemplate();
+  t.throws(() => topicHelper.getRenderedTextFromTopicAndTemplateName(topic, templateName));
+});

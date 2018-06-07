@@ -58,11 +58,11 @@ test.afterEach((t) => {
 // Assert helper functions
 // TODO: Maybe move to own asserts module?
 async function assertSendingReplyWithCampaignTemplate(req, res, template, replyName) {
-  sandbox.stub(repliesHelper, 'sendReplyWithCampaignTemplate')
+  sandbox.stub(repliesHelper, 'sendReplyWithTopicTemplate')
     .returns(resolvedPromise);
 
   await repliesHelper[replyName || template](req, res);
-  repliesHelper.sendReplyWithCampaignTemplate
+  repliesHelper.sendReplyWithTopicTemplate
     .should.have.been.calledWith(req, res, template);
 }
 
@@ -174,24 +174,24 @@ test('sendReply(): should call sendErrorResponse on failure', async (t) => {
   helpers.sendErrorResponse.should.have.been.called;
 });
 
-test('continueConversation(): sendReplyWithCampaignTemplate should be called', async (t) => {
+test('continueConversation(): sendReplyWithTopicTemplate should be called', async (t) => {
   sandbox.stub(gambitCampaigns, 'postCampaignActivity')
     .returns(Promise.resolve(gCampResponse.data));
-  sandbox.stub(repliesHelper, 'sendReplyWithCampaignTemplate')
+  sandbox.stub(repliesHelper, 'sendReplyWithTopicTemplate')
     .returns(resolvedPromise);
 
   await repliesHelper.continueConversation(t.context.req, t.context.res);
-  repliesHelper.sendReplyWithCampaignTemplate.should.have.been.called;
+  repliesHelper.sendReplyWithTopicTemplate.should.have.been.called;
 });
 
 test('continueConversation(): helpers.sendErrorResponse should be called if postCampaignActivity fails', async (t) => {
   sandbox.stub(gambitCampaigns, 'postCampaignActivity')
     .returns(Promise.reject(gCampResponse.data));
-  sandbox.stub(repliesHelper, 'sendReplyWithCampaignTemplate')
+  sandbox.stub(repliesHelper, 'sendReplyWithTopicTemplate')
     .returns(resolvedPromise);
 
   await repliesHelper.continueConversation(t.context.req, t.context.res);
-  repliesHelper.sendReplyWithCampaignTemplate.should.not.have.been.called;
+  repliesHelper.sendReplyWithTopicTemplate.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
 });
 
@@ -205,17 +205,17 @@ test('continueConversation(): should call noCampaign if req.campaign undefined',
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 
-test('askContinue(): should call sendReplyWithCampaignTemplate', async (t) => {
+test('askContinue(): should call sendReplyWithTopicTemplate', async (t) => {
   const template = templates.askContinueTemplates.askContinue;
   await assertSendingReplyWithCampaignTemplate(t.context.req, t.context.res, template);
 });
 
-test('askSignup(): should call sendReplyWithCampaignTemplate', async (t) => {
+test('askSignup(): should call sendReplyWithTopicTemplate', async (t) => {
   const template = templates.askSignupTemplates.askSignup;
   await assertSendingReplyWithCampaignTemplate(t.context.req, t.context.res, template);
 });
 
-test('campaignClosed(): should call sendReplyWithCampaignTemplate', async (t) => {
+test('campaignClosed(): should call sendReplyWithTopicTemplate', async (t) => {
   const template = templates.campaignClosed;
   await assertSendingReplyWithCampaignTemplate(t.context.req, t.context.res, template);
 });
@@ -240,22 +240,22 @@ test('confirmedSignup(): should call continueConversation', async (t) => {
   repliesHelper.continueConversation.getCall(0).args[0].keyword.should.equal('confirmed');
 });
 
-test('declinedContinue(): should call sendReplyWithCampaignTemplate', async (t) => {
+test('declinedContinue(): should call sendReplyWithTopicTemplate', async (t) => {
   const template = templates.declinedContinue;
   await assertSendingReplyWithCampaignTemplate(t.context.req, t.context.res, template);
 });
 
-test('declinedSignup(): should call sendReplyWithCampaignTemplate', async (t) => {
+test('declinedSignup(): should call sendReplyWithTopicTemplate', async (t) => {
   const template = templates.declinedSignup;
   await assertSendingReplyWithCampaignTemplate(t.context.req, t.context.res, template);
 });
 
-test('invalidAskContinueResponse(): should call sendReplyWithCampaignTemplate', async (t) => {
+test('invalidAskContinueResponse(): should call sendReplyWithTopicTemplate', async (t) => {
   const template = templates.askContinueTemplates.invalidAskContinueResponse;
   await assertSendingReplyWithCampaignTemplate(t.context.req, t.context.res, template);
 });
 
-test('invalidAskSignupResponse(): should call sendReplyWithCampaignTemplate', async (t) => {
+test('invalidAskSignupResponse(): should call sendReplyWithTopicTemplate', async (t) => {
   const template = templates.askSignupTemplates.invalidAskSignupResponse;
   await assertSendingReplyWithCampaignTemplate(t.context.req, t.context.res, template);
 });
@@ -302,7 +302,7 @@ test('supportRequested(): should call sendGambitConversationsTemplate if no camp
   await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template);
 });
 
-test('supportRequested(): should call sendReplyWithCampaignTemplate if campaign is found', async (t) => {
+test('supportRequested(): should call sendReplyWithTopicTemplate if campaign is found', async (t) => {
   const template = templates.memberSupport;
   await assertSendingReplyWithCampaignTemplate(t.context.req, t.context.res, template, 'supportRequested');
 });
