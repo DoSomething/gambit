@@ -22,7 +22,7 @@ const sandbox = sinon.sandbox.create();
 test.beforeEach((t) => {
   sandbox.stub(helpers.request, 'executeChangeTopicMacro')
     .returns(Promise.resolve({}));
-  sandbox.stub(helpers.replies, 'continueCampaign')
+  sandbox.stub(helpers.replies, 'continueConversation')
     .returns(underscore.noop);
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(underscore.noop);
@@ -60,7 +60,7 @@ test('changeTopicMacro executes chnageTopicMacro if request isChangeTopicMacro',
   helpers.request.isChangeTopicMacro.should.have.been.called;
   next.should.not.have.been.called;
   helpers.request.executeChangeTopicMacro.should.have.been.calledWith(t.context.req);
-  helpers.replies.continueCampaign.should.have.been.calledWith(t.context.req, t.context.res);
+  helpers.replies.continueConversation.should.have.been.calledWith(t.context.req, t.context.res);
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 

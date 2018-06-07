@@ -36,24 +36,24 @@ const continueCampaignMiddleware = require('../../../lib/middleware/messages/mem
 
 router.use(paramsMiddleware());
 
-// Fetch User for Conversation.
+// Get or create user for conversation.
 router.use(getUserMiddleware(getUserConfig));
-
-// Creates User if doesn't exist.
 router.use(createUserIfNotFoundMiddleware());
 
 // Load/create conversation.
 router.use(getConversationMiddleware());
 router.use(createConversationMiddleware());
 
-// Send inbound message text to Rivescript for a reply.
+// Get the Rivescript bot reply to the text sent from user.
 router.use(getRivescriptReplyMiddleware());
 
-// Load/create inbound message.
+// Checks if this is a retry request, and loads inbound message if it exists already.
 router.use(loadInboundMessageMiddleware());
+
+// Creates inbound message from user.
 router.use(createInboundMessageMiddleware());
 
-// Load outbound message.
+// Checks if this is a retry request, and loads outbound reply message if it exists already.
 router.use(loadOutboundMessageMiddleware(loadOutboundMessageConfig));
 
 // Updates Last Messaged At, Subscription Status, Paused.
@@ -71,6 +71,7 @@ router.use(badWordsMiddleware());
 // If MENU keyword, set random Campaign and ask for Signup.
 router.use(campaignMenuMiddleware());
 
+// TODO: This won't be used once we publish defaultTopicTrigger entries with topic responses.
 // If Campaign keyword was sent, update Conversation campaign and send continueCampaign.
 router.use(campaignKeywordMiddleware());
 
@@ -90,7 +91,7 @@ router.use(supportRequestedMiddleware());
 // Checks if a Campaign has been set.
 router.use(noCampaignTemplateMiddleware());
 
-// Checks that Campaign isn't closed.
+// // Checks that Campaign isn't closed.
 router.use(closedCampaignMiddleware());
 
 // Check for yes/no/invalid responses to sent Ask Signup/Continue messages:

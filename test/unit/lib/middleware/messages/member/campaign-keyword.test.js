@@ -32,7 +32,7 @@ const sandbox = sinon.sandbox.create();
 test.beforeEach((t) => {
   sandbox.stub(replies, 'campaignClosed')
     .returns(underscore.noop);
-  sandbox.stub(replies, 'continueCampaign')
+  sandbox.stub(replies, 'continueConversation')
     .returns(underscore.noop);
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(underscore.noop);
@@ -103,11 +103,11 @@ test('getCampaignByKeyword should call replies.campaignClosed if keyword Campaig
   gambitCampaigns.isClosedCampaign.should.have.been.called;
   t.context.req.campaign.should.equal(mockCampaign);
   t.context.req.keyword.should.equal(mockKeyword);
-  replies.continueCampaign.should.not.have.been.called;
+  replies.continueConversation.should.not.have.been.called;
   replies.campaignClosed.should.have.been.called;
 });
 
-test('getCampaignByKeyword should call replies.continueCampaign if keyword Campaign is active', async (t) => {
+test('getCampaignByKeyword should call replies.continueConversation if keyword Campaign is active', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = getCampaignByKeyword();
@@ -126,7 +126,7 @@ test('getCampaignByKeyword should call replies.continueCampaign if keyword Campa
   gambitCampaigns.isClosedCampaign.should.have.been.called;
   t.context.req.campaign.should.equal(mockCampaign);
   t.context.req.keyword.should.equal(mockKeyword);
-  replies.continueCampaign.should.have.been.called;
+  replies.continueConversation.should.have.been.called;
   replies.campaignClosed.should.not.have.been.called;
 });
 

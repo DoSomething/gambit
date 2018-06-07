@@ -15,6 +15,7 @@ const gambitCampaigns = require('../../../../lib/gambit-campaigns');
 const helpers = require('../../../../lib/helpers');
 const templatesConfig = require('../../../../config/lib/helpers/template');
 const Message = require('../../../../app/models/Message');
+const campaignFactory = require('../../../helpers/factories/campaign');
 const conversationFactory = require('../../../helpers/factories/conversation');
 const messageFactory = require('../../../helpers/factories/message');
 
@@ -44,7 +45,7 @@ test.beforeEach((t) => {
     .returns(() => {});
 
   // add a campaign object
-  t.context.req.campaign = { id: stubs.getCampaignId() };
+  t.context.req.campaign = campaignFactory.getValidCampaign();
 });
 
 // Cleanup
@@ -173,35 +174,35 @@ test('sendReply(): should call sendErrorResponse on failure', async (t) => {
   helpers.sendErrorResponse.should.have.been.called;
 });
 
-test('continueCampaign(): sendReplyWithCampaignTemplate should be called', async (t) => {
+test('continueConversation(): sendReplyWithCampaignTemplate should be called', async (t) => {
   sandbox.stub(gambitCampaigns, 'postCampaignActivity')
     .returns(Promise.resolve(gCampResponse.data));
   sandbox.stub(repliesHelper, 'sendReplyWithCampaignTemplate')
     .returns(resolvedPromise);
 
-  await repliesHelper.continueCampaign(t.context.req, t.context.res);
+  await repliesHelper.continueConversation(t.context.req, t.context.res);
   repliesHelper.sendReplyWithCampaignTemplate.should.have.been.called;
 });
 
-test('continueCampaign(): helpers.sendErrorResponse should be called if no campaign exists', async (t) => {
+test('continueConversation(): helpers.sendErrorResponse should be called if postCampaignActivity fails', async (t) => {
   sandbox.stub(gambitCampaigns, 'postCampaignActivity')
     .returns(Promise.reject(gCampResponse.data));
   sandbox.stub(repliesHelper, 'sendReplyWithCampaignTemplate')
     .returns(resolvedPromise);
 
-  await repliesHelper.continueCampaign(t.context.req, t.context.res);
+  await repliesHelper.continueConversation(t.context.req, t.context.res);
   repliesHelper.sendReplyWithCampaignTemplate.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
 });
 
-test('continueCampaign(): helpers.sendErrorResponse should be called on Gambit Campaign error', async (t) => {
-  t.context.req.campaign = {};
-  sandbox.stub(repliesHelper, 'sendReplyWithCampaignTemplate')
+test('continueConversation(): should call noCampaign if req.campaign undefined', async (t) => {
+  t.context.req.campaign = null;
+  sandbox.stub(repliesHelper, 'noCampaign')
     .returns(resolvedPromise);
 
-  await repliesHelper.continueCampaign(t.context.req, t.context.res);
-  repliesHelper.sendReplyWithCampaignTemplate.should.not.have.been.called;
-  helpers.sendErrorResponse.should.have.been.called;
+  await repliesHelper.continueConversation(t.context.req, t.context.res);
+  repliesHelper.noCampaign.should.have.been.called;
+  helpers.sendErrorResponse.should.not.have.been.called;
 });
 
 test('askContinue(): should call sendReplyWithCampaignTemplate', async (t) => {
@@ -219,24 +220,24 @@ test('campaignClosed(): should call sendReplyWithCampaignTemplate', async (t) =>
   await assertSendingReplyWithCampaignTemplate(t.context.req, t.context.res, template);
 });
 
-test('confirmedContinue(): should call continueCampaign', async (t) => {
-  sandbox.stub(repliesHelper, 'continueCampaign')
+test('confirmedContinue(): should call continueConversation', async (t) => {
+  sandbox.stub(repliesHelper, 'continueConversation')
     .returns(resolvedPromise);
 
   await repliesHelper.confirmedContinue(t.context.req, t.context.res);
-  repliesHelper.continueCampaign.should.have.been.called;
+  repliesHelper.continueConversation.should.have.been.called;
   // TODO: Should not be testing hardcoded strings
-  repliesHelper.continueCampaign.getCall(0).args[0].keyword.should.equal('continue');
+  repliesHelper.continueConversation.getCall(0).args[0].keyword.should.equal('continue');
 });
 
-test('confirmedSignup(): should call continueCampaign', async (t) => {
-  sandbox.stub(repliesHelper, 'continueCampaign')
+test('confirmedSignup(): should call continueConversation', async (t) => {
+  sandbox.stub(repliesHelper, 'continueConversation')
     .returns(resolvedPromise);
 
   await repliesHelper.confirmedSignup(t.context.req, t.context.res);
-  repliesHelper.continueCampaign.should.have.been.called;
+  repliesHelper.continueConversation.should.have.been.called;
   // TODO: Should not be testing hardcoded strings
-  repliesHelper.continueCampaign.getCall(0).args[0].keyword.should.equal('confirmed');
+  repliesHelper.continueConversation.getCall(0).args[0].keyword.should.equal('confirmed');
 });
 
 test('declinedContinue(): should call sendReplyWithCampaignTemplate', async (t) => {
