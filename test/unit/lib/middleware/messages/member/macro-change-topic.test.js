@@ -10,7 +10,6 @@ const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 
 const helpers = require('../../../../../../lib/helpers');
-const stubs = require('../../../../../helpers/stubs');
 
 chai.should();
 chai.use(sinonChai);
