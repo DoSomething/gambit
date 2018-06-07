@@ -27,7 +27,7 @@ const updateUserMiddleware = require('../../../lib/middleware/messages/member/us
 const supportRequestedMiddleware = require('../../../lib/middleware/messages/member/support-requested');
 const forwardSupportMessageMiddleware = require('../../../lib/middleware/messages/member/support-message');
 const campaignMenuMiddleware = require('../../../lib/middleware/messages/member/campaign-menu');
-const currentCampaignMiddleware = require('../../../lib/middleware/messages/member/campaign-current');
+const getTopicMiddleware = require('../../../lib/middleware/messages/member/topic-get');
 const closedCampaignMiddleware = require('../../../lib/middleware/messages/member/campaign-closed');
 const noCampaignTemplateMiddleware = require('../../../lib/middleware/messages/member/template-no-campaign');
 const parseAskSignupMiddleware = require('../../../lib/middleware/messages/member/parse-ask-signup-answer');
@@ -82,8 +82,8 @@ router.use(forwardSupportMessageMiddleware());
 // Sends the reply text returned by Rivescript.
 router.use(rivescriptTemplateMiddleware());
 
-// Otherwise, load the Campaign stored on the Conversation.
-router.use(currentCampaignMiddleware());
+// Otherwise, fetch the current conversation topic.
+router.use(getTopicMiddleware());
 
 // If QUESTION keyword, pause Conversation and prompt User to send their support question.
 router.use(supportRequestedMiddleware());
