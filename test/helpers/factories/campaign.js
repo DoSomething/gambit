@@ -27,6 +27,12 @@ module.exports.getValidCampaign = function getValidCampaign() {
       postType: stubs.getPostType(),
       templates: {},
     },
+    // TODO: Create a topic factory.
+    topics: [{
+      id: stubs.getTopicId(),
+      postType: stubs.getPostType(),
+      templates: {},
+    }],
   };
   result.botConfig.templates[messageTemplate] = {
     raw: messageText,
