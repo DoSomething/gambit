@@ -28,7 +28,6 @@ test.beforeEach((t) => {
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(underscore.noop);
   t.context.req = httpMocks.createRequest();
-  t.context.req.macro = stubs.getRandomWord();
   t.context.res = httpMocks.createResponse();
 });
 
