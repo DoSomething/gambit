@@ -17,6 +17,7 @@ const createUserIfNotFoundMiddleware = require('../../../lib/middleware/messages
 const loadInboundMessageMiddleware = require('../../../lib/middleware/messages/member/message-inbound-load');
 const createInboundMessageMiddleware = require('../../../lib/middleware/messages/member/message-inbound-create');
 const loadOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-load');
+const changeTopicMacroMiddleware = require('../../../lib/middleware/messages/member/macro-change-topic');
 const macroReplyMiddleware = require('../../../lib/middleware/messages/member/template-macro-reply');
 const badWordsMiddleware = require('../../../lib/middleware/messages/member/bad-words');
 const campaignKeywordMiddleware = require('../../../lib/middleware/messages/member/campaign-keyword');
@@ -58,7 +59,10 @@ router.use(loadOutboundMessageMiddleware(loadOutboundMessageConfig));
 // Updates Last Messaged At, Subscription Status, Paused.
 router.use(updateUserMiddleware());
 
-// Sends macro reply if exists.
+// If bot reply is a changeTopic macro, execute it.
+router.use(changeTopicMacroMiddleware());
+
+// If bot reply is a macro with hardcoded reply message, send the reply.
 router.use(macroReplyMiddleware());
 
 // Scolds User if inbound message contains bad words.
