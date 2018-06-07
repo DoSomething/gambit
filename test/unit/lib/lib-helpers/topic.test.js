@@ -7,6 +7,8 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 
 const gambitCampaigns = require('../../../../lib/gambit-campaigns');
+const helpers = require('../../../../lib/helpers');
+const stubs = require('../../../helpers/stubs');
 const defaultTopicTriggerFactory = require('../../../helpers/factories/defaultTopicTrigger');
 
 chai.should();
@@ -50,4 +52,25 @@ test('fetchAllDefaultTopicTriggers should throw on gambitCampaigns.fetchDefaultT
   gambitCampaigns.fetchDefaultTopicTriggers.should.have.been.called;
   topicHelper.parseDefaultTopicTrigger.should.not.have.been.called;
   result.should.deep.equal(mockError);
+});
+
+// parseDefaultTopicTrigger
+test('parseDefaultTopicTrigger should return null if defaultTopicTrigger undefined', (t) => {
+  const result = topicHelper.parseDefaultTopicTrigger();
+  t.is(result, null);
+});
+
+test('parseDefaultTopicTrigger should return defaultTopicTrigger if defaultTopicTrigger.topicId undefined', () => {
+  const defaultTopicTrigger = defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger();
+  const result = topicHelper.parseDefaultTopicTrigger(defaultTopicTrigger);
+  result.should.deep.equal(defaultTopicTrigger);
+});
+
+test('parseDefaultTopicTrigger should return object with a changeTopic macro reply if defaultTopicTrigger.topicId', () => {
+  const mockChangeTopicMacro = `changeTopicTo${stubs.getTopicId()}`;
+  sandbox.stub(helpers.macro, 'getChangeTopicMacroFromTopicId')
+    .returns(mockChangeTopicMacro);
+  const defaultTopicTrigger = defaultTopicTriggerFactory.getValidChangeTopicDefaultTopicTrigger();
+  const result = topicHelper.parseDefaultTopicTrigger(defaultTopicTrigger);
+  result.reply.should.equal(mockChangeTopicMacro);
 });

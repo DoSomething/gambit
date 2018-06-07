@@ -1,6 +1,7 @@
 'use strict';
 
 module.exports = {
+  changeTopicPrefix: 'changeTopicTo',
   macros: {
     campaignMenu: 'campaignMenu',
     confirmedCampaign: 'confirmedCampaign',

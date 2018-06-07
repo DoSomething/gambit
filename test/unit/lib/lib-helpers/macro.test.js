@@ -13,8 +13,11 @@ chai.use(sinonChai);
 
 // app modules
 const config = require('../../../../config/lib/helpers/macro');
+const stubs = require('../../../helpers/stubs');
 
 const macros = config.macros;
+const topicId = stubs.getTopicId();
+const changeTopicMacroName = `${config.changeTopicPrefix}${topicId}`;
 const undefinedMacroName = 'trialByCombat';
 
 // module to be tested
@@ -29,6 +32,7 @@ test.afterEach(() => {
   sandbox.restore();
 });
 
+// getReply
 test('getReply should return text for given macro', () => {
   const macro = config.macros.subscriptionStatusStop;
   const reply = config.replies[macro];
@@ -40,16 +44,43 @@ test('getReply should return falsy for undefined macro reply', (t) => {
   t.falsy(macroHelper.getReply(undefinedMacroName));
 });
 
-test('isMacro should return text for given macro', () => {
+// getChangeTopicMacroFromTopicId
+test('getChangeTopicMacroFromTopicId returns string with changeTopicMacro prefix and topicId', () => {
+  const result = macroHelper.getChangeTopicMacroFromTopicId(topicId);
+  result.should.equal(changeTopicMacroName);
+});
+
+// getTopicIdFromChangeTopicMacro
+test('getTopicIdFromChangeTopicMacro returns topicId from given changeTopic macro name', () => {
+  const result = macroHelper.getTopicIdFromChangeTopicMacro(changeTopicMacroName);
+  result.should.equal(topicId);
+});
+
+// isChangeTopic
+test('isChangeTopic returns whether string includes changeTopic macro prefix', (t) => {
+  t.truthy(macroHelper.isChangeTopic(changeTopicMacroName));
+  t.falsy(macroHelper.isChangeTopic(undefinedMacroName));
+});
+
+// isMacro
+test('isMacro returns true if macro isChangeTopic', (t) => {
+  sandbox.stub(macroHelper, 'isChangeTopic')
+    .returns(true);
+  t.truthy(macroHelper.isMacro());
+});
+
+test('isMacro returns whether text exists for given macro if not isChangeTopic', (t) => {
+  sandbox.stub(macroHelper, 'isChangeTopic')
+    .returns(false);
   const macro = config.macros.confirmedCampaign;
-  const result = macroHelper.isMacro(macro);
-  macro.should.equal(result);
+  t.truthy(macroHelper.isMacro(macro));
 });
 
 test('isMacro should return falsy for undefined macro', (t) => {
   t.falsy(macroHelper.isMacro(undefinedMacroName));
 });
 
+// isCampaignMenu
 test('isCampaignMenu should return boolean', (t) => {
   t.true(macroHelper.isCampaignMenu(macros.campaignMenu));
   t.falsy(macroHelper.isCampaignMenu(undefinedMacroName));
