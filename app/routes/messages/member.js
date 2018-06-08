@@ -26,9 +26,9 @@ const rivescriptTemplateMiddleware = require('../../../lib/middleware/messages/m
 const updateUserMiddleware = require('../../../lib/middleware/messages/member/user-update');
 const supportRequestedMiddleware = require('../../../lib/middleware/messages/member/support-requested');
 const forwardSupportMessageMiddleware = require('../../../lib/middleware/messages/member/support-message');
-const campaignMenuMiddleware = require('../../../lib/middleware/messages/member/campaign-menu');
+const menuMacroMiddleware = require('../../../lib/middleware/messages/member/macro-menu');
 const getTopicMiddleware = require('../../../lib/middleware/messages/member/topic-get');
-const continueConversationMiddleware = require('../../../lib/middleware/messages/member/campaign-continue');
+const continueConversationMiddleware = require('../../../lib/middleware/messages/member/conversation-continue');
 
 router.use(paramsMiddleware());
 
@@ -65,7 +65,7 @@ router.use(macroReplyMiddleware());
 router.use(badWordsMiddleware());
 
 // If MENU keyword, set random Campaign and ask for Signup.
-router.use(campaignMenuMiddleware());
+router.use(menuMacroMiddleware());
 
 // TODO: This won't be used once we publish defaultTopicTrigger entries with topic responses.
 // If Campaign keyword was sent, update Conversation campaign and send continueCampaign.
