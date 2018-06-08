@@ -39,7 +39,7 @@ test.beforeEach((t) => {
     .returns(underscore.noop);
   t.context.req = httpMocks.createRequest();
   t.context.req.conversation = mockConversation;
-  sandbox.stub(mockConversation, 'changeTopic')
+  sandbox.stub(helpers.request, 'changeTopicByCampaign')
     .returns(Promise.resolve(true));
   t.context.req.inboundMessageText = stubs.getKeyword();
   t.context.res = httpMocks.createResponse();
@@ -79,7 +79,7 @@ test('getCampaignByKeyword should call next if gambitCampaigns.getCampaignByKeyw
   // test
   await middleware(t.context.req, t.context.res, next);
   gambitCampaigns.getCampaignByKeyword.should.have.been.called;
-  t.context.req.conversation.changeTopic.should.not.have.been.called;
+  helpers.request.changeTopicByCampaign.should.not.have.been.called;
   next.should.have.been.called;
   t.falsy(t.context.req.campaign);
   t.falsy(t.context.req.keyword);
@@ -98,8 +98,7 @@ test('getCampaignByKeyword should call replies.continueConversation if campaign 
   // test
   await middleware(t.context.req, t.context.res, next);
   gambitCampaigns.getCampaignByKeyword.should.have.been.called;
-  t.context.req.conversation.changeTopic.should.have.been.called;
-  t.context.req.campaign.should.equal(mockCampaign);
+  helpers.request.changeTopicByCampaign.should.have.been.called;
   t.context.req.keyword.should.equal(mockKeyword);
   replies.continueConversation.should.have.been.called;
 });
@@ -113,7 +112,7 @@ test('getCampaignByKeyword should call helpers.sendErrorResponse if getCampaignB
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  t.context.req.conversation.changeTopic.should.not.have.been.called;
+  helpers.request.changeTopicByCampaign.should.not.have.been.called;
   next.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
 });
