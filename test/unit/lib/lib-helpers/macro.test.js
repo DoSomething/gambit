@@ -80,10 +80,9 @@ test('isMacro should return falsy for undefined macro', (t) => {
   t.falsy(macroHelper.isMacro(undefinedMacroName));
 });
 
-// isCampaignMenu
-test('isCampaignMenu should return boolean', (t) => {
-  t.true(macroHelper.isCampaignMenu(macros.campaignMenu));
-  t.falsy(macroHelper.isCampaignMenu(undefinedMacroName));
+test('isMenu should return boolean', (t) => {
+  t.true(macroHelper.isMenu(macros.menu));
+  t.falsy(macroHelper.isMenu(undefinedMacroName));
 });
 
 test('macro.macros.x() should be equal to macro.macroNameValues.x', () => {

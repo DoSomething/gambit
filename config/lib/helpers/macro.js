@@ -3,10 +3,10 @@
 module.exports = {
   changeTopicPrefix: 'changeTopicTo',
   macros: {
-    campaignMenu: 'campaignMenu',
+    catchAll: 'catchAll',
     confirmedTopic: 'confirmedTopic',
     declinedTopic: 'declinedTopic',
-    gambit: 'gambit',
+    menu: 'menu',
     sendCrisisMessage: 'sendCrisisMessage',
     sendInfoMessage: 'sendInfoMessage',
     subscriptionStatusLess: 'subscriptionStatusLess',
