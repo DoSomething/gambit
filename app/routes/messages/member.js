@@ -18,17 +18,17 @@ const loadInboundMessageMiddleware = require('../../../lib/middleware/messages/m
 const createInboundMessageMiddleware = require('../../../lib/middleware/messages/member/message-inbound-create');
 const loadOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-load');
 const changeTopicMacroMiddleware = require('../../../lib/middleware/messages/member/macro-change-topic');
-const macroReplyMiddleware = require('../../../lib/middleware/messages/member/template-macro-reply');
+const replyMacroMiddleware = require('../../../lib/middleware/messages/member/macro-reply');
 const badWordsMiddleware = require('../../../lib/middleware/messages/member/bad-words');
 const campaignKeywordMiddleware = require('../../../lib/middleware/messages/member/campaign-keyword');
 const getRivescriptReplyMiddleware = require('../../../lib/middleware/messages/member/rivescript-reply-get');
-const rivescriptTemplateMiddleware = require('../../../lib/middleware/messages/member/template-rivescript');
+const sendRivescriptReplyMiddleware = require('../../../lib/middleware/messages/member/rivescript-reply-send');
 const updateUserMiddleware = require('../../../lib/middleware/messages/member/user-update');
 const supportRequestedMiddleware = require('../../../lib/middleware/messages/member/support-requested');
 const forwardSupportMessageMiddleware = require('../../../lib/middleware/messages/member/support-message');
 const menuMacroMiddleware = require('../../../lib/middleware/messages/member/macro-menu');
 const getTopicMiddleware = require('../../../lib/middleware/messages/member/topic-get');
-const continueConversationMiddleware = require('../../../lib/middleware/messages/member/conversation-continue');
+const catchAllMiddleware = require('../../../lib/middleware/messages/member/catch-all');
 
 router.use(paramsMiddleware());
 
@@ -59,7 +59,7 @@ router.use(updateUserMiddleware());
 router.use(changeTopicMacroMiddleware());
 
 // If bot reply is a macro with hardcoded reply message, send the reply.
-router.use(macroReplyMiddleware());
+router.use(replyMacroMiddleware());
 
 // Scolds User if inbound message contains bad words.
 router.use(badWordsMiddleware());
@@ -76,16 +76,16 @@ router.use(campaignKeywordMiddleware());
 router.use(forwardSupportMessageMiddleware());
 
 // Sends the reply text returned by Rivescript.
-router.use(rivescriptTemplateMiddleware());
+router.use(sendRivescriptReplyMiddleware());
 
 // Otherwise, fetch the current conversation topic.
 router.use(getTopicMiddleware());
 
-// TODO: Why is this here
+// TODO: Why is this here and nor further up. Let's just combine into one middleware.
 // If QUESTION keyword, pause Conversation and prompt User to send their support question.
 router.use(supportRequestedMiddleware());
 
 // Determines whether to start or continue conversation for the current topic.
-router.use(continueConversationMiddleware());
+router.use(catchAllMiddleware());
 
 module.exports = router;

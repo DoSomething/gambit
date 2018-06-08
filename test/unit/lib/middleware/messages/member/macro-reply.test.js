@@ -18,7 +18,7 @@ chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const macroReplyTemplate = require('../../../../../../lib/middleware/messages/member/template-macro-reply');
+const replyMacro = require('../../../../../../lib/middleware/messages/member/macro-reply');
 
 const sandbox = sinon.sandbox.create();
 
@@ -38,10 +38,10 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-test('macroReplyTemplate should call replies[macroReply] if macro.getReply returns string', async (t) => {
+test('replyMacro should call replies[macroReply] if macro.getReply returns string', async (t) => {
   // setup
   const next = sinon.stub();
-  const middleware = macroReplyTemplate();
+  const middleware = replyMacro();
   sandbox.stub(macroHelper, 'getReply')
     .returns(macroName);
   sandbox.stub(replies, 'subscriptionStatusStop')
@@ -54,10 +54,10 @@ test('macroReplyTemplate should call replies[macroReply] if macro.getReply retur
   next.should.not.have.been.called;
 });
 
-test('macroReplyTemplate should call next if macro.getReply undefined', async (t) => {
+test('replyMacro should call next if macro.getReply undefined', async (t) => {
   // setup
   const next = sinon.stub();
-  const middleware = macroReplyTemplate();
+  const middleware = replyMacro();
   sandbox.stub(macroHelper, 'getReply')
     .returns(null);
   sandbox.stub(replies, 'subscriptionStatusStop')
@@ -70,10 +70,10 @@ test('macroReplyTemplate should call next if macro.getReply undefined', async (t
   next.should.have.been.called;
 });
 
-test('macroReplyTemplate should call sendErrorResponse if macro.getReply throws', async (t) => {
+test('replyMacro should call sendErrorResponse if macro.getReply throws', async (t) => {
   // setup
   const next = sinon.stub();
-  const middleware = macroReplyTemplate();
+  const middleware = replyMacro();
   sandbox.stub(macroHelper, 'getReply')
     .throws();
   sandbox.stub(replies, 'subscriptionStatusStop')
@@ -90,7 +90,7 @@ test('macroReplyTemplate should call sendErrorResponse if macro.getReply throws'
 test('infoTemplate should call sendErrorResponse if replies throws', async (t) => {
   // setup
   const next = sinon.stub();
-  const middleware = macroReplyTemplate();
+  const middleware = replyMacro();
   sandbox.stub(macroHelper, 'getReply')
     .returns(true);
   sandbox.stub(replies, 'subscriptionStatusStop')
