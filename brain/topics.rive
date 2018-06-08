@@ -7,7 +7,7 @@
 
 // The campaign topic defines triggers to catch yes and no messages and call the confirmedCampaign
 // and declinedCampaign macros respectively.
-> topic campaign includes random
+> topic menu includes random
 
 + @yes [*]
 - confirmedCampaign
