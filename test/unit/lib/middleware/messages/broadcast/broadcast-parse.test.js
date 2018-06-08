@@ -56,7 +56,7 @@ test('parseBroadcast should parse broadcast and inject vars into req', async (t)
 
   helpers.broadcast.parseBroadcast.should.have.been.calledWith(t.context.req.broadcast);
   helpers.request.setCampaignId.should.have.been.called;
-  helpers.request.setTopic.should.have.been.called;
+  helpers.request.setTopic.should.not.have.been.called;
   helpers.request.setOutboundMessageText.should.have.been.called;
   helpers.request.setOutboundMessageTemplate.should.have.been.called;
   helpers.attachments.add.should.have.been.called;
