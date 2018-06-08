@@ -72,7 +72,7 @@ test('isMacro returns true if macro isChangeTopic', (t) => {
 test('isMacro returns whether text exists for given macro if not isChangeTopic', (t) => {
   sandbox.stub(macroHelper, 'isChangeTopic')
     .returns(false);
-  const macro = config.macros.confirmedCampaign;
+  const macro = config.macros.subscriptionStatusStop;
   t.truthy(macroHelper.isMacro(macro));
 });
 
@@ -92,14 +92,14 @@ test('macro.macros.x() should be equal to macro.macroNameValues.x', () => {
   });
 });
 
-test('isConfirmedCampaign should return boolean', (t) => {
-  t.true(macroHelper.isConfirmedCampaign(macros.confirmedCampaign));
-  t.falsy(macroHelper.isConfirmedCampaign(undefinedMacroName));
+test('isConfirmedTopic should return boolean', (t) => {
+  t.true(macroHelper.isConfirmedTopic(macros.confirmedTopic));
+  t.falsy(macroHelper.isConfirmedTopic(undefinedMacroName));
 });
 
-test('isDeclinedCampaign should return boolean', (t) => {
-  t.true(macroHelper.isDeclinedCampaign(macros.declinedCampaign));
-  t.falsy(macroHelper.isDeclinedCampaign(undefinedMacroName));
+test('isDeclinedTopic should return boolean', (t) => {
+  t.true(macroHelper.isDeclinedTopic(macros.declinedTopic));
+  t.falsy(macroHelper.isDeclinedTopic(undefinedMacroName));
 });
 
 test('isSendCrisisMessage should return boolean', (t) => {

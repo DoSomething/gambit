@@ -1,22 +1,21 @@
 // topics.rive
 
 /**
- * All topics should include random to catch all triggers defined in the default topic (which is
+ * All topics should include 'random' to catch all triggers defined in the default topic (which is
  * hardcoded as the 'random' topic in Rivescript.
  */
 
-// The campaign topic defines triggers to catch yes and no messages and call the confirmedCampaign
-// and declinedCampaign macros respectively.
+// The menu topic defines triggers to catch yes and no responses when user was asked whether they'd like to start or continue their conversation for a given topic.
 > topic menu includes random
 
 + @yes [*]
-- confirmedCampaign
+- confirmedTopic
 
 + (heck|hell|hells|hm|uh|why) @yes [*]
-- confirmedCampaign
+- confirmedTopic
 
 + @no [*]
-- declinedCampaign
+- declinedTopic
 
 < topic
 

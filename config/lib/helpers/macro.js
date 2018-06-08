@@ -4,8 +4,8 @@ module.exports = {
   changeTopicPrefix: 'changeTopicTo',
   macros: {
     campaignMenu: 'campaignMenu',
-    confirmedCampaign: 'confirmedCampaign',
-    declinedCampaign: 'declinedCampaign',
+    confirmedTopic: 'confirmedTopic',
+    declinedTopic: 'declinedTopic',
     gambit: 'gambit',
     sendCrisisMessage: 'sendCrisisMessage',
     sendInfoMessage: 'sendInfoMessage',

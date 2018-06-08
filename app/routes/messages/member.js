@@ -28,11 +28,7 @@ const supportRequestedMiddleware = require('../../../lib/middleware/messages/mem
 const forwardSupportMessageMiddleware = require('../../../lib/middleware/messages/member/support-message');
 const campaignMenuMiddleware = require('../../../lib/middleware/messages/member/campaign-menu');
 const getTopicMiddleware = require('../../../lib/middleware/messages/member/topic-get');
-const closedCampaignMiddleware = require('../../../lib/middleware/messages/member/campaign-closed');
-const noCampaignTemplateMiddleware = require('../../../lib/middleware/messages/member/template-no-campaign');
-const parseAskSignupMiddleware = require('../../../lib/middleware/messages/member/parse-ask-signup-answer');
-const parseAskContinueMiddleware = require('../../../lib/middleware/messages/member/parse-ask-continue-answer');
-const continueCampaignMiddleware = require('../../../lib/middleware/messages/member/campaign-continue');
+const continueConversationMiddleware = require('../../../lib/middleware/messages/member/campaign-continue');
 
 router.use(paramsMiddleware());
 
@@ -85,20 +81,11 @@ router.use(rivescriptTemplateMiddleware());
 // Otherwise, fetch the current conversation topic.
 router.use(getTopicMiddleware());
 
+// TODO: Why is this here
 // If QUESTION keyword, pause Conversation and prompt User to send their support question.
 router.use(supportRequestedMiddleware());
 
-// Checks if a Campaign has been set.
-router.use(noCampaignTemplateMiddleware());
-
-// // Checks that Campaign isn't closed.
-router.use(closedCampaignMiddleware());
-
-// Check for yes/no/invalid responses to sent Ask Signup/Continue messages:
-router.use(parseAskSignupMiddleware());
-router.use(parseAskContinueMiddleware());
-
-// Continue Campaign conversation, or prompt to return back to it.
-router.use(continueCampaignMiddleware());
+// Determines whether to start or continue conversation for the current topic.
+router.use(continueConversationMiddleware());
 
 module.exports = router;
