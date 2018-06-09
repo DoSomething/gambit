@@ -2,6 +2,7 @@
 
 const Chance = require('chance');
 const stubs = require('../stubs');
+const topicFactory = require('./topic');
 
 const chance = new Chance();
 
@@ -27,12 +28,7 @@ module.exports.getValidCampaign = function getValidCampaign() {
       postType: stubs.getPostType(),
       templates: {},
     },
-    // TODO: Create a topic factory.
-    topics: [{
-      id: stubs.getTopicId(),
-      postType: stubs.getPostType(),
-      templates: {},
-    }],
+    topics: [topicFactory.getValidTopic()],
   };
   result.botConfig.templates[messageTemplate] = {
     raw: messageText,

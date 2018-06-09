@@ -11,6 +11,7 @@ const underscore = require('underscore');
 const helpers = require('../../../../lib/helpers');
 const stubs = require('../../../helpers/stubs');
 const conversationFactory = require('../../../helpers/factories/conversation');
+const topicFactory = require('../../../helpers/factories/topic');
 
 chai.should();
 chai.use(sinonChai);
@@ -37,6 +38,21 @@ test.afterEach(() => {
   sandbox.restore();
 });
 
+// changeTopic
+test('changeTopic should call setTopic and return req.conversation.changeTopic', async (t) => {
+  sandbox.stub(requestHelper, 'setTopic')
+    .returns(underscore.noop);
+  sandbox.stub(conversation, 'changeTopic')
+    .returns(Promise.resolve(true));
+  t.context.req.conversation = conversation;
+  const topic = topicFactory.getValidTopic();
+
+  await requestHelper.changeTopic(t.context.req, topic);
+  requestHelper.setTopic.should.have.been.calledWith(t.context.req, topic);
+  conversation.changeTopic.should.have.been.calledWith(topic);
+});
+
+// parseCampaignKeyword
 test('parseCampaignKeyword should return trimmed lowercase req.inboundMessageText', () => {
   const text = 'Winter ';
   const trimSpy = sandbox.spy(String.prototype, 'trim');

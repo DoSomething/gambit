@@ -40,12 +40,25 @@ test('fetchById calls gambitCampaigns.getCampaignById', async () => {
   result.should.deep.equal(campaignLookupStub);
 });
 
+// getPostTypeFromCampaign
+test('getPostTypeFromCampaign should return a string if campaign has topics', () => {
+  const result = campaignHelper.getPostTypeFromCampaign(campaignStub);
+  result.should.equal(postTypeStub);
+});
+
+test('getPostTypeFromCampaign should return null if campaign does not have any topics', (t) => {
+  const campaign = campaignFactory.getValidCampaign();
+  campaign.topics = [];
+  t.is(campaignHelper.getPostTypeFromCampaign(campaign), null);
+});
+
 // getWebSignupMessageTemplateNameFromCampaign
 test('getWebSignupMessageTemplateNameFromCampaign returns string from config.signupMessageTemplateNamesByPostType', () => {
   const result = campaignHelper.getWebSignupMessageTemplateNameFromCampaign(campaignStub);
   const templateName = campaignHelperConfig.signupMessageTemplateNamesByPostType[postTypeStub];
   result.should.equal(templateName);
 });
+
 
 // isClosedCampaign
 test('isClosedCampaign calls gambitCampaigns.isClosedCampaign', (t) => {
