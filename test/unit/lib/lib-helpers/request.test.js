@@ -27,6 +27,7 @@ const userId = stubs.getUserId();
 const platformUserId = stubs.getMobileNumber();
 const conversation = conversationFactory.getValidConversation();
 const message = conversation.lastOutboundMessage;
+const topic = topicFactory.getValidTopic();
 
 test.beforeEach((t) => {
   sandbox.stub(helpers.analytics, 'addCustomAttributes')
@@ -46,7 +47,6 @@ test('changeTopic should call setTopic and return req.conversation.changeTopic',
   sandbox.stub(conversation, 'changeTopic')
     .returns(Promise.resolve(true));
   t.context.req.conversation = conversation;
-  const topic = topicFactory.getValidTopic();
 
   await requestHelper.changeTopic(t.context.req, topic);
   requestHelper.setTopic.should.have.been.calledWith(t.context.req, topic);
@@ -78,6 +78,29 @@ test('changeTopicByCampaign should call setCampaign and return changeTopic if ca
   await requestHelper.changeTopicByCampaign(t.context.req, campaign);
   requestHelper.setCampaign.should.have.been.calledWith(t.context.req, campaign);
   requestHelper.changeTopic.should.have.been.calledWith(t.context.req, campaign.topics[0]);
+});
+
+// executeChangeTopicMacro
+test('executeChangeTopicMacro should call setKeyword, fetch topic and return changeTopic', async (t) => {
+  t.context.req.rivescriptMatch = stubs.getRandomWord();
+  t.context.req.macro = stubs.getRandomWord();
+  sandbox.stub(requestHelper, 'setKeyword')
+    .returns(underscore.noop);
+  const topicId = stubs.getContentfulId();
+  sandbox.stub(helpers.macro, 'getTopicIdFromChangeTopicMacro')
+    .returns(topicId);
+  sandbox.stub(requestHelper, 'changeTopic')
+    .returns(Promise.resolve(true));
+  sandbox.stub(helpers.topic, 'fetchById')
+    .returns(Promise.resolve(topic));
+  t.context.req.conversation = conversation;
+
+  await requestHelper.executeChangeTopicMacro(t.context.req);
+  requestHelper.setKeyword.should.have.been
+    .calledWith(t.context.req, t.context.req.rivescriptMatch);
+  helpers.macro.getTopicIdFromChangeTopicMacro.should.have.been.calledWith(t.context.req.macro);
+  helpers.topic.fetchById.should.have.been.calledWith(topicId);
+  requestHelper.changeTopic.should.have.been.calledWith(t.context.req, topic);
 });
 
 // parseCampaignKeyword
@@ -165,10 +188,9 @@ test('setPlatformUserId should inject a platformUserId property to req', (t) => 
 });
 
 test('setTopic should inject a topic property to req', (t) => {
-  const topic = conversation.topic;
   requestHelper.setTopic(t.context.req, topic);
   t.context.req.topic.should.equal(topic);
-  helpers.analytics.addCustomAttributes.should.have.been.calledWith({ topic });
+  helpers.analytics.addCustomAttributes.should.have.been.calledWith({ topic: topic.id });
 });
 
 test('setUserId should inject a userId property to req', (t) => {
