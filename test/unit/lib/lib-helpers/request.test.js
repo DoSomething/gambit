@@ -26,6 +26,7 @@ const campaignId = stubs.getCampaignId();
 const userId = stubs.getUserId();
 const platformUserId = stubs.getMobileNumber();
 const conversation = conversationFactory.getValidConversation();
+const macro = stubs.getRandomWord();
 const message = conversation.lastOutboundMessage;
 const topic = topicFactory.getValidTopic();
 
@@ -109,6 +110,90 @@ test('hasCampaign should return boolean of whether req.campign defined', (t) => 
   t.truthy(requestHelper.hasCampaign(t.context.req));
   t.context.req.campaign = null;
   t.falsy(requestHelper.hasCampaign(t.context.req));
+});
+
+// isChangeTopicMacro
+test('isChangeTopicMacro should return true if req.macro is changeTopic', (t) => {
+  sandbox.stub(helpers.macro, 'isChangeTopic')
+    .returns(true);
+  t.context.req.macro = macro;
+  t.truthy(requestHelper.isChangeTopicMacro(t.context.req));
+});
+
+test('isChangeTopicMacro should return false if req.macro is undefined', (t) => {
+  sandbox.stub(helpers.macro, 'isChangeTopic')
+    .returns(true);
+  t.falsy(requestHelper.isChangeTopicMacro(t.context.req));
+});
+
+test('isChangeTopicMacro should return false if req.macro is not changeTopic', (t) => {
+  sandbox.stub(helpers.macro, 'isChangeTopic')
+    .returns(false);
+  t.context.req.macro = macro;
+  t.falsy(requestHelper.isChangeTopicMacro(t.context.req));
+});
+
+// isConfirmedTopicMacro
+test('isConfirmedTopicMacro should return true if req.macro is confirmedTopic', (t) => {
+  sandbox.stub(helpers.macro, 'isConfirmedTopic')
+    .returns(true);
+  t.context.req.macro = macro;
+  t.truthy(requestHelper.isConfirmedTopicMacro(t.context.req));
+});
+
+test('isConfirmedTopicMacro should return false if req.macro is undefined', (t) => {
+  sandbox.stub(helpers.macro, 'isConfirmedTopic')
+    .returns(true);
+  t.falsy(requestHelper.isConfirmedTopicMacro(t.context.req));
+});
+
+test('isConfirmedTopicMacro should return false if req.macro is not confirmedTopic', (t) => {
+  sandbox.stub(helpers.macro, 'isConfirmedTopic')
+    .returns(false);
+  t.context.req.macro = macro;
+  t.falsy(requestHelper.isConfirmedTopicMacro(t.context.req));
+});
+
+// isDeclinedTopicMacro
+test('isDeclinedTopicMacro should return true if req.macro is declinedTopic', (t) => {
+  sandbox.stub(helpers.macro, 'isDeclinedTopic')
+    .returns(true);
+  t.context.req.macro = macro;
+  t.truthy(requestHelper.isDeclinedTopicMacro(t.context.req));
+});
+
+test('isDeclinedTopicMacro should return false if req.macro is undefined', (t) => {
+  sandbox.stub(helpers.macro, 'isDeclinedTopic')
+    .returns(true);
+  t.falsy(requestHelper.isDeclinedTopicMacro(t.context.req));
+});
+
+test('isDeclinedTopicMacro should return false if req.macro is not declinedTopic', (t) => {
+  sandbox.stub(helpers.macro, 'isDeclinedTopic')
+    .returns(false);
+  t.context.req.macro = macro;
+  t.falsy(requestHelper.isDeclinedTopicMacro(t.context.req));
+});
+
+// isMenuMacro
+test('isMenuMacro should return true if req.macro is menu', (t) => {
+  sandbox.stub(helpers.macro, 'isMenu')
+    .returns(true);
+  t.context.req.macro = macro;
+  t.truthy(requestHelper.isMenuMacro(t.context.req));
+});
+
+test('isMenuMacro should return false if req.macro is undefined', (t) => {
+  sandbox.stub(helpers.macro, 'isMenu')
+    .returns(true);
+  t.falsy(requestHelper.isMenuMacro(t.context.req));
+});
+
+test('isMenuMacro should return false if req.macro is not menu', (t) => {
+  sandbox.stub(helpers.macro, 'isMenu')
+    .returns(false);
+  t.context.req.macro = macro;
+  t.falsy(requestHelper.isMenuMacro(t.context.req));
 });
 
 // parseCampaignKeyword
