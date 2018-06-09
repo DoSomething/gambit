@@ -103,6 +103,14 @@ test('executeChangeTopicMacro should call setKeyword, fetch topic and return cha
   requestHelper.changeTopic.should.have.been.calledWith(t.context.req, topic);
 });
 
+// hasCampaign
+test('hasCampaign should return boolean of whether req.campign defined', (t) => {
+  t.context.req.campaign = campaignFactory.getValidCampaign();
+  t.truthy(requestHelper.hasCampaign(t.context.req));
+  t.context.req.campaign = null;
+  t.falsy(requestHelper.hasCampaign(t.context.req));
+});
+
 // parseCampaignKeyword
 test('parseCampaignKeyword should return trimmed lowercase req.inboundMessageText', () => {
   const text = 'Winter ';
