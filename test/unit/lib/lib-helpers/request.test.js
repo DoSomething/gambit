@@ -10,6 +10,7 @@ const underscore = require('underscore');
 
 const helpers = require('../../../../lib/helpers');
 const stubs = require('../../../helpers/stubs');
+const campaignFactory = require('../../../helpers/factories/campaign');
 const conversationFactory = require('../../../helpers/factories/conversation');
 const topicFactory = require('../../../helpers/factories/topic');
 
@@ -50,6 +51,33 @@ test('changeTopic should call setTopic and return req.conversation.changeTopic',
   await requestHelper.changeTopic(t.context.req, topic);
   requestHelper.setTopic.should.have.been.calledWith(t.context.req, topic);
   conversation.changeTopic.should.have.been.calledWith(topic);
+});
+
+// changeTopicByCampaign
+test('changeTopicByCampaign should call setCampaign and return error if campaign does not have topics', async (t) => {
+  sandbox.stub(requestHelper, 'setCampaign')
+    .returns(underscore.noop);
+  sandbox.stub(conversation, 'changeTopic')
+    .returns(Promise.resolve(true));
+  t.context.req.conversation = conversation;
+  const campaign = campaignFactory.getValidCampaignWithoutTopics();
+
+  await t.throws(requestHelper.changeTopicByCampaign(t.context.req, campaign));
+  requestHelper.setCampaign.should.have.been.calledWith(t.context.req, campaign);
+  conversation.changeTopic.should.not.been.called;
+});
+
+test('changeTopicByCampaign should call setCampaign and return changeTopic if campaign has topics', async (t) => {
+  sandbox.stub(requestHelper, 'setCampaign')
+    .returns(underscore.noop);
+  sandbox.stub(requestHelper, 'changeTopic')
+    .returns(Promise.resolve(true));
+  t.context.req.conversation = conversation;
+  const campaign = campaignFactory.getValidCampaign();
+
+  await requestHelper.changeTopicByCampaign(t.context.req, campaign);
+  requestHelper.setCampaign.should.have.been.calledWith(t.context.req, campaign);
+  requestHelper.changeTopic.should.have.been.calledWith(t.context.req, campaign.topics[0]);
 });
 
 // parseCampaignKeyword

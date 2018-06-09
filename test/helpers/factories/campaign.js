@@ -14,7 +14,7 @@ const numericIdRange = {
 /**
  * @see https://github.com/DoSomething/gambit-campaigns/blob/master/documentation/endpoints/campaigns.md#retrieve-a-campaign
 */
-module.exports.getValidCampaign = function getValidCampaign() {
+function getValidCampaign() {
   const messageTemplate = stubs.getTemplate();
   const messageText = stubs.getRandomMessageText();
   const result = {
@@ -36,4 +36,15 @@ module.exports.getValidCampaign = function getValidCampaign() {
     override: true,
   };
   return result;
+}
+
+function getValidCampaignWithoutTopics() {
+  const campaign = module.exports.getValidCampaign();
+  campaign.topics = [];
+  return campaign;
+}
+
+module.exports = {
+  getValidCampaign,
+  getValidCampaignWithoutTopics,
 };
