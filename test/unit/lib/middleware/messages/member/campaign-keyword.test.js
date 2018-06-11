@@ -33,7 +33,7 @@ const sandbox = sinon.sandbox.create();
 test.beforeEach((t) => {
   sandbox.stub(replies, 'campaignClosed')
     .returns(underscore.noop);
-  sandbox.stub(replies, 'continueConversation')
+  sandbox.stub(replies, 'continueTopic')
     .returns(underscore.noop);
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(underscore.noop);
@@ -85,7 +85,7 @@ test('getCampaignByKeyword should call next if gambitCampaigns.getCampaignByKeyw
   t.falsy(t.context.req.keyword);
 });
 
-test('getCampaignByKeyword should call replies.continueConversation if campaign found', async (t) => {
+test('getCampaignByKeyword should call replies.continueTopic if campaign found', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = getCampaignByKeyword();
@@ -100,7 +100,7 @@ test('getCampaignByKeyword should call replies.continueConversation if campaign 
   gambitCampaigns.getCampaignByKeyword.should.have.been.called;
   helpers.request.changeTopicByCampaign.should.have.been.called;
   t.context.req.keyword.should.equal(mockKeyword);
-  replies.continueConversation.should.have.been.called;
+  replies.continueTopic.should.have.been.called;
 });
 
 test('getCampaignByKeyword should call helpers.sendErrorResponse if getCampaignByKeyword fails', async (t) => {
