@@ -28,7 +28,7 @@ const supportRequestedMiddleware = require('../../../lib/middleware/messages/mem
 const forwardSupportMessageMiddleware = require('../../../lib/middleware/messages/member/support-message');
 const menuMacroMiddleware = require('../../../lib/middleware/messages/member/macro-menu');
 const getTopicMiddleware = require('../../../lib/middleware/messages/member/topic-get');
-const catchAllMiddleware = require('../../../lib/middleware/messages/member/catch-all');
+const catchAllMacroMiddleware = require('../../../lib/middleware/messages/member/macro-catch-all');
 
 router.use(paramsMiddleware());
 
@@ -86,6 +86,6 @@ router.use(getTopicMiddleware());
 router.use(supportRequestedMiddleware());
 
 // Determines whether to start or continue conversation for the current topic.
-router.use(catchAllMiddleware());
+router.use(catchAllMacroMiddleware());
 
 module.exports = router;
