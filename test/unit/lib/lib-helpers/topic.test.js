@@ -10,6 +10,7 @@ const gambitCampaigns = require('../../../../lib/gambit-campaigns');
 const helpers = require('../../../../lib/helpers');
 const stubs = require('../../../helpers/stubs');
 const defaultTopicTriggerFactory = require('../../../helpers/factories/defaultTopicTrigger');
+const topicFactory = require('../../../helpers/factories/topic');
 
 chai.should();
 chai.use(sinonChai);
@@ -52,6 +53,29 @@ test('fetchAllDefaultTopicTriggers should throw on gambitCampaigns.fetchDefaultT
   gambitCampaigns.fetchDefaultTopicTriggers.should.have.been.called;
   topicHelper.parseDefaultTopicTrigger.should.not.have.been.called;
   result.should.deep.equal(mockError);
+});
+
+// fetchAllTopics
+test('fetchAllTopics should call gambitCampaigns.fetchTopics', async () => {
+  const mockResponse = [topicFactory.getValidTopic(), topicFactory.getValidTopic()];
+  sandbox.stub(gambitCampaigns, 'fetchTopics')
+    .returns(Promise.resolve(mockResponse));
+
+  const result = await topicHelper.fetchAllTopics();
+  gambitCampaigns.fetchTopics.should.have.been.called;
+  result.should.deep.equal(mockResponse);
+});
+
+
+// fetchById
+test('fetchById should call gambitCampaigns.fetchTopicById', async () => {
+  const mockTopic = topicFactory.getValidTopic();
+  sandbox.stub(gambitCampaigns, 'fetchTopicById')
+    .returns(Promise.resolve(mockTopic));
+
+  const result = await topicHelper.fetchById();
+  gambitCampaigns.fetchTopicById.should.have.been.called;
+  result.should.deep.equal(mockTopic);
 });
 
 // parseDefaultTopicTrigger
