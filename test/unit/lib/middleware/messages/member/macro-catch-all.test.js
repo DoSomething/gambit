@@ -20,6 +20,12 @@ const catchAllMacro = require('../../../../../../lib/middleware/messages/member/
 const sandbox = sinon.sandbox.create();
 
 test.beforeEach((t) => {
+  sandbox.stub(helpers.replies, 'confirmedSignup')
+    .returns(underscore.noop);
+  sandbox.stub(helpers.replies, 'declinedSignup')
+    .returns(underscore.noop);
+  sandbox.stub(helpers.replies, 'invalidAskSignupResponse')
+    .returns(underscore.noop);
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(underscore.noop);
   t.context.req = httpMocks.createRequest();
@@ -64,6 +70,29 @@ test('catchAllMacro should call replies.campaignClosed if request.isClosedCampai
   helpers.request.isClosedCampaign.should.have.been.calledWith(t.context.req);
   next.should.not.have.been.called;
   helpers.replies.campaignClosed.should.have.been.calledWith(t.context.req, t.context.res);
+});
+
+test('catchAllMacro should call replies.confirmedSignup if request.isLastOutboundAskContinue and request.isConfirmedTopicMacro', async (t) => {
+  const next = sinon.stub();
+  const middleware = catchAllMacro();
+  sandbox.stub(helpers.request, 'hasCampaign')
+    .returns(true);
+  sandbox.stub(helpers.request, 'isClosedCampaign')
+    .returns(false);
+  sandbox.stub(helpers.request, 'isLastOutboundAskSignup')
+    .returns(true);
+  sandbox.stub(helpers.request, 'isConfirmedTopicMacro')
+    .returns(true);
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+
+  helpers.request.hasCampaign.should.have.been.calledWith(t.context.req);
+  helpers.request.isClosedCampaign.should.have.been.calledWith(t.context.req);
+  helpers.request.isLastOutboundAskSignup.should.have.been.calledWith(t.context.req);
+  helpers.request.isConfirmedTopicMacro.should.have.been.calledWith(t.context.req);
+  next.should.not.have.been.called;
+  helpers.replies.confirmedSignup.should.have.been.calledWith(t.context.req, t.context.res);
 });
 
 test('catchAllMacro should call replies.continueTopic if request has active campaign, is not an ask template, and last outbound template is not a topic template', async (t) => {
