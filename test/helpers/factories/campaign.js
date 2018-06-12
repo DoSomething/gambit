@@ -28,7 +28,7 @@ function getValidCampaign() {
       postType: stubs.getPostType(),
       templates: {},
     },
-    topics: [topicFactory.getValidTopic()],
+    topics: [topicFactory.getValidTopicWithoutCampaign()],
   };
   result.botConfig.templates[messageTemplate] = {
     raw: messageText,

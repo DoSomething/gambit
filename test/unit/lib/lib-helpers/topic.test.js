@@ -9,6 +9,7 @@ const sinonChai = require('sinon-chai');
 const gambitCampaigns = require('../../../../lib/gambit-campaigns');
 const helpers = require('../../../../lib/helpers');
 const stubs = require('../../../helpers/stubs');
+const campaignFactory = require('../../../helpers/factories/campaign');
 const defaultTopicTriggerFactory = require('../../../helpers/factories/defaultTopicTrigger');
 const topicFactory = require('../../../helpers/factories/topic');
 
@@ -66,7 +67,6 @@ test('fetchAllTopics should call gambitCampaigns.fetchTopics', async () => {
   result.should.deep.equal(mockResponse);
 });
 
-
 // fetchById
 test('fetchById should call gambitCampaigns.fetchTopicById', async () => {
   const mockTopic = topicFactory.getValidTopic();
@@ -76,6 +76,21 @@ test('fetchById should call gambitCampaigns.fetchTopicById', async () => {
   const result = await topicHelper.fetchById();
   gambitCampaigns.fetchTopicById.should.have.been.called;
   result.should.deep.equal(mockTopic);
+});
+
+// fetchByCampaignId
+test('fetchByCampaignId should call helpers.campaign.fetchById and inject campaign property into each result array item ', async () => {
+  const mockCampaign = campaignFactory.getValidCampaign();
+  sandbox.stub(helpers.campaign, 'fetchById')
+    .returns(Promise.resolve(mockCampaign));
+  const campaignId = stubs.getCampaignId();
+
+  const result = await topicHelper.fetchByCampaignId(campaignId);
+  helpers.campaign.fetchById.should.have.been.calledWith(campaignId);
+  result.forEach((topic, index) => {
+    result[index].campaign.should.deep.equal(mockCampaign);
+    result[index].id.should.equal(topic.id);
+  });
 });
 
 // parseDefaultTopicTrigger
@@ -101,21 +116,14 @@ test('parseDefaultTopicTrigger should return object with a changeTopic macro rep
 
 // getRenderedTextFromTopicAndTemplateName
 test('getRenderedTextFromTopicAndTemplateName returns a string when template exists', () => {
+  const topic = topicFactory.getValidTopic();
   const templateName = stubs.getTemplate();
-  const templateText = stubs.getRandomMessageText();
-  // TODO: Add topic factory.
-  const topic = {
-    id: stubs.getContentfulId(),
-    templates: {},
-  };
-  topic.templates[templateName] = { rendered: templateText };
-
   const result = topicHelper.getRenderedTextFromTopicAndTemplateName(topic, templateName);
-  result.should.equal(templateText);
+  result.should.equal(topic.templates[templateName].rendered);
 });
 
 test('getRenderedTextFromTopicAndTemplateName throws when template undefined', (t) => {
-  const topic = { id: stubs.getContentfulId() };
-  const templateName = stubs.getTemplate();
+  const topic = topicFactory.getValidTopic();
+  const templateName = 'winterfell';
   t.throws(() => topicHelper.getRenderedTextFromTopicAndTemplateName(topic, templateName));
 });

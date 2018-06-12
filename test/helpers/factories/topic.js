@@ -3,7 +3,7 @@
 const stubs = require('../stubs');
 
 function getValidTopic() {
-  return {
+  const result = {
     id: stubs.getContentfulId(),
     postType: stubs.getPostType(),
     templates: {},
@@ -11,8 +11,22 @@ function getValidTopic() {
       id: stubs.getCampaignId(),
     },
   };
+  const templateName = stubs.getTemplate();
+  result.templates[templateName] = {
+    raw: stubs.getRandomMessageText(),
+    rendered: stubs.getRandomMessageText(),
+    override: true,
+  };
+  return result;
+}
+
+function getValidTopicWithoutCampaign() {
+  const topic = module.exports.getValidTopic();
+  topic.campaign = null;
+  return topic;
 }
 
 module.exports = {
   getValidTopic,
+  getValidTopicWithoutCampaign,
 };
