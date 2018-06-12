@@ -91,7 +91,7 @@ conversationSchema.statics.findOneAndPopulateLastOutboundMessage = function (que
 conversationSchema.methods.changeTopic = function (topicObject) {
   this.topic = topicObject.id;
   this.campaignId = topicObject.campaign ? topicObject.campaign.id : null;
-  logger.debug('conversation.changeTopic', { topic: this.topic, campaignId: this.capmaignId });
+  logger.debug('conversation.changeTopic', { topic: this.topic, campaignId: this.campaignId });
   return this.save();
 };
 
