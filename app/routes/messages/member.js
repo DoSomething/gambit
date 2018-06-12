@@ -81,7 +81,7 @@ router.use(sendRivescriptReplyMiddleware());
 // Otherwise, fetch the current conversation topic.
 router.use(getTopicMiddleware());
 
-// TODO: Why is this here and nor further up. Let's just combine into one middleware.
+// TODO: Why is this here and not further up? Let's just combine into one middleware.
 // If QUESTION keyword, pause Conversation and prompt User to send their support question.
 router.use(supportRequestedMiddleware());
 
