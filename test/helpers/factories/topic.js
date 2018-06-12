@@ -7,6 +7,9 @@ function getValidTopic() {
     id: stubs.getContentfulId(),
     postType: stubs.getPostType(),
     templates: {},
+    campaign: {
+      id: stubs.getCampaignId(),
+    },
   };
 }
 
