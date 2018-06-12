@@ -84,7 +84,20 @@ conversationSchema.statics.findOneAndPopulateLastOutboundMessage = function (que
 };
 
 /**
- * Set topic property.
+ * Updates topic and campaign per given topic object.
+ * @param {Object} topic
+ * @return {Promise}
+ */
+conversationSchema.methods.changeTopic = function (topicObject) {
+  this.topic = topicObject.id;
+  this.campaignId = topicObject.campaign ? topicObject.campaign.id : null;
+  logger.debug('conversation.changeTopic', { topic: this.topic, campaignId: this.campaignId });
+  return this.save();
+};
+
+/**
+ * TODO: This will be deprecated once broadcast content type is split out into multiple types.
+ * Sets Rivescript topic property to a string.
  * @param {String} topic
  * @return {Promise}
  */
