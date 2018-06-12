@@ -87,7 +87,7 @@ test('replyMacro should call sendErrorResponse if macro.getReply throws', async 
   next.should.not.have.been.called;
 });
 
-test('infoTemplate should call sendErrorResponse if replies throws', async (t) => {
+test('replyMacro should call sendErrorResponse if replies throws', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = replyMacro();
