@@ -9,7 +9,6 @@ const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 
-const gambitCampaigns = require('../../../../../../lib/gambit-campaigns');
 const helpers = require('../../../../../../lib/helpers');
 const stubs = require('../../../../../helpers/stubs');
 const campaignFactory = require('../../../../../helpers/factories/campaign');
@@ -22,7 +21,7 @@ const templateStub = stubs.getSignupMessageTemplateName();
 const textStub = stubs.getRandomMessageText();
 
 // module to be tested
-const parseCampaign = require('../../../../../../lib/middleware/messages/signup/campaign-parse');
+const validateTopic = require('../../../../../../lib/middleware/messages/signup/topic-validate');
 
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();
@@ -47,12 +46,12 @@ test.afterEach((t) => {
 /**
  * Tests
  */
-test('parseCampaign calls request helper functions with campaign helper results', async (t) => {
+test('validateTopic calls request helper functions with campaign helper results', async (t) => {
   const next = sinon.stub();
-  const middleware = parseCampaign();
+  const middleware = validateTopic();
   sandbox.stub(helpers.campaign, 'getWebSignupMessageTemplateNameFromCampaign')
     .returns(templateStub);
-  sandbox.stub(gambitCampaigns, 'getMessageTextFromMessageTemplate')
+  sandbox.stub(helpers.topic, 'getRenderedTextFromTopicAndTemplateName')
     .returns(textStub);
 
   // test
@@ -64,9 +63,9 @@ test('parseCampaign calls request helper functions with campaign helper results'
   helpers.request.setOutboundMessageText.should.have.been.calledWith(t.context.req, textStub);
 });
 
-test('parseCampaign sends sendErrorResponse if getSignupMessageTemplateName throws', async (t) => {
+test('validateTopic sends sendErrorResponse if getSignupMessageTemplateName throws', async (t) => {
   const next = sinon.stub();
-  const middleware = parseCampaign();
+  const middleware = validateTopic();
   sandbox.stub(helpers.campaign, 'getWebSignupMessageTemplateNameFromCampaign')
     .throws();
 
