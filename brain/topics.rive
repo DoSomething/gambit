@@ -1,7 +1,14 @@
 // topics.rive
 
+> topic unsubscribed 
+
++ [*]
+- noReply
+
+< topic
+
 /**
- * All topics should include 'random' to catch all triggers defined in the default topic (which is
+ * All other topics should include 'random' to catch all triggers defined in the default topic (which is
  * hardcoded as the 'random' topic in Rivescript.
  */
 
@@ -26,13 +33,13 @@
 > topic askSubscriptionStatus includes random
 
 + a
-- subscriptionStatusActive
+- subscriptionStatusActive{topic=random}
 
 + b
-- subscriptionStatusLess
+- subscriptionStatusLess{topic=random}
 
 + c
-- subscriptionStatusStop
+- subscriptionStatusStop{topic=unsubscribed}
 
 + [*]
 - Sorry, I didn't get that. How often would you like to receive alerts? Text A for weekly, B for monthly, or C to STOP. If you'd like to remain {{user.sms_status}}, text MENU to find a new action to take.
