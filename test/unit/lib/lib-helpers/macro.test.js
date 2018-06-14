@@ -111,6 +111,11 @@ test('isSendInfoMessage should return boolean', (t) => {
   t.falsy(macroHelper.isSendInfoMessage(undefinedMacroName));
 });
 
+test('isSubscriptionStatusActive should return boolean', (t) => {
+  t.true(macroHelper.isSubscriptionStatusActive(macros.subscriptionStatusActive));
+  t.falsy(macroHelper.isSubscriptionStatusActive(undefinedMacroName));
+});
+
 test('isSubscriptionStatusLess should return boolean', (t) => {
   t.true(macroHelper.isSubscriptionStatusLess(macros.subscriptionStatusLess));
   t.falsy(macroHelper.isSubscriptionStatusLess(undefinedMacroName));

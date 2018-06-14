@@ -146,6 +146,13 @@ test('hasAddress should return false if user does not have address properties se
 });
 
 // updateSubscriptionStatus
+test('getSubscriptionStatusUpdate should return active value if active macro is passed', () => {
+  const user = userFactory.getValidUser();
+  const activeMacro = helpers.macro.macros.subscriptionStatusActive();
+  const result = userHelper.getSubscriptionStatusUpdate(user, activeMacro);
+  result.should.equal(subscriptionHelper.statuses.active());
+});
+
 test('getSubscriptionStatusUpdate should return stop value if stop macro is passed', () => {
   const user = userFactory.getValidUser();
   const stopMacro = helpers.macro.macros.subscriptionStatusStop();
