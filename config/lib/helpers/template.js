@@ -65,6 +65,10 @@ const templatesMap = {
       name: 'noReply',
       text: '',
     },
+    subscriptionStatusActive: {
+      name: 'subscriptionStatusActive',
+      text: 'OK, great! You\'ll receive weekly updates from me. -Freddie, DoSomething.org.',
+    },
     subscriptionStatusLess: {
       name: 'subscriptionStatusLess',
       text: 'OK, great! We\'ll start sending you updates monthly instead of weekly! -Freddie, DoSomething.org.',
