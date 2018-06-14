@@ -19,6 +19,26 @@
 
 < topic
 
+// Asks user to set their sms_status.
++ subscription
+- How often would you like to receive alerts? Text A for weekly, B for monthly, or C to STOP{topic=askSubscriptionStatus}
+
+> topic askSubscriptionStatus includes random
+
++ a
+- subscriptionStatusActive
+
++ b
+- subscriptionStatusActive
+
++ c
+- subscriptionStatusStop
+
++ [*]
+- Sorry, I didn't get that. How often would you like to receive alerts? Text A for weekly, B for monthly, or C to STOP. If you'd like to remain {{user.sms_status}}, text MENU to find a new action to take.
+
+< topic
+
 // The survey_response topic is commonly used by broadcast entries. This will eventually be
 // deprecated by a content type like an AutoReplyBroadcast that sends a generic auto reply message
 // and changes conversation topic back to random so user gets prompted to continue a campaign.
