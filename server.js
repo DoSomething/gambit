@@ -19,20 +19,12 @@ const rivescript = require('./lib/rivescript');
 /**
  * Fetch additional Rivescript from Content API and load the Rivescript bot.
  */
-helpers.topic.fetchAllDefaultTopicTriggers()
-  .then((defaultTopicTriggers) => {
-    logger.info('fetchAllDefaultTopicTriggers success', { count: defaultTopicTriggers.length });
-    return helpers.rivescript.writeRivescriptFromDefaultTopicTriggers(defaultTopicTriggers);
-  })
-  // Note: We plan to support topic-specific triggers by adding a triggers property to topics.
-  // Once the property/data exists, we'll make another query to the Content API to fetch all topics
-  // that contain their own triggers, and write them as Rivescript topics.
-  // @see https://github.com/DoSomething/gambit-conversations/blob/77ff4b13b71d73d7f2b286ad9691d6c79c3309da/lib/helpers/rivescript.js#L81
+helpers.rivescript.fetchAndWriteRivescript()
   .then((opts) => {
-    logger.info('writeRivescriptFromDefaultTopicTriggers success', { opts });
+    logger.info('fetchAndWriteRivescript success', { opts });
     rivescript.getBot();
   })
-  .catch(error => logger.error('fetchAllDefaultTopicTriggers', { error }));
+  .catch(error => logger.error('fetchAndWriteRivescript', { error }));
 
 const db = mongoose.connection;
 db.on('error', () => {

@@ -1,5 +1,6 @@
 // star.rive
-// If no triggers have been matched, send this message to the Gambs.
+// If no triggers have been matched, send hardcoded 'catchAll' macro name to handle reply.
+// @see https://www.rivescript.com/docs/tutorial#catch-all-trigger
 
 + *
-- gambit
+- catchAll
