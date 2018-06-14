@@ -55,10 +55,10 @@ router.use(updateUserMiddleware());
 
 router.use(parseMacroMiddleware());
 
-router.use(menuMacroMiddleware());
-
 // Scolds User if inbound message contains bad words.
 router.use(badWordsMiddleware());
+
+router.use(menuMacroMiddleware());
 
 // TODO: This won't be used once we publish defaultTopicTrigger entries with topic responses.
 // If Campaign keyword was sent, update Conversation campaign and send continueCampaign.
