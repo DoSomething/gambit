@@ -73,9 +73,13 @@ const templatesMap = {
       name: 'subscriptionStatusLess',
       text: 'OK, great! We\'ll start sending you updates monthly instead of weekly! -Freddie, DoSomething.org.',
     },
+    subscriptionStatusResubscribed: {
+      name: 'subscriptionStatusResubscribed',
+      text: 'Welcome back! You\'ll receive weekly updates from me, or if you just want monthly texts, text LESS -Freddie, DoSomething.org.',
+    },
     subscriptionStatusStop: {
       name: 'subscriptionStatusStop',
-      text: `Ok, you'll stop getting texts from me. If you just want monthly texts, text LESS. Questions? ${helpCenterUrl}. If you wish to unsubscribe, do not respond to this message.`,
+      text: `Ok, you'll stop getting texts from me. Questions? ${helpCenterUrl}. If you wish to resubscribe, text JOIN.`,
     },
     supportRequested: {
       name: 'supportRequested',

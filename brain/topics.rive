@@ -1,6 +1,18 @@
 // topics.rive
 
+// Unsubcribed users should only receive replies to a select few triggers.
+// It's possible we could DRY these triggers with what's defined in macros.rive if topis
+// can include multiples.
 > topic unsubscribed 
+
++ info 
+- sendInfoMessage
+
++ help
+@ info
+
++ join
+- subscriptionStatusResubscribed{topic=random}
 
 + [*]
 - noReply
