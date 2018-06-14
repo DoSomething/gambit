@@ -63,15 +63,18 @@ test('getTopic should call fetchByCampaignId and setTopic', async (t) => {
   next.should.have.been.called;
 });
 
-test('getTopic should send 204 if no topics found for campaignId', async (t) => {
+test('getTopic should send 204 status if no topics found for campaignId', async (t) => {
   const next = sinon.stub();
   const middleware = getTopic();
   sandbox.stub(helpers.topic, 'fetchByCampaignId')
     .returns(Promise.resolve(null));
+  // TODO: Move this hardcoded message into config to DRY.
+  const apiResponseMessage = 'Campaign does not have any topics.';
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  helpers.sendResponseWithStatusCode.should.have.been.called;
+  helpers.sendResponseWithStatusCode
+    .should.have.been.calledWith(t.context.res, 204, apiResponseMessage);
   helpers.addBlinkSuppressHeaders.should.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
   helpers.request.setTopic.should.not.have.been.called;

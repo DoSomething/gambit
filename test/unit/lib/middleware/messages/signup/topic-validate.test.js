@@ -46,9 +46,23 @@ test.afterEach((t) => {
 /**
  * Tests
  */
+test('validateTopic should call sendErrorResponse if campaign is closed', async (t) => {
+  const next = sinon.stub();
+  const middleware = validateTopic();
+  sandbox.stub(helpers.campaign, 'isClosedCampaign')
+    .returns(true);
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  helpers.sendErrorResponse.should.have.been.called;
+  next.should.not.have.been.called;
+});
+
 test('validateTopic calls request helper functions with campaign helper results', async (t) => {
   const next = sinon.stub();
   const middleware = validateTopic();
+  sandbox.stub(helpers.campaign, 'isClosedCampaign')
+    .returns(false);
   sandbox.stub(helpers.campaign, 'getWebSignupMessageTemplateNameFromCampaign')
     .returns(templateStub);
   sandbox.stub(helpers.topic, 'getRenderedTextFromTopicAndTemplateName')
