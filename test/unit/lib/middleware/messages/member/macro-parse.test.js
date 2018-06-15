@@ -11,12 +11,15 @@ const underscore = require('underscore');
 
 const helpers = require('../../../../../../lib/helpers');
 const stubs = require('../../../../../helpers/stubs');
+const conversationFactory = require('../../../../../helpers/factories/conversation');
 
 chai.should();
 chai.use(sinonChai);
 
 // module to be tested
 const parseTopicMacro = require('../../../../../../lib/middleware/messages/member/macro-parse');
+
+const mockConversation = conversationFactory.getValidConversation();
 
 const sandbox = sinon.sandbox.create();
 
@@ -25,9 +28,12 @@ test.beforeEach((t) => {
     .returns(Promise.resolve({}));
   sandbox.stub(helpers.replies, 'continueTopic')
     .returns(underscore.noop);
+  sandbox.stub(helpers.replies, 'rivescriptReply')
+    .returns(underscore.noop);
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(underscore.noop);
   t.context.req = httpMocks.createRequest();
+  t.context.req.conversation = mockConversation;
   t.context.req.macro = stubs.getRandomWord();
   t.context.res = httpMocks.createResponse();
 });
@@ -35,6 +41,26 @@ test.beforeEach((t) => {
 test.afterEach((t) => {
   sandbox.restore();
   t.context = {};
+});
+
+test('parseTopicMacro sets rivescript topic and sends reply if request is not a macro', async (t) => {
+  const next = sinon.stub();
+  const middleware = parseTopicMacro();
+  sandbox.stub(helpers.request, 'isChangeTopicMacro')
+    .returns(true);
+  sandbox.stub(t.context.req.conversation, 'setTopic')
+    .returns(Promise.resolve(true));
+  t.context.req.macro = null;
+  const topic = stubs.getRandomWord();
+  t.context.req.rivescriptReplyTopic = topic;
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  helpers.request.isChangeTopicMacro.should.not.have.been.called;
+  next.should.not.have.been.called;
+  t.context.req.conversation.setTopic.should.have.been.calledWith(topic);
+  helpers.replies.rivescriptReply.should.have.been.calledWith(t.context.req, t.context.res);
+  helpers.sendErrorResponse.should.not.have.been.called;
 });
 
 test('parseTopicMacro executes changeTopicMacro if request isChangeTopicMacro', async (t) => {

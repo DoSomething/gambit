@@ -153,6 +153,13 @@ test('getSubscriptionStatusUpdate should return active value if active macro is 
   result.should.equal(subscriptionHelper.statuses.active());
 });
 
+test('getSubscriptionStatusUpdate should return active value if resubscribed macro is passed', () => {
+  const user = userFactory.getValidUser();
+  const resubscribedMacro = helpers.macro.macros.subscriptionStatusResubscribed();
+  const result = userHelper.getSubscriptionStatusUpdate(user, resubscribedMacro);
+  result.should.equal(subscriptionHelper.statuses.active());
+});
+
 test('getSubscriptionStatusUpdate should return stop value if stop macro is passed', () => {
   const user = userFactory.getValidUser();
   const stopMacro = helpers.macro.macros.subscriptionStatusStop();

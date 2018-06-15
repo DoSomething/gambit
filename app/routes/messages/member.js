@@ -58,6 +58,7 @@ router.use(parseMacroMiddleware());
 // Scolds User if inbound message contains bad words.
 router.use(badWordsMiddleware());
 
+// If MENU keyword, set random Campaign and ask for Signup.
 router.use(menuMacroMiddleware());
 
 // TODO: This won't be used once we publish defaultTopicTrigger entries with topic responses.
