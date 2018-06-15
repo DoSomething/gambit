@@ -1,8 +1,6 @@
 // topics.rive
 
 // Unsubcribed users should only receive replies to a select few triggers.
-// It's possible we could DRY these triggers with what's defined in macros.rive if topis
-// can include multiples.
 > topic unsubscribed 
 
 + info 
@@ -10,6 +8,9 @@
 
 + help
 @ info
+
++ less
+- subscriptionStatusLess{topic=random}
 
 + join
 - subscriptionStatusResubscribed{topic=random}
@@ -20,8 +21,8 @@
 < topic
 
 /**
- * All other topics should include 'random' to catch all triggers defined in the default topic (which is
- * hardcoded as the 'random' topic in Rivescript.
+ * All other topics should include 'random' to catch all triggers defined in the default topic
+ * (which is hardcoded as the 'random' topic in Rivescript).
  */
 
 // The menu topic defines triggers to catch yes and no responses when user was asked whether they'd like to start or continue their conversation for a given topic.
@@ -38,9 +39,9 @@
 
 < topic
 
-// Asks user to set their sms_status.
-+ subscription
-- How often would you like to receive alerts? Text A for weekly, B for monthly, or C to STOP{topic=askSubscriptionStatus}
+// Asks user to update their subscription status.
++ status
+- Hey it's Freddie from DoSomething.org! Do you want to hear from us A) Weekly B) Monthly C) Need More Info D) STOP {topic=askSubscriptionStatus}
 
 > topic askSubscriptionStatus includes random
 
@@ -51,10 +52,19 @@
 - subscriptionStatusLess{topic=random}
 
 + c
+- DoSomething is a community of 6 million young people taking action in their community. Read more about what we do: https://www.dosomething.org/us/about/who-we-are. Do you have a question for me? Text QUESTION and I’ll reply within 24 hours!\n\nDo you want to hear from us A ) Weekly B ) Monthly or STOP
+
++ d
 - subscriptionStatusStop{topic=unsubscribed}
 
++ need more
+@ c
+
++ more
+@ c
+
 + [*]
-- Sorry, I didn't get that. How often would you like to receive alerts? Text A for weekly, B for monthly, or C to STOP. If you'd like to remain {{user.sms_status}}, text MENU to find a new action to take.
+- Whoops, I'm sorry I didn't get that - do you want A) Weekly B) B Monthly C) Need More Info D) STOP
 
 < topic
 

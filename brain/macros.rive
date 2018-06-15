@@ -21,6 +21,9 @@
 + weekly
 - subscriptionStatusActive
 
++ monthly
+- subscriptionStatusLess
+
 + less
 - subscriptionStatusLess
 
