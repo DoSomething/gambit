@@ -52,7 +52,7 @@
 - subscriptionStatusLess{topic=random}
 
 + c
-- DoSomething is a community of 6 million young people taking action in their community. Read more about what we do: https://www.dosomething.org/us/about/who-we-are. Do you have a question for me? Text QUESTION and I’ll reply within 24 hours!\n\nDo you want to hear from us A ) Weekly B ) Monthly or STOP
+- DoSomething is a community of 6 million young people taking action in their community. Read more about what we do: https://www.dosomething.org/us/about/who-we-are. Do you have a question for me? Text QUESTION and I’ll reply within 24 hours!\n\nDo you want to hear from us A) Weekly B) Monthly or STOP
 
 + d
 - subscriptionStatusStop{topic=unsubscribed}
@@ -64,7 +64,7 @@
 @ c
 
 + [*]
-- Whoops, I'm sorry I didn't get that - do you want A) Weekly B) B Monthly C) Need More Info D) STOP
+- Whoops, I'm sorry I didn't get that - do you want A) Weekly B) Monthly C) Need More Info D) STOP
 
 < topic
 
