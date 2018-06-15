@@ -1,9 +1,9 @@
 'use strict';
 
 module.exports = {
-  changeTopicPrefix: 'changeTopicTo',
   macros: {
     catchAll: 'catchAll',
+    changeTopic: 'changeTopic',
     confirmedTopic: 'confirmedTopic',
     declinedTopic: 'declinedTopic',
     menu: 'menu',
