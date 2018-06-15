@@ -121,6 +121,11 @@ test('isSubscriptionStatusLess should return boolean', (t) => {
   t.falsy(macroHelper.isSubscriptionStatusLess(undefinedMacroName));
 });
 
+test('isSubscriptionStatusResubscribed should return boolean', (t) => {
+  t.true(macroHelper.isSubscriptionStatusResubscribed(macros.subscriptionStatusResubscribed));
+  t.falsy(macroHelper.isSubscriptionStatusResubscribed(undefinedMacroName));
+});
+
 test('isSubscriptionStatusStop should return boolean', (t) => {
   t.true(macroHelper.isSubscriptionStatusStop(macros.subscriptionStatusStop));
   t.falsy(macroHelper.isSubscriptionStatusStop(undefinedMacroName));
