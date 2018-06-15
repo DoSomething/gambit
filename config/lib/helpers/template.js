@@ -79,7 +79,7 @@ const templatesMap = {
     },
     subscriptionStatusStop: {
       name: 'subscriptionStatusStop',
-      text: `Ok, you'll stop getting texts from me.  If you just want monthly texts, text LESS. Questions? ${helpCenterUrl}`,
+      text: `Ok, you'll stop getting texts from me. If you just want monthly texts, text LESS. Questions? ${helpCenterUrl}`,
     },
     supportRequested: {
       name: 'supportRequested',
