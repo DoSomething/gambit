@@ -15,14 +15,20 @@
 + question
 @ q
 
+/**
+ * Subscription update triggers.
+ */
++ weekly
+- subscriptionStatusActive
+
++ monthly
+- subscriptionStatusLess
+
 + less
 - subscriptionStatusLess
 
-/**
- * Unsubscribe triggers.
- */
 + stop
-- subscriptionStatusStop
+- subscriptionStatusStop{topic=unsubscribed}
 
 + @unsubscribe
 @ stop

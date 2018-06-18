@@ -17,7 +17,7 @@ const stubs = require('../../../helpers/stubs');
 
 const macros = config.macros;
 const topicId = stubs.getTopicId();
-const changeTopicMacroName = `${config.changeTopicPrefix}${topicId}`;
+const changeTopicMacroName = `${config.macros.changeTopic}{topic=${topicId}}`;
 const undefinedMacroName = 'trialByCombat';
 
 // module to be tested
@@ -50,36 +50,20 @@ test('getChangeTopicMacroFromTopicId returns string with changeTopicMacro prefix
   result.should.equal(changeTopicMacroName);
 });
 
-// getTopicIdFromChangeTopicMacro
-test('getTopicIdFromChangeTopicMacro returns topicId from given changeTopic macro name', () => {
-  const result = macroHelper.getTopicIdFromChangeTopicMacro(changeTopicMacroName);
-  result.should.equal(topicId);
-});
-
 // isChangeTopic
-test('isChangeTopic returns whether string includes changeTopic macro prefix', (t) => {
-  t.truthy(macroHelper.isChangeTopic(changeTopicMacroName));
+test('isChangeTopic should return boolean', (t) => {
+  t.true(macroHelper.isChangeTopic(macros.changeTopic));
   t.falsy(macroHelper.isChangeTopic(undefinedMacroName));
 });
 
 // isMacro
-test('isMacro returns true if macro isChangeTopic', (t) => {
-  sandbox.stub(macroHelper, 'isChangeTopic')
-    .returns(true);
-  t.truthy(macroHelper.isMacro());
-});
-
-test('isMacro returns whether text exists for given macro if not isChangeTopic', (t) => {
-  sandbox.stub(macroHelper, 'isChangeTopic')
-    .returns(false);
+test('isMacro returns whether text exists for given macro', (t) => {
   const macro = config.macros.subscriptionStatusStop;
   t.truthy(macroHelper.isMacro(macro));
-});
-
-test('isMacro should return falsy for undefined macro', (t) => {
   t.falsy(macroHelper.isMacro(undefinedMacroName));
 });
 
+// isMenu
 test('isMenu should return boolean', (t) => {
   t.true(macroHelper.isMenu(macros.menu));
   t.falsy(macroHelper.isMenu(undefinedMacroName));
@@ -111,9 +95,19 @@ test('isSendInfoMessage should return boolean', (t) => {
   t.falsy(macroHelper.isSendInfoMessage(undefinedMacroName));
 });
 
+test('isSubscriptionStatusActive should return boolean', (t) => {
+  t.true(macroHelper.isSubscriptionStatusActive(macros.subscriptionStatusActive));
+  t.falsy(macroHelper.isSubscriptionStatusActive(undefinedMacroName));
+});
+
 test('isSubscriptionStatusLess should return boolean', (t) => {
   t.true(macroHelper.isSubscriptionStatusLess(macros.subscriptionStatusLess));
   t.falsy(macroHelper.isSubscriptionStatusLess(undefinedMacroName));
+});
+
+test('isSubscriptionStatusResubscribed should return boolean', (t) => {
+  t.true(macroHelper.isSubscriptionStatusResubscribed(macros.subscriptionStatusResubscribed));
+  t.falsy(macroHelper.isSubscriptionStatusResubscribed(undefinedMacroName));
 });
 
 test('isSubscriptionStatusStop should return boolean', (t) => {

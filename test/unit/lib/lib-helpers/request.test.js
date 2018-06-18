@@ -84,12 +84,10 @@ test('changeTopicByCampaign should call setCampaign and return changeTopic if ca
 // executeChangeTopicMacro
 test('executeChangeTopicMacro should call setKeyword, fetch topic and return changeTopic', async (t) => {
   t.context.req.rivescriptMatch = stubs.getRandomWord();
+  t.context.req.rivescriptReplyTopic = stubs.getContentfulId();
   t.context.req.macro = stubs.getRandomWord();
   sandbox.stub(requestHelper, 'setKeyword')
     .returns(underscore.noop);
-  const topicId = stubs.getContentfulId();
-  sandbox.stub(helpers.macro, 'getTopicIdFromChangeTopicMacro')
-    .returns(topicId);
   sandbox.stub(requestHelper, 'changeTopic')
     .returns(Promise.resolve(true));
   sandbox.stub(helpers.topic, 'fetchById')
@@ -99,8 +97,7 @@ test('executeChangeTopicMacro should call setKeyword, fetch topic and return cha
   await requestHelper.executeChangeTopicMacro(t.context.req);
   requestHelper.setKeyword.should.have.been
     .calledWith(t.context.req, t.context.req.rivescriptMatch);
-  helpers.macro.getTopicIdFromChangeTopicMacro.should.have.been.calledWith(t.context.req.macro);
-  helpers.topic.fetchById.should.have.been.calledWith(topicId);
+  helpers.topic.fetchById.should.have.been.calledWith(t.context.req.rivescriptReplyTopic);
   requestHelper.changeTopic.should.have.been.calledWith(t.context.req, topic);
 });
 
