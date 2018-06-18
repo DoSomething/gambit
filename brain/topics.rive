@@ -1,8 +1,28 @@
 // topics.rive
 
+// Unsubcribed users should only receive replies to a select few triggers.
+> topic unsubscribed 
+
++ info 
+- sendInfoMessage
+
++ help
+@ info
+
++ less
+- subscriptionStatusLess{topic=random}
+
++ join
+- subscriptionStatusResubscribed{topic=random}
+
++ [*]
+- noReply
+
+< topic
+
 /**
- * All topics should include 'random' to catch all triggers defined in the default topic (which is
- * hardcoded as the 'random' topic in Rivescript.
+ * All other topics should include 'random' to catch all triggers defined in the default topic
+ * (which is hardcoded as the 'random' topic in Rivescript).
  */
 
 // The menu topic defines triggers to catch yes and no responses when user was asked whether they'd like to start or continue their conversation for a given topic.
@@ -16,6 +36,35 @@
 
 + @no [*]
 - declinedTopic
+
+< topic
+
+// Asks user to update their subscription status.
++ status
+- Hey it's Freddie from DoSomething.org! Do you want to hear from us A) Weekly B) Monthly C) Need More Info D) STOP {topic=askSubscriptionStatus}
+
+> topic askSubscriptionStatus includes random
+
++ a
+- subscriptionStatusActive{topic=random}
+
++ b
+- subscriptionStatusLess{topic=random}
+
++ c
+- DoSomething is a community of 6 million young people taking action in their community. Read more about what we do: https://www.dosomething.org/us/about/who-we-are. Do you have a question for me? Text QUESTION and I’ll reply within 24 hours!\n\nDo you want to hear from us A) Weekly B) Monthly or STOP
+
++ d
+- subscriptionStatusStop{topic=unsubscribed}
+
++ need more
+@ c
+
++ more
+@ c
+
++ [*]
+- Whoops, I'm sorry I didn't get that - do you want A) Weekly B) Monthly C) Need More Info D) STOP
 
 < topic
 

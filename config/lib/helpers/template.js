@@ -7,7 +7,6 @@ const helpCenterUrl = 'http://doso.me/1jf4/291kep';
 // @see lib/helpers.js
 const menuCommand = 'menu';
 
-
 const templatesMap = {
   campaignClosed: 'campaignClosed',
   declinedSignup: 'declinedSignup',
@@ -65,13 +64,21 @@ const templatesMap = {
       name: 'noReply',
       text: '',
     },
+    subscriptionStatusActive: {
+      name: 'subscriptionStatusActive',
+      text: 'OK, great! You\'ll receive weekly updates from me. -Freddie, DoSomething.org.',
+    },
     subscriptionStatusLess: {
       name: 'subscriptionStatusLess',
-      text: 'OK, great! We\'ll start sending you updates monthly instead of weekly! -Freddie, DoSomething.org.',
+      text: 'Great, you\'ll start to receive 1 monthly update from Freddie at DoSomething.org! Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.',
+    },
+    subscriptionStatusResubscribed: {
+      name: 'subscriptionStatusResubscribed',
+      text: 'Hi I\'m Freddie from DoSomething.org! Welcome to my weekly updates (up to 8msg/week). Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.',
     },
     subscriptionStatusStop: {
       name: 'subscriptionStatusStop',
-      text: `Ok, you'll stop getting texts from me. If you just want monthly texts, text LESS. Questions? ${helpCenterUrl}. If you wish to unsubscribe, do not respond to this message.`,
+      text: 'You\'re unsubscribed from DoSomething.org Alerts. No more msgs will be sent. Reply HELP for help. Text JOIN to receive 4-8 msgs/mth or LESS for 1msg/mth.',
     },
     supportRequested: {
       name: 'supportRequested',
