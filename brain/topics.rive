@@ -15,6 +15,9 @@
 + join
 - subscriptionStatusResubscribed{topic=random}
 
++ @unsubscribe
+- subscriptionStatusStop
+
 + [*]
 - noReply
 
