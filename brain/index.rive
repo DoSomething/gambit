@@ -89,7 +89,7 @@
 ! array question  = is there|who|what|when|why|how
 ! array send      = send submit text
 ! array social    = social media|facebook|twitter|instagram|social
-! array unsubscribe = sotp|stop|stopp|quit|end|unsubscribe|cancel|do not|remove
+! array unsubscribe = sotp|stop|stopp|stopall|quit|end|unsubscribe|cancel|do not|remove
 ! array want      = want|am going|am thinking about
 ! array why       = why y how
 ! array yes       = y ya yas yea yeah yep yes yup
