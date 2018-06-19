@@ -145,7 +145,7 @@ test('hasAddress should return false if user does not have address properties se
   t.falsy(userHelper.hasAddress(user));
 });
 
-// updateSubscriptionStatus
+// getSubscriptionStatusUpdate
 test('getSubscriptionStatusUpdate should return active value if active macro is passed', () => {
   const user = userFactory.getValidUser();
   const activeMacro = helpers.macro.macros.subscriptionStatusActive();
@@ -174,20 +174,6 @@ test('getSubscriptionStatusUpdate should return less value if less macro is pass
   result.should.equal(subscriptionHelper.statuses.less());
 });
 
-test('getSubscriptionStatusUpdate should return active value if current status is stop', () => {
-  const user = userFactory.getValidUser();
-  user.sms_status = subscriptionHelper.statuses.stop();
-  const result = userHelper.getSubscriptionStatusUpdate(user, stubs.getRandomMessageText());
-  result.should.equal(subscriptionHelper.statuses.active());
-});
-
-test('getSubscriptionStatusUpdate should return active value if current status is undeliverable', () => {
-  const user = userFactory.getValidUser();
-  user.sms_status = subscriptionHelper.statuses.undeliverable();
-  const result = userHelper.getSubscriptionStatusUpdate(user, stubs.getRandomMessageText());
-  result.should.equal(subscriptionHelper.statuses.active());
-});
-
 test('getSubscriptionStatusUpdate should return active value if current status is null', () => {
   const user = userFactory.getValidUser();
   user.sms_status = null;
@@ -195,13 +181,20 @@ test('getSubscriptionStatusUpdate should return active value if current status i
   result.should.equal(subscriptionHelper.statuses.active());
 });
 
-test('getSubscriptionStatusUpdate should return falsy if current status is active', (t) => {
+test('getSubscriptionStatusUpdate should return null if current status exists and non macro is passed', (t) => {
   const user = userFactory.getValidUser();
-  const result = userHelper.getSubscriptionStatusUpdate(user, stubs.getRandomMessageText());
-  t.falsy(result);
+  user.sms_status = subscriptionHelper.statuses.active();
+  let result = userHelper.getSubscriptionStatusUpdate(user, stubs.getRandomMessageText());
+  t.is(result, null);
+  user.sms_status = subscriptionHelper.statuses.stop();
+  result = userHelper.getSubscriptionStatusUpdate(user, stubs.getRandomMessageText());
+  t.is(result, null);
+  user.sms_status = subscriptionHelper.statuses.undeliverable();
+  result = userHelper.getSubscriptionStatusUpdate(user, stubs.getRandomMessageText());
+  t.is(result, null);
 });
 
-test('isPaused should return user.sms_status', (t) => {
+test('isPaused should return user.sms_paused', (t) => {
   const user = userFactory.getValidUser();
   const result = userHelper.isPaused(user);
   t.deepEqual(result, user.sms_paused);
