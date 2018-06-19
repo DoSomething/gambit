@@ -66,11 +66,11 @@ const templatesMap = {
     },
     subscriptionStatusActive: {
       name: 'subscriptionStatusActive',
-      text: 'OK, great! You\'ll receive weekly updates from me. -Freddie, DoSomething.org.',
+      text: 'Okay, great! I\'ll text you once a week with updates on what\'s happening in the news and/or easy ways for you to take action in your community! Wanna take 2 mins to catch up on the 5 things you *must* know that happened last week? I complied some of my fav news here: https://www.dosomething.org/us/5-things-to-know-june-18?user_id={{user.id}},broadcastsource=weekly',
     },
     subscriptionStatusLess: {
       name: 'subscriptionStatusLess',
-      text: 'Great, you\'ll start to receive 1 monthly update from Freddie at DoSomething.org! Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.',
+      text: 'Okay, great! I\'ll text you once a month with updates on what\'s happening in the news and/or easy ways for you to take action in your community! Wanna take 2 mins to catch up on the 5 things you *must* know that happened last week? I complied some of my fav news here: https://www.dosomething.org/us/5-things-to-know-june-18?user_id={{user.id}},broadcastsource=monthly',
     },
     subscriptionStatusResubscribed: {
       name: 'subscriptionStatusResubscribed',
