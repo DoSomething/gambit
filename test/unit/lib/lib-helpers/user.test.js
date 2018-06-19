@@ -199,3 +199,14 @@ test('isPaused should return user.sms_paused', (t) => {
   const result = userHelper.isPaused(user);
   t.deepEqual(result, user.sms_paused);
 });
+
+// setPendingSubscriptionStatusForUserId
+test('setPendingSubscriptionStatusForUserId should call northstar.updateUser with pending status', async () => {
+  const userId = mockUser.id;
+  sandbox.stub(northstar, 'updateUser')
+    .returns(Promise.resolve({}));
+
+  await userHelper.setPendingSubscriptionStatusForUserId(userId);
+  northstar.updateUser.should.have.been
+    .calledWith(userId, { sms_status: subscriptionHelper.statuses.pending() });
+});
