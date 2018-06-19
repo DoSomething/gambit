@@ -30,6 +30,7 @@ test.afterEach(() => {
 
 test('subscriptionHelper.statuses.x() should be equal to config.subscriptionStatusValues.x', () => {
   Object.keys(statuses).forEach((statusName) => {
-    subscriptionHelper.statuses[statusName]().should.be.equal(statusName);
+    subscriptionHelper.statuses[statusName]()
+      .should.be.equal(config.subscriptionStatuses[statusName]);
   });
 });

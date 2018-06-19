@@ -44,7 +44,7 @@
 
 // Asks user to update their subscription status.
 + status
-- Hey it's Freddie from DoSomething.org! Do you want to hear from us A) Weekly B) Monthly C) Need More Info D) STOP {topic=askSubscriptionStatus}
+- Hi it's Freddie at DoSomething! I send texts w updates on news & easy ways to take action. Want texts: A)Weekly B)Monthly C)I need more info D)Text STOP to stop {topic=askSubscriptionStatus}
 
 > topic askSubscriptionStatus includes random
 
@@ -55,15 +55,12 @@
 - subscriptionStatusLess{topic=random}
 
 + c
-- DoSomething is a community of 6 million young people taking action in their community. Read more about what we do: https://www.dosomething.org/us/about/who-we-are. Do you have a question for me? Text QUESTION and I’ll reply within 24 hours!\n\nDo you want to hear from us A) Weekly B) Monthly or STOP
+- Sure! Maybe it's been a while since you signed up for DoSomething.org texts, so I'll give you the run down of what these texts are all about. Once a week, I text over 3 million young people with updates on what's happening in the news and/or easy ways to take action in your community.\n\nWant an example of the news we share? Take 2 mins to catch up on the 5 things you *must* know that happened last week? https://www.dosomething.org/us/5-things-to-know-june-18?user_id={{user.id}},broadcastsource=info
 
 + d
 - subscriptionStatusStop{topic=unsubscribed}
 
-+ need more
-@ c
-
-+ more
++ [*] more [*]
 @ c
 
 + [*]
@@ -122,58 +119,5 @@
 
 + [*]
 - Great. You've got yourself on the list. See you in your inbox on Tuesday!{topic=random}
-
-< topic
-
-/**
- * Campaign-less askSignup broadcast sent May 21 2018
- */
-> topic 20180521_under18 includes random
-
-+ yes
-- I'm happy you're joining this fight! Right now, we're talking to activists from Parkland, Black Lives Matter, The National School Walkout, and others to plan a national Week of Action next week (May 29-June 1).\n
-^ Your opinions matter. How do you want to make an impact on gun violence during our Week of Action? Take 2 mins and tell us here: https://dosomething.typeform.com/to/zi8Lzs?id={{user.id}}&s=sms{topic=survey_response}
-
-+ @yes [*]
-@ yes
-
-+ (heck|hell|hells|hm|uh|why) @yes [*]
-@ yes
-
-+ no
-- Ok - another action you take to keep your community and school safe is to stand up to bullying. We're collecting tips from members on to beat bullying. Text POWER to have your tactic featured in the largest peer-to-peer anti-bullying guide EVER (and enter to win a $5000 scholarship.{topic=survey_response}
-
-+ @no [*]
-@ no
-
-+ [*]
-- I'm sorry I didn't understand that, but I'm listening. Have a question? Text Q.\n
-^ Will you take action with us to end gun violence? Yes or No?
-
-< topic
-
-> topic 20180521_over18 includes random
-
-+ yes
-- I'm happy you're joining this fight! Right now, we’re talking to activists from Parkland, Black Lives Matter, The National School Walkout, and others to plan a historic Week of Action next week (May 29-June 1). Stay tuned!\n
-^ Your opinions matter. How do you want to make an impact on gun violence during our Week of Action? Tell us here: https://dosomething.typeform.com/to/zi8Lzs?id={{user.id}}&s=sms\n
-^ Then, make sure you're registered and can vote on this issue (2 mins): https://vote.dosomething.org/issue/gun?r=user:{{user.id}},campaignID:8017,campaignRunID:8022,source:sms,source_details:5212018_gun_gtm{topic=survey_response}
-
-+ @yes [*]
-@ yes
-
-+ (heck|hell|hells|hm|uh|why) @yes [*]
-@ yes
-
-+ no
-- Ok - if you're not ready to take direct action right now, you can still be an agent of change through voting.\n
-^ Let's do something about gun violence NOW by electing officials who will pass laws to protect our schools and save lives. It takes 2 minutes to register to vote: https://vote.dosomething.org/issue/gun?r=user:{{user.id}},campaignID:8017,campaignRunID:8022,source:sms,source_details:5212018_gun_kick{topic=survey_response}
-
-+ @no [*]
-@ no
-
-+ [*]
-- I'm sorry I didn't understand that, but I'm listening. Have a question? Text Q.\n
-^ Will you take action with us to end gun violence? Yes or No?
 
 < topic
