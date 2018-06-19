@@ -18,14 +18,11 @@
 /**
  * Subscription update triggers.
  */
-+ weekly
-- subscriptionStatusActive
++ (week|weekly)
+- subscriptionStatusActive{topic=random}
 
-+ monthly
-- subscriptionStatusLess
-
-+ less
-- subscriptionStatusLess
++ (less|month|monthly)
+- subscriptionStatusLess{topic=random}
 
 + stop
 - subscriptionStatusStop{topic=unsubscribed}
