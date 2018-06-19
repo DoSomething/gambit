@@ -187,6 +187,20 @@ test('setTopic calls save for new topic', async () => {
   mockConversation.save.should.have.been.called;
 });
 
+test('setTopic calls helpers.user.setPendingSubscriptionStatusForUserId if topic is askSubscriptionStatus', async () => {
+  const mockConversation = conversationFactory.getValidConversation();
+  const mockTopic = topics.askSubscriptionStatus;
+  sandbox.stub(mockConversation, 'save')
+    .returns(Promise.resolve(mockConversation));
+  sandbox.stub(helpers.user, 'setPendingSubscriptionStatusForUserId')
+    .returns(Promise.resolve(true));
+
+  await mockConversation.setTopic(mockTopic);
+  mockConversation.save.should.have.been.called;
+  helpers.user.setPendingSubscriptionStatusForUserId
+    .should.have.been.calledWith(mockConversation.userId);
+});
+
 test('setTopic does not call save for same topic', async () => {
   const mockConversation = conversationFactory.getValidConversation();
   sandbox.stub(mockConversation, 'save')
@@ -196,16 +210,31 @@ test('setTopic does not call save for same topic', async () => {
   mockConversation.save.should.not.have.been.called;
 });
 
-test('setDefaultTopic, setSupportTopic, setCampaignTopic call setTopic', async () => {
+// setDefaultTopic
+test('setDefaultTopic calls setTopic with config.topics.default', async () => {
   const mockConversation = conversationFactory.getValidConversation();
   sandbox.stub(mockConversation, 'setTopic')
     .returns(Promise.resolve(mockConversation));
 
   await mockConversation.setDefaultTopic();
   mockConversation.setTopic.should.have.been.calledWith(topics.default);
+});
+
+// setCampaignTopic
+test('setCampaignTopic calls setTopic with config.topics.campaign', async () => {
+  const mockConversation = conversationFactory.getValidConversation();
+  sandbox.stub(mockConversation, 'setTopic')
+    .returns(Promise.resolve(mockConversation));
 
   await mockConversation.setCampaignTopic();
   mockConversation.setTopic.should.have.been.calledWith(topics.campaign);
+});
+
+// setSupportTopic
+test('setSupportTopic calls setTopic with config.topics.support', async () => {
+  const mockConversation = conversationFactory.getValidConversation();
+  sandbox.stub(mockConversation, 'setTopic')
+    .returns(Promise.resolve(mockConversation));
 
   await mockConversation.setSupportTopic();
   mockConversation.setTopic.should.have.been.calledWith(topics.support);
