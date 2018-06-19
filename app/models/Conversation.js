@@ -102,12 +102,19 @@ conversationSchema.methods.changeTopic = function (topicObject) {
  * @return {Promise}
  */
 conversationSchema.methods.setTopic = function (topic) {
-  if (topic === this.topic) {
-    return Promise.resolve();
-  }
   logger.debug('Conversation.setTopic', { topic });
+
+  let promise = Promise.resolve();
+  if (topic === this.topic) {
+    return promise;
+  }
+
+  if (topic === config.topics.askSubscriptionStatus) {
+    promise = helpers.user.setPendingSubscriptionStatusForUserId(this.userId);
+  }
+
   this.topic = topic;
-  return this.save();
+  return promise.then(() => this.save());
 };
 
 /**
