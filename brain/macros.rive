@@ -18,10 +18,10 @@
 /**
  * Subscription update triggers.
  */
-+ weekly
++ (week|weekly)
 - subscriptionStatusActive
 
-+ monthly
++ (month|monthly)
 - subscriptionStatusLess
 
 + less
