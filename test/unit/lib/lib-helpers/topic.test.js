@@ -12,6 +12,7 @@ const stubs = require('../../../helpers/stubs');
 const campaignFactory = require('../../../helpers/factories/campaign');
 const defaultTopicTriggerFactory = require('../../../helpers/factories/defaultTopicTrigger');
 const topicFactory = require('../../../helpers/factories/topic');
+const config = require('../../../../config/lib/helpers/topic');
 
 chai.should();
 chai.use(sinonChai);
@@ -19,8 +20,10 @@ chai.use(sinonChai);
 // module to be tested
 const topicHelper = require('../../../../lib/helpers/topic');
 
+const hardcodedTopicId = config.hardcodedTopicIds[0];
 const replyTrigger = defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger();
 const redirectTrigger = defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger();
+
 const sandbox = sinon.sandbox.create();
 
 test.afterEach(() => {
@@ -68,14 +71,28 @@ test('fetchAllTopics should call gambitCampaigns.fetchTopics', async () => {
 });
 
 // fetchById
-test('fetchById should call gambitCampaigns.fetchTopicById', async () => {
+test('fetchById should call gambitCampaigns.fetchTopicById and return object if topicId is not hardcoded', async () => {
   const mockTopic = topicFactory.getValidTopic();
+  sandbox.stub(topicHelper, 'isHardcodedTopicId')
+    .returns(false);
   sandbox.stub(gambitCampaigns, 'fetchTopicById')
     .returns(Promise.resolve(mockTopic));
 
   const result = await topicHelper.fetchById();
   gambitCampaigns.fetchTopicById.should.have.been.called;
   result.should.deep.equal(mockTopic);
+});
+
+test('fetchById should return a string if topicId is hardcoded', async () => {
+  const mockTopic = topicFactory.getValidTopic();
+  sandbox.stub(topicHelper, 'isHardcodedTopicId')
+    .returns(true);
+  sandbox.stub(gambitCampaigns, 'fetchTopicById')
+    .returns(Promise.resolve(mockTopic));
+
+  const result = await topicHelper.fetchById(hardcodedTopicId);
+  gambitCampaigns.fetchTopicById.should.not.have.been.called;
+  result.should.equal(hardcodedTopicId);
 });
 
 // fetchByCampaignId
@@ -91,6 +108,12 @@ test('fetchByCampaignId should call helpers.campaign.fetchById and inject campai
     result[index].campaign.should.deep.equal(mockCampaign);
     result[index].id.should.equal(topic.id);
   });
+});
+
+// isHardcodedTopicId
+test('isHardcodedTopicId should return whether topicId exists in config.hardcodedTopicIds', (t) => {
+  t.truthy(topicHelper.isHardcodedTopicId(hardcodedTopicId));
+  t.falsy(topicHelper.isHardcodedTopicId(stubs.getContentfulId()));
 });
 
 // parseDefaultTopicTrigger
