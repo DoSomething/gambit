@@ -101,9 +101,7 @@ conversationSchema.statics.findOneAndPopulateLastOutboundMessage = function (que
         conversationId: conversation.id,
       }, req);
 
-      return conversation.save()
-        .then(updatedDoc => updatedDoc.populate('lastOutboundMessage'))
-        .catch(err => Promise.reject(err));
+      return conversation.save().then(updatedDoc => updatedDoc.populate('lastOutboundMessage'));
     });
 };
 
