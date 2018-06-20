@@ -110,9 +110,10 @@ conversationSchema.methods.setTopic = function (topic) {
   }
 
   if (topic === config.topics.askSubscriptionStatus) {
-    promise = helpers.user.setPendingSubscriptionStatusForUserId(this.userId);
+    if (this.userId) {
+      promise = helpers.user.setPendingSubscriptionStatusForUserId(this.userId);
+    }
   }
-
   this.topic = topic;
   return promise.then(() => this.save());
 };
