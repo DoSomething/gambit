@@ -80,7 +80,31 @@ conversationSchema.statics.getFromReq = function (req) {
  */
 conversationSchema.statics.findOneAndPopulateLastOutboundMessage = function (query, req) {
   logger.debug('Conversation.findOne', query, req);
-  return this.findOne(query).populate('lastOutboundMessage');
+
+  return this.findOne(query).populate('lastOutboundMessage')
+    .then((conversation) => {
+      if (!conversation) {
+        return Promise.resolve(conversation);
+      }
+      // Our first release of Conversations did not save userId, and we haven't yet run a bulk
+      // backfill query. If req.userId exist but conversation.userId doesn't, backfill it.
+      // TODO: Remove this logic if/when a bulk backfill is run:
+      // @see https://github.com/DoSomething/gambit-conversations/issues/342#issuecomment-398834646
+      const needsUserIdBackfill = req.userId && !conversation.userId;
+      if (!needsUserIdBackfill) {
+        return Promise.resolve(conversation);
+      }
+
+      conversation.userId = req.userId; // eslint-disable-line no-param-reassign
+      logger.debug('Backfilling Conversation.userId', {
+        userId: req.userId,
+        conversationId: conversation.id,
+      }, req);
+
+      return conversation.save()
+        .then(updatedDoc => updatedDoc.populate('lastOutboundMessage'))
+        .catch(err => Promise.reject(err));
+    });
 };
 
 /**
@@ -96,8 +120,7 @@ conversationSchema.methods.changeTopic = function (topicObject) {
 };
 
 /**
- * TODO: This will be deprecated once broadcast content type is split out into multiple types.
- * Sets Rivescript topic property to a string.
+ * Saves topic if topic change, and posts a user update if required.
  * @param {String} topic
  * @return {Promise}
  */
@@ -109,11 +132,10 @@ conversationSchema.methods.setTopic = function (topic) {
     return promise;
   }
 
-  if (topic === config.topics.askSubscriptionStatus) {
-    if (this.userId) {
-      promise = helpers.user.setPendingSubscriptionStatusForUserId(this.userId);
-    }
+  if (topic === config.topics.askSubscriptionStatus && this.userId) {
+    promise = helpers.user.setPendingSubscriptionStatusForUserId(this.userId);
   }
+
   this.topic = topic;
   return promise.then(() => this.save());
 };
@@ -315,14 +337,6 @@ conversationSchema.methods.createAndSetLastOutboundMessage = function (direction
   return this.createMessage(direction, text, template, req)
     .then((message) => {
       logger.debug('created message', { messageId: message.id }, req);
-      // Backfill Conversations that may not have userId set.
-      if (!this.userId) {
-        logger.debug('Backfilling Conversation.userId', {
-          userId: req.userId,
-          conversationId: this.id,
-        }, req);
-        this.userId = req.userId;
-      }
       return this.setLastOutboundMessage(message);
     });
 };
