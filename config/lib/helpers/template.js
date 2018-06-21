@@ -3,6 +3,9 @@
 const underscore = require('underscore');
 
 const helpCenterUrl = 'http://doso.me/1jf4/291kep';
+// Note: This url may also appear in hardcoded askSubscriptionStatus topic.
+// @see brain/topics.rive
+const dsNewsUrl = 'https://www.dosomething.org/us/family-separations-us-border';
 // TODO: DRY menuCommand definition.
 // @see lib/helpers.js
 const menuCommand = 'menu';
@@ -66,11 +69,11 @@ const templatesMap = {
     },
     subscriptionStatusActive: {
       name: 'subscriptionStatusActive',
-      text: 'Okay, great! I\'ll text you once a week with updates on what\'s happening in the news and/or easy ways for you to take action in your community! Wanna take 2 mins to catch up on the 5 things you *must* know that happened last week? I complied some of my fav news here: https://www.dosomething.org/us/5-things-to-know-june-18?user_id={{user.id}},broadcastsource=weekly',
+      text: `Okay, great! I'll text you once a week with updates on what's happening in the news and/or easy ways for you to take action in your community! ${dsNewsUrl}?user_id={{user.id}},broadcastsource=weekly`,
     },
     subscriptionStatusLess: {
       name: 'subscriptionStatusLess',
-      text: 'Okay, great! I\'ll text you once a month with updates on what\'s happening in the news and/or easy ways for you to take action in your community! Wanna take 2 mins to catch up on the 5 things you *must* know that happened last week? I complied some of my fav news here: https://www.dosomething.org/us/5-things-to-know-june-18?user_id={{user.id}},broadcastsource=monthly',
+      text: `Okay, great! I'll text you once a month with updates on what's happening in the news and/or easy ways for you to take action in your community! Wanna take 2 mins to catch up on the 5 things you *must* know that happened last week? I complied some of my fav news here: ${dsNewsUrl}?user_id={{user.id}},broadcastsource=monthly`,
     },
     subscriptionStatusResubscribed: {
       name: 'subscriptionStatusResubscribed',

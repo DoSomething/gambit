@@ -55,7 +55,7 @@
 - subscriptionStatusLess{topic=random}
 
 + c
-- Sure! Maybe it's been a while since you signed up for DoSomething.org texts, so I'll give you the run down of what these texts are all about. Once a week, I text over 3 million young people with updates on what's happening in the news and/or easy ways to take action in your community.\n\nWant an example of the news we share? Take 2 mins to catch up on the 5 things you *must* know that happened last week? https://www.dosomething.org/us/5-things-to-know-june-18?user_id={{user.id}},broadcastsource=info
+- Sure! Maybe it's been a while since you signed up for DoSomething.org texts, so I'll give you the run down of what these texts are all about. Once a week, I text over 3 million young people with updates on what's happening in the news and/or easy ways to take action in your community.\n\nWant an example of the news we share? Take 2 mins to catch up on the 5 things you *must* know that happened last week? https://www.dosomething.org/us/family-separations-us-border?user_id={{user.id}},broadcastsource=info
 
 + d
 - subscriptionStatusStop{topic=unsubscribed}
