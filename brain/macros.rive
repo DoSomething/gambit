@@ -33,7 +33,16 @@
 + [*] @unsubscribe [*] @messaging [*]
 @ stop
 
++ [*] wrong number [*]
+@ stop
+
 + @please @unsubscribe [*]
+@ stop
+
++ @please do not @messaging [*]
+@ stop
+
++ i do not want this
 @ stop
 
 + leave me alone
