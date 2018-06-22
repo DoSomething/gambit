@@ -39,7 +39,7 @@
 + @please @unsubscribe [*]
 @ stop
 
-+ @please do not [*]
++ @please do not @messaging [*]
 @ stop
 
 + leave me alone
