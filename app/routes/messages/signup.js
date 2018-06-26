@@ -15,7 +15,7 @@ const validateOutboundMessageMiddleware = require('../../../lib/middleware/messa
 const getConversationMiddleware = require('../../../lib/middleware/messages/conversation-get');
 const createConversationMiddleware = require('../../../lib/middleware/messages/conversation-create');
 const getTopicMiddleware = require('../../../lib/middleware/messages/signup/topic-get');
-const validateTopicMiddleware = require('../../../lib/middleware/messages/signup/topic-validate');
+const parseTopicMiddleware = require('../../../lib/middleware/messages/signup/topic-parse');
 const updateConversationMiddleware = require('../../../lib/middleware/messages/signup/conversation-update');
 const loadOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-load');
 const createOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-create');
@@ -25,8 +25,8 @@ router.use(paramsMiddleware());
 
 // Fetch topic for campaignId param.
 router.use(getTopicMiddleware());
-// Validate the topic should trigger a message.
-router.use(validateTopicMiddleware());
+// Parse topic for message data to send.
+router.use(parseTopicMiddleware());
 // Fetch user for userId param.
 router.use(getUserMiddleware(getUserConfig));
 router.use(validateOutboundMessageMiddleware(outboundMessageConfig));

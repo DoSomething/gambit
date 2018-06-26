@@ -67,7 +67,7 @@ test('getTopic should send 204 status if no topics found for campaignId', async 
   const next = sinon.stub();
   const middleware = getTopic();
   sandbox.stub(helpers.topic, 'fetchByCampaignId')
-    .returns(Promise.resolve(null));
+    .returns(Promise.resolve([]));
   // TODO: Move this hardcoded message into config to DRY.
   const apiResponseMessage = 'Campaign does not have any topics.';
 
