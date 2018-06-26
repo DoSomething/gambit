@@ -71,8 +71,22 @@ test('fetchAllTopics should call gambitCampaigns.fetchTopics', async () => {
 });
 
 // fetchById
+test('fetchById should return 404 error if topicId is the random topicId', async (t) => {
+  const mockTopic = topicFactory.getValidTopic();
+  sandbox.stub(topicHelper, 'isRandomTopicId')
+    .returns(true);
+  sandbox.stub(gambitCampaigns, 'fetchTopicById')
+    .returns(Promise.resolve(mockTopic));
+
+  const result = await t.throws(topicHelper.fetchById());
+  gambitCampaigns.fetchTopicById.should.not.have.been.called;
+  result.status.should.equal(404);
+});
+
 test('fetchById should call gambitCampaigns.fetchTopicById and return object if topicId is not hardcoded', async () => {
   const mockTopic = topicFactory.getValidTopic();
+  sandbox.stub(topicHelper, 'isRandomTopicId')
+    .returns(false);
   sandbox.stub(topicHelper, 'isHardcodedTopicId')
     .returns(false);
   sandbox.stub(gambitCampaigns, 'fetchTopicById')
@@ -85,6 +99,8 @@ test('fetchById should call gambitCampaigns.fetchTopicById and return object if 
 
 test('fetchById should return a string if topicId is hardcoded', async () => {
   const mockTopic = topicFactory.getValidTopic();
+  sandbox.stub(topicHelper, 'isRandomTopicId')
+    .returns(false);
   sandbox.stub(topicHelper, 'isHardcodedTopicId')
     .returns(true);
   sandbox.stub(gambitCampaigns, 'fetchTopicById')
@@ -114,6 +130,12 @@ test('fetchByCampaignId should call helpers.campaign.fetchById and inject campai
 test('isHardcodedTopicId should return whether topicId exists in config.hardcodedTopicIds', (t) => {
   t.truthy(topicHelper.isHardcodedTopicId(hardcodedTopicId));
   t.falsy(topicHelper.isHardcodedTopicId(stubs.getContentfulId()));
+});
+
+// isRandomTopicId
+test('isRandomTopicId should return whether topicId is config.randomTopicId', (t) => {
+  t.truthy(topicHelper.isRandomTopicId(config.randomTopicId));
+  t.falsy(topicHelper.isRandomTopicId(stubs.getContentfulId()));
 });
 
 // parseDefaultTopicTrigger
