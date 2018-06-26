@@ -19,7 +19,6 @@ const createInboundMessageMiddleware = require('../../../lib/middleware/messages
 const loadOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-load');
 const parseMacroMiddleware = require('../../../lib/middleware/messages/member/macro-parse');
 const badWordsMiddleware = require('../../../lib/middleware/messages/member/bad-words');
-const campaignKeywordMiddleware = require('../../../lib/middleware/messages/member/campaign-keyword');
 const getRivescriptReplyMiddleware = require('../../../lib/middleware/messages/member/rivescript-reply-get');
 const updateUserMiddleware = require('../../../lib/middleware/messages/member/user-update');
 const supportRequestedMiddleware = require('../../../lib/middleware/messages/member/support-requested');
@@ -60,10 +59,6 @@ router.use(badWordsMiddleware());
 
 // If MENU keyword, set random Campaign and ask for Signup.
 router.use(menuMacroMiddleware());
-
-// TODO: This won't be used once we publish defaultTopicTrigger entries with topic responses.
-// If Campaign keyword was sent, update Conversation campaign and send continueCampaign.
-router.use(campaignKeywordMiddleware());
 
 // If Conversation is paused, forward inbound messages to Front, for agents to respond to.
 // Sends an empty reply message back.

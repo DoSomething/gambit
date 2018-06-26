@@ -18,7 +18,6 @@ const sandbox = sinon.sandbox.create();
 const gambitCampaigns = require('../../../lib/gambit-campaigns');
 
 // stubs
-const stubs = require('../../helpers/stubs');
 const campaignFactory = require('../../helpers/factories/campaign');
 
 test.afterEach(() => {
@@ -38,18 +37,4 @@ test('isClosedCampaign should return false when campaign is closed', (t) => {
   campaign.status = config.closedStatusValue;
   const result = gambitCampaigns.isClosedCampaign(campaign);
   t.truthy(result);
-});
-
-// getMessageTextFromMessageTemplate
-test('getMessageTextFromMessageTemplate returns a string when template exists', () => {
-  const campaign = campaignFactory.getValidCampaign();
-  const templateName = stubs.getTemplate();
-  const result = gambitCampaigns.getMessageTextFromMessageTemplate(campaign, templateName);
-  result.should.equal(campaign.botConfig.templates[templateName].rendered);
-});
-
-test('getMessageTextFromMessageTemplate throws when template undefined', (t) => {
-  const campaign = { id: stubs.getCampaignId() };
-  const templateName = stubs.getTemplate();
-  t.throws(() => gambitCampaigns.getMessageTextFromMessageTemplate(campaign, templateName));
 });
