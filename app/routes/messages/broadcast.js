@@ -14,9 +14,9 @@ const getBroadcastMiddleware = require('../../../lib/middleware/messages/broadca
 const parseBroadcastMiddleware = require('../../../lib/middleware/messages/broadcast/broadcast-parse');
 const getUserMiddleware = require('../../../lib/middleware/messages/user-get');
 const validateOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-validate');
-const getConvoMiddleware = require('../../../lib/middleware/messages/conversation-get');
-const createConvoMiddleware = require('../../../lib/middleware/messages/conversation-create');
-const validateBroadcastMiddleware = require('../../../lib/middleware/messages/broadcast/broadcast-validate');
+const getConversationMiddleware = require('../../../lib/middleware/messages/conversation-get');
+const createConversationMiddleware = require('../../../lib/middleware/messages/conversation-create');
+const updateConversationMiddleware = require('../../../lib/middleware/messages/broadcast/conversation-update');
 const loadOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-load');
 const createOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-create');
 const sendOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-send');
@@ -24,13 +24,13 @@ const sendOutboundMessageMiddleware = require('../../../lib/middleware/messages/
 router.use(paramsMiddleware());
 router.use(getBroadcastMiddleware());
 router.use(parseBroadcastMiddleware());
+
 router.use(getUserMiddleware(getUserConfig));
 router.use(validateOutboundMessageMiddleware(outboundMessageConfig));
 
-router.use(getConvoMiddleware());
-router.use(createConvoMiddleware());
-
-router.use(validateBroadcastMiddleware());
+router.use(getConversationMiddleware());
+router.use(createConversationMiddleware());
+router.use(updateConversationMiddleware());
 
 router.use(loadOutboundMessageMiddleware(outboundMessageConfig));
 router.use(createOutboundMessageMiddleware(outboundMessageConfig));
