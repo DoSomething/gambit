@@ -14,4 +14,5 @@ module.exports = {
     'tmi_completed',
     'unsubscribed',
   ],
+  randomTopicId: 'random',
 };
