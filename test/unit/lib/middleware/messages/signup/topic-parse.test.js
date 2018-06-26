@@ -21,7 +21,7 @@ const templateStub = stubs.getSignupMessageTemplateName();
 const textStub = stubs.getRandomMessageText();
 
 // module to be tested
-const validateTopic = require('../../../../../../lib/middleware/messages/signup/topic-validate');
+const parseTopic = require('../../../../../../lib/middleware/messages/signup/topic-parse');
 
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();
@@ -46,9 +46,9 @@ test.afterEach((t) => {
 /**
  * Tests
  */
-test('validateTopic should call sendErrorResponse if campaign is closed', async (t) => {
+test('parseTopic should call sendErrorResponse if campaign is closed', async (t) => {
   const next = sinon.stub();
-  const middleware = validateTopic();
+  const middleware = parseTopic();
   sandbox.stub(helpers.campaign, 'isClosedCampaign')
     .returns(true);
 
@@ -58,9 +58,9 @@ test('validateTopic should call sendErrorResponse if campaign is closed', async 
   next.should.not.have.been.called;
 });
 
-test('validateTopic calls request helper functions with campaign helper results', async (t) => {
+test('parseTopic calls request helper functions with campaign helper results', async (t) => {
   const next = sinon.stub();
-  const middleware = validateTopic();
+  const middleware = parseTopic();
   sandbox.stub(helpers.campaign, 'isClosedCampaign')
     .returns(false);
   sandbox.stub(helpers.campaign, 'getWebSignupMessageTemplateNameFromCampaign')
@@ -77,9 +77,9 @@ test('validateTopic calls request helper functions with campaign helper results'
   helpers.request.setOutboundMessageText.should.have.been.calledWith(t.context.req, textStub);
 });
 
-test('validateTopic sends sendErrorResponse if getSignupMessageTemplateName throws', async (t) => {
+test('parseTopic sends sendErrorResponse if getSignupMessageTemplateName throws', async (t) => {
   const next = sinon.stub();
-  const middleware = validateTopic();
+  const middleware = parseTopic();
   sandbox.stub(helpers.campaign, 'getWebSignupMessageTemplateNameFromCampaign')
     .throws();
 
