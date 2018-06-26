@@ -9,7 +9,6 @@ const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 
-const campaigns = require('../../../../../../lib/gambit-campaigns');
 const helpers = require('../../../../../../lib/helpers');
 const stubs = require('../../../../../helpers/stubs');
 const campaignFactory = require('../../../../../helpers/factories/campaign');
@@ -78,15 +77,15 @@ test('validateBroadcast should call conversation.setTopic if req.topic is set', 
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 
-test('validateBroadcast should call getCampaignId if req.topic undefined and req.campaignId exists', async (t) => {
+test('validateBroadcast should call helpers.campaign.fetchById if req.topic undefined and req.campaignId exists', async (t) => {
   const next = sinon.stub();
   const middleware = validateBroadcast();
   t.context.req.campaignId = stubs.getCampaignId();
   sandbox.stub(conversation, 'setTopic')
     .returns(conversationSaveStub);
-  sandbox.stub(conversation, 'promptSignupForCampaign')
+  sandbox.stub(conversation, 'changeTopic')
     .returns(conversationSaveStub);
-  sandbox.stub(campaigns, 'getCampaignById')
+  sandbox.stub(helpers.campaign, 'fetchById')
     .returns(Promise.resolve(campaign));
 
   // test
@@ -94,47 +93,45 @@ test('validateBroadcast should call getCampaignId if req.topic undefined and req
 
   t.context.req.conversation.setTopic.should.not.have.been.called;
   next.should.have.been.called;
-  campaigns.getCampaignById.should.have.been.called;
-  t.context.req.conversation.promptSignupForCampaign.should.have.been.called;
+  helpers.campaign.fetchById.should.have.been.called;
+  t.context.req.conversation.changeTopic.should.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 
-test('validateBroadcast should call sendErrorResponse if getCampaignById throws', async (t) => {
+test('validateBroadcast should call sendErrorResponse if helpers.campaign.fetchById throws', async (t) => {
   const next = sinon.stub();
   const middleware = validateBroadcast();
   t.context.req.campaignId = stubs.getCampaignId();
   sandbox.stub(conversation, 'setTopic')
     .returns(conversationSaveStub);
-  sandbox.stub(conversation, 'promptSignupForCampaign')
+  sandbox.stub(conversation, 'changeTopic')
     .returns(conversationSaveStub);
-  sandbox.stub(campaigns, 'getCampaignById')
+  sandbox.stub(helpers.campaign, 'fetchById')
     .returns(Promise.reject('epic fail'));
 
   // test
   await middleware(t.context.req, t.context.res, next);
 
-  campaigns.getCampaignById.should.have.been.called;
-  t.context.req.conversation.promptSignupForCampaign.should.not.have.been.called;
+  helpers.campaign.fetchById.should.have.been.called;
+  t.context.req.conversation.changeTopic.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
   next.should.not.have.been.called;
 });
 
-test('validateBroadcast should call sendErrorResponse if promptSignupForCampaign throws', async (t) => {
+test('validateBroadcast should call sendErrorResponse if changeTopic throws', async (t) => {
   const next = sinon.stub();
   const middleware = validateBroadcast();
   t.context.req.campaignId = stubs.getCampaignId();
-  sandbox.stub(conversation, 'setTopic')
-    .returns(conversationSaveStub);
-  sandbox.stub(conversation, 'promptSignupForCampaign')
+  sandbox.stub(conversation, 'changeTopic')
     .throws();
-  sandbox.stub(campaigns, 'getCampaignById')
+  sandbox.stub(helpers.campaign, 'fetchById')
     .returns(Promise.resolve(campaign));
 
   // test
   await middleware(t.context.req, t.context.res, next);
 
-  campaigns.getCampaignById.should.have.been.called;
-  t.context.req.conversation.promptSignupForCampaign.should.have.been.called;
+  helpers.campaign.fetchById.should.have.been.called;
+  t.context.req.conversation.changeTopic.should.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
   next.should.not.have.been.called;
 });
