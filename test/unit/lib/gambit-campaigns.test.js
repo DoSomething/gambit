@@ -40,19 +40,6 @@ test('isClosedCampaign should return false when campaign is closed', (t) => {
   t.truthy(result);
 });
 
-test('hasKeywords should return true when campaign has keywords', (t) => {
-  const campaign = campaignFactory.getValidCampaign();
-  const result = gambitCampaigns.hasKeywords(campaign);
-  t.truthy(result);
-});
-
-test('hasKeywords should return false when campaign does not have keywords', (t) => {
-  const campaign = campaignFactory.getValidCampaign();
-  campaign.keywords = [];
-  const result = gambitCampaigns.hasKeywords(campaign);
-  t.falsy(result);
-});
-
 // getMessageTextFromMessageTemplate
 test('getMessageTextFromMessageTemplate returns a string when template exists', () => {
   const campaign = campaignFactory.getValidCampaign();

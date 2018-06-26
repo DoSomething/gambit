@@ -30,13 +30,13 @@ test.afterEach(() => {
 });
 
 // fetchById
-test('fetchById calls gambitCampaigns.getCampaignById', async () => {
-  sandbox.stub(gambitCampaigns, 'getCampaignById')
+test('fetchById calls gambitCampaigns.fetchCampaignById', async () => {
+  sandbox.stub(gambitCampaigns, 'fetchCampaignById')
     .returns(campaignLookupStub);
   const campaignId = campaignStub.id;
 
   const result = await campaignHelper.fetchById(campaignId);
-  gambitCampaigns.getCampaignById.should.have.been.calledWith(campaignId);
+  gambitCampaigns.fetchCampaignById.should.have.been.calledWith(campaignId);
   result.should.deep.equal(campaignLookupStub);
 });
 
