@@ -223,23 +223,6 @@ test('isMenuMacro should return false if req.macro is not menu', (t) => {
   t.falsy(requestHelper.isMenuMacro(t.context.req));
 });
 
-// parseCampaignKeyword
-test('parseCampaignKeyword should return trimmed lowercase req.inboundMessageText', () => {
-  const text = 'Winter ';
-  const trimSpy = sandbox.spy(String.prototype, 'trim');
-  const toLowerCaseSpy = sandbox.spy(String.prototype, 'toLowerCase');
-  const result = requestHelper.parseCampaignKeyword({ inboundMessageText: text });
-
-  trimSpy.should.have.been.called;
-  toLowerCaseSpy.should.have.been.called;
-  result.should.equal('winter');
-});
-
-test('parseCampaignKeyword should return null when req.inboundMessageText undefined', (t) => {
-  const result = requestHelper.parseCampaignKeyword({});
-  t.falsy(result);
-});
-
 // setCampaign
 test('setCampaign should inject a campaign property to req and call setCampaignId if !req.campaignId', (t) => {
   sandbox.spy(requestHelper, 'setCampaignId');
