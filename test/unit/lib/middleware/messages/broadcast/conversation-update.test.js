@@ -65,15 +65,12 @@ test('updateConversation should call conversation.setTopic if req.topic is set',
   t.context.req.topic = topic;
   sandbox.stub(conversation, 'setTopic')
     .returns(conversationSaveStub);
-  sandbox.stub(conversation, 'promptSignupForCampaign')
-    .returns(conversationSaveStub);
 
   // test
   await middleware(t.context.req, t.context.res, next);
 
   t.context.req.conversation.setTopic.should.have.been.called;
   next.should.have.been.called;
-  t.context.req.conversation.promptSignupForCampaign.should.not.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 

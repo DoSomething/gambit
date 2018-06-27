@@ -28,7 +28,6 @@ const conversationSchema = new mongoose.Schema({
   },
   topic: String,
   campaignId: Number,
-  signupStatus: String,
   lastOutboundMessage: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Message',
@@ -148,62 +147,8 @@ conversationSchema.methods.setDefaultTopic = function () {
 /**
  * @return {Promise}
  */
-conversationSchema.methods.setCampaignTopic = function () {
-  return this.setTopic(config.topics.campaign);
-};
-
-/**
- * @return {Promise}
- */
 conversationSchema.methods.setSupportTopic = function () {
   return this.setTopic(config.topics.support);
-};
-
-/**
- * Returns save of User for updating given Campaign and its topic.
- * TODO: Refactor to just pass a campaignId. We were initially passing a campaign
- * model to set Conversation.topic (if Campaign had its own Rivescript topic defined).
- *
- * @param {Campaign} campaign
- * @return {Promise}
- */
-conversationSchema.methods.setCampaignWithSignupStatus = function (campaign, signupStatus) {
-  this.campaignId = campaign.id;
-  this.signupStatus = signupStatus;
-  logger.debug('setCampaignWithSignupStatus', { campaign: this.campaignId, signupStatus });
-
-  return this.setCampaignTopic();
-};
-
-/**
- * Post signup for current campaign and set it as the topic.
- * @param {Campaign} campaign
- * @param {string} source
- * @param {string} keyword
- */
-conversationSchema.methods.setCampaign = function (campaign) {
-  return this.setCampaignWithSignupStatus(campaign, 'doing');
-};
-
-/**
- * Prompt signup for current campaign.
- * @param {Campaign} campaign
- * @param {string} source
- * @param {string} keyword
- */
-conversationSchema.methods.promptSignupForCampaign = function (campaign) {
-  return this.setCampaignWithSignupStatus(campaign, 'prompt');
-};
-
-/**
- * Decline signup for current campaign.
- * @param {Campaign} campaign
- * @param {string} source
- * @param {string} keyword
- */
-conversationSchema.methods.declineSignup = function () {
-  this.signupStatus = 'declined';
-  return this.save();
 };
 
 /**

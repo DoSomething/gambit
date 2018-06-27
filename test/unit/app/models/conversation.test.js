@@ -220,16 +220,6 @@ test('setDefaultTopic calls setTopic with config.topics.default', async () => {
   mockConversation.setTopic.should.have.been.calledWith(topics.default);
 });
 
-// setCampaignTopic
-test('setCampaignTopic calls setTopic with config.topics.campaign', async () => {
-  const mockConversation = conversationFactory.getValidConversation();
-  sandbox.stub(mockConversation, 'setTopic')
-    .returns(Promise.resolve(mockConversation));
-
-  await mockConversation.setCampaignTopic();
-  mockConversation.setTopic.should.have.been.calledWith(topics.campaign);
-});
-
 // setSupportTopic
 test('setSupportTopic calls setTopic with config.topics.support', async () => {
   const mockConversation = conversationFactory.getValidConversation();
