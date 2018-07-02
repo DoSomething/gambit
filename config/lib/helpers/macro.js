@@ -5,6 +5,7 @@ module.exports = {
     catchAll: 'catchAll',
     changeTopic: 'changeTopic',
     confirmedTopic: 'confirmedTopic',
+    createdUser: 'createdUser',
     declinedTopic: 'declinedTopic',
     menu: 'menu',
     noReply: 'noReply',
@@ -17,6 +18,7 @@ module.exports = {
     supportRequested: 'supportRequested',
   },
   replies: {
+    createdUser: 'createdUser',
     noReply: 'noReply',
     sendCrisisMessage: 'crisisMessage',
     sendInfoMessage: 'infoMessage',
