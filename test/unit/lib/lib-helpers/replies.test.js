@@ -265,6 +265,11 @@ test('badWords(): should call sendGambitConversationsTemplate', async (t) => {
   await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template);
 });
 
+test('createdUser(): should call sendGambitConversationsTemplate', async (t) => {
+  const template = templates.gambitConversationsTemplates.createdUser.name;
+  await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template);
+});
+
 test('crisis(): should call sendGambitConversationsTemplate', async (t) => {
   const template = templates.gambitConversationsTemplates.crisis.name;
   await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template, 'crisisMessage');
