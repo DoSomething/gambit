@@ -32,6 +32,7 @@ const sandbox = sinon.sandbox.create();
 // misc helper vars
 const gCampResponse = stubs.gambitCampaigns.getReceiveMessageResponse();
 const templates = templatesConfig.templatesMap;
+const gambitConversationsTemplates = templates.gambitConversationsTemplates;
 const resolvedPromise = Promise.resolve({});
 const rejectedPromise = Promise.reject({});
 
@@ -261,49 +262,49 @@ test('invalidAskSignupResponse(): should call sendReplyWithTopicTemplate', async
 });
 
 test('badWords(): should call sendGambitConversationsTemplate', async (t) => {
-  const template = templates.gambitConversationsTemplates.badWords.name;
+  const template = gambitConversationsTemplates.badWords.name;
   await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template);
 });
 
 test('createdUser(): should call sendGambitConversationsTemplate', async (t) => {
-  const template = templates.gambitConversationsTemplates.createdUser.name;
+  const template = gambitConversationsTemplates.createdUser.name;
   await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template);
 });
 
 test('crisis(): should call sendGambitConversationsTemplate', async (t) => {
-  const template = templates.gambitConversationsTemplates.crisis.name;
+  const template = gambitConversationsTemplates.crisis.name;
   await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template, 'crisisMessage');
 });
 
 test('info(): should call sendGambitConversationsTemplate', async (t) => {
-  const template = templates.gambitConversationsTemplates.info.name;
+  const template = gambitConversationsTemplates.info.name;
   await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template, 'infoMessage');
 });
 
 test('noCampaign(): should call sendGambitConversationsTemplate', async (t) => {
-  const template = templates.gambitConversationsTemplates.noCampaign.name;
+  const template = gambitConversationsTemplates.noCampaign.name;
   await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template);
 });
 
 test('noReply(): should call sendGambitConversationsTemplate', async (t) => {
-  const template = templates.gambitConversationsTemplates.noReply.name;
+  const template = gambitConversationsTemplates.noReply.name;
   await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template);
 });
 
 test('subscriptionStatusLess(): should call sendGambitConversationsTemplate', async (t) => {
-  const template = templates.gambitConversationsTemplates.subscriptionStatusLess.name;
+  const template = gambitConversationsTemplates.subscriptionStatusLess.name;
   await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template);
 });
 
 test('subscriptionStatusStop(): should call sendGambitConversationsTemplate', async (t) => {
-  const template = templates.gambitConversationsTemplates.subscriptionStatusStop.name;
+  const template = gambitConversationsTemplates.subscriptionStatusStop.name;
   await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template);
 });
 
 test('supportRequested(): should call sendGambitConversationsTemplate if no campaign is found', async (t) => {
   // Campaign is being set beforeEach test, so we need to unset it here
   t.context.req.campaign = undefined;
-  const template = templates.gambitConversationsTemplates.supportRequested.name;
+  const template = gambitConversationsTemplates.supportRequested.name;
   await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template);
 });
 
