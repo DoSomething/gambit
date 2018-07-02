@@ -6,6 +6,18 @@
 + help
 @ info
 
++ subscribe
+- subscriptionStatusActive
+
+// Join currently gets overridden in Contentful: once it's unpublished, this trigger will catch.
+// @see https://app.contentful.com/spaces/owik07lyerdj/entries/2OSVbOpFGEyGOYqqcgsyqM
++ join
+@ subscribe
+
++ menu
+- menu
+
+
 + menu
 - menu
 

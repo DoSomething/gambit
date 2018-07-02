@@ -2,6 +2,7 @@
 
 const underscore = require('underscore');
 
+const createdUserText = 'Hi I\'m Freddie from DoSomething.org! Welcome to my weekly updates (up to 8msg/week). Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.';
 const helpCenterUrl = 'http://doso.me/1jf4/291kep';
 // Note: This url may also appear in hardcoded askSubscriptionStatus topic.
 // @see brain/topics.rive
@@ -69,7 +70,7 @@ const templatesMap = {
     },
     subscriptionStatusActive: {
       name: 'subscriptionStatusActive',
-      text: `Okay, great! I'll text you once a week with updates on what's happening in the news and/or easy ways for you to take action in your community! Wanna take 2 mins to catch up on what's happening in the news this week and what you can do about it? ${newsUrl}?user_id={{user.id}},broadcastsource=weekly`,
+      text: createdUserText,
     },
     subscriptionStatusLess: {
       name: 'subscriptionStatusLess',
@@ -77,7 +78,7 @@ const templatesMap = {
     },
     subscriptionStatusResubscribed: {
       name: 'subscriptionStatusResubscribed',
-      text: 'Hi I\'m Freddie from DoSomething.org! Welcome to my weekly updates (up to 8msg/week). Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.',
+      text: createdUserText,
     },
     subscriptionStatusStop: {
       name: 'subscriptionStatusStop',
