@@ -24,6 +24,9 @@ helpers.rivescript.fetchAndWriteRivescript()
     logger.info('fetchAndWriteRivescript success', { opts });
     rivescript.getBot();
   })
+  // TODO: If fetchAndWriteRivescript fails, we need to retry it, not carry on as normal, as all
+  // member messages will return errors because the Rivescript bot has not finished sorting replies.
+  // @see lib/rivescript
   .catch(error => logger.error('fetchAndWriteRivescript', { error }));
 
 const db = mongoose.connection;
