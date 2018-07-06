@@ -28,6 +28,14 @@ test.afterEach(() => {
   sandbox.restore();
 });
 
+// getSubscriptionStatusActive
+test('getSubscriptionStatusActive should return subscriptionStatusActive config object', () => {
+  const result = templateHelper.getSubscriptionStatusActive();
+  result.should.deep.equal(config.templatesMap
+    .gambitConversationsTemplates.subscriptionStatusActive);
+});
+
+// getTextForTemplate
 test('getTextForTemplate should return text for given template', () => {
   const template = 'badWords';
   const templateText = config.conversationsTemplatesText[template];
@@ -39,16 +47,19 @@ test('getTextForTemplate should return falsy for undefined template', (t) => {
   t.falsy(templateHelper.getTextForTemplate(undefinedTemplateName));
 });
 
+// isAskContinueTemplate
 test('isAskContinueTemplate should return boolean', (t) => {
   t.true(templateHelper.isAskContinueTemplate('askContinue'));
   t.falsy(templateHelper.isAskContinueTemplate(undefinedTemplateName));
 });
 
+// isAskSignupTemplate
 test('isAskSignupTemplate should return boolean', (t) => {
   t.true(templateHelper.isAskSignupTemplate('askSignup'));
   t.falsy(templateHelper.isAskSignupTemplate(undefinedTemplateName));
 });
 
+// isGambitCampaignsTemplate
 test('isGambitCampaignsTemplate should return boolean', (t) => {
   t.true(templateHelper.isGambitCampaignsTemplate('askQuantity'));
   t.falsy(templateHelper.isGambitCampaignsTemplate(undefinedTemplateName));
