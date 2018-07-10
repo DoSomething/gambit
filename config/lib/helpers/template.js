@@ -2,7 +2,7 @@
 
 const underscore = require('underscore');
 
-const activeStatusText = 'Hi I\'m Freddie from DoSomething.org! Welcome to my weekly updates (up to 8msg/week). Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.';
+const activeStatusText = 'Hi I\'m Freddie from DoSomething.org! Welcome to my weekly updates (up to 8msg/month). Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.';
 const helpCenterUrl = 'http://doso.me/1jf4/291kep';
 // Note: This url may also appear in hardcoded askSubscriptionStatus topic.
 // @see brain/topics.rive
