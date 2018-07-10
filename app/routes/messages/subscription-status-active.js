@@ -2,7 +2,10 @@
 
 const express = require('express');
 
-const router = express.Router();
+// @see http://expressjs.com/en/api.html#express.router
+const router = express.Router({
+  mergeParams: true,
+});
 
 // Middleware configs
 const getUserConfig = require('../../../config/lib/middleware/messages/user-get');

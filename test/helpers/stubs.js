@@ -295,12 +295,17 @@ module.exports = {
     },
   },
   northstar: {
-    getUser: function getUser() {
+    getUser: function getUser(validNumber) {
+      let mobile;
+      // @see https://www.themarysue.com/mary-sue-rejection-hotline/
+      if (validNumber) {
+        mobile = '+16469266614';
+      }
       return {
         data: {
           id: module.exports.getUserId(),
           _id: module.exports.getUserId(),
-          mobile: module.exports.getMobileNumber(),
+          mobile: mobile || module.exports.getMobileNumber(),
         },
       };
     },
