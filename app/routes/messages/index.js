@@ -5,13 +5,13 @@ const logger = require('../../../lib/logger');
 
 const router = express.Router();
 
+const analyticsHelper = require('../../../lib/helpers/analytics');
+const broadcastMessagesRoute = require('./broadcast');
 const frontMessagesRoute = require('./front');
 const memberMessagesRoute = require('./member');
 const signupMessagesRoute = require('./signup');
-const updateMessageRoute = require('./update');
-const broadcastMessagesRoute = require('./broadcast');
-const analyticsHelper = require('../../../lib/helpers/analytics');
 const subscriptionStatusActiveRoute = require('./subscription-status-active');
+const updateMessageRoute = require('./update');
 
 /**
  * Nested router that will handle PATCH requests to /messages/:messageId
