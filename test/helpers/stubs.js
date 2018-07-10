@@ -148,14 +148,18 @@ module.exports = {
   getKeyword: function getKeyword() {
     return chance.word();
   },
-  getMobileNumber: function getMobileNumber() {
+  getMobileNumber: function getMobileNumber(valid) {
+    // @see https://www.themarysue.com/mary-sue-rejection-hotline/
+    if (valid) {
+      return '+16469266614';
+    }
     return mobileNumber;
   },
   getPlatform: function getPlatform() {
     return 'sms';
   },
-  getPlatformUserId: function getPlatformUserId() {
-    return mobileNumber;
+  getPlatformUserId: function getPlatformUserId(valid) {
+    return module.exports.getMobileNumber(valid);
   },
   getPostType: function getPostType() {
     return 'text';
@@ -296,16 +300,11 @@ module.exports = {
   },
   northstar: {
     getUser: function getUser(validNumber) {
-      let mobile;
-      // @see https://www.themarysue.com/mary-sue-rejection-hotline/
-      if (validNumber) {
-        mobile = '+16469266614';
-      }
       return {
         data: {
           id: module.exports.getUserId(),
           _id: module.exports.getUserId(),
-          mobile: mobile || module.exports.getMobileNumber(),
+          mobile: module.exports.getMobileNumber(validNumber),
         },
       };
     },
