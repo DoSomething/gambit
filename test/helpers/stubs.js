@@ -149,7 +149,11 @@ module.exports = {
     return chance.word();
   },
   getMobileNumber: function getMobileNumber(valid) {
-    // @see https://www.themarysue.com/mary-sue-rejection-hotline/
+    /**
+     * If the `valid` flag is set to a truthy value. We return a "valid" E164 formatted, US number.
+     * Otherwise, return the default number which is not a valid E164 formatted, US number.
+     * @see https://www.themarysue.com/mary-sue-rejection-hotline/
+     */
     if (valid) {
       return '+16469266614';
     }
