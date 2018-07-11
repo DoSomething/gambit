@@ -56,9 +56,11 @@ Sends a Broadcast message to a Member.
 
 Name | Type | Description
 --- | --- | ---
-`northstarId` or `userId` | `string` | User Id to send Broadcast message to
+`userId` or `northstarId`** | `string` | User Id to send Broadcast message to
 `broadcastId` | `string` | Broadcast Id to send
 `platform` | `string` | Optional, defaults to `'sms'`.
+
+> `northstarId` is deprecated but still accepted for backwards compatibility
 
 <details>
 <summary><strong>Example Request</strong></summary>
@@ -216,9 +218,11 @@ Creates an outbound Campaign Signup menu message in given User's Conversation.
 
 Name | Type | Description
 --- | --- | ---
-`northstarId` or `userId` | `string` | User Id to send externalSignupMenuMessage to
+`userId` or `northstarId`** | `string` | User Id to send externalSignupMenuMessage to
 `campaignId` | `string` | Campaign Id to send externalSignupMenuMessage for
 `platform` | `string` | Optional, defaults to `'sms'`.
+
+> `northstarId` is deprecated but still accepted for backwards compatibility
 
 <details>
 <summary><strong>Example Request</strong></summary>
@@ -279,8 +283,10 @@ Creates an outbound `subscriptionStatusActive` (Welcome) message in given User's
 
 Name | Type | Description
 --- | --- | ---
-`northstarId` or `userId` | `string` | User Id to send subscriptionStatusActive to
+`userId` or `northstarId`** | `string` | User Id to send subscriptionStatusActive to
 `platform` | `string` | Optional, defaults to `'sms'`.
+
+> `northstarId` is deprecated but still accepted for backwards compatibility
 
 <details>
 <summary><strong>Example Request</strong></summary>
@@ -426,10 +432,12 @@ Receives inbound messages from Members via specified origin, and returns the rep
 
 Name | Type | Description
 --- | --- | ---
-`northstarId` or `userId` | `string` | Sender's Northstar ID
+`userId` or `northstarId`** | `string` | Sender's Northstar ID
 `text` | `string` | Incoming message text
 `mediaUrl` | `string` | Incoming message attachment URL
 `messageId` | `string` | Optional. Incoming message ID (e.g. Slack message ID)
+
+> `northstarId` is deprecated but still accepted for backwards compatibility
 
 <details>
 <summary><strong>Example Request</strong></summary>
