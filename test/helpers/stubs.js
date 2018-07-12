@@ -6,7 +6,7 @@ const Chance = require('chance');
 const moment = require('moment');
 
 const twilioHelperConfig = require('../../config/lib/helpers/twilio');
-const subscriptionHelper = require('../../config/lib/helpers/subscription');
+const subscriptionHelper = require('../../lib/helpers/subscription');
 
 const chance = new Chance();
 const country = 'US';
@@ -303,19 +303,43 @@ module.exports = {
     },
   },
   northstar: {
-    getUser: function getUser(validNumber) {
+    /**
+     * getUser
+     *
+     * @param  {Object} opts = {}
+     * @return {Object}            An User data object
+     */
+    getUser: function getUser(opts = {}) {
+      const mobileData = {
+        mobile: module.exports.getMobileNumber(),
+      };
+
+      if (opts.noMobile) {
+        delete mobileData.mobile;
+      } else if (opts.validUsNumber) {
+        mobileData.mobile = module.exports.getMobileNumber(true);
+      }
+
+      const smsStatusData = {
+        sms_status: subscriptionHelper.statuses.active(),
+      };
+
+      if (opts.subscription) {
+        const subscriptionFn = subscriptionHelper.statuses[opts.subscription];
+
+        if (typeof subscriptionFn === 'function') {
+          smsStatusData.sms_status = subscriptionFn();
+        }
+      }
+
       return {
         data: {
           id: module.exports.getUserId(),
           _id: module.exports.getUserId(),
-          mobile: module.exports.getMobileNumber(validNumber),
+          ...mobileData,
+          ...smsStatusData,
         },
       };
-    },
-    getUserWithUndeliverableSmsStatus: function getUserWithUndeliverableSmsStatus() {
-      const user = module.exports.northstar.getUser();
-      user.data.sms_status = subscriptionHelper.subscriptionStatuses.undeliverable;
-      return user;
     },
   },
 };
