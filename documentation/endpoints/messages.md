@@ -1,3 +1,4 @@
+
 # Messages
 
 ```
@@ -39,6 +40,7 @@ The v2 POST Messages resource requires an `origin` query parameter, with possibl
 * [Broadcast](#broadcast)
 * [Front](#front)
 * [Signup](#signup)
+* [Subscription status active](#subscription-status-active)
 * [Twilio](#twilio)
 * [A custom messaging platform](#custom)
 
@@ -54,9 +56,11 @@ Sends a Broadcast message to a Member.
 
 Name | Type | Description
 --- | --- | ---
-`northstarId` | `string` | User Id to send Broadcast message to
+`userId` or `northstarId`** | `string` | User Id to send Broadcast message to
 `broadcastId` | `string` | Broadcast Id to send
 `platform` | `string` | Optional, defaults to `'sms'`.
+
+> `northstarId` is deprecated but still accepted for backwards compatibility
 
 <details>
 <summary><strong>Example Request</strong></summary>
@@ -214,9 +218,11 @@ Creates an outbound Campaign Signup menu message in given User's Conversation.
 
 Name | Type | Description
 --- | --- | ---
-`northstarId` | `string` | User Id to send externalSignupMenuMessage to
+`userId` or `northstarId`** | `string` | User Id to send externalSignupMenuMessage to
 `campaignId` | `string` | Campaign Id to send externalSignupMenuMessage for
 `platform` | `string` | Optional, defaults to `'sms'`.
+
+> `northstarId` is deprecated but still accepted for backwards compatibility
 
 <details>
 <summary><strong>Example Request</strong></summary>
@@ -259,6 +265,75 @@ curl -X "POST" "http://localhost:5100/api/v2/messages?origin=signup" \
       }
     ]
   }
+```
+
+</details>
+
+## Subscription status active
+
+```
+POST /v2/messages?origin=subscriptionStatusActive
+```
+
+Creates an outbound `subscriptionStatusActive` (Welcome) message in given User's Conversation.
+
+* Sends the message if given platform is SMS.
+
+### Input
+
+Name | Type | Description
+--- | --- | ---
+`userId` or `northstarId`** | `string` | User Id to send subscriptionStatusActive to
+`platform` | `string` | Optional, defaults to `'sms'`.
+
+> `northstarId` is deprecated but still accepted for backwards compatibility
+
+<details>
+<summary><strong>Example Request</strong></summary>
+
+```
+curl -X "POST" "http://localhost:5100/api/v2/messages?origin=subscriptionStatusActive" \
+     -H 'Content-Type: application/json; charset=utf-8' \
+     -u 'puppet:totallysecret' \
+     -d $'{
+		  "northstarId": "5547be89429c64ec7e8b518d"
+		}'
+```
+
+
+</details>
+<details>
+<summary><strong>Example Response</strong></summary>
+
+```
+{
+  "data": {
+    "messages": [
+      {
+        "platformMessageId": "SM319d272df2254594ad436ad5cb533f00",
+        "_id": "5b46418c6564fbf804b9a33b",
+        "updatedAt": "2018-07-11T17:42:37.072Z",
+        "createdAt": "2018-07-11T17:42:36.685Z",
+        "text": "Hi I'm Freddie from DoSomething.org! Welcome to my weekly updates (up to 8msg/month). Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.",
+        "direction": "outbound-api-send",
+        "template": "subscriptionStatusActive",
+        "conversationId": "5b45024f6564fbf804b9a339",
+        "topic": "random",
+        "userId": "5547be89429c64ec7e8b518d",
+        "broadcastId": null,
+        "__v": 0,
+        "metadata": {
+          "requestId": "e2aa69d1-9980-4882-94d2-03c89944a663",
+          "delivery": {
+            "totalSegments": 1,
+            "queuedAt": "2018-07-11T17:42:37.000Z"
+          }
+        },
+        "attachments": []
+      }
+    ]
+  }
+}
 ```
 
 </details>
@@ -357,10 +432,12 @@ Receives inbound messages from Members via specified origin, and returns the rep
 
 Name | Type | Description
 --- | --- | ---
-`northstarId` | `string` | Sender's Northstar ID
+`userId` or `northstarId`** | `string` | Sender's Northstar ID
 `text` | `string` | Incoming message text
 `mediaUrl` | `string` | Incoming message attachment URL
 `messageId` | `string` | Optional. Incoming message ID (e.g. Slack message ID)
+
+> `northstarId` is deprecated but still accepted for backwards compatibility
 
 <details>
 <summary><strong>Example Request</strong></summary>

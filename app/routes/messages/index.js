@@ -10,6 +10,7 @@ const broadcastMessagesRoute = require('./broadcast');
 const frontMessagesRoute = require('./front');
 const memberMessagesRoute = require('./member');
 const signupMessagesRoute = require('./signup');
+const subscriptionStatusActiveRoute = require('./subscription-status-active');
 const updateMessageRoute = require('./update');
 
 /**
@@ -27,6 +28,8 @@ router.post('/', (req, res, next) => {
     frontMessagesRoute(req, res, next);
   } else if (origin === 'signup') {
     signupMessagesRoute(req, res, next);
+  } else if (origin === 'subscriptionStatusActive') {
+    subscriptionStatusActiveRoute(req, res, next);
   } else {
     memberMessagesRoute(req, res, next);
   }
