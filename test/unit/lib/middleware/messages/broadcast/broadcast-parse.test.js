@@ -29,8 +29,6 @@ test.beforeEach((t) => {
     .returns(underscore.noop);
   sandbox.stub(helpers.request, 'setOutboundMessageTemplate')
     .returns(underscore.noop);
-  sandbox.stub(helpers.request, 'setOutboundMessageText')
-    .returns(underscore.noop);
   sandbox.stub(helpers.request, 'setTopic')
     .returns(underscore.noop);
   sandbox.stub(helpers, 'sendErrorResponse')
@@ -47,19 +45,18 @@ test.afterEach((t) => {
 test('parseBroadcast should parse broadcast and inject vars into req', async (t) => {
   const next = sinon.stub();
   const middleware = parseBroadcast();
-  sandbox.spy(helpers.broadcast, 'parseBroadcast');
   const broadcast = broadcastFactory.getValidCampaignBroadcast();
   t.context.req.broadcast = broadcast;
+  sandbox.stub(helpers.request, 'setOutboundMessageText')
+    .returns(underscore.noop);
 
   // test
   await middleware(t.context.req, t.context.res, next);
-
-  helpers.broadcast.parseBroadcast.should.have.been.calledWith(t.context.req.broadcast);
   helpers.request.setCampaignId.should.have.been.called;
   helpers.request.setTopic.should.not.have.been.called;
   helpers.request.setOutboundMessageText.should.have.been.called;
   helpers.request.setOutboundMessageTemplate.should.have.been.called;
-  helpers.attachments.add.should.have.been.called;
+  helpers.attachments.add.should.not.have.been.called;
   next.should.have.been.called;
 });
 
@@ -67,8 +64,7 @@ test('parseBroadcast should parse broadcast and inject vars into req', async (t)
 test('parseBroadcast should call sendErrorResponse on error', async (t) => {
   const next = sinon.stub();
   const middleware = parseBroadcast();
-  t.context.req.broadcastId = 'notFound';
-  sandbox.stub(helpers.broadcast, 'parseBroadcast')
+  sandbox.stub(helpers.request, 'setOutboundMessageText')
     .throws();
 
   // test

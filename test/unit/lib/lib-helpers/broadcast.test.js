@@ -49,30 +49,6 @@ test.afterEach(() => {
   sandbox.restore();
 });
 
-test('parseBroadcast should return an object', () => {
-  sandbox.stub(contentful, 'getCampaignIdFromBroadcast')
-    .returns(campaignId);
-  sandbox.stub(contentful, 'getAttachmentsFromBroadcast')
-    .returns(attachments);
-  sandbox.stub(contentful, 'getTopicFromBroadcast')
-    .returns(topic);
-  sandbox.stub(contentful, 'getMessageTextFromBroadcast')
-    .returns(message);
-
-  const result = broadcastHelper.parseBroadcast(broadcast);
-  result.id.should.equal(broadcastId);
-  contentful.getCampaignIdFromBroadcast.should.have.been.called;
-  result.campaignId.should.equal(campaignId);
-  contentful.getAttachmentsFromBroadcast.should.have.been.called;
-  result.attachments.should.equal(attachments);
-  contentful.getTopicFromBroadcast.should.have.been.called;
-  result.topic.should.equal(topic);
-  contentful.getMessageTextFromBroadcast.should.have.been.called;
-  result.message.should.equal(message);
-  result.name.should.equal(name);
-  result.createdAt.should.equal(date);
-  result.updatedAt.should.equal(date);
-});
 
 test('aggregateMessagesForBroadcastId should call Messages.aggregate and return array', async () => {
   sandbox.stub(Message, 'aggregate')
