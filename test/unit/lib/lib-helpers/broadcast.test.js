@@ -8,10 +8,8 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const logger = require('heroku-logger');
 
-const contentful = require('../../../../lib/contentful');
 const Message = require('../../../../app/models/Message');
 const stubs = require('../../../helpers/stubs');
-const broadcastFactory = require('../../../helpers/factories/broadcast');
 
 const config = require('../../../../config/lib/helpers/broadcast');
 
@@ -23,14 +21,7 @@ chai.use(sinonChai);
 const broadcastHelper = require('../../../../lib/helpers/broadcast');
 
 // stubs
-const attachments = [stubs.getAttachment()];
 const broadcastId = stubs.getBroadcastId();
-const date = Date.now();
-const broadcast = broadcastFactory.getValidCampaignBroadcast(date);
-const campaignId = stubs.getCampaignId();
-const topic = stubs.getTopic();
-const message = stubs.getBroadcastMessageText();
-const name = stubs.getBroadcastName();
 const defaultStats = stubs.getBroadcastStats(true);
 const mockAggregateResults = stubs.getBroadcastAggregateMessagesResults();
 const webhookContentTypeHeader = 'application/json';
