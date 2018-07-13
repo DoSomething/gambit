@@ -13,7 +13,6 @@ Gambit Conversations handles SMS conversations with DoSomething.org members, int
 #### External
 * Twilio
 * Front
-* Contentful
 
 Gambit Conversations is built with ❤️ and ☕, but also with: [Express](https://expressjs.com/), [MongoDB](https://www.mongodb.com/), and [Rivescript](https://www.rivescript.com/).
 
