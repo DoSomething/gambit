@@ -48,25 +48,25 @@ test.afterEach((t) => {
 /**
  * Tests
  */
-test('getBroadcast should inject broadcast property from fetchBroadcastById result', async (t) => {
+test('getBroadcast should inject broadcast property from fetchById result', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = getBroadcast();
-  sandbox.stub(helpers.broadcast, 'fetchBroadcastById')
+  sandbox.stub(helpers.broadcast, 'fetchById')
     .returns(Promise.resolve(mockBroadcast));
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  helpers.broadcast.fetchBroadcastById.should.have.been.calledWith(broadcastId);
+  helpers.broadcast.fetchById.should.have.been.calledWith(broadcastId);
   next.should.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 
-test('getBroadcast should call sendErrorResponse if fetchBroadcastById fails', async (t) => {
+test('getBroadcast should call sendErrorResponse if fetchById fails', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = getBroadcast();
-  sandbox.stub(helpers.broadcast, 'fetchBroadcastById')
+  sandbox.stub(helpers.broadcast, 'fetchById')
     .returns(Promise.reject(new Error()));
 
   // test
