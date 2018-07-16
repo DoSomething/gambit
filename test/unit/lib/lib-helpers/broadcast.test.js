@@ -9,7 +9,9 @@ const sinonChai = require('sinon-chai');
 const logger = require('heroku-logger');
 
 const Message = require('../../../../app/models/Message');
+const gambitCampaigns = require('../../../../lib/gambit-campaigns');
 const stubs = require('../../../helpers/stubs');
+const broadcastFactory = require('../../../helpers/factories/broadcast');
 
 const config = require('../../../../config/lib/helpers/broadcast');
 
@@ -40,7 +42,7 @@ test.afterEach(() => {
   sandbox.restore();
 });
 
-
+// aggregateMessagesForBroadcastId
 test('aggregateMessagesForBroadcastId should call Messages.aggregate and return array', async () => {
   sandbox.stub(Message, 'aggregate')
     .returns(Promise.resolve(mockAggregateResults));
@@ -49,19 +51,35 @@ test('aggregateMessagesForBroadcastId should call Messages.aggregate and return 
   result.should.equal(mockAggregateResults);
 });
 
-test('parseMessageDirection should return string', (t) => {
-  t.deepEqual(broadcastHelper.parseMessageDirection('inbound'), 'inbound');
-  t.deepEqual(broadcastHelper.parseMessageDirection('outbound-api-import'), 'outbound');
-  t.deepEqual(broadcastHelper.parseMessageDirection('outbound-api-send'), 'outbound');
-  t.deepEqual(broadcastHelper.parseMessageDirection('default'), 'outbound');
-});
-
 test('aggregateMessagesForBroadcastId should throw if Messages.aggregate fails', async (t) => {
   sandbox.stub(Message, 'aggregate')
     .returns(Promise.reject(new Error()));
   await t.throws(broadcastHelper.aggregateMessagesForBroadcastId(broadcastId));
 });
 
+// fetchAll
+test('fetchAll should return gambitCampaigns.fetchBroadcasts', async () => {
+  const broadcasts = [broadcastFactory.getValidCampaignBroadcast()];
+  sandbox.stub(gambitCampaigns, 'fetchBroadcasts')
+    .returns(Promise.resolve(broadcasts));
+
+  const result = await broadcastHelper.fetchAll();
+  result.should.deep.equal(broadcasts);
+  gambitCampaigns.fetchBroadcasts.should.have.been.called;
+});
+
+// fetchById
+test('fetchById should return gambitCampaigns.fetchBroadcastById', async () => {
+  const broadcast = broadcastFactory.getValidCampaignBroadcast();
+  sandbox.stub(gambitCampaigns, 'fetchBroadcastById')
+    .returns(Promise.resolve(broadcast));
+
+  const result = await broadcastHelper.fetchById(broadcastId);
+  result.should.deep.equal(broadcast);
+  gambitCampaigns.fetchBroadcastById.should.have.been.calledWith(broadcastId);
+});
+
+// formatStats
 test('formatStats should return default object when no data is passed', () => {
   sandbox.spy(broadcastHelper, 'parseMessageDirection');
   const result = broadcastHelper.formatStats();
@@ -90,6 +108,7 @@ test('formatStats should return default object when array without _id property i
   result.should.deep.equal(defaultStats);
 });
 
+// getWebhook
 test('getWebhook should return an object with body of a POST Broadcast Message request', () => {
   const mockRequest = {
     broadcastId,
@@ -99,4 +118,12 @@ test('getWebhook should return an object with body of a POST Broadcast Message r
   result.body.northstarId.should.equal(config.customerIo.userIdField);
   result.body.broadcastId.should.equal(broadcastId);
   result.should.have.property('url');
+});
+
+// parseMessageDirection
+test('parseMessageDirection should return string', (t) => {
+  t.deepEqual(broadcastHelper.parseMessageDirection('inbound'), 'inbound');
+  t.deepEqual(broadcastHelper.parseMessageDirection('outbound-api-import'), 'outbound');
+  t.deepEqual(broadcastHelper.parseMessageDirection('outbound-api-send'), 'outbound');
+  t.deepEqual(broadcastHelper.parseMessageDirection('default'), 'outbound');
 });

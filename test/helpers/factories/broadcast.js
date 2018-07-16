@@ -20,7 +20,7 @@ function getValidCampaignBroadcast(date = Date.now()) {
       attachments: [stubs.getAttachment()],
       template: 'askSignup',
     },
-    campaignId: 7984,
+    campaignId: stubs.getCampaignId(),
     topic: null,
   };
 }
