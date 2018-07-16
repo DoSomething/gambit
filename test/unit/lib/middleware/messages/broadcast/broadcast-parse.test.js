@@ -42,7 +42,7 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-test('parseBroadcast should parse broadcast and inject vars into req', async (t) => {
+test('parseBroadcast should parse campaign broadcast and inject campaignId into req', async (t) => {
   const next = sinon.stub();
   const middleware = parseBroadcast();
   const broadcast = broadcastFactory.getValidCampaignBroadcast();
@@ -52,14 +52,38 @@ test('parseBroadcast should parse broadcast and inject vars into req', async (t)
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  helpers.request.setCampaignId.should.have.been.called;
+  helpers.request.setCampaignId.should.have.been.calledWith(t.context.req, broadcast.campaignId);
   helpers.request.setTopic.should.not.have.been.called;
-  helpers.request.setOutboundMessageText.should.have.been.called;
-  helpers.request.setOutboundMessageTemplate.should.have.been.called;
-  helpers.attachments.add.should.not.have.been.called;
+  helpers.request.setOutboundMessageText
+    .should.have.been.calledWith(t.context.req, broadcast.message.text);
+  helpers.request.setOutboundMessageTemplate
+    .should.have.been.calledWith(t.context.req, broadcast.message.template);
+  helpers.attachments.add
+    .should.have.been.calledWith(t.context.req, broadcast.message.attachments[0]);
   next.should.have.been.called;
 });
 
+test('parseBroadcast should parse topic broadcast and inject topic into req', async (t) => {
+  const next = sinon.stub();
+  const middleware = parseBroadcast();
+  const broadcast = broadcastFactory.getValidTopicBroadcast();
+  t.context.req.broadcast = broadcast;
+  sandbox.stub(helpers.request, 'setOutboundMessageText')
+    .returns(underscore.noop);
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  helpers.request.setCampaignId.should.not.have.been.called;
+  helpers.request.setTopic
+    .should.have.been.calledWith(t.context.req, broadcast.topic);
+  helpers.request.setOutboundMessageText
+    .should.have.been.calledWith(t.context.req, broadcast.message.text);
+  helpers.request.setOutboundMessageTemplate
+    .should.have.been.calledWith(t.context.req, broadcast.message.template);
+  helpers.attachments.add
+    .should.have.been.calledWith(t.context.req, broadcast.message.attachments[0]);
+  next.should.have.been.called;
+});
 
 test('parseBroadcast should call sendErrorResponse on error', async (t) => {
   const next = sinon.stub();

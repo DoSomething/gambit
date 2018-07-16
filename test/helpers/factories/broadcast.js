@@ -17,7 +17,7 @@ function getValidCampaignBroadcast(date = Date.now()) {
     updatedAt: date,
     message: {
       text: stubs.getBroadcastMessageText(),
-      attachments: [],
+      attachments: [stubs.getAttachment()],
       template: 'askSignup',
     },
     campaignId: 7984,
