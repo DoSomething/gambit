@@ -84,7 +84,9 @@ test('PATCH /api/v2/messages/:id should update the message failedAt and failureD
         .to.be.eql(subscriptionHelper.subscriptionStatuses.undeliverable);
       return [
         200,
-        stubs.northstar.getUserWithUndeliverableSmsStatus(),
+        stubs.northstar.getUser({
+          subscription: 'undeliverable',
+        }),
       ];
     });
 

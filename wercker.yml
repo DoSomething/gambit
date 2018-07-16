@@ -1,4 +1,4 @@
-box: node:8.11.1
+box: node:8.11.3
 services:
   - id: mongo
 build:
