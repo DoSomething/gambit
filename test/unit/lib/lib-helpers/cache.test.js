@@ -9,7 +9,6 @@ const logger = require('heroku-logger');
 const rewire = require('rewire');
 
 const stubs = require('../../../helpers/stubs');
-const broadcastFactory = require('../../../helpers/factories/broadcast');
 
 // setup "x.should.y" assertion style
 chai.should();
@@ -20,7 +19,6 @@ const cacheHelper = rewire('../../../../lib/helpers/cache');
 
 // stubs
 const broadcastId = stubs.getBroadcastId();
-const broadcast = broadcastFactory.getValidCampaignBroadcast();
 const broadcastStats = stubs.getBroadcastStats();
 
 const sandbox = sinon.sandbox.create();
@@ -31,49 +29,7 @@ test.beforeEach(() => {
 
 test.afterEach(() => {
   sandbox.restore();
-  cacheHelper.__set__('broadcastsCache', undefined);
   cacheHelper.__set__('broadcastStatsCache', undefined);
-});
-
-/**
- * Broadcasts
- */
-test('broadcasts.get should return object when cache exists', async () => {
-  cacheHelper.__set__('broadcastsCache', {
-    get: () => Promise.resolve(broadcast),
-  });
-  const result = await cacheHelper.broadcasts.get(broadcastId);
-  result.should.deep.equal(broadcast);
-});
-
-test('broadcasts.get should return falsy when cache undefined', async (t) => {
-  cacheHelper.__set__('broadcastsCache', {
-    get: () => Promise.resolve(null),
-  });
-  const result = await cacheHelper.broadcasts.get(broadcastId);
-  t.falsy(result);
-});
-
-test('broadcasts.get should throw when cache set fails', async (t) => {
-  cacheHelper.__set__('broadcastsCache', {
-    get: () => Promise.reject(new Error()),
-  });
-  await t.throws(cacheHelper.broadcasts.get(broadcastId));
-});
-
-test('broadcasts.set should return an object', async () => {
-  cacheHelper.__set__('broadcastsCache', {
-    set: () => Promise.resolve(broadcast),
-  });
-  const result = await cacheHelper.broadcasts.set(broadcastId);
-  result.should.deep.equal(broadcast);
-});
-
-test('broadcasts.set should throw when cache set fails', async (t) => {
-  cacheHelper.__set__('broadcastsCache', {
-    set: () => Promise.reject(new Error()),
-  });
-  await t.throws(cacheHelper.broadcasts.set(broadcastId));
 });
 
 /**

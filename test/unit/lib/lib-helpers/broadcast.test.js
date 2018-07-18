@@ -8,8 +8,8 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const logger = require('heroku-logger');
 
-const contentful = require('../../../../lib/contentful');
 const Message = require('../../../../app/models/Message');
+const gambitCampaigns = require('../../../../lib/gambit-campaigns');
 const stubs = require('../../../helpers/stubs');
 const broadcastFactory = require('../../../helpers/factories/broadcast');
 
@@ -23,14 +23,7 @@ chai.use(sinonChai);
 const broadcastHelper = require('../../../../lib/helpers/broadcast');
 
 // stubs
-const attachments = [stubs.getAttachment()];
 const broadcastId = stubs.getBroadcastId();
-const date = Date.now();
-const broadcast = broadcastFactory.getValidCampaignBroadcast(date);
-const campaignId = stubs.getCampaignId();
-const topic = stubs.getTopic();
-const message = stubs.getBroadcastMessageText();
-const name = stubs.getBroadcastName();
 const defaultStats = stubs.getBroadcastStats(true);
 const mockAggregateResults = stubs.getBroadcastAggregateMessagesResults();
 const webhookContentTypeHeader = 'application/json';
@@ -49,31 +42,7 @@ test.afterEach(() => {
   sandbox.restore();
 });
 
-test('parseBroadcast should return an object', () => {
-  sandbox.stub(contentful, 'getCampaignIdFromBroadcast')
-    .returns(campaignId);
-  sandbox.stub(contentful, 'getAttachmentsFromBroadcast')
-    .returns(attachments);
-  sandbox.stub(contentful, 'getTopicFromBroadcast')
-    .returns(topic);
-  sandbox.stub(contentful, 'getMessageTextFromBroadcast')
-    .returns(message);
-
-  const result = broadcastHelper.parseBroadcast(broadcast);
-  result.id.should.equal(broadcastId);
-  contentful.getCampaignIdFromBroadcast.should.have.been.called;
-  result.campaignId.should.equal(campaignId);
-  contentful.getAttachmentsFromBroadcast.should.have.been.called;
-  result.attachments.should.equal(attachments);
-  contentful.getTopicFromBroadcast.should.have.been.called;
-  result.topic.should.equal(topic);
-  contentful.getMessageTextFromBroadcast.should.have.been.called;
-  result.message.should.equal(message);
-  result.name.should.equal(name);
-  result.createdAt.should.equal(date);
-  result.updatedAt.should.equal(date);
-});
-
+// aggregateMessagesForBroadcastId
 test('aggregateMessagesForBroadcastId should call Messages.aggregate and return array', async () => {
   sandbox.stub(Message, 'aggregate')
     .returns(Promise.resolve(mockAggregateResults));
@@ -82,19 +51,35 @@ test('aggregateMessagesForBroadcastId should call Messages.aggregate and return 
   result.should.equal(mockAggregateResults);
 });
 
-test('parseMessageDirection should return string', (t) => {
-  t.deepEqual(broadcastHelper.parseMessageDirection('inbound'), 'inbound');
-  t.deepEqual(broadcastHelper.parseMessageDirection('outbound-api-import'), 'outbound');
-  t.deepEqual(broadcastHelper.parseMessageDirection('outbound-api-send'), 'outbound');
-  t.deepEqual(broadcastHelper.parseMessageDirection('default'), 'outbound');
-});
-
 test('aggregateMessagesForBroadcastId should throw if Messages.aggregate fails', async (t) => {
   sandbox.stub(Message, 'aggregate')
     .returns(Promise.reject(new Error()));
   await t.throws(broadcastHelper.aggregateMessagesForBroadcastId(broadcastId));
 });
 
+// fetchAll
+test('fetchAll should return gambitCampaigns.fetchBroadcasts', async () => {
+  const broadcasts = [broadcastFactory.getValidCampaignBroadcast()];
+  sandbox.stub(gambitCampaigns, 'fetchBroadcasts')
+    .returns(Promise.resolve(broadcasts));
+
+  const result = await broadcastHelper.fetchAll();
+  result.should.deep.equal(broadcasts);
+  gambitCampaigns.fetchBroadcasts.should.have.been.called;
+});
+
+// fetchById
+test('fetchById should return gambitCampaigns.fetchBroadcastById', async () => {
+  const broadcast = broadcastFactory.getValidCampaignBroadcast();
+  sandbox.stub(gambitCampaigns, 'fetchBroadcastById')
+    .returns(Promise.resolve(broadcast));
+
+  const result = await broadcastHelper.fetchById(broadcastId);
+  result.should.deep.equal(broadcast);
+  gambitCampaigns.fetchBroadcastById.should.have.been.calledWith(broadcastId);
+});
+
+// formatStats
 test('formatStats should return default object when no data is passed', () => {
   sandbox.spy(broadcastHelper, 'parseMessageDirection');
   const result = broadcastHelper.formatStats();
@@ -123,6 +108,7 @@ test('formatStats should return default object when array without _id property i
   result.should.deep.equal(defaultStats);
 });
 
+// getWebhook
 test('getWebhook should return an object with body of a POST Broadcast Message request', () => {
   const mockRequest = {
     broadcastId,
@@ -132,4 +118,12 @@ test('getWebhook should return an object with body of a POST Broadcast Message r
   result.body.northstarId.should.equal(config.customerIo.userIdField);
   result.body.broadcastId.should.equal(broadcastId);
   result.should.have.property('url');
+});
+
+// parseMessageDirection
+test('parseMessageDirection should return string', (t) => {
+  t.deepEqual(broadcastHelper.parseMessageDirection('inbound'), 'inbound');
+  t.deepEqual(broadcastHelper.parseMessageDirection('outbound-api-import'), 'outbound');
+  t.deepEqual(broadcastHelper.parseMessageDirection('outbound-api-send'), 'outbound');
+  t.deepEqual(broadcastHelper.parseMessageDirection('default'), 'outbound');
 });
