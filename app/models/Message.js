@@ -46,8 +46,6 @@ const messageSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 messageSchema.index({ createdAt: 1 });
-messageSchema.index({ updatedAt: 1 });
-messageSchema.index({ createdAt: -1, campaignId: 1 });
 messageSchema.index({ createdAt: -1, broadcastId: 1, direction: 1, macro: 1 });
 messageSchema.index({ broadcastId: -1, direction: 1, macro: 1 });
 
