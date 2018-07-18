@@ -18,11 +18,53 @@ const sandbox = sinon.sandbox.create();
 const gambitCampaigns = require('../../../lib/gambit-campaigns');
 
 // stubs
+const broadcastFactory = require('../../helpers/factories/broadcast');
 const campaignFactory = require('../../helpers/factories/campaign');
+
+const campaignBroadcast = broadcastFactory.getValidCampaignBroadcast();
+const fetchError = new Error({ message: 'Epic fail' });
 
 test.afterEach(() => {
   // reset stubs, spies, and mocks
   sandbox.restore();
+});
+
+// fetchBroadcastById
+test('fetchBroadcastById should return result of a successful GET /broadcasts/:id request', async () => {
+  sandbox.stub(gambitCampaigns, 'executeGet')
+    .returns(Promise.resolve(campaignBroadcast));
+  const result = await gambitCampaigns.fetchBroadcastById(campaignBroadcast.id);
+  result.should.deep.equal(campaignBroadcast);
+  const endpoint = `${config.endpoints.broadcasts}/${campaignBroadcast.id}`;
+  gambitCampaigns.executeGet.should.have.been.calledWith(endpoint);
+});
+
+test('fetchBroadcastById should return error of failed GET /broadcasts/:id request', async (t) => {
+  sandbox.stub(gambitCampaigns, 'executeGet')
+    .returns(Promise.reject(fetchError));
+  const result = await t.throws(gambitCampaigns.fetchBroadcastById());
+  t.is(result.message, fetchError.message);
+});
+
+// fetchBroadcasts
+test('fetchBroadcasts should return result of a successful GET /broadcasts request', async () => {
+  const broadcasts = [
+    campaignBroadcast,
+    broadcastFactory.getValidTopicBroadcast(),
+  ];
+  sandbox.stub(gambitCampaigns, 'executeGet')
+    .returns(Promise.resolve(broadcasts));
+  const result = await gambitCampaigns.fetchBroadcasts();
+  result.should.deep.equal(broadcasts);
+  gambitCampaigns.executeGet.should.have.been.calledWith(config.endpoints.broadcasts);
+});
+
+test('fetchBroadcasts should return error of failed GET /broadcasts request', async (t) => {
+  sandbox.stub(gambitCampaigns, 'executeGet')
+    .returns(Promise.reject(fetchError));
+  const result = await t.throws(gambitCampaigns.fetchBroadcasts());
+  t.is(result.message, fetchError.message);
+  gambitCampaigns.executeGet.should.have.been.calledWith(config.endpoints.broadcasts);
 });
 
 // isClosedCampaign
