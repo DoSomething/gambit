@@ -85,16 +85,6 @@ test('getReplyRivescript should return Rivescript with trigger and reply command
 });
 
 // getRivescriptFromDefaultTopicTrigger
-test('getRivescriptFromDefaultTopicTrigger should return null if no defaultTopicTrigger', (t) => {
-  sandbox.stub(rivescriptHelper, 'formatRivescriptLine')
-    .returns(mockReplyLine);
-  sandbox.stub(rivescriptHelper, 'getRivescriptFromTriggerTextAndRivescriptLine')
-    .returns(mockRivescript);
-
-  const result = rivescriptHelper.getRivescriptFromDefaultTopicTrigger();
-  t.is(result, null);
-});
-
 test('getRivescriptFromDefaultTopicTrigger returns redirectRivescript if defaultTopicTrigger.redirect is set', () => {
   sandbox.stub(rivescriptHelper, 'getRedirectRivescript')
     .returns(mockRivescript);
