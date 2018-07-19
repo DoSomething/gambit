@@ -5,30 +5,30 @@ This is __Gambit Conversations__, the DoSomething.org multi-platform chatbot ser
 ## Authentication
 See [Authentication](authentication.md) for details on authorizing your requests.
 
-
 ## Endpoints
-
-### v1
-
-Endpoint | Functionality                                           
--------- | -------------
-`GET /api/v1/broadcasts` | Retrieve all Broadcasts.
-`GET /api/v1/broadcasts/:id` | [Retrieve a Broadcast](endpoints/broadcasts.md).
-`GET /api/v1/conversations` | Retrieve all Conversations.
-`GET /api/v1/conversations/:id` | Retrieve a Conversation.
-`GET /api/v1/messages` | Retrieve all Messages.
-`GET /api/v1/messages/:id` | Retrieve a Message.
 
 ### v2
 
 Endpoint | Functionality                                           
 -------- | -------------
-`POST /api/v2/messages` | [Create a Message](endpoints/messages.md).
-`PATCH /api/v2/messages/:messageId` | [Update a Message](endpoints/messages.md).
+`GET /api/v2/broadcasts` | Retrieves broadcasts (proxies the [Gambit Campaigns `GET /broadcasts` endpoint](https://github.com/DoSomething/gambit-campaigns/tree/master/documentation))
+`GET /api/v2/broadcasts/:id` | [Retrieve a broadcast](endpoints/broadcasts.md).
+`POST /api/v2/messages` | [Create a message](endpoints/messages.md).
+`PATCH /api/v2/messages/:messageId` | [Update a message](endpoints/messages.md).
 
-### Query parameters
+### v1
 
-The GET Conversation and Messages are served via the Express Restify Mongoose package. [Docs](https://florianholzapfel.github.io/express-restify-mongoose/)
+All v1 endpoints are served via the Express Restify Mongoose package. [Docs](https://florianholzapfel.github.io/express-restify-mongoose/)
+
+Endpoint | Functionality                                           
+-------- | -------------
+`/api/v1/conversations` | Retrieve conversations.
+`/api/v1/conversations/:id` | Retrieve a conversation.
+`/api/v1/messages` | Retrieve messages.
+`/api/v1/messages/:id` | Retrieve a message.
+
+
+
 
 ### Filtering
 * https://gambit-conversations-staging.herokuapp.com/api/v1/messages?query={"platform":"slack"}
