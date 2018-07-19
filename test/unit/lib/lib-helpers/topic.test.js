@@ -59,17 +59,6 @@ test('fetchAllDefaultTopicTriggers should throw on gambitCampaigns.fetchDefaultT
   result.should.deep.equal(mockError);
 });
 
-// fetchAllTopics
-test('fetchAllTopics should call gambitCampaigns.fetchTopics', async () => {
-  const mockResponse = [topicFactory.getValidTopic(), topicFactory.getValidTopic()];
-  sandbox.stub(gambitCampaigns, 'fetchTopics')
-    .returns(Promise.resolve(mockResponse));
-
-  const result = await topicHelper.fetchAllTopics();
-  gambitCampaigns.fetchTopics.should.have.been.called;
-  result.should.deep.equal(mockResponse);
-});
-
 // fetchById
 test('fetchById should return 404 error if topicId is the random topicId', async (t) => {
   const mockTopic = topicFactory.getValidTopic();
