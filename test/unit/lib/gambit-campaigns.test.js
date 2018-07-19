@@ -32,7 +32,7 @@ test.afterEach(() => {
 // fetchBroadcastById
 test('fetchBroadcastById should return result of a successful GET /broadcasts/:id request', async () => {
   sandbox.stub(gambitCampaigns, 'executeGet')
-    .returns(Promise.resolve(campaignBroadcast));
+    .returns(Promise.resolve({ data: campaignBroadcast }));
   const result = await gambitCampaigns.fetchBroadcastById(campaignBroadcast.id);
   result.should.deep.equal(campaignBroadcast);
   const endpoint = `${config.endpoints.broadcasts}/${campaignBroadcast.id}`;
@@ -48,14 +48,16 @@ test('fetchBroadcastById should return error of failed GET /broadcasts/:id reque
 
 // fetchBroadcasts
 test('fetchBroadcasts should return result of a successful GET /broadcasts request', async () => {
-  const broadcasts = [
-    campaignBroadcast,
-    broadcastFactory.getValidTopicBroadcast(),
-  ];
+  const fetchResponse = {
+    data: [
+      campaignBroadcast,
+      broadcastFactory.getValidTopicBroadcast(),
+    ],
+  };
   sandbox.stub(gambitCampaigns, 'executeGet')
-    .returns(Promise.resolve(broadcasts));
+    .returns(Promise.resolve(fetchResponse));
   const result = await gambitCampaigns.fetchBroadcasts();
-  result.should.deep.equal(broadcasts);
+  result.should.deep.equal(fetchResponse);
   gambitCampaigns.executeGet.should.have.been.calledWith(config.endpoints.broadcasts);
 });
 
