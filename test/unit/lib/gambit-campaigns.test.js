@@ -20,9 +20,15 @@ const gambitCampaigns = require('../../../lib/gambit-campaigns');
 // stubs
 const broadcastFactory = require('../../helpers/factories/broadcast');
 const campaignFactory = require('../../helpers/factories/campaign');
+const defaultTopicTriggerFactory = require('../../helpers/factories/defaultTopicTrigger');
 
 const campaignBroadcast = broadcastFactory.getValidCampaignBroadcast();
+const defaultTopicTriggers = [
+  defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger(),
+  defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger(),
+];
 const fetchError = new Error({ message: 'Epic fail' });
+const queryParams = { skip: 11 };
 
 test.afterEach(() => {
   // reset stubs, spies, and mocks
@@ -56,9 +62,9 @@ test('fetchBroadcasts should return result of a successful GET /broadcasts reque
   };
   sandbox.stub(gambitCampaigns, 'executeGet')
     .returns(Promise.resolve(fetchResponse));
-  const result = await gambitCampaigns.fetchBroadcasts();
+  const result = await gambitCampaigns.fetchBroadcasts(queryParams);
   result.should.deep.equal(fetchResponse);
-  gambitCampaigns.executeGet.should.have.been.calledWith(config.endpoints.broadcasts);
+  gambitCampaigns.executeGet.should.have.been.calledWith(config.endpoints.broadcasts, queryParams);
 });
 
 test('fetchBroadcasts should return error of failed GET /broadcasts request', async (t) => {
@@ -67,6 +73,17 @@ test('fetchBroadcasts should return error of failed GET /broadcasts request', as
   const result = await t.throws(gambitCampaigns.fetchBroadcasts());
   t.is(result.message, fetchError.message);
   gambitCampaigns.executeGet.should.have.been.calledWith(config.endpoints.broadcasts);
+});
+
+// fetchDefaultTopicTriggers
+test('fetchDefaultTopicTriggers should return result of a successful GET /fetchDefaultTopicTriggers request', async () => {
+  const fetchResponse = { data: defaultTopicTriggers };
+  sandbox.stub(gambitCampaigns, 'executeGet')
+    .returns(Promise.resolve(fetchResponse));
+  const result = await gambitCampaigns.fetchDefaultTopicTriggers(queryParams);
+  result.should.deep.equal(fetchResponse);
+  gambitCampaigns.executeGet
+    .should.have.been.calledWith(config.endpoints.defaultTopicTriggers, queryParams);
 });
 
 // isClosedCampaign
