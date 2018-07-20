@@ -22,10 +22,10 @@ All v1 endpoints are served via the Express Restify Mongoose package. [Docs](htt
 
 Endpoint | Functionality                                           
 -------- | -------------
-`/api/v1/conversations` | Retrieve conversations.
-`/api/v1/conversations/:id` | Retrieve a conversation.
-`/api/v1/messages` | Retrieve messages.
-`/api/v1/messages/:id` | Retrieve a message.
+`GET /api/v1/conversations` | Retrieve conversations.
+`GET /api/v1/conversations/:id` | Retrieve a conversation.
+`GET /api/v1/messages` | Retrieve messages.
+`GET /api/v1/messages/:id` | Retrieve a message.
 
 
 
