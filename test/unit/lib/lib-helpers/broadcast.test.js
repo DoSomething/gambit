@@ -57,15 +57,16 @@ test('aggregateMessagesForBroadcastId should throw if Messages.aggregate fails',
   await t.throws(broadcastHelper.aggregateMessagesForBroadcastId(broadcastId));
 });
 
-// fetchAll
-test('fetchAll should return gambitCampaigns.fetchBroadcasts', async () => {
+// fetch
+test('fetch should return gambitCampaigns.fetchBroadcasts', async () => {
   const broadcasts = [broadcastFactory.getValidCampaignBroadcast()];
+  const query = { skip: 11 };
   sandbox.stub(gambitCampaigns, 'fetchBroadcasts')
     .returns(Promise.resolve(broadcasts));
 
-  const result = await broadcastHelper.fetchAll();
+  const result = await broadcastHelper.fetch(query);
   result.should.deep.equal(broadcasts);
-  gambitCampaigns.fetchBroadcasts.should.have.been.called;
+  gambitCampaigns.fetchBroadcasts.should.have.been.calledWith(query);
 });
 
 // fetchById

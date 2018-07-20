@@ -5,7 +5,9 @@ const stubs = require('../stubs');
 function getValidChangeTopicDefaultTopicTrigger() {
   return {
     trigger: stubs.getRandomWord(),
-    topicId: stubs.getContentfulId(),
+    topic: {
+      id: stubs.getContentfulId(),
+    },
   };
 }
 

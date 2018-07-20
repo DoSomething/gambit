@@ -29,6 +29,22 @@ test.afterEach(() => {
   sandbox.restore();
 });
 
+// fetchAllActive
+test('fetchAllActive calls gambitCampaigns.fetchCampaigns and filters by isClosedCampaign', async () => {
+  const campaigns = [campaignFactory.getValidCampaign(), campaignFactory.getValidCampaign()];
+  sandbox.stub(gambitCampaigns, 'fetchCampaigns')
+    .returns(Promise.resolve({ data: campaigns }));
+  sandbox.stub(gambitCampaigns, 'isClosedCampaign')
+    .returns(false);
+
+  const result = await campaignHelper.fetchAllActive();
+  gambitCampaigns.fetchCampaigns.should.have.been.called;
+  campaigns.forEach((campaign) => {
+    gambitCampaigns.isClosedCampaign.should.have.been.calledWith(campaign);
+  });
+  result.should.deep.equal(campaigns);
+});
+
 // fetchById
 test('fetchById calls gambitCampaigns.fetchCampaignById', async () => {
   sandbox.stub(gambitCampaigns, 'fetchCampaignById')
