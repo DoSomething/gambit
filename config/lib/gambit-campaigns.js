@@ -8,5 +8,8 @@ module.exports = {
   closedStatusValue: 'closed',
   endpoints: {
     broadcasts: 'broadcasts',
+    campaigns: 'campaigns',
+    defaultTopicTriggers: 'defaultTopicTriggers',
+    topics: 'topics',
   },
 };

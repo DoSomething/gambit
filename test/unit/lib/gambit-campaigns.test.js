@@ -20,9 +20,18 @@ const gambitCampaigns = require('../../../lib/gambit-campaigns');
 // stubs
 const broadcastFactory = require('../../helpers/factories/broadcast');
 const campaignFactory = require('../../helpers/factories/campaign');
+const defaultTopicTriggerFactory = require('../../helpers/factories/defaultTopicTrigger');
+const topicFactory = require('../../helpers/factories/topic');
 
+const campaign = campaignFactory.getValidCampaign();
 const campaignBroadcast = broadcastFactory.getValidCampaignBroadcast();
+const defaultTopicTriggers = [
+  defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger(),
+  defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger(),
+];
 const fetchError = new Error({ message: 'Epic fail' });
+const queryParams = { skip: 11 };
+const topic = topicFactory.getValidTopic();
 
 test.afterEach(() => {
   // reset stubs, spies, and mocks
@@ -32,7 +41,7 @@ test.afterEach(() => {
 // fetchBroadcastById
 test('fetchBroadcastById should return result of a successful GET /broadcasts/:id request', async () => {
   sandbox.stub(gambitCampaigns, 'executeGet')
-    .returns(Promise.resolve(campaignBroadcast));
+    .returns(Promise.resolve({ data: campaignBroadcast }));
   const result = await gambitCampaigns.fetchBroadcastById(campaignBroadcast.id);
   result.should.deep.equal(campaignBroadcast);
   const endpoint = `${config.endpoints.broadcasts}/${campaignBroadcast.id}`;
@@ -48,15 +57,17 @@ test('fetchBroadcastById should return error of failed GET /broadcasts/:id reque
 
 // fetchBroadcasts
 test('fetchBroadcasts should return result of a successful GET /broadcasts request', async () => {
-  const broadcasts = [
-    campaignBroadcast,
-    broadcastFactory.getValidTopicBroadcast(),
-  ];
+  const fetchResponse = {
+    data: [
+      campaignBroadcast,
+      broadcastFactory.getValidTopicBroadcast(),
+    ],
+  };
   sandbox.stub(gambitCampaigns, 'executeGet')
-    .returns(Promise.resolve(broadcasts));
-  const result = await gambitCampaigns.fetchBroadcasts();
-  result.should.deep.equal(broadcasts);
-  gambitCampaigns.executeGet.should.have.been.calledWith(config.endpoints.broadcasts);
+    .returns(Promise.resolve(fetchResponse));
+  const result = await gambitCampaigns.fetchBroadcasts(queryParams);
+  result.should.deep.equal(fetchResponse);
+  gambitCampaigns.executeGet.should.have.been.calledWith(config.endpoints.broadcasts, queryParams);
 });
 
 test('fetchBroadcasts should return error of failed GET /broadcasts request', async (t) => {
@@ -67,16 +78,61 @@ test('fetchBroadcasts should return error of failed GET /broadcasts request', as
   gambitCampaigns.executeGet.should.have.been.calledWith(config.endpoints.broadcasts);
 });
 
+// fetchCampaignById
+test('fetchCampaignById should return result of a successful GET /campaigns/:id request', async () => {
+  sandbox.stub(gambitCampaigns, 'executeGet')
+    .returns(Promise.resolve({ data: campaign }));
+
+  const result = await gambitCampaigns.fetchCampaignById(campaign.id);
+  result.should.deep.equal(campaign);
+  const endpoint = `${config.endpoints.campaigns}/${campaign.id}`;
+  gambitCampaigns.executeGet.should.have.been.calledWith(endpoint);
+});
+
+// fetchCampaigns
+test('fetchCampaigns should return result of a successful GET /campaigns request', async () => {
+  const campaigns = [campaign, campaign];
+  const fetchResponse = { data: campaigns };
+  sandbox.stub(gambitCampaigns, 'executeGet')
+    .returns(Promise.resolve(fetchResponse));
+
+  const result = await gambitCampaigns.fetchCampaigns();
+  result.should.deep.equal(fetchResponse);
+  gambitCampaigns.executeGet
+    .should.have.been.calledWith(config.endpoints.campaigns);
+});
+
+// fetchDefaultTopicTriggers
+test('fetchDefaultTopicTriggers should return result of a successful GET /fetchDefaultTopicTriggers request', async () => {
+  const fetchResponse = { data: defaultTopicTriggers };
+  sandbox.stub(gambitCampaigns, 'executeGet')
+    .returns(Promise.resolve(fetchResponse));
+  const result = await gambitCampaigns.fetchDefaultTopicTriggers(queryParams);
+  result.should.deep.equal(fetchResponse);
+  gambitCampaigns.executeGet
+    .should.have.been.calledWith(config.endpoints.defaultTopicTriggers, queryParams);
+});
+
+// fetchTopicById
+test('fetchTopicById should return result of a successful GET /topics/:id request', async () => {
+  sandbox.stub(gambitCampaigns, 'executeGet')
+    .returns(Promise.resolve({ data: topic }));
+
+  const result = await gambitCampaigns.fetchTopicById(topic.id);
+  result.should.deep.equal(topic);
+  const endpoint = `${config.endpoints.topics}/${topic.id}`;
+  gambitCampaigns.executeGet.should.have.been.calledWith(endpoint);
+});
+
 // isClosedCampaign
 test('isClosedCampaign should return true when campaign is active', (t) => {
-  const campaign = campaignFactory.getValidCampaign();
   const result = gambitCampaigns.isClosedCampaign(campaign);
   t.falsy(result);
 });
 
 test('isClosedCampaign should return false when campaign is closed', (t) => {
-  const campaign = campaignFactory.getValidCampaign();
-  campaign.status = config.closedStatusValue;
-  const result = gambitCampaigns.isClosedCampaign(campaign);
+  const closedCampaign = campaignFactory.getValidCampaign();
+  closedCampaign.status = config.closedStatusValue;
+  const result = gambitCampaigns.isClosedCampaign(closedCampaign);
   t.truthy(result);
 });

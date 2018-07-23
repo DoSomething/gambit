@@ -6,6 +6,9 @@ const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 
+
+const gambitCampaigns = require('../../../../lib/gambit-campaigns');
+const helpers = require('../../../../lib/helpers');
 const config = require('../../../../config/lib/helpers/rivescript');
 const stubs = require('../../../helpers/stubs');
 const defaultTopicTriggerFactory = require('../../../helpers/factories/defaultTopicTrigger');
@@ -23,11 +26,43 @@ const mockRivescriptLine = `${mockRivescriptCommand}${lineBreak}`;
 const mockRedirectLine = `${config.commands.redirect}${config.separators.command}${mockWord}${lineBreak}`;
 const mockReplyLine = `${config.commands.reply}${config.separators.command}${mockWord}${lineBreak}`;
 const mockRivescript = [mockRivescriptLine, mockReplyLine].join(lineBreak);
+const replyTrigger = defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger();
+const redirectTrigger = defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger();
 
 const sandbox = sinon.sandbox.create();
 
 test.afterEach(() => {
   sandbox.restore();
+});
+
+// fetchDefaultTopicTriggers
+test('fetchDefaultTopicTriggers should call parseDefaultTopicTrigger on gambitCampaigns.fetchDefaultTopicTriggers success', async () => {
+  const data = [replyTrigger, redirectTrigger];
+  const mockParsedTrigger = defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger();
+  sandbox.stub(gambitCampaigns, 'fetchDefaultTopicTriggers')
+    .returns(Promise.resolve({ data }));
+  sandbox.stub(rivescriptHelper, 'parseDefaultTopicTrigger')
+    .returns(mockParsedTrigger);
+
+  const result = await rivescriptHelper.fetchDefaultTopicTriggers();
+  data.forEach((item) => {
+    rivescriptHelper.parseDefaultTopicTrigger.should.have.been.calledWith(item);
+  });
+  gambitCampaigns.fetchDefaultTopicTriggers.should.have.been.called;
+  result.should.deep.equal([mockParsedTrigger, mockParsedTrigger]);
+});
+
+test('fetchDefaultTopicTriggers should throw on gambitCampaigns.fetchDefaultTopicTriggers fail', async (t) => {
+  const mockError = new Error('epic fail');
+  sandbox.stub(gambitCampaigns, 'fetchDefaultTopicTriggers')
+    .returns(Promise.reject(mockError));
+  sandbox.stub(rivescriptHelper, 'parseDefaultTopicTrigger')
+    .returns(replyTrigger);
+
+  const result = await t.throws(rivescriptHelper.fetchDefaultTopicTriggers());
+  gambitCampaigns.fetchDefaultTopicTriggers.should.have.been.called;
+  rivescriptHelper.parseDefaultTopicTrigger.should.not.have.been.called;
+  result.should.deep.equal(mockError);
 });
 
 // formatRivescriptLine
@@ -85,16 +120,6 @@ test('getReplyRivescript should return Rivescript with trigger and reply command
 });
 
 // getRivescriptFromDefaultTopicTrigger
-test('getRivescriptFromDefaultTopicTrigger should return null if no defaultTopicTrigger', (t) => {
-  sandbox.stub(rivescriptHelper, 'formatRivescriptLine')
-    .returns(mockReplyLine);
-  sandbox.stub(rivescriptHelper, 'getRivescriptFromTriggerTextAndRivescriptLine')
-    .returns(mockRivescript);
-
-  const result = rivescriptHelper.getRivescriptFromDefaultTopicTrigger();
-  t.is(result, null);
-});
-
 test('getRivescriptFromDefaultTopicTrigger returns redirectRivescript if defaultTopicTrigger.redirect is set', () => {
   sandbox.stub(rivescriptHelper, 'getRedirectRivescript')
     .returns(mockRivescript);
@@ -152,4 +177,24 @@ test('joinRivescriptLines returns input array joined by the config line separato
   const lines = [mockRivescript, mockRivescript, mockRivescript];
   const result = rivescriptHelper.joinRivescriptLines(lines);
   result.should.equal(lines.join(lineBreak));
+});
+
+// parseDefaultTopicTrigger
+test('parseDefaultTopicTrigger should throw error if defaultTopicTrigger undefined', (t) => {
+  t.throws(() => rivescriptHelper.parseDefaultTopicTrigger());
+});
+
+test('parseDefaultTopicTrigger should return defaultTopicTrigger if defaultTopicTrigger.topicId undefined', () => {
+  const defaultTopicTrigger = defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger();
+  const result = rivescriptHelper.parseDefaultTopicTrigger(defaultTopicTrigger);
+  result.should.deep.equal(defaultTopicTrigger);
+});
+
+test('parseDefaultTopicTrigger should return object with a changeTopic macro reply if defaultTopicTrigger.topic set', () => {
+  const mockChangeTopicMacro = `changeTopicTo${stubs.getTopicId()}`;
+  sandbox.stub(helpers.macro, 'getChangeTopicMacroFromTopicId')
+    .returns(mockChangeTopicMacro);
+  const defaultTopicTrigger = defaultTopicTriggerFactory.getValidChangeTopicDefaultTopicTrigger();
+  const result = rivescriptHelper.parseDefaultTopicTrigger(defaultTopicTrigger);
+  result.reply.should.equal(mockChangeTopicMacro);
 });

@@ -19,14 +19,11 @@ module.exports = function init(app) {
   // v1
   // Restified routes.
   app.use(mongooseRoutes);
-  // GET broadcasts routes are prefixed with v1 to keep consistent with our v1 Mongoose routes.
-  // TODO: Prefix with v2, resolve Express Mongoose Restify conflicts (or build custom GET routes).
-  app.use('/api/v1/broadcasts/:broadcastId',
-    broadcastsSingleRoute);
-  app.use('/api/v1/broadcasts',
-    broadcastsIndexRoute);
-
   // v2
+  app.use('/api/v2/broadcasts/:broadcastId',
+    broadcastsSingleRoute);
+  app.use('/api/v2/broadcasts',
+    broadcastsIndexRoute);
   app.use('/api/v2/messages',
     /**
      * parses Metadata like requestId and retryCount
