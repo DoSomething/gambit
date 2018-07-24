@@ -6,7 +6,6 @@ module.exports = {
     apiKey: process.env.DS_GAMBIT_CAMPAIGNS_API_KEY,
   },
   authHeader: 'x-gambit-api-key',
-  closedStatusValue: 'closed',
   endpoints: {
     broadcasts: 'broadcasts',
     campaigns: 'campaigns',

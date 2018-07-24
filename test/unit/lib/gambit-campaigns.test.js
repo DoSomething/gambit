@@ -169,16 +169,3 @@ test('fetchTopicById should return result of a successful GET /topics/:id reques
   const endpoint = `${config.endpoints.topics}/${topic.id}`;
   gambitCampaigns.executeGet.should.have.been.calledWith(endpoint);
 });
-
-// isClosedCampaign
-test('isClosedCampaign should return true when campaign is active', (t) => {
-  const result = gambitCampaigns.isClosedCampaign(campaign);
-  t.falsy(result);
-});
-
-test('isClosedCampaign should return false when campaign is closed', (t) => {
-  const closedCampaign = campaignFactory.getValidCampaign();
-  closedCampaign.status = config.closedStatusValue;
-  const result = gambitCampaigns.isClosedCampaign(closedCampaign);
-  t.truthy(result);
-});
