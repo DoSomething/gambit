@@ -8,6 +8,7 @@ module.exports = {
   authHeader: 'x-gambit-api-key',
   endpoints: {
     broadcasts: 'broadcasts',
+    campaignActivity: 'campaignActivity',
     campaigns: 'campaigns',
     defaultTopicTriggers: 'defaultTopicTriggers',
     topics: 'topics',

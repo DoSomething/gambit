@@ -18,6 +18,7 @@ const sandbox = sinon.sandbox.create();
 const gambitCampaigns = require('../../../lib/gambit-campaigns');
 
 // stubs
+const stubs = require('../../helpers/stubs');
 const broadcastFactory = require('../../helpers/factories/broadcast');
 const campaignFactory = require('../../helpers/factories/campaign');
 const defaultTopicTriggerFactory = require('../../helpers/factories/defaultTopicTrigger');
@@ -168,4 +169,17 @@ test('fetchTopicById should return result of a successful GET /topics/:id reques
   result.should.deep.equal(topic);
   const endpoint = `${config.endpoints.topics}/${topic.id}`;
   gambitCampaigns.executeGet.should.have.been.calledWith(endpoint);
+});
+
+// postCampaignActivity
+test('postCampaignActivity should return result of a successful POST /campaignActivity request', async () => {
+  const requestData = { text: stubs.getRandomMessageText() };
+  const responseData = { abc: 123 };
+  sandbox.stub(gambitCampaigns, 'executePost')
+    .returns(Promise.resolve({ data: responseData }));
+
+  const result = await gambitCampaigns.postCampaignActivity(requestData);
+  result.should.deep.equal(responseData);
+  const endpoint = config.endpoints.campaignActivity;
+  gambitCampaigns.executePost.should.have.been.calledWith(endpoint, requestData);
 });

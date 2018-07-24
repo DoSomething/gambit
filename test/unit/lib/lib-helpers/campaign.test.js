@@ -75,7 +75,6 @@ test('getWebSignupMessageTemplateNameFromCampaign returns string from config.sig
   result.should.equal(templateName);
 });
 
-
 // isClosedCampaign
 test('isClosedCampaign should return true when campaign is active', (t) => {
   const result = campaignHelper.isClosedCampaign(campaignFactory.getValidCampaign());
