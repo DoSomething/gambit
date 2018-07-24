@@ -6,8 +6,8 @@ const test = require('ava');
 const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
+const superagent = require('superagent');
 const config = require('../../../config/lib/gambit-campaigns');
-
 
 chai.should();
 chai.use(sinonChai);
@@ -30,6 +30,7 @@ const defaultTopicTriggers = [
   defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger(),
 ];
 const fetchError = new Error({ message: 'Epic fail' });
+const fetchSuccess = { data: defaultTopicTriggers };
 const queryParams = { skip: 11 };
 const topic = topicFactory.getValidTopic();
 
@@ -37,6 +38,51 @@ test.afterEach(() => {
   // reset stubs, spies, and mocks
   sandbox.restore();
 });
+
+// executeGet
+test('executeGet should call superagent.get with apiUrl and parse body', async () => {
+  const endpoint = 'dragons';
+  const apiUrl = `${config.clientOptions.apiUrl}/${endpoint}`;
+  sandbox.stub(gambitCampaigns, 'apiUrl')
+    .returns(apiUrl);
+  sandbox.stub(superagent, 'get')
+    .callsFake(() => ({
+      // TODO: These nested functions should be stubbed to verify args passed.
+      set: () => { // eslint-disable-line arrow-body-style
+        return {
+          query: () => Promise.resolve({ body: fetchSuccess }),
+        };
+      },
+    }));
+
+  const result = await gambitCampaigns.executeGet(endpoint, queryParams);
+  result.should.equal(fetchSuccess);
+  gambitCampaigns.apiUrl.should.have.been.calledWith(endpoint);
+  superagent.get.should.have.been.calledWith(apiUrl);
+});
+
+// executePost
+test('executePost should call superagent.post with apiUrl and parse body', async () => {
+  const endpoint = 'dragons';
+  const apiUrl = `${config.clientOptions.apiUrl}/${endpoint}`;
+  sandbox.stub(gambitCampaigns, 'apiUrl')
+    .returns(apiUrl);
+  sandbox.stub(superagent, 'post')
+    .callsFake(() => ({
+      // TODO: These nested functions should be stubbed to verify args passed.
+      set: () => { // eslint-disable-line arrow-body-style
+        return {
+          send: () => Promise.resolve({ body: fetchSuccess }),
+        };
+      },
+    }));
+
+  const result = await gambitCampaigns.executePost(endpoint, queryParams);
+  result.should.equal(fetchSuccess);
+  gambitCampaigns.apiUrl.should.have.been.calledWith(endpoint);
+  superagent.post.should.have.been.calledWith(apiUrl);
+});
+
 
 // fetchBroadcastById
 test('fetchBroadcastById should return result of a successful GET /broadcasts/:id request', async () => {
