@@ -225,7 +225,7 @@ test('isMenuMacro should return false if req.macro is not menu', (t) => {
 });
 
 // postCampaignActivityFromReq
-test('postCampaignActivityFromReq should post getCampaignActivityPayloadFromReq as campaignActivity', async (t) => {
+test('postCampaignActivityFromReq should post getCampaignActivityPayloadFromReq as campaignActivity', async () => {
   const postData = { text: stubs.getRandomMessageText() };
   const postResult = { data: 123 };
   sandbox.stub(requestHelper, 'getCampaignActivityPayloadFromReq')
