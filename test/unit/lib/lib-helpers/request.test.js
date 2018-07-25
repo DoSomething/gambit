@@ -9,6 +9,7 @@ const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 
 const helpers = require('../../../../lib/helpers');
+const gambitCampaigns = require('../../../../lib/gambit-campaigns');
 const stubs = require('../../../helpers/stubs');
 const campaignFactory = require('../../../helpers/factories/campaign');
 const conversationFactory = require('../../../helpers/factories/conversation');
@@ -221,6 +222,20 @@ test('isMenuMacro should return false if req.macro is not menu', (t) => {
     .returns(false);
   t.context.req.macro = macro;
   t.falsy(requestHelper.isMenuMacro(t.context.req));
+});
+
+// postCampaignActivityFromReq
+test('postCampaignActivityFromReq should post getCampaignActivityPayloadFromReq as campaignActivity', async (t) => {
+  const postData = { text: stubs.getRandomMessageText() };
+  const postResult = { data: 123 };
+  sandbox.stub(requestHelper, 'getCampaignActivityPayloadFromReq')
+    .returns(postData);
+  sandbox.stub(gambitCampaigns, 'postCampaignActivity')
+    .returns(Promise.resolve(postResult));
+
+  const result = await requestHelper.postCampaignActivityFromReq();
+  gambitCampaigns.postCampaignActivity.should.have.been.calledWith(postData);
+  result.should.deep.equal(postResult);
 });
 
 // setCampaign
