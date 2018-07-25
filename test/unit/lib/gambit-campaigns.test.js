@@ -40,6 +40,13 @@ test.afterEach(() => {
   sandbox.restore();
 });
 
+// apiUrl
+test('apiUrl return given endpoint param with prefixed with config.clientOptions.baseUri ', () => {
+  const endpoint = 'dragons';
+  const result = gambitCampaigns.apiUrl(endpoint);
+  result.should.equal(`${config.clientOptions.baseUri}/${endpoint}`);
+});
+
 // executeGet
 test('executeGet should call superagent.get with apiUrl and parse body', async () => {
   const endpoint = 'dragons';
