@@ -15,4 +15,7 @@ module.exports = {
     'unsubscribed',
   ],
   randomTopicId: 'random',
+  autoReplyTypes: [
+    'autoReplyBroadcast',
+  ],
 };
