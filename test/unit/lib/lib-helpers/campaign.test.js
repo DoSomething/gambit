@@ -34,13 +34,13 @@ test('fetchAllActive calls gambitCampaigns.fetchCampaigns and filters by isClose
   const campaigns = [campaignFactory.getValidCampaign(), campaignFactory.getValidCampaign()];
   sandbox.stub(gambitCampaigns, 'fetchCampaigns')
     .returns(Promise.resolve({ data: campaigns }));
-  sandbox.stub(gambitCampaigns, 'isClosedCampaign')
+  sandbox.stub(campaignHelper, 'isClosedCampaign')
     .returns(false);
 
   const result = await campaignHelper.fetchAllActive();
   gambitCampaigns.fetchCampaigns.should.have.been.called;
   campaigns.forEach((campaign) => {
-    gambitCampaigns.isClosedCampaign.should.have.been.calledWith(campaign);
+    campaignHelper.isClosedCampaign.should.have.been.calledWith(campaign);
   });
   result.should.deep.equal(campaigns);
 });
@@ -75,12 +75,15 @@ test('getWebSignupMessageTemplateNameFromCampaign returns string from config.sig
   result.should.equal(templateName);
 });
 
-
 // isClosedCampaign
-test('isClosedCampaign calls gambitCampaigns.isClosedCampaign', (t) => {
-  sandbox.stub(gambitCampaigns, 'isClosedCampaign')
-    .returns(true);
-  const result = campaignHelper.isClosedCampaign(campaignStub);
+test('isClosedCampaign should return true when campaign is active', (t) => {
+  const result = campaignHelper.isClosedCampaign(campaignFactory.getValidCampaign());
+  t.falsy(result);
+});
+
+test('isClosedCampaign should return false when campaign is closed', (t) => {
+  const closedCampaign = campaignFactory.getValidCampaign();
+  closedCampaign.status = campaignHelperConfig.statuses.closed;
+  const result = campaignHelper.isClosedCampaign(closedCampaign);
   t.truthy(result);
-  gambitCampaigns.isClosedCampaign.should.have.been.calledWith(campaignStub);
 });

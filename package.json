@@ -1,6 +1,6 @@
 {
   "name": "gambit-conversations",
-  "version": "2.14.1",
+  "version": "2.14.2",
   "description": "The DoSomething.org chatbot service for multi-platform conversations.",
   "author": "DoSomething.org",
   "license": "MIT",

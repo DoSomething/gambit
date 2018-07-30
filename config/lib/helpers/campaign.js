@@ -6,4 +6,8 @@ module.exports = {
     photo: 'webStartPhotoPost',
     text: 'webAskText',
   },
+  statuses: {
+    active: 'active',
+    closed: 'closed',
+  },
 };

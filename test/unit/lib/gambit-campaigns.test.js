@@ -6,8 +6,8 @@ const test = require('ava');
 const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
+const superagent = require('superagent');
 const config = require('../../../config/lib/gambit-campaigns');
-
 
 chai.should();
 chai.use(sinonChai);
@@ -18,6 +18,7 @@ const sandbox = sinon.sandbox.create();
 const gambitCampaigns = require('../../../lib/gambit-campaigns');
 
 // stubs
+const stubs = require('../../helpers/stubs');
 const broadcastFactory = require('../../helpers/factories/broadcast');
 const campaignFactory = require('../../helpers/factories/campaign');
 const defaultTopicTriggerFactory = require('../../helpers/factories/defaultTopicTrigger');
@@ -30,6 +31,7 @@ const defaultTopicTriggers = [
   defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger(),
 ];
 const fetchError = new Error({ message: 'Epic fail' });
+const fetchSuccess = { data: defaultTopicTriggers };
 const queryParams = { skip: 11 };
 const topic = topicFactory.getValidTopic();
 
@@ -37,6 +39,58 @@ test.afterEach(() => {
   // reset stubs, spies, and mocks
   sandbox.restore();
 });
+
+// apiUrl
+test('apiUrl return given endpoint param with prefixed with config.clientOptions.baseUri ', () => {
+  const endpoint = 'dragons';
+  const result = gambitCampaigns.apiUrl(endpoint);
+  result.should.equal(`${config.clientOptions.baseUri}/${endpoint}`);
+});
+
+// executeGet
+test('executeGet should call superagent.get with apiUrl and parse body', async () => {
+  const endpoint = 'dragons';
+  const apiUrl = `${config.clientOptions.apiUrl}/${endpoint}`;
+  sandbox.stub(gambitCampaigns, 'apiUrl')
+    .returns(apiUrl);
+  sandbox.stub(superagent, 'get')
+    .callsFake(() => ({
+      // TODO: These nested functions should be stubbed to verify args passed.
+      set: () => { // eslint-disable-line arrow-body-style
+        return {
+          query: () => Promise.resolve({ body: fetchSuccess }),
+        };
+      },
+    }));
+
+  const result = await gambitCampaigns.executeGet(endpoint, queryParams);
+  result.should.equal(fetchSuccess);
+  gambitCampaigns.apiUrl.should.have.been.calledWith(endpoint);
+  superagent.get.should.have.been.calledWith(apiUrl);
+});
+
+// executePost
+test('executePost should call superagent.post with apiUrl and parse body', async () => {
+  const endpoint = 'dragons';
+  const apiUrl = `${config.clientOptions.apiUrl}/${endpoint}`;
+  sandbox.stub(gambitCampaigns, 'apiUrl')
+    .returns(apiUrl);
+  sandbox.stub(superagent, 'post')
+    .callsFake(() => ({
+      // TODO: These nested functions should be stubbed to verify args passed.
+      set: () => { // eslint-disable-line arrow-body-style
+        return {
+          send: () => Promise.resolve({ body: fetchSuccess }),
+        };
+      },
+    }));
+
+  const result = await gambitCampaigns.executePost(endpoint, queryParams);
+  result.should.equal(fetchSuccess);
+  gambitCampaigns.apiUrl.should.have.been.calledWith(endpoint);
+  superagent.post.should.have.been.calledWith(apiUrl);
+});
+
 
 // fetchBroadcastById
 test('fetchBroadcastById should return result of a successful GET /broadcasts/:id request', async () => {
@@ -124,15 +178,15 @@ test('fetchTopicById should return result of a successful GET /topics/:id reques
   gambitCampaigns.executeGet.should.have.been.calledWith(endpoint);
 });
 
-// isClosedCampaign
-test('isClosedCampaign should return true when campaign is active', (t) => {
-  const result = gambitCampaigns.isClosedCampaign(campaign);
-  t.falsy(result);
-});
+// postCampaignActivity
+test('postCampaignActivity should return result of a successful POST /campaignActivity request', async () => {
+  const requestData = { text: stubs.getRandomMessageText() };
+  const responseData = { abc: 123 };
+  sandbox.stub(gambitCampaigns, 'executePost')
+    .returns(Promise.resolve({ data: responseData }));
 
-test('isClosedCampaign should return false when campaign is closed', (t) => {
-  const closedCampaign = campaignFactory.getValidCampaign();
-  closedCampaign.status = config.closedStatusValue;
-  const result = gambitCampaigns.isClosedCampaign(closedCampaign);
-  t.truthy(result);
+  const result = await gambitCampaigns.postCampaignActivity(requestData);
+  result.should.deep.equal(responseData);
+  const endpoint = config.endpoints.campaignActivity;
+  gambitCampaigns.executePost.should.have.been.calledWith(endpoint, requestData);
 });

@@ -11,7 +11,6 @@ const Promise = require('bluebird');
 
 const stubs = require('../../../helpers/stubs');
 const logger = require('../../../../lib/logger');
-const gambitCampaigns = require('../../../../lib/gambit-campaigns');
 const helpers = require('../../../../lib/helpers');
 const templatesConfig = require('../../../../config/lib/helpers/template');
 const Message = require('../../../../app/models/Message');
@@ -176,7 +175,7 @@ test('sendReply(): should call sendErrorResponse on failure', async (t) => {
 });
 
 test('continueTopic(): sendReplyWithTopicTemplate should be called', async (t) => {
-  sandbox.stub(gambitCampaigns, 'postCampaignActivity')
+  sandbox.stub(helpers.request, 'postCampaignActivityFromReq')
     .returns(Promise.resolve(gCampResponse.data));
   sandbox.stub(repliesHelper, 'sendReplyWithTopicTemplate')
     .returns(resolvedPromise);
@@ -186,7 +185,7 @@ test('continueTopic(): sendReplyWithTopicTemplate should be called', async (t) =
 });
 
 test('continueTopic(): helpers.sendErrorResponse should be called if postCampaignActivity fails', async (t) => {
-  sandbox.stub(gambitCampaigns, 'postCampaignActivity')
+  sandbox.stub(helpers.request, 'postCampaignActivityFromReq')
     .returns(Promise.reject(gCampResponse.data));
   sandbox.stub(repliesHelper, 'sendReplyWithTopicTemplate')
     .returns(resolvedPromise);
