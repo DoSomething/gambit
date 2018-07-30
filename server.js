@@ -20,7 +20,7 @@ const rivescript = require('./lib/rivescript');
  * Fetch additional Rivescript from Content API and load the Rivescript bot.
  */
 helpers.rivescript.fetchRivescript()
-  .then(data => rivescript.getBot(data))
+  .then(data => rivescript.createNewBot(data))
   // TODO: Retry fetching Rivescript on error.
   .catch(error => logger.error('fetchRivescript', { error }));
 
