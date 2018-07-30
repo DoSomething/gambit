@@ -44,9 +44,9 @@
 
 // Asks user to update their subscription status.
 + status
-- Hi it's Freddie at DoSomething! I send texts w updates on news & easy ways to take action. Want texts: A)Weekly B)Monthly C)I need more info D)Text STOP to stop {topic=askSubscriptionStatus}
+- Hi it's Freddie at DoSomething! I send texts w updates on news & easy ways to take action. Want texts: A)Weekly B)Monthly C)I need more info D)Text STOP to stop {topic=ask_subscription_status}
 
-> topic askSubscriptionStatus includes random
+> topic ask_subscription_status includes random
 
 + a
 - subscriptionStatusActive{topic=random}

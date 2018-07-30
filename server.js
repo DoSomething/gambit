@@ -19,15 +19,10 @@ const rivescript = require('./lib/rivescript');
 /**
  * Fetch additional Rivescript from Content API and load the Rivescript bot.
  */
-helpers.rivescript.fetchAndWriteRivescript()
-  .then((opts) => {
-    logger.info('fetchAndWriteRivescript success', { opts });
-    rivescript.getBot();
-  })
-  // TODO: If fetchAndWriteRivescript fails, we need to retry it, not carry on as normal, as all
-  // member messages will return errors because the Rivescript bot has not finished sorting replies.
-  // @see lib/rivescript
-  .catch(error => logger.error('fetchAndWriteRivescript', { error }));
+helpers.rivescript.fetchRivescript()
+  .then(data => rivescript.getBot(data))
+  // TODO: Retry fetching Rivescript on error.
+  .catch(error => logger.error('fetchRivescript', { error }));
 
 const db = mongoose.connection;
 db.on('error', () => {
