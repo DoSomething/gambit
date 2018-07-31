@@ -102,6 +102,21 @@ test('executeChangeTopicMacro should call setKeyword, fetch topic and return cha
   requestHelper.changeTopic.should.have.been.calledWith(t.context.req, topic);
 });
 
+// getRivescriptReply
+test('getRivescriptReply should call helpers.rivescript.getBotReply with req vars', async (t) => {
+  t.context.req.userId = userId;
+  t.context.req.conversation = conversation;
+  t.context.req.inboundMessageText = stubs.getRandomMessageText();
+  const botReply = { text: stubs.getRandomMessageText() };
+  sandbox.stub(helpers.rivescript, 'getBotReply')
+    .returns(Promise.resolve(botReply));
+
+  const result = await requestHelper.getRivescriptReply(t.context.req);
+  helpers.rivescript.getBotReply.should.have.been
+    .calledWith(userId, conversation.topic, t.context.req.inboundMessageText);
+  result.should.deep.equal(botReply);
+});
+
 // hasCampaign
 test('hasCampaign should return boolean of whether req.campign defined', (t) => {
   t.context.req.campaign = campaignFactory.getValidCampaign();
@@ -194,6 +209,26 @@ test('postCampaignActivityFromReq should post getCampaignActivityPayloadFromReq 
   const result = await requestHelper.postCampaignActivityFromReq();
   gambitCampaigns.postCampaignActivity.should.have.been.calledWith(postData);
   result.should.deep.equal(postResult);
+});
+
+// saidNo
+test('saidNo returns whether req.askYesNoResponse equals no', (t) => {
+  t.context.req.askYesNoResponse = 'yes';
+  t.falsy(requestHelper.saidNo(t.context.req));
+  t.context.req.askYesNoResponse = 'no';
+  t.truthy(requestHelper.saidNo(t.context.req));
+  t.context.req.askYesNoResponse = 'invalid';
+  t.falsy(requestHelper.saidNo(t.context.req));
+});
+
+// saidYes
+test('saidYes returns whether req.askYesNoResponse equals yes', (t) => {
+  t.context.req.askYesNoResponse = 'yes';
+  t.truthy(requestHelper.saidYes(t.context.req));
+  t.context.req.askYesNoResponse = 'no';
+  t.falsy(requestHelper.saidYes(t.context.req));
+  t.context.req.askYesNoResponse = 'invalid';
+  t.falsy(requestHelper.saidYes(t.context.req));
 });
 
 // setCampaign
