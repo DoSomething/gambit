@@ -20,6 +20,8 @@ const catchAllMacro = require('../../../../../../lib/middleware/messages/member/
 const sandbox = sinon.sandbox.create();
 
 test.beforeEach((t) => {
+  sandbox.stub(helpers.request, 'parseAskYesNoResponse')
+    .returns(Promise.resolve(underscore.noop));
   sandbox.stub(helpers.replies, 'confirmedSignup')
     .returns(underscore.noop);
   sandbox.stub(helpers.replies, 'declinedSignup')
@@ -88,8 +90,8 @@ test('catchAllMacro should call replies.confirmedSignup if request.isLastOutboun
     .returns(false);
   sandbox.stub(helpers.request, 'isLastOutboundAskSignup')
     .returns(true);
-  sandbox.stub(helpers.request, 'parseAskYesNoResponse')
-    .returns('yes');
+  sandbox.stub(helpers.request, 'saidYes')
+    .returns(true);
 
   // test
   await middleware(t.context.req, t.context.res, next);
@@ -97,7 +99,7 @@ test('catchAllMacro should call replies.confirmedSignup if request.isLastOutboun
   helpers.request.hasCampaign.should.have.been.calledWith(t.context.req);
   helpers.request.isClosedCampaign.should.have.been.calledWith(t.context.req);
   helpers.request.isLastOutboundAskSignup.should.have.been.calledWith(t.context.req);
-  helpers.request.parseAskYesNoResponse.should.have.been.calledWith(t.context.req);
+  helpers.request.saidYes.should.have.been.calledWith(t.context.req);
   next.should.not.have.been.called;
   helpers.replies.confirmedSignup.should.have.been.calledWith(t.context.req, t.context.res);
 });
@@ -111,8 +113,10 @@ test('catchAllMacro should call replies.declinedSignup if request.isLastOutbound
     .returns(false);
   sandbox.stub(helpers.request, 'isLastOutboundAskSignup')
     .returns(true);
-  sandbox.stub(helpers.request, 'parseAskYesNoResponse')
-    .returns('no');
+  sandbox.stub(helpers.request, 'saidYes')
+    .returns(false);
+  sandbox.stub(helpers.request, 'saidNo')
+    .returns(true);
 
   // test
   await middleware(t.context.req, t.context.res, next);
@@ -120,7 +124,8 @@ test('catchAllMacro should call replies.declinedSignup if request.isLastOutbound
   helpers.request.hasCampaign.should.have.been.calledWith(t.context.req);
   helpers.request.isClosedCampaign.should.have.been.calledWith(t.context.req);
   helpers.request.isLastOutboundAskSignup.should.have.been.calledWith(t.context.req);
-  helpers.request.parseAskYesNoResponse.should.have.been.calledWith(t.context.req);
+  helpers.request.saidYes.should.have.been.calledWith(t.context.req);
+  helpers.request.saidNo.should.have.been.calledWith(t.context.req);
   next.should.not.have.been.called;
   helpers.replies.declinedSignup.should.have.been.calledWith(t.context.req, t.context.res);
 });
@@ -134,8 +139,10 @@ test('catchAllMacro should call replies.invalidAskSignupResponse if request.isLa
     .returns(false);
   sandbox.stub(helpers.request, 'isLastOutboundAskSignup')
     .returns(true);
-  sandbox.stub(helpers.request, 'parseAskYesNoResponse')
-    .returns('invalid');
+  sandbox.stub(helpers.request, 'saidYes')
+    .returns(false);
+  sandbox.stub(helpers.request, 'saidNo')
+    .returns(false);
 
   // test
   await middleware(t.context.req, t.context.res, next);
@@ -143,7 +150,8 @@ test('catchAllMacro should call replies.invalidAskSignupResponse if request.isLa
   helpers.request.hasCampaign.should.have.been.calledWith(t.context.req);
   helpers.request.isClosedCampaign.should.have.been.calledWith(t.context.req);
   helpers.request.isLastOutboundAskSignup.should.have.been.calledWith(t.context.req);
-  helpers.request.parseAskYesNoResponse.should.have.been.calledWith(t.context.req);
+  helpers.request.saidYes.should.have.been.calledWith(t.context.req);
+  helpers.request.saidNo.should.have.been.calledWith(t.context.req);
   next.should.not.have.been.called;
   helpers.replies.invalidAskSignupResponse
     .should.have.been.calledWith(t.context.req, t.context.res);
@@ -161,8 +169,8 @@ test('catchAllMacro should call replies.confirmedContinue if request.isLastOutbo
     .returns(false);
   sandbox.stub(helpers.request, 'isLastOutboundAskContinue')
     .returns(true);
-  sandbox.stub(helpers.request, 'parseAskYesNoResponse')
-    .returns('yes');
+  sandbox.stub(helpers.request, 'saidYes')
+    .returns(true);
 
   // test
   await middleware(t.context.req, t.context.res, next);
@@ -171,7 +179,7 @@ test('catchAllMacro should call replies.confirmedContinue if request.isLastOutbo
   helpers.request.isClosedCampaign.should.have.been.calledWith(t.context.req);
   helpers.request.isLastOutboundAskSignup.should.have.been.calledWith(t.context.req);
   helpers.request.isLastOutboundAskContinue.should.have.been.calledWith(t.context.req);
-  helpers.request.parseAskYesNoResponse.should.have.been.calledWith(t.context.req);
+  helpers.request.saidYes.should.have.been.calledWith(t.context.req);
   next.should.not.have.been.called;
   helpers.replies.confirmedContinue.should.have.been.calledWith(t.context.req, t.context.res);
 });
@@ -187,8 +195,10 @@ test('catchAllMacro should call replies.declinedContinue if request.isLastOutbou
     .returns(false);
   sandbox.stub(helpers.request, 'isLastOutboundAskContinue')
     .returns(true);
-  sandbox.stub(helpers.request, 'parseAskYesNoResponse')
-    .returns('no');
+  sandbox.stub(helpers.request, 'saidYes')
+    .returns(false);
+  sandbox.stub(helpers.request, 'saidNo')
+    .returns(true);
 
   // test
   await middleware(t.context.req, t.context.res, next);
@@ -197,7 +207,7 @@ test('catchAllMacro should call replies.declinedContinue if request.isLastOutbou
   helpers.request.isClosedCampaign.should.have.been.calledWith(t.context.req);
   helpers.request.isLastOutboundAskSignup.should.have.been.calledWith(t.context.req);
   helpers.request.isLastOutboundAskContinue.should.have.been.calledWith(t.context.req);
-  helpers.request.parseAskYesNoResponse.should.have.been.calledWith(t.context.req);
+  helpers.request.saidNo.should.have.been.calledWith(t.context.req);
   next.should.not.have.been.called;
   helpers.replies.declinedContinue.should.have.been.calledWith(t.context.req, t.context.res);
 });
@@ -213,8 +223,10 @@ test('catchAllMacro should call replies.invalidAskContinueResponse if request.is
     .returns(false);
   sandbox.stub(helpers.request, 'isLastOutboundAskContinue')
     .returns(true);
-  sandbox.stub(helpers.request, 'parseAskYesNoResponse')
-    .returns('invalid');
+  sandbox.stub(helpers.request, 'saidYes')
+    .returns(false);
+  sandbox.stub(helpers.request, 'saidNo')
+    .returns(false);
 
   // test
   await middleware(t.context.req, t.context.res, next);
@@ -223,7 +235,8 @@ test('catchAllMacro should call replies.invalidAskContinueResponse if request.is
   helpers.request.isClosedCampaign.should.have.been.calledWith(t.context.req);
   helpers.request.isLastOutboundAskSignup.should.have.been.calledWith(t.context.req);
   helpers.request.isLastOutboundAskContinue.should.have.been.calledWith(t.context.req);
-  helpers.request.parseAskYesNoResponse.should.have.been.calledWith(t.context.req);
+  helpers.request.saidYes.should.have.been.calledWith(t.context.req);
+  helpers.request.saidNo.should.have.been.calledWith(t.context.req);
   next.should.not.have.been.called;
   helpers.replies.invalidAskContinueResponse
     .should.have.been.calledWith(t.context.req, t.context.res);
