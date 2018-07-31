@@ -131,48 +131,6 @@ test('isChangeTopicMacro should return false if req.macro is not changeTopic', (
   t.falsy(requestHelper.isChangeTopicMacro(t.context.req));
 });
 
-// isConfirmedTopicMacro
-test('isConfirmedTopicMacro should return true if req.macro is confirmedTopic', (t) => {
-  sandbox.stub(helpers.macro, 'isConfirmedTopic')
-    .returns(true);
-  t.context.req.macro = macro;
-  t.truthy(requestHelper.isConfirmedTopicMacro(t.context.req));
-});
-
-test('isConfirmedTopicMacro should return false if req.macro is undefined', (t) => {
-  sandbox.stub(helpers.macro, 'isConfirmedTopic')
-    .returns(true);
-  t.falsy(requestHelper.isConfirmedTopicMacro(t.context.req));
-});
-
-test('isConfirmedTopicMacro should return false if req.macro is not confirmedTopic', (t) => {
-  sandbox.stub(helpers.macro, 'isConfirmedTopic')
-    .returns(false);
-  t.context.req.macro = macro;
-  t.falsy(requestHelper.isConfirmedTopicMacro(t.context.req));
-});
-
-// isDeclinedTopicMacro
-test('isDeclinedTopicMacro should return true if req.macro is declinedTopic', (t) => {
-  sandbox.stub(helpers.macro, 'isDeclinedTopic')
-    .returns(true);
-  t.context.req.macro = macro;
-  t.truthy(requestHelper.isDeclinedTopicMacro(t.context.req));
-});
-
-test('isDeclinedTopicMacro should return false if req.macro is undefined', (t) => {
-  sandbox.stub(helpers.macro, 'isDeclinedTopic')
-    .returns(true);
-  t.falsy(requestHelper.isDeclinedTopicMacro(t.context.req));
-});
-
-test('isDeclinedTopicMacro should return false if req.macro is not declinedTopic', (t) => {
-  sandbox.stub(helpers.macro, 'isDeclinedTopic')
-    .returns(false);
-  t.context.req.macro = macro;
-  t.falsy(requestHelper.isDeclinedTopicMacro(t.context.req));
-});
-
 // isLastOutboundAskContinue
 test('isLastOutboundAskContinue should return whether if req.lastOutboundTemplate is an askContinue template', (t) => {
   sandbox.stub(helpers.template, 'isAskContinueTemplate')
