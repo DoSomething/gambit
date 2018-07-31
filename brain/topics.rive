@@ -1,7 +1,7 @@
 // topics.rive
 
 // Unsubcribed users should only receive replies to a select few triggers.
-> topic unsubscribed 
+> topic unsubscribed
 
 + info 
 - sendInfoMessage
@@ -28,17 +28,20 @@
  * (which is hardcoded as the 'random' topic in Rivescript).
  */
 
-// The menu topic defines triggers to catch yes and no responses when user was asked whether they'd like to start or continue their conversation for a given topic.
-> topic menu includes random
+// Parses message as a reply to a yes no question.
+> topic ask_yes_no
 
 + @yes [*]
-- confirmedTopic
+- yes
 
 + (heck|hell|hells|hm|uh|why) @yes [*]
-- confirmedTopic
+- yes
 
 + @no [*]
-- declinedTopic
+- no
+
++ [*]
+- invalid
 
 < topic
 
