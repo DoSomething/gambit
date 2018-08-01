@@ -11,18 +11,12 @@ require('./config/mongoose')(config.dbUri);
 
 const app = require('./app');
 const mongoose = require('mongoose');
-const logger = require('heroku-logger');
-
 const helpers = require('./lib/helpers');
-const rivescript = require('./lib/rivescript');
 
 /**
  * Fetch additional Rivescript from Content API and load the Rivescript bot.
  */
-helpers.rivescript.fetchRivescript()
-  .then(data => rivescript.createNewBot(data))
-  // TODO: Retry fetching Rivescript on error.
-  .catch(error => logger.error('fetchRivescript', { error }));
+helpers.rivescript.loadBot();
 
 const db = mongoose.connection;
 db.on('error', () => {
