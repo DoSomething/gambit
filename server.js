@@ -7,14 +7,33 @@ require('dotenv').config();
 require('newrelic');
 
 const config = require('./config');
-require('./config/mongoose')(config.dbUri);
-
-const app = require('./app');
-const mongoose = require('mongoose');
-const logger = require('heroku-logger');
-
+const logger = require('./lib/logger');
 const helpers = require('./lib/helpers');
 const rivescript = require('./lib/rivescript');
+const app = require('./app');
+
+// Start mongoose connection
+require('./config/mongoose')(config.dbUri);
+
+const mongoose = require('mongoose');
+/**
+ * For practical reasons, a Connection equals a Db.
+ * @see http://mongoosejs.com/docs/4.x/docs/api.html#connection_Connection
+ */
+const db = mongoose.connection;
+
+// Register connection error listener
+db.on('error', (error) => {
+  /**
+   * TODO: This is not good, we should kill the app! If we had clustering, or a process management
+   * setup, the child process would respawn and try to re-connect.
+   */
+  logger.error('DB connection error:', { error });
+});
+// Register connection open listener
+db.once('open', () => {
+  app.listen(config.port, () => logger.info(`Conversations API is running on port=${config.port}.`));
+});
 
 /**
  * Fetch additional Rivescript from Content API and load the Rivescript bot.
@@ -28,15 +47,3 @@ helpers.rivescript.fetchAndWriteRivescript()
   // member messages will return errors because the Rivescript bot has not finished sorting replies.
   // @see lib/rivescript
   .catch(error => logger.error('fetchAndWriteRivescript', { error }));
-
-const db = mongoose.connection;
-db.on('error', () => {
-  // TODO console.log has to be replaced by other development logging library: Winston?
-  // console.error.bind(console, 'connection error:');
-});
-db.once('open', () => {
-  app.listen(config.port, () => {
-    // TODO console.log has to be replaced by other development logging library: Winston?
-    // console.log(`Conversations API is running on port=${config.port}.`);
-  });
-});
