@@ -150,28 +150,6 @@ test('getRivescriptFromDefaultTopicTrigger returns replyRivescript if defaultTop
   result.should.equal(mockRivescript);
 });
 
-// getRivescriptFromDefaultTopicTriggers
-test('getRivescriptFromDefaultTopicTriggers returns joined getRivescriptFromDefaultTopicTrigger results', () => {
-  const allRivescripts = [mockRivescript, mockRivescript, mockRivescript].join(lineBreak);
-  sandbox.stub(rivescriptHelper, 'getRivescriptFromDefaultTopicTrigger')
-    .returns(mockRivescript);
-  sandbox.stub(rivescriptHelper, 'joinRivescriptLines')
-    .returns(allRivescripts);
-  const defaultTopicTriggers = [
-    defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger(),
-    defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger(),
-    defaultTopicTriggerFactory.getValidRedirectDefaultTopicTrigger(),
-  ];
-
-  const result = rivescriptHelper.getRivescriptFromDefaultTopicTriggers(defaultTopicTriggers);
-  defaultTopicTriggers.forEach((item) => {
-    rivescriptHelper.getRivescriptFromDefaultTopicTrigger.should.have.been.calledWith(item);
-  });
-  rivescriptHelper.joinRivescriptLines
-    .should.have.been.calledWith([mockRivescript, mockRivescript, mockRivescript]);
-  result.should.equal(allRivescripts);
-});
-
 // joinRivescriptLines
 test('joinRivescriptLines returns input array joined by the config line separator', () => {
   const lines = [mockRivescript, mockRivescript, mockRivescript];

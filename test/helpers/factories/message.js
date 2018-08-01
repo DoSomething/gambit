@@ -16,6 +16,7 @@ module.exports.getRawMessageData = function getRawMessageData(direction) {
     template: stubs.getTemplate(),
     broadcastId: stubs.getBroadcastId(),
     userId: stubs.getUserId(),
+    macro: stubs.getMacro(),
   };
 };
 

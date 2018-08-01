@@ -27,7 +27,7 @@ const campaignId = stubs.getCampaignId();
 const userId = stubs.getUserId();
 const platformUserId = stubs.getMobileNumber();
 const conversation = conversationFactory.getValidConversation();
-const macro = stubs.getRandomWord();
+const macro = stubs.getMacro();
 const message = conversation.lastOutboundMessage;
 const topic = topicFactory.getValidTopic();
 
@@ -198,18 +198,71 @@ test('isMenuMacro should return false if req.macro is not menu', (t) => {
 });
 
 // parseAskYesNoResponse
-test('parseAskYesNoResponse updates req.macro property if saidYes or saidNo macro ', async (t) => {
-  const rivescriptReplyText = 'dragon';
-  t.context.req.inboundMessageText = stubs.getRandomMessageText();
+test('parseAskYesNoResponse updates macro if parseAskYesNoResponse returns isSaidYesMacro', async (t) => {
+  const mockParseAskYesNoResponse = 'dragon';
+  sandbox.stub(message, 'updateMacro')
+    .returns(Promise.resolve());
   sandbox.stub(helpers.rivescript, 'parseAskYesNoResponse')
-    .returns(Promise.resolve(rivescriptReplyText));
+    .returns(Promise.resolve(mockParseAskYesNoResponse));
   sandbox.stub(helpers.macro, 'isSaidYes')
     .returns(true);
+  sandbox.stub(helpers.request, 'setMacro')
+    .returns(underscore.noop);
+  t.context.req.inboundMessage = message;
 
   await requestHelper.parseAskYesNoResponse(t.context.req);
   helpers.rivescript.parseAskYesNoResponse.should.have.been
-    .calledWith(t.context.req.inboundMessageText);
-  t.context.req.macro.should.equal(rivescriptReplyText);
+    .calledWith(message.text);
+  helpers.macro.isSaidYes.should.have.been.calledWith(mockParseAskYesNoResponse);
+  helpers.request.setMacro.should.have.been.calledWith(t.context.req, mockParseAskYesNoResponse);
+  message.updateMacro.should.have.been.calledWith(mockParseAskYesNoResponse);
+});
+
+test('parseAskYesNoResponse updates macro if parseAskYesNoResponse returns isSaidMacro', async (t) => {
+  const mockParseAskYesNoResponse = 'dragon';
+  sandbox.stub(message, 'updateMacro')
+    .returns(Promise.resolve());
+  sandbox.stub(helpers.rivescript, 'parseAskYesNoResponse')
+    .returns(Promise.resolve(mockParseAskYesNoResponse));
+  sandbox.stub(helpers.macro, 'isSaidYes')
+    .returns(false);
+  sandbox.stub(helpers.macro, 'isSaidNo')
+    .returns(true);
+  sandbox.stub(helpers.request, 'setMacro')
+    .returns(underscore.noop);
+  t.context.req.inboundMessage = message;
+
+  await requestHelper.parseAskYesNoResponse(t.context.req);
+  helpers.rivescript.parseAskYesNoResponse.should.have.been
+    .calledWith(message.text);
+  helpers.macro.isSaidYes.should.have.been.calledWith(mockParseAskYesNoResponse);
+  helpers.macro.isSaidNo.should.have.been.calledWith(mockParseAskYesNoResponse);
+  helpers.request.setMacro.should.have.been.calledWith(t.context.req, mockParseAskYesNoResponse);
+  message.updateMacro.should.have.been.calledWith(mockParseAskYesNoResponse);
+});
+
+
+test('parseAskYesNoResponse does not update macro if parseAskYesNoResponse does not return saidYes or saidNo', async (t) => {
+  const mockParseAskYesNoResponse = 'dragon';
+  sandbox.stub(message, 'updateMacro')
+    .returns(Promise.resolve());
+  sandbox.stub(helpers.rivescript, 'parseAskYesNoResponse')
+    .returns(Promise.resolve(mockParseAskYesNoResponse));
+  sandbox.stub(helpers.macro, 'isSaidYes')
+    .returns(false);
+  sandbox.stub(helpers.macro, 'isSaidNo')
+    .returns(false);
+  sandbox.stub(helpers.request, 'setMacro')
+    .returns(underscore.noop);
+  t.context.req.inboundMessage = message;
+
+  await requestHelper.parseAskYesNoResponse(t.context.req);
+  helpers.rivescript.parseAskYesNoResponse.should.have.been
+    .calledWith(message.text);
+  helpers.macro.isSaidYes.should.have.been.calledWith(mockParseAskYesNoResponse);
+  helpers.macro.isSaidNo.should.have.been.calledWith(mockParseAskYesNoResponse);
+  helpers.request.setMacro.should.not.have.been.called;
+  message.updateMacro.should.not.have.been.called;
 });
 
 // postCampaignActivityFromReq
