@@ -12,11 +12,11 @@ require('./config/mongoose')(config.dbUri);
 const app = require('./app');
 const mongoose = require('mongoose');
 const helpers = require('./lib/helpers');
+const logger = require('./lib/logger');
 
-/**
- * Fetch additional Rivescript from Content API and load the Rivescript bot.
- */
-helpers.rivescript.loadBot();
+helpers.rivescript.loadBot()
+  // TODO: Retry loading Bot if an error occurred.
+  .catch(error => logger.error('loadBot error', { error }));
 
 const db = mongoose.connection;
 db.on('error', () => {
