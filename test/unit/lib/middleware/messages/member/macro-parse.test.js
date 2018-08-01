@@ -43,26 +43,6 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-test('parseTopicMacro sets rivescript topic and sends reply if request is not a macro', async (t) => {
-  const next = sinon.stub();
-  const middleware = parseTopicMacro();
-  sandbox.stub(helpers.request, 'isChangeTopicMacro')
-    .returns(true);
-  sandbox.stub(t.context.req.conversation, 'setTopic')
-    .returns(Promise.resolve(true));
-  t.context.req.macro = null;
-  const topic = stubs.getRandomWord();
-  t.context.req.rivescriptReplyTopic = topic;
-
-  // test
-  await middleware(t.context.req, t.context.res, next);
-  helpers.request.isChangeTopicMacro.should.not.have.been.called;
-  next.should.not.have.been.called;
-  t.context.req.conversation.setTopic.should.have.been.calledWith(topic);
-  helpers.replies.rivescriptReply.should.have.been.calledWith(t.context.req, t.context.res);
-  helpers.sendErrorResponse.should.not.have.been.called;
-});
-
 test('parseTopicMacro executes changeTopicMacro if request isChangeTopicMacro', async (t) => {
   const next = sinon.stub();
   const middleware = parseTopicMacro();

@@ -17,9 +17,10 @@ const createUserIfNotFoundMiddleware = require('../../../lib/middleware/messages
 const loadInboundMessageMiddleware = require('../../../lib/middleware/messages/member/message-inbound-load');
 const createInboundMessageMiddleware = require('../../../lib/middleware/messages/member/message-inbound-create');
 const loadOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-load');
-const parseMacroMiddleware = require('../../../lib/middleware/messages/member/macro-parse');
 const badWordsMiddleware = require('../../../lib/middleware/messages/member/bad-words');
 const getRivescriptReplyMiddleware = require('../../../lib/middleware/messages/member/rivescript-reply-get');
+const parseRivescriptReplyMiddleware = require('../../../lib/middleware/messages/member/rivescript-reply-parse');
+const parseMacroMiddleware = require('../../../lib/middleware/messages/member/macro-parse');
 const updateUserMiddleware = require('../../../lib/middleware/messages/member/user-update');
 const supportRequestedMiddleware = require('../../../lib/middleware/messages/member/support-requested');
 const forwardSupportMessageMiddleware = require('../../../lib/middleware/messages/member/support-message');
@@ -51,6 +52,8 @@ router.use(loadOutboundMessageMiddleware(loadOutboundMessageConfig));
 
 // Updates Last Messaged At, Subscription Status, Paused.
 router.use(updateUserMiddleware());
+
+router.use(parseRivescriptReplyMiddleware());
 
 router.use(parseMacroMiddleware());
 
