@@ -15,8 +15,6 @@ const campaignFactory = require('../../../helpers/factories/campaign');
 const conversationFactory = require('../../../helpers/factories/conversation');
 const topicFactory = require('../../../helpers/factories/topic');
 
-const config = require('../../../../config/lib/helpers/request');
-
 chai.should();
 chai.use(sinonChai);
 
@@ -32,7 +30,6 @@ const conversation = conversationFactory.getValidConversation();
 const macro = stubs.getRandomWord();
 const message = conversation.lastOutboundMessage;
 const topic = topicFactory.getValidTopic();
-const askYesNoValues = config.askYesNo.values;
 
 test.beforeEach((t) => {
   sandbox.stub(helpers.analytics, 'addCustomAttributes')
@@ -201,15 +198,18 @@ test('isMenuMacro should return false if req.macro is not menu', (t) => {
 });
 
 // parseAskYesNoResponse
-test('parseAskYesNoResponse injects a askYesNoResponse property into req', async (t) => {
-  const rivescriptReplyText = stubs.getRandomWord();
-  sandbox.stub(requestHelper, 'getRivescriptReply')
-    .returns(Promise.resolve({ text: rivescriptReplyText }));
+test('parseAskYesNoResponse updates req.macro property if saidYes or saidNo macro ', async (t) => {
+  const rivescriptReplyText = 'dragon';
+  t.context.req.inboundMessageText = stubs.getRandomMessageText();
+  sandbox.stub(helpers.rivescript, 'parseAskYesNoResponse')
+    .returns(Promise.resolve(rivescriptReplyText));
+  sandbox.stub(helpers.macro, 'isSaidYes')
+    .returns(true);
 
   await requestHelper.parseAskYesNoResponse(t.context.req);
-  requestHelper.getRivescriptReply.should.have.been
-    .calledWith(t.context.req, config.askYesNo.topicId);
-  t.context.req.askYesNoResponse.should.equal(rivescriptReplyText);
+  helpers.rivescript.parseAskYesNoResponse.should.have.been
+    .calledWith(t.context.req.inboundMessageText);
+  t.context.req.macro.should.equal(rivescriptReplyText);
 });
 
 // postCampaignActivityFromReq
@@ -226,24 +226,24 @@ test('postCampaignActivityFromReq should post getCampaignActivityPayloadFromReq 
   result.should.deep.equal(postResult);
 });
 
-// saidNo
-test('saidNo returns whether req.askYesNoResponse equals no', (t) => {
-  t.context.req.askYesNoResponse = askYesNoValues.yes;
-  t.falsy(requestHelper.saidNo(t.context.req));
-  t.context.req.askYesNoResponse = askYesNoValues.no;
-  t.truthy(requestHelper.saidNo(t.context.req));
-  t.context.req.askYesNoResponse = askYesNoValues.invalid;
-  t.falsy(requestHelper.saidNo(t.context.req));
+// isSaidNoMacro
+test('isSaidNoMacro returns whether req.askYesNoResponse equals no', (t) => {
+  t.context.req.macro = helpers.macro.macros.saidYes();
+  t.falsy(requestHelper.isSaidNoMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.saidNo();
+  t.truthy(requestHelper.isSaidNoMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.catchAll();
+  t.falsy(requestHelper.isSaidNoMacro(t.context.req));
 });
 
-// saidYes
-test('saidYes returns whether req.askYesNoResponse equals yes', (t) => {
-  t.context.req.askYesNoResponse = askYesNoValues.yes;
-  t.truthy(requestHelper.saidYes(t.context.req));
-  t.context.req.askYesNoResponse = askYesNoValues.no;
-  t.falsy(requestHelper.saidYes(t.context.req));
-  t.context.req.askYesNoResponse = askYesNoValues.invalid;
-  t.falsy(requestHelper.saidYes(t.context.req));
+// isSaidYesMacro
+test('isSaidYesMacro returns whether req.askYesNoResponse equals yes', (t) => {
+  t.context.req.macro = helpers.macro.macros.saidYes();
+  t.truthy(requestHelper.isSaidYesMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.saidNo();
+  t.falsy(requestHelper.isSaidYesMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.catchAll();
+  t.falsy(requestHelper.isSaidYesMacro(t.context.req));
 });
 
 // setCampaign

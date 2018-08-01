@@ -23,27 +23,29 @@
 
 < topic
 
-/**
- * All other topics should include 'random' to catch all triggers defined in the default topic
- * (which is hardcoded as the 'random' topic in Rivescript).
- */
-
-// Parses message as a reply to a yes no question.
+// Helper topic for parsing responses to outbound yes no questions.
 > topic ask_yes_no
 
 + @yes [*]
-- yes
+- saidYes
 
+// TODO: Should we just replace this with [*] yes [*]?
 + (heck|hell|hells|hm|uh|why) @yes [*]
-- yes
+- saidYes
 
+// And add a leading wildcard here too? If so, maybe we should check for any signs of no before yes.
 + @no [*]
-- no
+- saidNo
 
 + [*]
 - invalid
 
 < topic
+
+/**
+ * All other topics should include 'random' to catch all triggers defined in the default topic
+ * (which is hardcoded as the 'random' topic in Rivescript).
+ */
 
 // Asks user to update their subscription status.
 + status

@@ -6,6 +6,8 @@ module.exports = {
     changeTopic: 'changeTopic',
     menu: 'menu',
     noReply: 'noReply',
+    saidNo: 'saidNo',
+    saidYes: 'saidYes',
     sendCrisisMessage: 'sendCrisisMessage',
     sendInfoMessage: 'sendInfoMessage',
     subscriptionStatusActive: 'subscriptionStatusActive',

@@ -75,6 +75,16 @@ test('macro.macros.x() should be equal to macro.macroNameValues.x', () => {
   });
 });
 
+test('isSaidYes should return boolean', (t) => {
+  t.true(macroHelper.isSaidYes(macros.saidYes));
+  t.falsy(macroHelper.isSaidYes(undefinedMacroName));
+});
+
+test('isSaidNo should return boolean', (t) => {
+  t.true(macroHelper.isSaidNo(macros.saidNo));
+  t.falsy(macroHelper.isSaidNo(undefinedMacroName));
+});
+
 test('isSendCrisisMessage should return boolean', (t) => {
   t.true(macroHelper.isSendCrisisMessage(macros.sendCrisisMessage));
   t.falsy(macroHelper.isSendCrisisMessage(undefinedMacroName));
