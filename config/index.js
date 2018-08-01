@@ -7,6 +7,8 @@ const config = {
   dbUri: process.env.MONGODB_URI || 'mongodb://localhost/gambit-conversations',
   port: process.env.PORT || 5100,
   env: process.env.NODE_ENV || 'development',
+  // overridden in production to true
+  forceHttps: false,
 };
 
 // Require env-dependent configs
