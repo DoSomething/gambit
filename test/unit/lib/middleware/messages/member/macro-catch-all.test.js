@@ -20,8 +20,6 @@ const catchAllMacro = require('../../../../../../lib/middleware/messages/member/
 const sandbox = sinon.sandbox.create();
 
 test.beforeEach((t) => {
-  sandbox.stub(helpers.request, 'parseAskYesNoResponse')
-    .returns(Promise.resolve(underscore.noop));
   sandbox.stub(helpers.replies, 'confirmedSignup')
     .returns(underscore.noop);
   sandbox.stub(helpers.replies, 'declinedSignup')
@@ -43,6 +41,22 @@ test.beforeEach((t) => {
 test.afterEach((t) => {
   sandbox.restore();
   t.context = {};
+});
+
+test('catchAllMacro should call replies.autoReply if request.isAutoReplyTopic', async (t) => {
+  const next = sinon.stub();
+  const middleware = catchAllMacro();
+  sandbox.stub(helpers.request, 'isAutoReplyTopic')
+    .returns(true);
+  sandbox.stub(helpers.replies, 'autoReply')
+    .returns(underscore.noop);
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+
+  helpers.request.isAutoReplyTopic.should.have.been.calledWith(t.context.req);
+  next.should.not.have.been.called;
+  helpers.replies.autoReply.should.have.been.calledWith(t.context.req, t.context.res);
 });
 
 test('catchAllMacro should call replies.noCampaign if not request.hasCampaign', async (t) => {
@@ -80,6 +94,29 @@ test('catchAllMacro should call replies.campaignClosed if request.isClosedCampai
   helpers.replies.campaignClosed.should.have.been.calledWith(t.context.req, t.context.res);
 });
 
+test('catchAllMacro should sendErrorResponse if parseAskYesNoResponse fails', async (t) => {
+  const next = sinon.stub();
+  const middleware = catchAllMacro();
+  const mockError = { message: 'o no' };
+  sandbox.stub(helpers.request, 'hasCampaign')
+    .returns(true);
+  sandbox.stub(helpers.request, 'isClosedCampaign')
+    .returns(false);
+  sandbox.stub(helpers.request, 'isLastOutboundAskSignup')
+    .returns(true);
+  sandbox.stub(helpers.request, 'parseAskYesNoResponse')
+    .returns(Promise.reject(mockError));
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+
+  helpers.request.hasCampaign.should.have.been.calledWith(t.context.req);
+  helpers.request.isClosedCampaign.should.have.been.calledWith(t.context.req);
+  helpers.request.isLastOutboundAskSignup.should.have.been.calledWith(t.context.req);
+  next.should.not.have.been.called;
+  helpers.sendErrorResponse.should.have.been.calledWith(t.context.res, mockError);
+});
+
 // Ask Signup
 test('catchAllMacro should call replies.confirmedSignup if request.isLastOutboundAskSignup and user said yes', async (t) => {
   const next = sinon.stub();
@@ -92,6 +129,8 @@ test('catchAllMacro should call replies.confirmedSignup if request.isLastOutboun
     .returns(true);
   sandbox.stub(helpers.request, 'isSaidYesMacro')
     .returns(true);
+  sandbox.stub(helpers.request, 'parseAskYesNoResponse')
+    .returns(Promise.resolve());
 
   // test
   await middleware(t.context.req, t.context.res, next);
@@ -117,6 +156,8 @@ test('catchAllMacro should call replies.declinedSignup if request.isLastOutbound
     .returns(false);
   sandbox.stub(helpers.request, 'isSaidNoMacro')
     .returns(true);
+  sandbox.stub(helpers.request, 'parseAskYesNoResponse')
+    .returns(Promise.resolve());
 
   // test
   await middleware(t.context.req, t.context.res, next);
@@ -143,6 +184,8 @@ test('catchAllMacro should call replies.invalidAskSignupResponse if request.isLa
     .returns(false);
   sandbox.stub(helpers.request, 'isSaidNoMacro')
     .returns(false);
+  sandbox.stub(helpers.request, 'parseAskYesNoResponse')
+    .returns(Promise.resolve());
 
   // test
   await middleware(t.context.req, t.context.res, next);
@@ -171,6 +214,8 @@ test('catchAllMacro should call replies.confirmedContinue if request.isLastOutbo
     .returns(true);
   sandbox.stub(helpers.request, 'isSaidYesMacro')
     .returns(true);
+  sandbox.stub(helpers.request, 'parseAskYesNoResponse')
+    .returns(Promise.resolve());
 
   // test
   await middleware(t.context.req, t.context.res, next);
@@ -199,6 +244,8 @@ test('catchAllMacro should call replies.declinedContinue if request.isLastOutbou
     .returns(false);
   sandbox.stub(helpers.request, 'isSaidNoMacro')
     .returns(true);
+  sandbox.stub(helpers.request, 'parseAskYesNoResponse')
+    .returns(Promise.resolve());
 
   // test
   await middleware(t.context.req, t.context.res, next);
@@ -227,6 +274,8 @@ test('catchAllMacro should call replies.invalidAskContinueResponse if request.is
     .returns(false);
   sandbox.stub(helpers.request, 'isSaidNoMacro')
     .returns(false);
+  sandbox.stub(helpers.request, 'parseAskYesNoResponse')
+    .returns(Promise.resolve());
 
   // test
   await middleware(t.context.req, t.context.res, next);
@@ -240,6 +289,34 @@ test('catchAllMacro should call replies.invalidAskContinueResponse if request.is
   next.should.not.have.been.called;
   helpers.replies.invalidAskContinueResponse
     .should.have.been.calledWith(t.context.req, t.context.res);
+});
+
+test('catchAllMacro should call replies.continueTopic if request has active campaign, is not an ask template, and last outbound template is not a topic template', async (t) => {
+  const next = sinon.stub();
+  const middleware = catchAllMacro();
+  sandbox.stub(helpers.request, 'hasCampaign')
+    .returns(true);
+  sandbox.stub(helpers.request, 'isClosedCampaign')
+    .returns(false);
+  sandbox.stub(helpers.request, 'isLastOutboundAskContinue')
+    .returns(false);
+  sandbox.stub(helpers.request, 'isLastOutboundAskSignup')
+    .returns(false);
+  sandbox.stub(helpers.request, 'isLastOutboundTopicTemplate')
+    .returns(true);
+  sandbox.stub(helpers.replies, 'continueTopic')
+    .returns(underscore.noop);
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+
+  helpers.request.hasCampaign.should.have.been.calledWith(t.context.req);
+  helpers.request.isClosedCampaign.should.have.been.calledWith(t.context.req);
+  helpers.request.isLastOutboundAskContinue.should.have.been.calledWith(t.context.req);
+  helpers.request.isLastOutboundAskSignup.should.have.been.calledWith(t.context.req);
+  helpers.request.isLastOutboundTopicTemplate.should.have.been.calledWith(t.context.req);
+  next.should.not.have.been.called;
+  helpers.replies.continueTopic.should.have.been.calledWith(t.context.req, t.context.res);
 });
 
 test('catchAllMacro should call replies.continueTopic if request has active campaign, is not an ask template, and last outbound template is not a topic template', async (t) => {
