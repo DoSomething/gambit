@@ -76,7 +76,7 @@ router.use(forwardSupportMessageMiddleware());
 // Otherwise, fetch the current conversation topic.
 router.use(getTopicMiddleware());
 
-// Now that that the topic templates are loaded, check if this is asupport request, as topics may
+// Now that that the topic templates are loaded, check if this is a support request, as topics may
 // override the supportRequested template.
 // TODO: Move this into catchall.
 router.use(supportRequestedMiddleware());

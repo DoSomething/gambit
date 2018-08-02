@@ -89,3 +89,28 @@ test('replyMacro sets conversation topic if macro has reply and request is a top
   mockConversation.setTopic.should.have.been.calledWith(mockTopic);
   next.should.not.have.been.called;
 });
+
+test('replyMacro calls sendErrorResponse if setTopic fails', async (t) => {
+  const next = sinon.stub();
+  const middleware = replyMacro();
+  t.context.req.macro = mockMacro;
+  const mockTopic = stubs.getRandomWord();
+  t.context.req.rivescriptReplyTopic = mockTopic;
+  sandbox.stub(helpers.macro, 'getReply')
+    .returns(mockMacro);
+  sandbox.stub(helpers.request, 'isTopicChange')
+    .returns(true);
+  sandbox.stub(helpers.replies, mockMacro)
+    .returns(underscore.noop);
+  const mockError = { message: 'Epic fail' };
+  sandbox.stub(mockConversation, 'setTopic')
+    .returns(Promise.reject(mockError));
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  helpers.macro.getReply.should.have.been.calledWith(t.context.req.macro);
+  helpers.replies[mockMacro].should.not.have.been.called;
+  mockConversation.setTopic.should.have.been.calledWith(mockTopic);
+  next.should.not.have.been.called;
+  helpers.sendErrorResponse.should.have.been.calledWith(t.context.res, mockError);
+});
