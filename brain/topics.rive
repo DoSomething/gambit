@@ -1,7 +1,7 @@
 // topics.rive
 
 // Unsubcribed users should only receive replies to a select few triggers.
-> topic unsubscribed 
+> topic unsubscribed
 
 + info 
 - sendInfoMessage
@@ -23,30 +23,35 @@
 
 < topic
 
+// Helper topic for parsing responses to outbound yes no questions.
+> topic ask_yes_no
+
++ @yes [*]
+- saidYes
+
+// TODO: Should we just replace this with [*] yes [*]?
++ (heck|hell|hells|hm|uh|why) @yes [*]
+- saidYes
+
+// And add a leading wildcard here too? If so, maybe we should check for any signs of no before yes.
++ @no [*]
+- saidNo
+
++ [*]
+- invalid
+
+< topic
+
 /**
  * All other topics should include 'random' to catch all triggers defined in the default topic
  * (which is hardcoded as the 'random' topic in Rivescript).
  */
 
-// The menu topic defines triggers to catch yes and no responses when user was asked whether they'd like to start or continue their conversation for a given topic.
-> topic menu includes random
-
-+ @yes [*]
-- confirmedTopic
-
-+ (heck|hell|hells|hm|uh|why) @yes [*]
-- confirmedTopic
-
-+ @no [*]
-- declinedTopic
-
-< topic
-
 // Asks user to update their subscription status.
 + status
-- Hi it's Freddie at DoSomething! I send texts w updates on news & easy ways to take action. Want texts: A)Weekly B)Monthly C)I need more info D)Text STOP to stop {topic=askSubscriptionStatus}
+- Hi it's Freddie at DoSomething! I send texts w updates on news & easy ways to take action. Want texts: A)Weekly B)Monthly C)I need more info D)Text STOP to stop {topic=ask_subscription_status}
 
-> topic askSubscriptionStatus includes random
+> topic ask_subscription_status includes random
 
 + a
 - subscriptionStatusActive{topic=random}

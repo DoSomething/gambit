@@ -50,6 +50,14 @@ messageSchema.index({ createdAt: -1, broadcastId: 1, direction: 1, macro: 1 });
 messageSchema.index({ broadcastId: -1, direction: 1, macro: 1 });
 
 /**
+ * Instance Methods
+ */
+messageSchema.methods.updateMacro = function (macroName) {
+  this.macro = macroName;
+  return this.save();
+};
+
+/**
  * Static Methods
  */
 

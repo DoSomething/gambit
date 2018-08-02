@@ -4,10 +4,10 @@ module.exports = {
   macros: {
     catchAll: 'catchAll',
     changeTopic: 'changeTopic',
-    confirmedTopic: 'confirmedTopic',
-    declinedTopic: 'declinedTopic',
     menu: 'menu',
     noReply: 'noReply',
+    saidNo: 'saidNo',
+    saidYes: 'saidYes',
     sendCrisisMessage: 'sendCrisisMessage',
     sendInfoMessage: 'sendInfoMessage',
     subscriptionStatusActive: 'subscriptionStatusActive',
