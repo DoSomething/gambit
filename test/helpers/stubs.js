@@ -24,6 +24,16 @@ function getContentfulId() {
   return '72mon4jUeQOaokEIkQMaoa';
 }
 
+/**
+ * @return {String}
+ */
+function getMacro() {
+  return 'catchAll';
+}
+
+/**
+ * @return {String}
+ */
 function getTopicId() {
   return module.exports.getContentfulId();
 }
@@ -148,6 +158,7 @@ module.exports = {
   getKeyword: function getKeyword() {
     return chance.word();
   },
+  getMacro,
   getMobileNumber: function getMobileNumber(valid) {
     /**
      * If the `valid` flag is set to a truthy value. We return a "valid" E164 formatted, US number.

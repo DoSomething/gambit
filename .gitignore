@@ -18,6 +18,3 @@ node_modules
 #code coverage directories
 .nyc_output
 coverage
-
-# Rivescript loaded externally
-brain/contentApi.rive

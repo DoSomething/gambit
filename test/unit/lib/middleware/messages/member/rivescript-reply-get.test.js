@@ -10,7 +10,6 @@ const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 
 const helpers = require('../../../../../../lib/helpers');
-const rivescript = require('../../../../../../lib/rivescript');
 const conversationFactory = require('../../../../../helpers/factories/conversation');
 
 const macroHelper = helpers.macro;
@@ -53,12 +52,12 @@ test('getRivescriptReply should inject vars into req', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = getRivescriptReply();
-  sandbox.stub(rivescript, 'getReply')
+  sandbox.stub(helpers.request, 'getRivescriptReply')
     .returns(Promise.resolve(mockRivescriptReply));
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  rivescript.getReply.should.have.been.called;
+  helpers.request.getRivescriptReply.should.have.been.calledWith(t.context.req);
   t.context.req.rivescriptReplyText.should.equal(mockText);
   t.context.req.rivescriptReplyTopic.should.equal(mockTopic);
   t.context.req.rivescriptMatch.should.equal(mockMatch);
@@ -70,11 +69,12 @@ test('getRivescriptReply should call sendErrorResponse if rivescript.getReply fa
   // setup
   const next = sinon.stub();
   const middleware = getRivescriptReply();
-  sandbox.stub(rivescript, 'getReply')
+  sandbox.stub(helpers.request, 'getRivescriptReply')
     .returns(Promise.reject(new Error()));
 
   // test
   await middleware(t.context.req, t.context.res, next);
+  helpers.request.getRivescriptReply.should.have.been.calledWith(t.context.req);
   next.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
 });
@@ -83,7 +83,7 @@ test('getRivescriptReply should set req.macro if rivescript.getReplyText is a ma
   // setup
   const next = sinon.stub();
   const middleware = getRivescriptReply();
-  sandbox.stub(rivescript, 'getReply')
+  sandbox.stub(helpers.request, 'getRivescriptReply')
     .returns(Promise.resolve(mockRivescriptReply));
   sandbox.stub(macroHelper, 'isMacro')
     .returns(mockText);
@@ -99,7 +99,7 @@ test('getRivescriptReply should not set req.macro if rivescript.getReplyText is 
   // setup
   const next = sinon.stub();
   const middleware = getRivescriptReply();
-  sandbox.stub(rivescript, 'getReply')
+  sandbox.stub(helpers.request, 'getRivescriptReply')
     .returns(Promise.resolve(mockRivescriptReply));
   sandbox.stub(macroHelper, 'isMacro')
     .returns(null);
@@ -115,7 +115,7 @@ test('getRivescriptReply should not set req.macro if helpers.macro.isMacro fails
   // setup
   const next = sinon.stub();
   const middleware = getRivescriptReply();
-  sandbox.stub(rivescript, 'getReply')
+  sandbox.stub(helpers.request, 'getRivescriptReply')
     .returns(Promise.resolve(mockRivescriptReply));
   sandbox.stub(macroHelper, 'isMacro').throws();
 
