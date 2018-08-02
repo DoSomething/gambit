@@ -5,9 +5,10 @@ const test = require('ava');
 const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
-
+const underscore = require('underscore');
 
 const gambitCampaigns = require('../../../../lib/gambit-campaigns');
+const rivescriptApi = require('../../../../lib/rivescript');
 const helpers = require('../../../../lib/helpers');
 const config = require('../../../../config/lib/helpers/rivescript');
 const stubs = require('../../../helpers/stubs');
@@ -150,33 +151,30 @@ test('getRivescriptFromDefaultTopicTrigger returns replyRivescript if defaultTop
   result.should.equal(mockRivescript);
 });
 
-// getRivescriptFromDefaultTopicTriggers
-test('getRivescriptFromDefaultTopicTriggers returns joined getRivescriptFromDefaultTopicTrigger results', () => {
-  const allRivescripts = [mockRivescript, mockRivescript, mockRivescript].join(lineBreak);
-  sandbox.stub(rivescriptHelper, 'getRivescriptFromDefaultTopicTrigger')
-    .returns(mockRivescript);
-  sandbox.stub(rivescriptHelper, 'joinRivescriptLines')
-    .returns(allRivescripts);
-  const defaultTopicTriggers = [
-    defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger(),
-    defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger(),
-    defaultTopicTriggerFactory.getValidRedirectDefaultTopicTrigger(),
-  ];
-
-  const result = rivescriptHelper.getRivescriptFromDefaultTopicTriggers(defaultTopicTriggers);
-  defaultTopicTriggers.forEach((item) => {
-    rivescriptHelper.getRivescriptFromDefaultTopicTrigger.should.have.been.calledWith(item);
-  });
-  rivescriptHelper.joinRivescriptLines
-    .should.have.been.calledWith([mockRivescript, mockRivescript, mockRivescript]);
-  result.should.equal(allRivescripts);
-});
-
 // joinRivescriptLines
 test('joinRivescriptLines returns input array joined by the config line separator', () => {
   const lines = [mockRivescript, mockRivescript, mockRivescript];
   const result = rivescriptHelper.joinRivescriptLines(lines);
   result.should.equal(lines.join(lineBreak));
+});
+
+// loadBot
+test('loadBot calls fetchDefaultTopicTriggers and creates a new Rivescript bot with result', async () => {
+  const fetchDefaultTopicTriggers = [replyTrigger, redirectTrigger, replyTrigger];
+  sandbox.stub(rivescriptHelper, 'fetchDefaultTopicTriggers')
+    .returns(Promise.resolve(fetchDefaultTopicTriggers));
+  sandbox.stub(rivescriptHelper, 'getRivescriptFromDefaultTopicTrigger')
+    .returns(mockRivescript);
+  sandbox.stub(rivescriptApi, 'createNewBot')
+    .returns(underscore.noop);
+
+  await rivescriptHelper.loadBot();
+  rivescriptHelper.fetchDefaultTopicTriggers.should.have.been.called;
+  fetchDefaultTopicTriggers.forEach((item) => {
+    rivescriptHelper.getRivescriptFromDefaultTopicTrigger.should.have.been.calledWith(item);
+  });
+  rivescriptApi.createNewBot.should.have.been
+    .calledWith([mockRivescript, mockRivescript, mockRivescript]);
 });
 
 // parseDefaultTopicTrigger

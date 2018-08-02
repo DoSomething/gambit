@@ -75,14 +75,14 @@ test('macro.macros.x() should be equal to macro.macroNameValues.x', () => {
   });
 });
 
-test('isConfirmedTopic should return boolean', (t) => {
-  t.true(macroHelper.isConfirmedTopic(macros.confirmedTopic));
-  t.falsy(macroHelper.isConfirmedTopic(undefinedMacroName));
+test('isSaidYes should return boolean', (t) => {
+  t.true(macroHelper.isSaidYes(macros.saidYes));
+  t.falsy(macroHelper.isSaidYes(undefinedMacroName));
 });
 
-test('isDeclinedTopic should return boolean', (t) => {
-  t.true(macroHelper.isDeclinedTopic(macros.declinedTopic));
-  t.falsy(macroHelper.isDeclinedTopic(undefinedMacroName));
+test('isSaidNo should return boolean', (t) => {
+  t.true(macroHelper.isSaidNo(macros.saidNo));
+  t.falsy(macroHelper.isSaidNo(undefinedMacroName));
 });
 
 test('isSendCrisisMessage should return boolean', (t) => {
