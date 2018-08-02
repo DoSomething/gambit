@@ -7,25 +7,33 @@ require('dotenv').config();
 require('newrelic');
 
 const config = require('./config');
+const logger = require('./lib/logger');
+const helpers = require('./lib/helpers');
+const app = require('./app');
+
+// Start mongoose connection
 require('./config/mongoose')(config.dbUri);
 
-const app = require('./app');
 const mongoose = require('mongoose');
-const helpers = require('./lib/helpers');
-const logger = require('./lib/logger');
+/**
+ * For practical reasons, a Connection equals a Db.
+ * @see http://mongoosejs.com/docs/4.x/docs/api.html#connection_Connection
+ */
+const db = mongoose.connection;
+
+// Register connection error listener
+db.on('error', (error) => {
+  /**
+   * TODO: This is not good, we should kill the app! If we had clustering, or a process management
+   * setup, the child process would respawn and try to re-connect.
+   */
+  logger.error('DB connection error:', { error });
+});
+// Register connection open listener
+db.once('open', () => {
+  app.listen(config.port, () => logger.info(`Conversations API is running on port=${config.port}.`));
+});
 
 helpers.rivescript.loadBot()
   // TODO: Retry loading Bot if an error occurred.
   .catch(error => logger.error('loadBot error', { error }));
-
-const db = mongoose.connection;
-db.on('error', () => {
-  // TODO console.log has to be replaced by other development logging library: Winston?
-  // console.error.bind(console, 'connection error:');
-});
-db.once('open', () => {
-  app.listen(config.port, () => {
-    // TODO console.log has to be replaced by other development logging library: Winston?
-    // console.log(`Conversations API is running on port=${config.port}.`);
-  });
-});
