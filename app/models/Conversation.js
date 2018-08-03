@@ -103,25 +103,15 @@ conversationSchema.statics.findOneAndPopulateLastOutboundMessage = function (que
 };
 
 /**
- * Updates topic property with given topic, and updates user subscription status to pending if
- * the new topic is an askSubscriptionStatus.
+ * Saves topicId as topic property, updates the campaignId property if topic contains a campaign.
  *
  * @param {Object} topic
  * @return {Promise}
  */
-conversationSchema.methods.changeTopic = function (topic) {
+conversationSchema.methods.setTopic = function (topic) {
   const topicId = topic.id;
-  let promise = Promise.resolve();
-  if (this.topic === topicId) {
-    return promise;
-  }
-
-  logger.debug('Conversation.changeTopic', { topicId });
-  if (helpers.topic.isAskSubscriptionStatus(topic) && this.userId) {
-    promise = helpers.user.setPendingSubscriptionStatusForUserId(this.userId);
-  }
-
   this.topic = topicId;
+  logger.debug('updating conversation.topic', { topicId });
   if (topic.campaign && topic.campaign.id) {
     const campaignId = topic.campaign.id;
     if (!this.campaignId !== campaignId) {
@@ -129,22 +119,21 @@ conversationSchema.methods.changeTopic = function (topic) {
       this.campaignId = campaignId;
     }
   }
-
-  return promise.then(() => this.save());
+  return this.save();
 };
 
 /**
  * @return {Promise}
  */
 conversationSchema.methods.setDefaultTopic = function () {
-  return this.changeTopic(helpers.topic.getDefaultTopic());
+  return this.setTopic(helpers.topic.getDefaultTopic());
 };
 
 /**
  * @return {Promise}
  */
 conversationSchema.methods.setSupportTopic = function () {
-  return this.changeTopic(helpers.topic.getSupportTopic());
+  return this.setTopic(helpers.topic.getSupportTopic());
 };
 
 /**

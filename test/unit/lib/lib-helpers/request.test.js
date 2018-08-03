@@ -43,30 +43,69 @@ test.afterEach(() => {
 });
 
 // changeTopic
-test('changeTopic should call setTopic and return req.conversation.changeTopic', async (t) => {
+test('changeTopic does not call setTopic if not a topic change', async (t) => {
   sandbox.stub(requestHelper, 'setTopic')
     .returns(underscore.noop);
-  sandbox.stub(conversation, 'changeTopic')
+  sandbox.stub(conversation, 'setTopic')
     .returns(Promise.resolve(true));
   t.context.req.conversation = conversation;
+  t.context.req.currentTopicId = topic.id;
 
   await requestHelper.changeTopic(t.context.req, topic);
   requestHelper.setTopic.should.have.been.calledWith(t.context.req, topic);
-  conversation.changeTopic.should.have.been.calledWith(topic);
+  conversation.setTopic.should.not.have.been.called;
+});
+
+test('changeTopic calls helpers.user.setPendingSubscriptionStatusForUserId and setTopic when topic change is askSubscriptionStatus', async (t) => {
+  sandbox.stub(requestHelper, 'setTopic')
+    .returns(underscore.noop);
+  sandbox.stub(helpers.topic, 'isAskSubscriptionStatus')
+    .returns(true);
+  sandbox.stub(conversation, 'setTopic')
+    .returns(Promise.resolve());
+  sandbox.stub(helpers.user, 'setPendingSubscriptionStatusForUserId')
+    .returns(Promise.resolve(true));
+  t.context.req.conversation = conversation;
+  t.context.req.currentTopicId = 'abc';
+  t.context.req.userId = 'def';
+
+  await requestHelper.changeTopic(t.context.req, topic);
+  requestHelper.setTopic.should.have.been.calledWith(t.context.req, topic);
+  helpers.user.setPendingSubscriptionStatusForUserId
+    .should.have.been.calledWith(t.context.req.userId);
+  conversation.setTopic.should.have.been.calledWith(topic);
+});
+
+test('changeTopic calls setTopic when topic change is not askSubscriptionStatus', async (t) => {
+  sandbox.stub(requestHelper, 'setTopic')
+    .returns(underscore.noop);
+  sandbox.stub(helpers.topic, 'isAskSubscriptionStatus')
+    .returns(false);
+  sandbox.stub(conversation, 'setTopic')
+    .returns(Promise.resolve());
+  sandbox.stub(helpers.user, 'setPendingSubscriptionStatusForUserId')
+    .returns(Promise.resolve(true));
+  t.context.req.conversation = conversation;
+  t.context.req.currentTopicId = 'abc';
+
+  await requestHelper.changeTopic(t.context.req, topic);
+  requestHelper.setTopic.should.have.been.calledWith(t.context.req, topic);
+  helpers.user.setPendingSubscriptionStatusForUserId.should.not.have.been.called;
+  conversation.setTopic.should.have.been.calledWith(topic);
 });
 
 // changeTopicByCampaign
 test('changeTopicByCampaign should call setCampaign and return error if campaign does not have topics', async (t) => {
   sandbox.stub(requestHelper, 'setCampaign')
     .returns(underscore.noop);
-  sandbox.stub(conversation, 'changeTopic')
+  sandbox.stub(conversation, 'setTopic')
     .returns(Promise.resolve(true));
   t.context.req.conversation = conversation;
   const campaign = campaignFactory.getValidCampaignWithoutTopics();
 
   await t.throws(requestHelper.changeTopicByCampaign(t.context.req, campaign));
   requestHelper.setCampaign.should.have.been.calledWith(t.context.req, campaign);
-  conversation.changeTopic.should.not.been.called;
+  conversation.setTopic.should.not.been.called;
 });
 
 test('changeTopicByCampaign should call setCampaign and return changeTopic if campaign has topics', async (t) => {

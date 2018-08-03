@@ -17,8 +17,6 @@ const twilio = require('../../../../lib/twilio');
 const stubs = require('../../../helpers/stubs');
 const conversationFactory = require('../../../helpers/factories/conversation');
 const messageFactory = require('../../../helpers/factories/message');
-const topicFactory = require('../../../helpers/factories/topic');
-
 
 const tagsHelper = helpers.tags;
 const smsConversation = conversationFactory.getValidConversation();
@@ -175,64 +173,29 @@ test('postMessageToSupport calls front.postMessage if conversation is SMS', asyn
   front.postMessage.should.have.been.calledWith(t.context.req.userId, message.text);
 });
 
-// changeTopic
-test('changeTopic calls save for new topic', async () => {
-  const mockConversation = conversationFactory.getValidConversation();
-  const mockTopic = topicFactory.getValidTopic();
-  sandbox.stub(mockConversation, 'save')
-    .returns(Promise.resolve(mockConversation));
-
-  await mockConversation.changeTopic(mockTopic);
-  mockConversation.save.should.have.been.called;
-});
-
-test('changeTopic calls helpers.user.setPendingSubscriptionStatusForUserId if topic is askSubscriptionStatus', async () => {
-  const mockConversation = conversationFactory.getValidConversation();
-  const mockTopic = topicFactory.getValidTopic();
-  sandbox.stub(helpers.topic, 'isAskSubscriptionStatus')
-    .returns(true);
-  sandbox.stub(mockConversation, 'save')
-    .returns(Promise.resolve(mockConversation));
-  sandbox.stub(helpers.user, 'setPendingSubscriptionStatusForUserId')
-    .returns(Promise.resolve(true));
-
-  await mockConversation.changeTopic(mockTopic);
-  mockConversation.save.should.have.been.called;
-  helpers.user.setPendingSubscriptionStatusForUserId
-    .should.have.been.calledWith(mockConversation.userId);
-});
-
-test('changeTopic does not call save for same topic', async () => {
-  const mockConversation = conversationFactory.getValidConversation();
-  sandbox.stub(mockConversation, 'save')
-    .returns(Promise.resolve(mockConversation));
-
-  await mockConversation.changeTopic({ id: mockConversation.topic });
-  mockConversation.save.should.not.have.been.called;
-});
 
 // setDefaultTopic
-test('setDefaultTopic calls changeTopic with default topic', async () => {
+test('setDefaultTopic calls setTopic with default topic', async () => {
   const mockConversation = conversationFactory.getValidConversation();
   const mockTopic = { id: 'dragons' };
   sandbox.stub(helpers.topic, 'getDefaultTopic')
     .returns(mockTopic);
-  sandbox.stub(mockConversation, 'changeTopic')
+  sandbox.stub(mockConversation, 'setTopic')
     .returns(Promise.resolve(mockConversation));
 
   await mockConversation.setDefaultTopic();
-  mockConversation.changeTopic.should.have.been.calledWith(mockTopic);
+  mockConversation.setTopic.should.have.been.calledWith(mockTopic);
 });
 
 // setSupportTopic
-test('setSupportTopic calls changeTopic with support topic', async () => {
+test('setSupportTopic calls setTopic with support topic', async () => {
   const mockConversation = conversationFactory.getValidConversation();
   const mockTopic = { id: 'dragons' };
   sandbox.stub(helpers.topic, 'getSupportTopic')
     .returns(mockTopic);
-  sandbox.stub(mockConversation, 'changeTopic')
+  sandbox.stub(mockConversation, 'setTopic')
     .returns(Promise.resolve(mockConversation));
 
   await mockConversation.setSupportTopic();
-  mockConversation.changeTopic.should.have.been.calledWith(mockTopic);
+  mockConversation.setTopic.should.have.been.calledWith(mockTopic);
 });
