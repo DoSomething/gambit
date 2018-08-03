@@ -105,35 +105,31 @@ conversationSchema.statics.findOneAndPopulateLastOutboundMessage = function (que
 };
 
 /**
- * Updates topic and campaign per given topic object.
+ * Saves topic if topic change, and posts a user update if required.
  * @param {Object} topic
  * @return {Promise}
  */
-conversationSchema.methods.changeTopic = function (topicObject) {
-  this.topic = topicObject.id;
-  this.campaignId = topicObject.campaign ? topicObject.campaign.id : null;
-  logger.debug('conversation.changeTopic', { topic: this.topic, campaignId: this.campaignId });
-  return this.save();
-};
-
-/**
- * Saves topic if topic change, and posts a user update if required.
- * @param {String} topic
- * @return {Promise}
- */
-conversationSchema.methods.setTopic = function (topic) {
-  logger.debug('Conversation.setTopic', { topic });
-
+conversationSchema.methods.changeTopic = function (topic) {
+  const topicId = topic.id;
   let promise = Promise.resolve();
-  if (topic === this.topic) {
+  if (this.topic === topicId) {
     return promise;
   }
 
-  if (topic === config.topics.askSubscriptionStatus && this.userId) {
+  logger.debug('Conversation.changeTopic', { topicId });
+  if (topicId === config.topics.askSubscriptionStatus && this.userId) {
     promise = helpers.user.setPendingSubscriptionStatusForUserId(this.userId);
   }
 
-  this.topic = topic;
+  this.topic = topicId;
+  if (topic.campaign && topic.campaign.id) {
+    const campaignId = topic.campaign.id;
+    if (!this.campaignId !== campaignId) {
+      logger.debug('updating conversation.campaignId', { campaignId });
+      this.campaignId = campaignId;
+    }
+  }
+
   return promise.then(() => this.save());
 };
 
@@ -141,14 +137,14 @@ conversationSchema.methods.setTopic = function (topic) {
  * @return {Promise}
  */
 conversationSchema.methods.setDefaultTopic = function () {
-  return this.setTopic(config.topics.default);
+  return this.changeTopic({ id: config.topics.default });
 };
 
 /**
  * @return {Promise}
  */
 conversationSchema.methods.setSupportTopic = function () {
-  return this.setTopic(config.topics.support);
+  return this.changeTopic({ id: config.topics.support });
 };
 
 /**

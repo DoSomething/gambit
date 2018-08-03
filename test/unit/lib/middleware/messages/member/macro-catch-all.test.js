@@ -318,31 +318,3 @@ test('catchAllMacro should call replies.continueTopic if request has active camp
   next.should.not.have.been.called;
   helpers.replies.continueTopic.should.have.been.calledWith(t.context.req, t.context.res);
 });
-
-test('catchAllMacro should call replies.continueTopic if request has active campaign, is not an ask template, and last outbound template is not a topic template', async (t) => {
-  const next = sinon.stub();
-  const middleware = catchAllMacro();
-  sandbox.stub(helpers.request, 'hasCampaign')
-    .returns(true);
-  sandbox.stub(helpers.request, 'isClosedCampaign')
-    .returns(false);
-  sandbox.stub(helpers.request, 'isLastOutboundAskContinue')
-    .returns(false);
-  sandbox.stub(helpers.request, 'isLastOutboundAskSignup')
-    .returns(false);
-  sandbox.stub(helpers.request, 'isLastOutboundTopicTemplate')
-    .returns(true);
-  sandbox.stub(helpers.replies, 'continueTopic')
-    .returns(underscore.noop);
-
-  // test
-  await middleware(t.context.req, t.context.res, next);
-
-  helpers.request.hasCampaign.should.have.been.calledWith(t.context.req);
-  helpers.request.isClosedCampaign.should.have.been.calledWith(t.context.req);
-  helpers.request.isLastOutboundAskContinue.should.have.been.calledWith(t.context.req);
-  helpers.request.isLastOutboundAskSignup.should.have.been.calledWith(t.context.req);
-  helpers.request.isLastOutboundTopicTemplate.should.have.been.calledWith(t.context.req);
-  next.should.not.have.been.called;
-  helpers.replies.continueTopic.should.have.been.calledWith(t.context.req, t.context.res);
-});

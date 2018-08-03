@@ -85,7 +85,7 @@ test('changeTopicByCampaign should call setCampaign and return changeTopic if ca
 // executeChangeTopicMacro
 test('executeChangeTopicMacro should call setKeyword, fetch topic and return changeTopic', async (t) => {
   t.context.req.rivescriptMatch = stubs.getRandomWord();
-  t.context.req.rivescriptReplyTopic = stubs.getContentfulId();
+  t.context.req.rivescriptReplyTopic = { id: stubs.getContentfulId() };
   t.context.req.macro = stubs.getRandomWord();
   sandbox.stub(requestHelper, 'setKeyword')
     .returns(underscore.noop);
@@ -98,7 +98,7 @@ test('executeChangeTopicMacro should call setKeyword, fetch topic and return cha
   await requestHelper.executeChangeTopicMacro(t.context.req);
   requestHelper.setKeyword.should.have.been
     .calledWith(t.context.req, t.context.req.rivescriptMatch);
-  helpers.topic.fetchById.should.have.been.calledWith(t.context.req.rivescriptReplyTopic);
+  helpers.topic.fetchById.should.have.been.calledWith(t.context.req.rivescriptReplyTopic.id);
   requestHelper.changeTopic.should.have.been.calledWith(t.context.req, topic);
 });
 
@@ -401,7 +401,8 @@ test('setTopic should inject a topic property to req and call setCampaign if top
   sandbox.spy(requestHelper, 'setCampaign');
   requestHelper.setTopic(t.context.req, topic);
   t.context.req.topic.should.equal(topic);
-  helpers.analytics.addCustomAttributes.should.have.been.calledWith({ topic: topic.id });
+  const topicId = topic.id;
+  helpers.analytics.addCustomAttributes.should.have.been.calledWith({ topicId });
   requestHelper.setCampaign.should.have.been.calledWith(t.context.req, topic.campaign);
 });
 
@@ -412,7 +413,7 @@ test('setTopic should not call setCampaign if topic.campaign undefined', (t) => 
   requestHelper.setTopic(t.context.req, campaignlessTopic);
   t.context.req.topic.should.equal(campaignlessTopic);
   helpers.analytics.addCustomAttributes
-    .should.have.been.calledWith({ topic: campaignlessTopic.id });
+    .should.have.been.calledWith({ topicId: campaignlessTopic.id });
   requestHelper.setCampaign.should.not.have.been.called;
 });
 

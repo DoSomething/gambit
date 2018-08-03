@@ -30,7 +30,7 @@ test.afterEach(() => {
 // fetchById
 test('fetchById should return 404 error if topicId is the random topicId', async (t) => {
   const mockTopic = topicFactory.getValidTopic();
-  sandbox.stub(topicHelper, 'isRandomTopicId')
+  sandbox.stub(topicHelper, 'isDefaultTopicId')
     .returns(true);
   sandbox.stub(gambitCampaigns, 'fetchTopicById')
     .returns(Promise.resolve(mockTopic));
@@ -42,7 +42,7 @@ test('fetchById should return 404 error if topicId is the random topicId', async
 
 test('fetchById should call gambitCampaigns.fetchTopicById and return object if topicId is not hardcoded', async () => {
   const mockTopic = topicFactory.getValidTopic();
-  sandbox.stub(topicHelper, 'isRandomTopicId')
+  sandbox.stub(topicHelper, 'isDefaultTopicId')
     .returns(false);
   sandbox.stub(topicHelper, 'isHardcodedTopicId')
     .returns(false);
@@ -54,18 +54,18 @@ test('fetchById should call gambitCampaigns.fetchTopicById and return object if 
   result.should.deep.equal(mockTopic);
 });
 
-test('fetchById should return a string if topicId is hardcoded', async () => {
+test('fetchById should return getTopicFromRivescriptTopicId if topicId is hardcoded', async () => {
   const mockTopic = topicFactory.getValidTopic();
-  sandbox.stub(topicHelper, 'isRandomTopicId')
+  sandbox.stub(topicHelper, 'isDefaultTopicId')
     .returns(false);
   sandbox.stub(topicHelper, 'isHardcodedTopicId')
     .returns(true);
-  sandbox.stub(gambitCampaigns, 'fetchTopicById')
-    .returns(Promise.resolve(mockTopic));
+  sandbox.stub(topicHelper, 'getTopicFromRivescriptTopicId')
+    .returns(mockTopic);
 
   const result = await topicHelper.fetchById(hardcodedTopicId);
-  gambitCampaigns.fetchTopicById.should.not.have.been.called;
-  result.should.equal(hardcodedTopicId);
+  topicHelper.getTopicFromRivescriptTopicId.should.have.been.calledWith(hardcodedTopicId);
+  result.should.equal(mockTopic);
 });
 
 // fetchByCampaignId
@@ -89,10 +89,10 @@ test('isHardcodedTopicId should return whether topicId exists in config.hardcode
   t.falsy(topicHelper.isHardcodedTopicId(stubs.getContentfulId()));
 });
 
-// isRandomTopicId
-test('isRandomTopicId should return whether topicId is config.randomTopicId', (t) => {
-  t.truthy(topicHelper.isRandomTopicId(config.randomTopicId));
-  t.falsy(topicHelper.isRandomTopicId(stubs.getContentfulId()));
+// isDefaultTopicId
+test('isDefaultTopicId should return whether topicId is config.defaultTopicId', (t) => {
+  t.truthy(topicHelper.isDefaultTopicId(config.defaultTopicId));
+  t.falsy(topicHelper.isDefaultTopicId(stubs.getContentfulId()));
 });
 
 // getRenderedTextFromTopicAndTemplateName

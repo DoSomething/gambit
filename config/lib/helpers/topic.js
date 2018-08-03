@@ -14,7 +14,7 @@ module.exports = {
     'tmi_completed',
     'unsubscribed',
   ],
-  randomTopicId: 'random',
+  defaultTopicId: 'random',
   autoReplyTypes: [
     'autoReplyBroadcast',
   ],

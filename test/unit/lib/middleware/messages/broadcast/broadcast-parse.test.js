@@ -75,7 +75,7 @@ test('parseBroadcast should parse topic broadcast and inject topic into req', as
   await middleware(t.context.req, t.context.res, next);
   helpers.request.setCampaignId.should.not.have.been.called;
   helpers.request.setTopic
-    .should.have.been.calledWith(t.context.req, broadcast.topic);
+    .should.have.been.calledWith(t.context.req, { id: broadcast.topic });
   helpers.request.setOutboundMessageText
     .should.have.been.calledWith(t.context.req, broadcast.message.text);
   helpers.request.setOutboundMessageTemplate
