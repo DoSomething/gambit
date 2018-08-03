@@ -39,13 +39,13 @@ test.afterEach((t) => {
 test('parseRivescriptReply calls next if req.macro is set', async (t) => {
   const next = sinon.stub();
   const middleware = parseRivescriptReply();
-  sandbox.stub(helpers.topic, 'isHardcodedTopicId')
+  sandbox.stub(helpers.topic, 'isRivescriptTopicId')
     .returns(true);
   t.context.req.macro = stubs.getMacro();
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  helpers.topic.isHardcodedTopicId.should.not.have.been.called;
+  helpers.topic.isRivescriptTopicId.should.not.have.been.called;
   next.should.have.been.called;
   helpers.replies.rivescriptReply.should.not.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;

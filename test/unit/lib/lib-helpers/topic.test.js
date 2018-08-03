@@ -44,7 +44,7 @@ test('fetchById should call gambitCampaigns.fetchTopicById and return object if 
   const mockTopic = topicFactory.getValidTopic();
   sandbox.stub(topicHelper, 'isDefaultTopicId')
     .returns(false);
-  sandbox.stub(topicHelper, 'isHardcodedTopicId')
+  sandbox.stub(topicHelper, 'isRivescriptTopicId')
     .returns(false);
   sandbox.stub(gambitCampaigns, 'fetchTopicById')
     .returns(Promise.resolve(mockTopic));
@@ -58,7 +58,7 @@ test('fetchById should return getTopicFromRivescriptTopicId if topicId is hardco
   const mockTopic = topicFactory.getValidTopic();
   sandbox.stub(topicHelper, 'isDefaultTopicId')
     .returns(false);
-  sandbox.stub(topicHelper, 'isHardcodedTopicId')
+  sandbox.stub(topicHelper, 'isRivescriptTopicId')
     .returns(true);
   sandbox.stub(topicHelper, 'getTopicFromRivescriptTopicId')
     .returns(mockTopic);
@@ -83,10 +83,10 @@ test('fetchByCampaignId should call helpers.campaign.fetchById and inject campai
   });
 });
 
-// isHardcodedTopicId
-test('isHardcodedTopicId should return whether topicId exists in config.hardcodedTopicIds', (t) => {
-  t.truthy(topicHelper.isHardcodedTopicId(hardcodedTopicId));
-  t.falsy(topicHelper.isHardcodedTopicId(stubs.getContentfulId()));
+// isRivescriptTopicId
+test('isRivescriptTopicId should return whether topicId exists in config.hardcodedTopicIds', (t) => {
+  t.truthy(topicHelper.isRivescriptTopicId(hardcodedTopicId));
+  t.falsy(topicHelper.isRivescriptTopicId(stubs.getContentfulId()));
 });
 
 // isDefaultTopicId
