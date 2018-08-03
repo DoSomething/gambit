@@ -54,6 +54,12 @@ test('fetchByCampaignId should call helpers.campaign.fetchById and inject campai
   });
 });
 
+// getDefaultTopic
+test('getDefaultTopic should return config.rivescriptTopics.default', () => {
+  const result = topicHelper.getDefaultTopic();
+  result.should.deep.equal(config.rivescriptTopics.default);
+});
+
 // getDefaultTopicId
 test('getDefaultTopicId should return config.rivescriptTopics.default.id', (t) => {
   t.is(topicHelper.getDefaultTopicId(), config.rivescriptTopics.default.id);
@@ -67,6 +73,12 @@ test('getRivescriptTopicById returns object with type rivescript and given id', 
   result.id.should.equal(mockRivescriptTopicId);
   result.type.should.equal('rivescript');
   result.name.should.equal(mockRivescriptTopicId);
+});
+
+// getSupportTopic
+test('getSupportTopic should return config.rivescriptTopics.support', () => {
+  const result = topicHelper.getSupportTopic();
+  result.should.deep.equal(config.rivescriptTopics.support);
 });
 
 // isAskSubscriptionStatus

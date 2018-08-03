@@ -24,5 +24,8 @@ module.exports = {
     default: {
       id: 'random',
     },
+    support: {
+      id: 'support',
+    },
   },
 };

@@ -19,10 +19,8 @@ const conversationFactory = require('../../../helpers/factories/conversation');
 const messageFactory = require('../../../helpers/factories/message');
 const topicFactory = require('../../../helpers/factories/topic');
 
-const config = require('../../../../config/app/models/conversation');
 
 const tagsHelper = helpers.tags;
-const topics = config.topics;
 const smsConversation = conversationFactory.getValidConversation();
 const alexaConversation = conversationFactory.getValidConversation('alexa');
 const supportConversation = conversationFactory.getValidSupportConversation();
@@ -190,7 +188,9 @@ test('changeTopic calls save for new topic', async () => {
 
 test('changeTopic calls helpers.user.setPendingSubscriptionStatusForUserId if topic is askSubscriptionStatus', async () => {
   const mockConversation = conversationFactory.getValidConversation();
-  const mockTopic = { id: topics.askSubscriptionStatus };
+  const mockTopic = topicFactory.getValidTopic();
+  sandbox.stub(helpers.topic, 'isAskSubscriptionStatus')
+    .returns(true);
   sandbox.stub(mockConversation, 'save')
     .returns(Promise.resolve(mockConversation));
   sandbox.stub(helpers.user, 'setPendingSubscriptionStatusForUserId')
@@ -212,21 +212,27 @@ test('changeTopic does not call save for same topic', async () => {
 });
 
 // setDefaultTopic
-test('setDefaultTopic calls changeTopic with config.topics.default', async () => {
+test('setDefaultTopic calls changeTopic with default topic', async () => {
   const mockConversation = conversationFactory.getValidConversation();
+  const mockTopic = { id: 'dragons' };
+  sandbox.stub(helpers.topic, 'getDefaultTopic')
+    .returns(mockTopic);
   sandbox.stub(mockConversation, 'changeTopic')
     .returns(Promise.resolve(mockConversation));
 
   await mockConversation.setDefaultTopic();
-  mockConversation.changeTopic.should.have.been.calledWith({ id: topics.default });
+  mockConversation.changeTopic.should.have.been.calledWith(mockTopic);
 });
 
 // setSupportTopic
-test('setSupportTopic calls changeTopic with config.topics.support', async () => {
+test('setSupportTopic calls changeTopic with support topic', async () => {
   const mockConversation = conversationFactory.getValidConversation();
+  const mockTopic = { id: 'dragons' };
+  sandbox.stub(helpers.topic, 'getSupportTopic')
+    .returns(mockTopic);
   sandbox.stub(mockConversation, 'changeTopic')
     .returns(Promise.resolve(mockConversation));
 
   await mockConversation.setSupportTopic();
-  mockConversation.changeTopic.should.have.been.calledWith({ id: topics.support });
+  mockConversation.changeTopic.should.have.been.calledWith(mockTopic);
 });

@@ -11,8 +11,6 @@ const front = require('../../lib/front');
 const twilio = require('../../lib/twilio');
 const bertly = require('../../lib/bertly');
 
-const config = require('../../config/app/models/conversation');
-
 /**
  * Schema.
  */
@@ -47,7 +45,7 @@ conversationSchema.statics.createFromReq = function (req) {
     userId: req.userId,
     platform: req.platform,
     platformUserId: req.platformUserId,
-    topic: config.topics.default,
+    topic: helpers.topic.getDefaultTopicId(),
   };
 
   return this.create(data);
@@ -139,14 +137,14 @@ conversationSchema.methods.changeTopic = function (topic) {
  * @return {Promise}
  */
 conversationSchema.methods.setDefaultTopic = function () {
-  return this.changeTopic({ id: config.topics.default });
+  return this.changeTopic(helpers.topic.getDefaultTopic());
 };
 
 /**
  * @return {Promise}
  */
 conversationSchema.methods.setSupportTopic = function () {
-  return this.changeTopic({ id: config.topics.support });
+  return this.changeTopic(helpers.topic.getSupportTopic());
 };
 
 /**
@@ -363,7 +361,7 @@ conversationSchema.methods.isSms = function () {
  * @return {boolean}
  */
 conversationSchema.methods.isSupportTopic = function () {
-  return this.topic === config.topics.support;
+  return this.topic === helpers.topic.getSupportTopic().id;
 };
 
 module.exports = mongoose.model('Conversation', conversationSchema);
