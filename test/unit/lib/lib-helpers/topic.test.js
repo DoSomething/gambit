@@ -54,17 +54,17 @@ test('fetchById should call gambitCampaigns.fetchTopicById and return object if 
   result.should.deep.equal(mockTopic);
 });
 
-test('fetchById should return getTopicFromRivescriptTopicId if topicId is hardcoded', async () => {
+test('fetchById should return getRivescriptTopicById if topicId is hardcoded', async () => {
   const mockTopic = topicFactory.getValidTopic();
   sandbox.stub(topicHelper, 'isDefaultTopicId')
     .returns(false);
   sandbox.stub(topicHelper, 'isRivescriptTopicId')
     .returns(true);
-  sandbox.stub(topicHelper, 'getTopicFromRivescriptTopicId')
+  sandbox.stub(topicHelper, 'getRivescriptTopicById')
     .returns(mockTopic);
 
   const result = await topicHelper.fetchById(hardcodedTopicId);
-  topicHelper.getTopicFromRivescriptTopicId.should.have.been.calledWith(hardcodedTopicId);
+  topicHelper.getRivescriptTopicById.should.have.been.calledWith(hardcodedTopicId);
   result.should.equal(mockTopic);
 });
 
@@ -81,6 +81,15 @@ test('fetchByCampaignId should call helpers.campaign.fetchById and inject campai
     result[index].campaign.should.deep.equal(mockCampaign);
     result[index].id.should.equal(topic.id);
   });
+});
+
+// getRivescriptTopicById
+test('getRivescriptTopicById returns object with type rivescript and given id', () => {
+  const mockRivescriptTopicId = config.rivescriptTopics.default.id;
+  const result = topicHelper.getRivescriptTopicById(mockRivescriptTopicId);
+  result.id.should.equal(mockRivescriptTopicId);
+  result.type.should.equal('rivescript');
+  result.name.should.equal(mockRivescriptTopicId);
 });
 
 // isAskSubscriptionStatus

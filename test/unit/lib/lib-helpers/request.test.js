@@ -106,6 +106,7 @@ test('executeChangeTopicMacro should call setKeyword, fetch topic and return cha
 test('getRivescriptReply should call helpers.rivescript.getBotReply with req vars', async (t) => {
   t.context.req.userId = userId;
   t.context.req.conversation = conversation;
+  t.context.req.currentTopicId = stubs.getContentfulId();
   t.context.req.inboundMessageText = stubs.getRandomMessageText();
   const botReply = { text: stubs.getRandomMessageText() };
   sandbox.stub(helpers.rivescript, 'getBotReply')
@@ -113,7 +114,7 @@ test('getRivescriptReply should call helpers.rivescript.getBotReply with req var
 
   const result = await requestHelper.getRivescriptReply(t.context.req);
   helpers.rivescript.getBotReply.should.have.been
-    .calledWith(userId, conversation.topic, t.context.req.inboundMessageText);
+    .calledWith(userId, t.context.req.currentTopicId, t.context.req.inboundMessageText);
   result.should.deep.equal(botReply);
 });
 
@@ -332,8 +333,13 @@ test('setConversation should inject a conversation property to req', (t) => {
     .returns(underscore.noop);
   requestHelper.setConversation(t.context.req, conversation);
   t.context.req.conversation.should.equal(conversation);
+  t.context.req.currentTopicId.should.equal(conversation.topic);
   const conversationId = conversation.id;
-  helpers.analytics.addCustomAttributes.should.have.been.calledWith({ conversationId });
+  const currentTopicId = conversation.topic;
+  helpers.analytics.addCustomAttributes.should.have.been.calledWith({
+    conversationId,
+    currentTopicId,
+  });
   requestHelper.setLastOutboundMessage.should.have.been.calledWith(t.context.req, message);
 });
 
