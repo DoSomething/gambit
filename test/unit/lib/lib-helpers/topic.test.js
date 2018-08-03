@@ -83,6 +83,12 @@ test('fetchByCampaignId should call helpers.campaign.fetchById and inject campai
   });
 });
 
+// getDefaultTopicId
+test('getDefaultTopicId should return config.rivescriptTopics.default.id', (t) => {
+  t.is(topicHelper.getDefaultTopicId(), config.rivescriptTopics.default.id);
+  t.not(topicHelper.isDefaultTopicId(), stubs.getContentfulId());
+});
+
 // getRivescriptTopicById
 test('getRivescriptTopicById returns object with type rivescript and given id', () => {
   const mockRivescriptTopicId = config.rivescriptTopics.default.id;
