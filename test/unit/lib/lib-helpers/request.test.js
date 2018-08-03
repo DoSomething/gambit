@@ -108,14 +108,19 @@ test('getRivescriptReply should call helpers.rivescript.getBotReply with req var
   t.context.req.conversation = conversation;
   t.context.req.currentTopicId = stubs.getContentfulId();
   t.context.req.inboundMessageText = stubs.getRandomMessageText();
-  const botReply = { text: stubs.getRandomMessageText() };
+  const mockRivescriptTopicId = 'random';
+  const mockRivescriptTopic = { id: mockRivescriptTopicId };
+  const botReply = { text: stubs.getRandomMessageText(), match: '@hello' };
   sandbox.stub(helpers.rivescript, 'getBotReply')
     .returns(Promise.resolve(botReply));
-
+  sandbox.stub(helpers.topic, 'getRivescriptTopicById')
+    .returns(mockRivescriptTopic);
   const result = await requestHelper.getRivescriptReply(t.context.req);
   helpers.rivescript.getBotReply.should.have.been
     .calledWith(userId, t.context.req.currentTopicId, t.context.req.inboundMessageText);
-  result.should.deep.equal(botReply);
+  result.text.should.equal(botReply.text);
+  result.match.should.equal(botReply.match);
+  result.topic.should.deep.equal(mockRivescriptTopic);
 });
 
 // hasCampaign
