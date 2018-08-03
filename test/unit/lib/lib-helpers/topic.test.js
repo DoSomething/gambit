@@ -83,6 +83,13 @@ test('fetchByCampaignId should call helpers.campaign.fetchById and inject campai
   });
 });
 
+// isAskSubscriptionStatus
+test('isAskSubscriptionStatus returns whether topic is rivescriptTopics.isAskSubscriptionStatus', (t) => {
+  const mockTopic = topicFactory.getValidTopic();
+  t.truthy(topicHelper.isAskSubscriptionStatus(config.rivescriptTopics.askSubscriptionStatus));
+  t.falsy(topicHelper.isAskSubscriptionStatus(mockTopic));
+});
+
 // isRivescriptTopicId
 test('isRivescriptTopicId should return whether topicId exists in config.hardcodedTopicIds', (t) => {
   t.truthy(topicHelper.isRivescriptTopicId(hardcodedTopicId));
@@ -91,7 +98,7 @@ test('isRivescriptTopicId should return whether topicId exists in config.hardcod
 
 // isDefaultTopicId
 test('isDefaultTopicId should return whether topicId is config.defaultTopicId', (t) => {
-  t.truthy(topicHelper.isDefaultTopicId(config.defaultTopicId));
+  t.truthy(topicHelper.isDefaultTopicId(config.rivescriptTopics.default.id));
   t.falsy(topicHelper.isDefaultTopicId(stubs.getContentfulId()));
 });
 

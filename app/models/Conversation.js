@@ -105,7 +105,9 @@ conversationSchema.statics.findOneAndPopulateLastOutboundMessage = function (que
 };
 
 /**
- * Saves topic if topic change, and posts a user update if required.
+ * Updates topic property with given topic, and updates user subscription status to pending if
+ * the new topic is an askSubscriptionStatus.
+ *
  * @param {Object} topic
  * @return {Promise}
  */
@@ -117,7 +119,7 @@ conversationSchema.methods.changeTopic = function (topic) {
   }
 
   logger.debug('Conversation.changeTopic', { topicId });
-  if (topicId === config.topics.askSubscriptionStatus && this.userId) {
+  if (helpers.topic.isAskSubscriptionStatus(topic) && this.userId) {
     promise = helpers.user.setPendingSubscriptionStatusForUserId(this.userId);
   }
 

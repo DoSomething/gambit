@@ -14,8 +14,15 @@ module.exports = {
     'tmi_completed',
     'unsubscribed',
   ],
-  defaultTopicId: 'random',
-  autoReplyTypes: [
+  autoReplyTopics: [
     'autoReplyBroadcast',
   ],
+  rivescriptTopics: {
+    askSubscriptionStatus: {
+      id: 'ask_subscription_status',
+    },
+    default: {
+      id: 'random',
+    },
+  },
 };
