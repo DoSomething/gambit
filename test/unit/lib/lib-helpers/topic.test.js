@@ -28,44 +28,15 @@ test.afterEach(() => {
 });
 
 // fetchById
-test('fetchById should return 404 error if topicId is the random topicId', async (t) => {
-  const mockTopic = topicFactory.getValidTopic();
-  sandbox.stub(topicHelper, 'isDefaultTopicId')
-    .returns(true);
-  sandbox.stub(gambitCampaigns, 'fetchTopicById')
-    .returns(Promise.resolve(mockTopic));
-
-  const result = await t.throws(topicHelper.fetchById());
-  gambitCampaigns.fetchTopicById.should.not.have.been.called;
-  result.status.should.equal(404);
-});
-
 test('fetchById should call gambitCampaigns.fetchTopicById and return object if topicId is not hardcoded', async () => {
-  const mockTopic = topicFactory.getValidTopic();
-  sandbox.stub(topicHelper, 'isDefaultTopicId')
-    .returns(false);
-  sandbox.stub(topicHelper, 'isRivescriptTopicId')
-    .returns(false);
+  const topic = topicFactory.getValidTopic();
+  const topicId = topic.id;
   sandbox.stub(gambitCampaigns, 'fetchTopicById')
-    .returns(Promise.resolve(mockTopic));
+    .returns(Promise.resolve(topic));
 
-  const result = await topicHelper.fetchById();
-  gambitCampaigns.fetchTopicById.should.have.been.called;
-  result.should.deep.equal(mockTopic);
-});
-
-test('fetchById should return getRivescriptTopicById if topicId is hardcoded', async () => {
-  const mockTopic = topicFactory.getValidTopic();
-  sandbox.stub(topicHelper, 'isDefaultTopicId')
-    .returns(false);
-  sandbox.stub(topicHelper, 'isRivescriptTopicId')
-    .returns(true);
-  sandbox.stub(topicHelper, 'getRivescriptTopicById')
-    .returns(mockTopic);
-
-  const result = await topicHelper.fetchById(hardcodedTopicId);
-  topicHelper.getRivescriptTopicById.should.have.been.calledWith(hardcodedTopicId);
-  result.should.equal(mockTopic);
+  const result = await topicHelper.fetchById(topicId);
+  gambitCampaigns.fetchTopicById.should.have.been.calledWith(topicId);
+  result.should.deep.equal(topic);
 });
 
 // fetchByCampaignId
