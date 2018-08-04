@@ -2,6 +2,7 @@
 
 module.exports = {
   // These should correspond to topics defined in brain/topics.rive
+  // TODO: Move this into the rivescriptTopics defined property below.
   hardcodedTopicIds: [
     'ask_subscription_status',
     // The campaign topic may exist for users who haven't messaged since querying topics endpoint.

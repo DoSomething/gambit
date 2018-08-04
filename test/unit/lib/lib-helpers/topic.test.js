@@ -28,7 +28,7 @@ test.afterEach(() => {
 });
 
 // fetchById
-test('fetchById should call gambitCampaigns.fetchTopicById and return object if topicId is not hardcoded', async () => {
+test('fetchById should return gambitCampaigns.fetchTopicById', async () => {
   const topic = topicFactory.getValidTopic();
   const topicId = topic.id;
   sandbox.stub(gambitCampaigns, 'fetchTopicById')
