@@ -10,6 +10,7 @@ const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 
 const helpers = require('../../../../../../lib/helpers');
+const topicFactory = require('../../../../../helpers/factories/topic');
 
 chai.should();
 chai.use(sinonChai);
@@ -291,7 +292,7 @@ test('catchAllMacro should call replies.invalidAskContinueResponse if request.is
     .should.have.been.calledWith(t.context.req, t.context.res);
 });
 
-test('catchAllMacro should call replies.continueTopic if request has active campaign, is not an ask template, and last outbound template is not a topic template', async (t) => {
+test('catchAllMacro should call replies.continueTopic if request has active campaign, is not an ask template, and last outbound template is a topic template', async (t) => {
   const next = sinon.stub();
   const middleware = catchAllMacro();
   sandbox.stub(helpers.request, 'hasCampaign')
@@ -317,4 +318,107 @@ test('catchAllMacro should call replies.continueTopic if request has active camp
   helpers.request.isLastOutboundTopicTemplate.should.have.been.calledWith(t.context.req);
   next.should.not.have.been.called;
   helpers.replies.continueTopic.should.have.been.calledWith(t.context.req, t.context.res);
+});
+
+test('catchAllMacro should call changeTopic if request has active campaign, is not an ask template, last outbound template is not a topic template, and current topic is default', async (t) => {
+  const next = sinon.stub();
+  const middleware = catchAllMacro();
+  sandbox.stub(helpers.request, 'hasCampaign')
+    .returns(true);
+  sandbox.stub(helpers.request, 'isClosedCampaign')
+    .returns(false);
+  sandbox.stub(helpers.request, 'isLastOutboundAskContinue')
+    .returns(false);
+  sandbox.stub(helpers.request, 'isLastOutboundAskSignup')
+    .returns(false);
+  sandbox.stub(helpers.request, 'isLastOutboundTopicTemplate')
+    .returns(false);
+  sandbox.stub(helpers.topic, 'isDefaultTopicId')
+    .returns(true);
+  sandbox.stub(helpers.request, 'changeTopic')
+    .returns(Promise.resolve());
+  sandbox.stub(helpers.replies, 'askContinue')
+    .returns(underscore.noop);
+  t.context.req.topic = topicFactory.getValidTopic();
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+
+  helpers.request.hasCampaign.should.have.been.calledWith(t.context.req);
+  helpers.request.isClosedCampaign.should.have.been.calledWith(t.context.req);
+  helpers.request.isLastOutboundAskContinue.should.have.been.calledWith(t.context.req);
+  helpers.request.isLastOutboundAskSignup.should.have.been.calledWith(t.context.req);
+  helpers.request.isLastOutboundTopicTemplate.should.have.been.calledWith(t.context.req);
+  helpers.request.changeTopic.should.have.been.calledWith(t.context.req, t.context.req.topic);
+  helpers.replies.askContinue.should.have.been.calledWith(t.context.req, t.context.res);
+  next.should.not.have.been.called;
+});
+
+test('catchAllMacro should sendError if changeTopic fails when request has active campaign, is not an ask template, last outbound template is not a topic template, and current topic is default', async (t) => {
+  const next = sinon.stub();
+  const middleware = catchAllMacro();
+  const mockError = { message: 'Epic fail' };
+  sandbox.stub(helpers.request, 'hasCampaign')
+    .returns(true);
+  sandbox.stub(helpers.request, 'isClosedCampaign')
+    .returns(false);
+  sandbox.stub(helpers.request, 'isLastOutboundAskContinue')
+    .returns(false);
+  sandbox.stub(helpers.request, 'isLastOutboundAskSignup')
+    .returns(false);
+  sandbox.stub(helpers.request, 'isLastOutboundTopicTemplate')
+    .returns(false);
+  sandbox.stub(helpers.topic, 'isDefaultTopicId')
+    .returns(true);
+  sandbox.stub(helpers.request, 'changeTopic')
+    .returns(Promise.reject(mockError));
+  sandbox.stub(helpers.replies, 'askContinue')
+    .returns(underscore.noop);
+  t.context.req.topic = topicFactory.getValidTopic();
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+
+  helpers.request.hasCampaign.should.have.been.calledWith(t.context.req);
+  helpers.request.isClosedCampaign.should.have.been.calledWith(t.context.req);
+  helpers.request.isLastOutboundAskContinue.should.have.been.calledWith(t.context.req);
+  helpers.request.isLastOutboundAskSignup.should.have.been.calledWith(t.context.req);
+  helpers.request.isLastOutboundTopicTemplate.should.have.been.calledWith(t.context.req);
+  helpers.request.changeTopic.should.have.been.calledWith(t.context.req, t.context.req.topic);
+  helpers.sendErrorResponse.should.have.been.calledWith(t.context.res, mockError);
+  helpers.replies.askContinue.should.not.have.been.called;
+});
+
+test('catchAllMacro should not call changeTopic if request has active campaign, is not an ask template, last outbound template is not a topic template, and current topic is default', async (t) => {
+  const next = sinon.stub();
+  const middleware = catchAllMacro();
+  sandbox.stub(helpers.request, 'hasCampaign')
+    .returns(true);
+  sandbox.stub(helpers.request, 'isClosedCampaign')
+    .returns(false);
+  sandbox.stub(helpers.request, 'isLastOutboundAskContinue')
+    .returns(false);
+  sandbox.stub(helpers.request, 'isLastOutboundAskSignup')
+    .returns(false);
+  sandbox.stub(helpers.request, 'isLastOutboundTopicTemplate')
+    .returns(false);
+  sandbox.stub(helpers.topic, 'isDefaultTopicId')
+    .returns(false);
+  sandbox.stub(helpers.request, 'changeTopic')
+    .returns(Promise.resolve());
+  sandbox.stub(helpers.replies, 'askContinue')
+    .returns(underscore.noop);
+  t.context.req.topic = topicFactory.getValidTopic();
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+
+  helpers.request.hasCampaign.should.have.been.calledWith(t.context.req);
+  helpers.request.isClosedCampaign.should.have.been.calledWith(t.context.req);
+  helpers.request.isLastOutboundAskContinue.should.have.been.calledWith(t.context.req);
+  helpers.request.isLastOutboundAskSignup.should.have.been.calledWith(t.context.req);
+  helpers.request.isLastOutboundTopicTemplate.should.have.been.calledWith(t.context.req);
+  helpers.request.changeTopic.should.not.have.been.calledWith(t.context.req);
+  helpers.replies.askContinue.should.have.been.calledWith(t.context.req, t.context.res);
+  next.should.not.have.been.called;
 });
