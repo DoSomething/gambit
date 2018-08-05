@@ -114,7 +114,7 @@ conversationSchema.methods.setTopic = function (topic) {
   logger.debug('updating conversation.topic', { topicId });
   if (topic.campaign && topic.campaign.id) {
     const campaignId = topic.campaign.id;
-    if (!this.campaignId !== campaignId) {
+    if (this.campaignId !== campaignId) {
       logger.debug('updating conversation.campaignId', { campaignId });
       this.campaignId = campaignId;
     }

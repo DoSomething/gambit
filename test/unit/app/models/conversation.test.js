@@ -203,13 +203,15 @@ test('setSupportTopic calls setTopic with support topic', async () => {
 // setTopic
 test('setTopic calls save for new topic', async () => {
   const mockConversation = conversationFactory.getValidConversation();
-  const mockTopic = topicFactory.getValidTopic;
+  const mockTopic = topicFactory.getValidTopic();
+  const mockResult = conversationFactory.getValidConversation();
+  mockResult.topic = mockTopic.id;
+  mockResult.campaignId = mockTopic.campaign.id;
   sandbox.stub(mockConversation, 'save')
-    .returns(Promise.resolve(mockConversation));
+    .returns(Promise.resolve(mockResult));
 
   await mockConversation.setTopic(mockTopic);
   mockConversation.save.should.have.been.called;
-  // TODO: These tests fail but shouldn't.
-  // mockConversation.topic.should.equal(topicFactory.id);
-  // mockConversation.campaignId.should.equal(topicFactory.campaign.id);
+  mockConversation.topic.should.equal(mockResult.topic);
+  mockConversation.campaignId.should.equal(mockResult.campaignId);
 });
