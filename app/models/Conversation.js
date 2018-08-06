@@ -11,8 +11,6 @@ const front = require('../../lib/front');
 const twilio = require('../../lib/twilio');
 const bertly = require('../../lib/bertly');
 
-const config = require('../../config/app/models/conversation');
-
 /**
  * Schema.
  */
@@ -47,7 +45,7 @@ conversationSchema.statics.createFromReq = function (req) {
     userId: req.userId,
     platform: req.platform,
     platformUserId: req.platformUserId,
-    topic: config.topics.default,
+    topic: helpers.topic.getDefaultTopicId(),
   };
 
   return this.create(data);
@@ -105,50 +103,37 @@ conversationSchema.statics.findOneAndPopulateLastOutboundMessage = function (que
 };
 
 /**
- * Updates topic and campaign per given topic object.
+ * Saves topicId as topic property, updates the campaignId property if topic contains a campaign.
+ *
  * @param {Object} topic
  * @return {Promise}
  */
-conversationSchema.methods.changeTopic = function (topicObject) {
-  this.topic = topicObject.id;
-  this.campaignId = topicObject.campaign ? topicObject.campaign.id : null;
-  logger.debug('conversation.changeTopic', { topic: this.topic, campaignId: this.campaignId });
-  return this.save();
-};
-
-/**
- * Saves topic if topic change, and posts a user update if required.
- * @param {String} topic
- * @return {Promise}
- */
 conversationSchema.methods.setTopic = function (topic) {
-  logger.debug('Conversation.setTopic', { topic });
-
-  let promise = Promise.resolve();
-  if (topic === this.topic) {
-    return promise;
+  const topicId = topic.id;
+  this.topic = topicId;
+  logger.debug('updating conversation.topic', { topicId });
+  if (topic.campaign && topic.campaign.id) {
+    const campaignId = topic.campaign.id;
+    if (this.campaignId !== campaignId) {
+      logger.debug('updating conversation.campaignId', { campaignId });
+      this.campaignId = campaignId;
+    }
   }
-
-  if (topic === config.topics.askSubscriptionStatus && this.userId) {
-    promise = helpers.user.setPendingSubscriptionStatusForUserId(this.userId);
-  }
-
-  this.topic = topic;
-  return promise.then(() => this.save());
+  return this.save();
 };
 
 /**
  * @return {Promise}
  */
 conversationSchema.methods.setDefaultTopic = function () {
-  return this.setTopic(config.topics.default);
+  return this.setTopic(helpers.topic.getDefaultTopic());
 };
 
 /**
  * @return {Promise}
  */
 conversationSchema.methods.setSupportTopic = function () {
-  return this.setTopic(config.topics.support);
+  return this.setTopic(helpers.topic.getSupportTopic());
 };
 
 /**
@@ -365,7 +350,7 @@ conversationSchema.methods.isSms = function () {
  * @return {boolean}
  */
 conversationSchema.methods.isSupportTopic = function () {
-  return this.topic === config.topics.support;
+  return this.topic === helpers.topic.getSupportTopic().id;
 };
 
 module.exports = mongoose.model('Conversation', conversationSchema);
