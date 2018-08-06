@@ -28,44 +28,15 @@ test.afterEach(() => {
 });
 
 // fetchById
-test('fetchById should return 404 error if topicId is the random topicId', async (t) => {
-  const mockTopic = topicFactory.getValidTopic();
-  sandbox.stub(topicHelper, 'isRandomTopicId')
-    .returns(true);
+test('fetchById should return gambitCampaigns.fetchTopicById', async () => {
+  const topic = topicFactory.getValidTopic();
+  const topicId = topic.id;
   sandbox.stub(gambitCampaigns, 'fetchTopicById')
-    .returns(Promise.resolve(mockTopic));
+    .returns(Promise.resolve(topic));
 
-  const result = await t.throws(topicHelper.fetchById());
-  gambitCampaigns.fetchTopicById.should.not.have.been.called;
-  result.status.should.equal(404);
-});
-
-test('fetchById should call gambitCampaigns.fetchTopicById and return object if topicId is not hardcoded', async () => {
-  const mockTopic = topicFactory.getValidTopic();
-  sandbox.stub(topicHelper, 'isRandomTopicId')
-    .returns(false);
-  sandbox.stub(topicHelper, 'isHardcodedTopicId')
-    .returns(false);
-  sandbox.stub(gambitCampaigns, 'fetchTopicById')
-    .returns(Promise.resolve(mockTopic));
-
-  const result = await topicHelper.fetchById();
-  gambitCampaigns.fetchTopicById.should.have.been.called;
-  result.should.deep.equal(mockTopic);
-});
-
-test('fetchById should return a string if topicId is hardcoded', async () => {
-  const mockTopic = topicFactory.getValidTopic();
-  sandbox.stub(topicHelper, 'isRandomTopicId')
-    .returns(false);
-  sandbox.stub(topicHelper, 'isHardcodedTopicId')
-    .returns(true);
-  sandbox.stub(gambitCampaigns, 'fetchTopicById')
-    .returns(Promise.resolve(mockTopic));
-
-  const result = await topicHelper.fetchById(hardcodedTopicId);
-  gambitCampaigns.fetchTopicById.should.not.have.been.called;
-  result.should.equal(hardcodedTopicId);
+  const result = await topicHelper.fetchById(topicId);
+  gambitCampaigns.fetchTopicById.should.have.been.calledWith(topicId);
+  result.should.deep.equal(topic);
 });
 
 // fetchByCampaignId
@@ -83,16 +54,50 @@ test('fetchByCampaignId should call helpers.campaign.fetchById and inject campai
   });
 });
 
-// isHardcodedTopicId
-test('isHardcodedTopicId should return whether topicId exists in config.hardcodedTopicIds', (t) => {
-  t.truthy(topicHelper.isHardcodedTopicId(hardcodedTopicId));
-  t.falsy(topicHelper.isHardcodedTopicId(stubs.getContentfulId()));
+// getDefaultTopic
+test('getDefaultTopic should return config.rivescriptTopics.default', () => {
+  const result = topicHelper.getDefaultTopic();
+  result.should.deep.equal(config.rivescriptTopics.default);
 });
 
-// isRandomTopicId
-test('isRandomTopicId should return whether topicId is config.randomTopicId', (t) => {
-  t.truthy(topicHelper.isRandomTopicId(config.randomTopicId));
-  t.falsy(topicHelper.isRandomTopicId(stubs.getContentfulId()));
+// getDefaultTopicId
+test('getDefaultTopicId should return config.rivescriptTopics.default.id', (t) => {
+  t.is(topicHelper.getDefaultTopicId(), config.rivescriptTopics.default.id);
+  t.not(topicHelper.isDefaultTopicId(), stubs.getContentfulId());
+});
+
+// getRivescriptTopicById
+test('getRivescriptTopicById returns object with type rivescript and given id', () => {
+  const mockRivescriptTopicId = config.rivescriptTopics.default.id;
+  const result = topicHelper.getRivescriptTopicById(mockRivescriptTopicId);
+  result.id.should.equal(mockRivescriptTopicId);
+  result.type.should.equal('rivescript');
+  result.name.should.equal(mockRivescriptTopicId);
+});
+
+// getSupportTopic
+test('getSupportTopic should return config.rivescriptTopics.support', () => {
+  const result = topicHelper.getSupportTopic();
+  result.should.deep.equal(config.rivescriptTopics.support);
+});
+
+// isAskSubscriptionStatus
+test('isAskSubscriptionStatus returns whether topic is rivescriptTopics.isAskSubscriptionStatus', (t) => {
+  const mockTopic = topicFactory.getValidTopic();
+  t.truthy(topicHelper.isAskSubscriptionStatus(config.rivescriptTopics.askSubscriptionStatus));
+  t.falsy(topicHelper.isAskSubscriptionStatus(mockTopic));
+});
+
+// isRivescriptTopicId
+test('isRivescriptTopicId should return whether topicId exists in config.hardcodedTopicIds', (t) => {
+  t.truthy(topicHelper.isRivescriptTopicId(hardcodedTopicId));
+  t.falsy(topicHelper.isRivescriptTopicId(stubs.getContentfulId()));
+});
+
+// isDefaultTopicId
+test('isDefaultTopicId should return whether topicId is config.defaultTopicId', (t) => {
+  t.truthy(topicHelper.isDefaultTopicId(config.rivescriptTopics.default.id));
+  t.falsy(topicHelper.isDefaultTopicId(stubs.getContentfulId()));
 });
 
 // getRenderedTextFromTopicAndTemplateName

@@ -17,13 +17,15 @@ const createUserIfNotFoundMiddleware = require('../../../lib/middleware/messages
 const loadInboundMessageMiddleware = require('../../../lib/middleware/messages/member/message-inbound-load');
 const createInboundMessageMiddleware = require('../../../lib/middleware/messages/member/message-inbound-create');
 const loadOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-load');
-const parseMacroMiddleware = require('../../../lib/middleware/messages/member/macro-parse');
 const badWordsMiddleware = require('../../../lib/middleware/messages/member/bad-words');
 const getRivescriptReplyMiddleware = require('../../../lib/middleware/messages/member/rivescript-reply-get');
+const parseRivescriptReplyMiddleware = require('../../../lib/middleware/messages/member/rivescript-reply-parse');
 const updateUserMiddleware = require('../../../lib/middleware/messages/member/user-update');
 const supportRequestedMiddleware = require('../../../lib/middleware/messages/member/support-requested');
 const forwardSupportMessageMiddleware = require('../../../lib/middleware/messages/member/support-message');
+const changeTopicMacroMiddleware = require('../../../lib/middleware/messages/member/macro-change-topic');
 const menuMacroMiddleware = require('../../../lib/middleware/messages/member/macro-menu');
+const replyMacroMiddleware = require('../../../lib/middleware/messages/member/macro-reply');
 const getTopicMiddleware = require('../../../lib/middleware/messages/member/topic-get');
 const catchAllMacroMiddleware = require('../../../lib/middleware/messages/member/macro-catch-all');
 
@@ -52,13 +54,20 @@ router.use(loadOutboundMessageMiddleware(loadOutboundMessageConfig));
 // Updates Last Messaged At, Subscription Status, Paused.
 router.use(updateUserMiddleware());
 
-router.use(parseMacroMiddleware());
+// Sends the Rivescript reply if it's not a macro.
+router.use(parseRivescriptReplyMiddleware());
 
-// Scolds User if inbound message contains bad words.
-router.use(badWordsMiddleware());
+// Changes conversation topic if user sent a keyword.
+router.use(changeTopicMacroMiddleware());
 
-// If MENU keyword, set random Campaign and ask for Signup.
+// Executes macros that send a single hardcoded reply.
+router.use(replyMacroMiddleware());
+
+// Responds to a menu command by finding a random campaign to ask user for signup.
 router.use(menuMacroMiddleware());
+
+// Scolds user if message contains bad words.
+router.use(badWordsMiddleware());
 
 // If Conversation is paused, forward inbound messages to Front, for agents to respond to.
 // Sends an empty reply message back.
@@ -67,7 +76,7 @@ router.use(forwardSupportMessageMiddleware());
 // Otherwise, fetch the current conversation topic.
 router.use(getTopicMiddleware());
 
-// Now that that the topic template is loaded, check for a support request, as topics may
+// Now that that the topic templates are loaded, check if this is a support request, as topics may
 // override the supportRequested template.
 // TODO: Move this into catchall.
 router.use(supportRequestedMiddleware());

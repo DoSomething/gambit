@@ -43,30 +43,91 @@ test.afterEach(() => {
 });
 
 // changeTopic
-test('changeTopic should call setTopic and return req.conversation.changeTopic', async (t) => {
+test('changeTopic does not call setTopic if not a topic change', async (t) => {
   sandbox.stub(requestHelper, 'setTopic')
     .returns(underscore.noop);
-  sandbox.stub(conversation, 'changeTopic')
+  sandbox.stub(conversation, 'setTopic')
     .returns(Promise.resolve(true));
   t.context.req.conversation = conversation;
+  t.context.req.currentTopicId = topic.id;
 
   await requestHelper.changeTopic(t.context.req, topic);
   requestHelper.setTopic.should.have.been.calledWith(t.context.req, topic);
-  conversation.changeTopic.should.have.been.calledWith(topic);
+  conversation.setTopic.should.not.have.been.called;
 });
+
+test('changeTopic calls helpers.user.setPendingSubscriptionStatusForUserId and setTopic when topic change is askSubscriptionStatus', async (t) => {
+  sandbox.stub(requestHelper, 'setTopic')
+    .returns(underscore.noop);
+  sandbox.stub(helpers.topic, 'isAskSubscriptionStatus')
+    .returns(true);
+  sandbox.stub(conversation, 'setTopic')
+    .returns(Promise.resolve());
+  sandbox.stub(helpers.user, 'setPendingSubscriptionStatusForUserId')
+    .returns(Promise.resolve(true));
+  t.context.req.conversation = conversation;
+  t.context.req.currentTopicId = 'abc';
+  t.context.req.userId = 'def';
+
+  await requestHelper.changeTopic(t.context.req, topic);
+  requestHelper.setTopic.should.have.been.calledWith(t.context.req, topic);
+  helpers.user.setPendingSubscriptionStatusForUserId
+    .should.have.been.calledWith(t.context.req.userId);
+  conversation.setTopic.should.have.been.calledWith(topic);
+});
+
+test('changeTopic calls setTopic when topic change is not askSubscriptionStatus', async (t) => {
+  sandbox.stub(requestHelper, 'setTopic')
+    .returns(underscore.noop);
+  sandbox.stub(helpers.topic, 'isAskSubscriptionStatus')
+    .returns(false);
+  sandbox.stub(conversation, 'setTopic')
+    .returns(Promise.resolve());
+  sandbox.stub(helpers.user, 'setPendingSubscriptionStatusForUserId')
+    .returns(Promise.resolve(true));
+  t.context.req.conversation = conversation;
+  t.context.req.currentTopicId = 'abc';
+  t.context.req.userId = 'def';
+
+  await requestHelper.changeTopic(t.context.req, topic);
+  requestHelper.setTopic.should.have.been.calledWith(t.context.req, topic);
+  helpers.user.setPendingSubscriptionStatusForUserId.should.not.have.been.called;
+  conversation.setTopic.should.have.been.calledWith(topic);
+});
+
+test('changeTopic does not call setTopic when topic change is askSubscriptionStatus and setPendingSubscriptionStatusForUserId fails', async (t) => {
+  sandbox.stub(requestHelper, 'setTopic')
+    .returns(underscore.noop);
+  sandbox.stub(helpers.topic, 'isAskSubscriptionStatus')
+    .returns(true);
+  sandbox.stub(conversation, 'setTopic')
+    .returns(Promise.resolve());
+  const error = { message: 'Epic fail' };
+  sandbox.stub(helpers.user, 'setPendingSubscriptionStatusForUserId')
+    .returns(Promise.reject(error));
+  t.context.req.conversation = conversation;
+  t.context.req.currentTopicId = 'abc';
+  t.context.req.userId = 'def';
+
+  await t.throws(requestHelper.changeTopic(t.context.req, topic));
+  requestHelper.setTopic.should.have.been.calledWith(t.context.req, topic);
+  helpers.user.setPendingSubscriptionStatusForUserId.should.have.been.called;
+  conversation.setTopic.should.not.have.been.called;
+});
+
 
 // changeTopicByCampaign
 test('changeTopicByCampaign should call setCampaign and return error if campaign does not have topics', async (t) => {
   sandbox.stub(requestHelper, 'setCampaign')
     .returns(underscore.noop);
-  sandbox.stub(conversation, 'changeTopic')
+  sandbox.stub(conversation, 'setTopic')
     .returns(Promise.resolve(true));
   t.context.req.conversation = conversation;
   const campaign = campaignFactory.getValidCampaignWithoutTopics();
 
   await t.throws(requestHelper.changeTopicByCampaign(t.context.req, campaign));
   requestHelper.setCampaign.should.have.been.calledWith(t.context.req, campaign);
-  conversation.changeTopic.should.not.been.called;
+  conversation.setTopic.should.not.been.called;
 });
 
 test('changeTopicByCampaign should call setCampaign and return changeTopic if campaign has topics', async (t) => {
@@ -85,7 +146,7 @@ test('changeTopicByCampaign should call setCampaign and return changeTopic if ca
 // executeChangeTopicMacro
 test('executeChangeTopicMacro should call setKeyword, fetch topic and return changeTopic', async (t) => {
   t.context.req.rivescriptMatch = stubs.getRandomWord();
-  t.context.req.rivescriptReplyTopic = stubs.getContentfulId();
+  t.context.req.rivescriptReplyTopic = { id: stubs.getContentfulId() };
   t.context.req.macro = stubs.getRandomWord();
   sandbox.stub(requestHelper, 'setKeyword')
     .returns(underscore.noop);
@@ -98,7 +159,7 @@ test('executeChangeTopicMacro should call setKeyword, fetch topic and return cha
   await requestHelper.executeChangeTopicMacro(t.context.req);
   requestHelper.setKeyword.should.have.been
     .calledWith(t.context.req, t.context.req.rivescriptMatch);
-  helpers.topic.fetchById.should.have.been.calledWith(t.context.req.rivescriptReplyTopic);
+  helpers.topic.fetchById.should.have.been.calledWith(t.context.req.rivescriptReplyTopic.id);
   requestHelper.changeTopic.should.have.been.calledWith(t.context.req, topic);
 });
 
@@ -106,15 +167,21 @@ test('executeChangeTopicMacro should call setKeyword, fetch topic and return cha
 test('getRivescriptReply should call helpers.rivescript.getBotReply with req vars', async (t) => {
   t.context.req.userId = userId;
   t.context.req.conversation = conversation;
+  t.context.req.currentTopicId = stubs.getContentfulId();
   t.context.req.inboundMessageText = stubs.getRandomMessageText();
-  const botReply = { text: stubs.getRandomMessageText() };
+  const mockRivescriptTopicId = 'random';
+  const mockRivescriptTopic = { id: mockRivescriptTopicId };
+  const botReply = { text: stubs.getRandomMessageText(), match: '@hello' };
   sandbox.stub(helpers.rivescript, 'getBotReply')
     .returns(Promise.resolve(botReply));
-
+  sandbox.stub(helpers.topic, 'getRivescriptTopicById')
+    .returns(mockRivescriptTopic);
   const result = await requestHelper.getRivescriptReply(t.context.req);
   helpers.rivescript.getBotReply.should.have.been
-    .calledWith(userId, conversation.topic, t.context.req.inboundMessageText);
-  result.should.deep.equal(botReply);
+    .calledWith(userId, t.context.req.currentTopicId, t.context.req.inboundMessageText);
+  result.text.should.equal(botReply.text);
+  result.match.should.equal(botReply.match);
+  result.topic.should.deep.equal(mockRivescriptTopic);
 });
 
 // hasCampaign
@@ -332,8 +399,13 @@ test('setConversation should inject a conversation property to req', (t) => {
     .returns(underscore.noop);
   requestHelper.setConversation(t.context.req, conversation);
   t.context.req.conversation.should.equal(conversation);
+  t.context.req.currentTopicId.should.equal(conversation.topic);
   const conversationId = conversation.id;
-  helpers.analytics.addCustomAttributes.should.have.been.calledWith({ conversationId });
+  const currentTopicId = conversation.topic;
+  helpers.analytics.addCustomAttributes.should.have.been.calledWith({
+    conversationId,
+    currentTopicId,
+  });
   requestHelper.setLastOutboundMessage.should.have.been.calledWith(t.context.req, message);
 });
 
@@ -401,7 +473,8 @@ test('setTopic should inject a topic property to req and call setCampaign if top
   sandbox.spy(requestHelper, 'setCampaign');
   requestHelper.setTopic(t.context.req, topic);
   t.context.req.topic.should.equal(topic);
-  helpers.analytics.addCustomAttributes.should.have.been.calledWith({ topic: topic.id });
+  const topicId = topic.id;
+  helpers.analytics.addCustomAttributes.should.have.been.calledWith({ topicId });
   requestHelper.setCampaign.should.have.been.calledWith(t.context.req, topic.campaign);
 });
 
@@ -412,7 +485,7 @@ test('setTopic should not call setCampaign if topic.campaign undefined', (t) => 
   requestHelper.setTopic(t.context.req, campaignlessTopic);
   t.context.req.topic.should.equal(campaignlessTopic);
   helpers.analytics.addCustomAttributes
-    .should.have.been.calledWith({ topic: campaignlessTopic.id });
+    .should.have.been.calledWith({ topicId: campaignlessTopic.id });
   requestHelper.setCampaign.should.not.have.been.called;
 });
 

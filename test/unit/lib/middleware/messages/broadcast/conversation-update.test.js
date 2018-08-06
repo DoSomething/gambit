@@ -23,7 +23,6 @@ const updateConversation = require('../../../../../../lib/middleware/messages/br
 
 const campaign = campaignFactory.getValidCampaign();
 const conversation = conversationFactory.getValidConversation();
-const conversationSaveStub = Promise.resolve(conversation);
 
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();
@@ -44,16 +43,13 @@ test.afterEach((t) => {
 test('updateConversation should call sendErrorResponse if req.topic and req.campaignId undefined', async (t) => {
   const next = sinon.stub();
   const middleware = updateConversation();
-  sandbox.stub(conversation, 'setTopic')
-    .returns(conversationSaveStub);
-  sandbox.stub(conversation, 'changeTopic')
-    .returns(conversationSaveStub);
+  sandbox.stub(helpers.request, 'changeTopic')
+    .returns(Promise.resolve());
 
   // test
   await middleware(t.context.req, t.context.res, next);
 
-  t.context.req.conversation.setTopic.should.not.have.been.called;
-  t.context.req.conversation.changeTopic.should.not.have.been.called;
+  helpers.request.changeTopic.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
   next.should.not.have.been.called;
 });
@@ -63,13 +59,13 @@ test('updateConversation should call conversation.setTopic if req.topic is set',
   const middleware = updateConversation();
   const topic = stubs.getTopic();
   t.context.req.topic = topic;
-  sandbox.stub(conversation, 'setTopic')
-    .returns(conversationSaveStub);
+  sandbox.stub(helpers.request, 'changeTopic')
+    .returns(Promise.resolve());
 
   // test
   await middleware(t.context.req, t.context.res, next);
 
-  t.context.req.conversation.setTopic.should.have.been.called;
+  helpers.request.changeTopic.should.have.been.calledWith(t.context.req, topic);
   next.should.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
 });
@@ -78,10 +74,8 @@ test('updateConversation should call helpers.campaign.fetchById if req.topic und
   const next = sinon.stub();
   const middleware = updateConversation();
   t.context.req.campaignId = stubs.getCampaignId();
-  sandbox.stub(conversation, 'setTopic')
-    .returns(conversationSaveStub);
-  sandbox.stub(conversation, 'changeTopic')
-    .returns(conversationSaveStub);
+  sandbox.stub(helpers.request, 'changeTopic')
+    .returns(Promise.resolve());
   sandbox.stub(helpers.campaign, 'fetchById')
     .returns(Promise.resolve(campaign));
   sandbox.stub(helpers.campaign, 'isClosedCampaign')
@@ -90,10 +84,10 @@ test('updateConversation should call helpers.campaign.fetchById if req.topic und
   // test
   await middleware(t.context.req, t.context.res, next);
 
-  t.context.req.conversation.setTopic.should.not.have.been.called;
   next.should.have.been.called;
   helpers.campaign.fetchById.should.have.been.called;
-  t.context.req.conversation.changeTopic.should.have.been.called;
+  // TODO: Confirm changeTopic was calledWith first item in campaign.topics array property.
+  helpers.request.changeTopic.should.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 
@@ -101,10 +95,8 @@ test('updateConversation should call sendErrorResponse if broadcast campaign is 
   const next = sinon.stub();
   const middleware = updateConversation();
   t.context.req.campaignId = stubs.getCampaignId();
-  sandbox.stub(conversation, 'setTopic')
-    .returns(conversationSaveStub);
-  sandbox.stub(conversation, 'changeTopic')
-    .returns(conversationSaveStub);
+  sandbox.stub(helpers.request, 'changeTopic')
+    .returns(Promise.resolve());
   sandbox.stub(helpers.campaign, 'fetchById')
     .returns(Promise.resolve(campaign));
   sandbox.stub(helpers.campaign, 'isClosedCampaign')
@@ -114,7 +106,7 @@ test('updateConversation should call sendErrorResponse if broadcast campaign is 
   await middleware(t.context.req, t.context.res, next);
 
   helpers.campaign.fetchById.should.have.been.called;
-  t.context.req.conversation.changeTopic.should.not.have.been.called;
+  helpers.request.changeTopic.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
 });
 
@@ -122,10 +114,8 @@ test('updateConversation should call sendErrorResponse if helpers.campaign.fetch
   const next = sinon.stub();
   const middleware = updateConversation();
   t.context.req.campaignId = stubs.getCampaignId();
-  sandbox.stub(conversation, 'setTopic')
-    .returns(conversationSaveStub);
-  sandbox.stub(conversation, 'changeTopic')
-    .returns(conversationSaveStub);
+  sandbox.stub(helpers.request, 'changeTopic')
+    .returns(Promise.resolve());
   sandbox.stub(helpers.campaign, 'fetchById')
     .returns(Promise.reject('epic fail'));
 
@@ -133,7 +123,7 @@ test('updateConversation should call sendErrorResponse if helpers.campaign.fetch
   await middleware(t.context.req, t.context.res, next);
 
   helpers.campaign.fetchById.should.have.been.called;
-  t.context.req.conversation.changeTopic.should.not.have.been.called;
+  helpers.request.changeTopic.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
   next.should.not.have.been.called;
 });
@@ -142,7 +132,7 @@ test('updateConversation should call sendErrorResponse if changeTopic throws', a
   const next = sinon.stub();
   const middleware = updateConversation();
   t.context.req.campaignId = stubs.getCampaignId();
-  sandbox.stub(conversation, 'changeTopic')
+  sandbox.stub(helpers.request, 'changeTopic')
     .throws();
   sandbox.stub(helpers.campaign, 'fetchById')
     .returns(Promise.resolve(campaign));
@@ -151,7 +141,7 @@ test('updateConversation should call sendErrorResponse if changeTopic throws', a
   await middleware(t.context.req, t.context.res, next);
 
   helpers.campaign.fetchById.should.have.been.called;
-  t.context.req.conversation.changeTopic.should.have.been.called;
+  helpers.request.changeTopic.should.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
   next.should.not.have.been.called;
 });
