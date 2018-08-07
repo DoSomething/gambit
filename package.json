@@ -56,7 +56,7 @@
     "moment": "^2.21.0",
     "mongoose": "^4.10.6",
     "mustache": "^2.3.0",
-    "newrelic": "2.8.x",
+    "newrelic": "4.7.0",
     "request": "^2.81.0",
     "request-promise": "^4.2.1",
     "rivescript": "^1.17.2",
