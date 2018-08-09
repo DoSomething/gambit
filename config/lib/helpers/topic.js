@@ -15,9 +15,14 @@ module.exports = {
     'tmi_completed',
     'unsubscribed',
   ],
-  autoReplyTopics: [
-    'autoReplyBroadcast',
-  ],
+  types: {
+    askYesNo: 'askYesNo',
+    autoReply: 'autoReply',
+    photoPostConfig: 'photoPostConfig',
+    textPostConfig: 'textPostConfig',
+    // To be deprecated by autoReply:
+    externalPostConfig: 'externalPostConfig',
+  },
   rivescriptTopics: {
     askSubscriptionStatus: {
       id: 'ask_subscription_status',

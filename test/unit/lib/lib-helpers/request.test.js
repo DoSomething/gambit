@@ -495,3 +495,31 @@ test('setUserId should inject a userId property to req', (t) => {
   t.context.req.userId.should.equal(userId);
   helpers.analytics.addCustomAttributes.should.have.been.calledWith({ userId });
 });
+
+// shouldSendAutoReply
+test('shouldSendAutoReply returns false if req.topic undefined', (t) => {
+  t.falsy(requestHelper.shouldSendAutoReply(t.context.req));
+});
+
+test('shouldSendAutoReply return true if req.topic isAskYesNo (for now)', (t) => {
+  sandbox.stub(helpers.topic, 'isAskYesNo')
+    .returns(true);
+  t.context.req.topic = topic;
+  t.truthy(requestHelper.shouldSendAutoReply(t.context.req));
+});
+
+test('shouldSendAutoReply return true if req.topic isAutoReply', (t) => {
+  sandbox.stub(helpers.topic, 'isAutoReply')
+    .returns(true);
+  t.context.req.topic = topic;
+  t.truthy(requestHelper.shouldSendAutoReply(t.context.req));
+});
+
+test('shouldSendAutoReply return false if req.topic is neither isAutoReply or isAskYesNo', (t) => {
+  sandbox.stub(helpers.topic, 'isAskYesNo')
+    .returns(false);
+  sandbox.stub(helpers.topic, 'isAutoReply')
+    .returns(false);
+  t.context.req.topic = topic;
+  t.falsy(requestHelper.shouldSendAutoReply(t.context.req));
+});
