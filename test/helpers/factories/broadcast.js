@@ -29,7 +29,7 @@ function getValidAskSubscriptionStatus() {
 }
 
 function getValidAskYesNo() {
-  return getBroadcast(config.types.askYesNo);
+  return module.exports.getBroadcast(config.types.askYesNo);
 }
 
 function getValidCampaignBroadcast() {
@@ -52,6 +52,7 @@ function getValidTopicBroadcast() {
 }
 
 module.exports = {
+  getBroadcast,
   getValidAskSubscriptionStatus,
   getValidAskYesNo,
   getValidCampaignBroadcast,
