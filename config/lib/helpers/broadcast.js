@@ -5,6 +5,8 @@ module.exports = {
     askSubscriptionStatus: 'askSubscriptionStatus',
     askYesNo: 'askYesNo',
     autoReplyBroadcast: 'autoReplyBroadcast',
+    photoPostBroadcast: 'photoPostBroadcast',
+    textPostBroadcast: 'textPostBroadcast',
     legacy: 'broadcast',
   },
   default: {

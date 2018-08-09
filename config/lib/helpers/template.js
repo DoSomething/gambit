@@ -25,6 +25,7 @@ const templatesMap = {
     askSignup: 'askSignup',
     invalidAskSignupResponse: 'invalidAskSignupResponse',
   },
+  // TODO: Rename as topicTemplates.
   gambitCampaignsTemplates: {
     askCaption: 'askCaption',
     askPhoto: 'askPhoto',
@@ -39,14 +40,17 @@ const templatesMap = {
     invalidQuantity: 'invalidQuantity',
     invalidText: 'invalidText',
     invalidWhyParticipated: 'invalidWhyParticipated',
+    photoPostBroadcast: 'photoPostBroadcast',
     startExternalPost: 'startExternalPost',
     startExternalPostAutoReply: 'startExternalPostAutoReply',
     startPhotoPost: 'startPhotoPost',
     startPhotoPostAutoReply: 'startPhotoPostAutoReply',
+    textPostBroadcast: 'textPostBroadcast',
     webAskText: 'webAskText',
     webStartExternalPost: 'webStartExternalPost',
     webStartPhotoPost: 'webStartPhotoPost',
   },
+  // TODO: Rename as macroTemplates.
   gambitConversationsTemplates: {
     badWords: {
       name: 'badWords',
