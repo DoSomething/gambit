@@ -30,7 +30,7 @@ const webhookContentTypeHeader = 'application/json';
 
 const askSubscriptionStatusBroadcast = broadcastFactory.getValidAskSubscriptionStatus();
 const askYesNoBroadcast = broadcastFactory.getValidAskYesNo();
-const legacyBroadcast = broadcastFactory.getValidCampaignBroadcast();
+const legacyBroadcast = broadcastFactory.getValidLegacyCampaignBroadcast();
 
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();
@@ -63,7 +63,7 @@ test('aggregateMessagesForBroadcastId should throw if Messages.aggregate fails',
 
 // fetch
 test('fetch should return gambitCampaigns.fetchBroadcasts', async () => {
-  const broadcasts = [broadcastFactory.getValidCampaignBroadcast()];
+  const broadcasts = [broadcastFactory.getValidLegacyCampaignBroadcast()];
   const query = { skip: 11 };
   sandbox.stub(gambitCampaigns, 'fetchBroadcasts')
     .returns(Promise.resolve(broadcasts));
@@ -75,7 +75,7 @@ test('fetch should return gambitCampaigns.fetchBroadcasts', async () => {
 
 // fetchById
 test('fetchById should return gambitCampaigns.fetchBroadcastById', async () => {
-  const broadcast = broadcastFactory.getValidCampaignBroadcast();
+  const broadcast = broadcastFactory.getValidLegacyCampaignBroadcast();
   sandbox.stub(gambitCampaigns, 'fetchBroadcastById')
     .returns(Promise.resolve(broadcast));
 

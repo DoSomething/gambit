@@ -38,7 +38,7 @@ function getValidAskYesNo() {
   return module.exports.getBroadcast(config.types.askYesNo);
 }
 
-function getValidCampaignBroadcast() {
+function getValidLegacyCampaignBroadcast() {
   const broadcast = getBroadcast(config.types.legacy);
   broadcast.message.template = 'askSignup';
   broadcast.topic = null;
@@ -49,7 +49,7 @@ function getValidCampaignBroadcast() {
 /**
  * @return {Object}
  */
-function getValidTopicBroadcast() {
+function getValidLegacyRivescriptTopicBroadcast() {
   const broadcast = getBroadcast(config.types.legacy);
   broadcast.message.template = 'rivescript';
   broadcast.topic = stubs.getTopic();
@@ -62,6 +62,6 @@ module.exports = {
   getValidAutoReplyBroadcast,
   getValidAskSubscriptionStatus,
   getValidAskYesNo,
-  getValidCampaignBroadcast,
-  getValidTopicBroadcast,
+  getValidLegacyCampaignBroadcast,
+  getValidLegacyRivescriptTopicBroadcast,
 };

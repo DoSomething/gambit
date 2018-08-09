@@ -15,8 +15,8 @@ const stubs = require('../../../../../helpers/stubs');
 const broadcastFactory = require('../../../../../helpers/factories/broadcast');
 
 const broadcasts = [
-  broadcastFactory.getValidCampaignBroadcast(),
-  broadcastFactory.getValidTopicBroadcast(),
+  broadcastFactory.getValidLegacyCampaignBroadcast(),
+  broadcastFactory.getValidLegacyRivescriptTopicBroadcast(),
 ];
 
 chai.should();
