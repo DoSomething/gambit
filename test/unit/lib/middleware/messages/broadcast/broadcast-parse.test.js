@@ -25,9 +25,6 @@ const sandbox = sinon.sandbox.create();
 test.beforeEach((t) => {
   sandbox.stub(helpers.attachments, 'add')
     .returns(underscore.noop);
-  // TODO: Remove me and add tests for non legacy parsing.
-  sandbox.stub(helpers.broadcast, 'isLegacyBroadcast')
-    .returns(true);
   sandbox.stub(helpers.request, 'setCampaignId')
     .returns(underscore.noop);
   sandbox.stub(helpers.request, 'setOutboundMessageTemplate')
@@ -45,7 +42,7 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-test('parseBroadcast should parse campaign broadcast and inject campaignId into req', async (t) => {
+test('parseBroadcast should inject campaignId into req if legacy campaign broadcast', async (t) => {
   const next = sinon.stub();
   const middleware = parseBroadcast();
   const broadcast = broadcastFactory.getValidCampaignBroadcast();
@@ -66,7 +63,7 @@ test('parseBroadcast should parse campaign broadcast and inject campaignId into 
   next.should.have.been.called;
 });
 
-test('parseBroadcast should parse topic broadcast and inject topic into req', async (t) => {
+test('parseBroadcast should inject topic into req if legacy rivescript topic broadcast', async (t) => {
   const next = sinon.stub();
   const middleware = parseBroadcast();
   const broadcast = broadcastFactory.getValidTopicBroadcast();
@@ -77,14 +74,48 @@ test('parseBroadcast should parse topic broadcast and inject topic into req', as
   // test
   await middleware(t.context.req, t.context.res, next);
   helpers.request.setCampaignId.should.not.have.been.called;
-  helpers.request.setTopic
-    .should.have.been.calledWith(t.context.req, { id: broadcast.topic });
+  helpers.request.setTopic.should.have.been.calledWith(t.context.req, { id: broadcast.topic });
   helpers.request.setOutboundMessageText
     .should.have.been.calledWith(t.context.req, broadcast.message.text);
   helpers.request.setOutboundMessageTemplate
     .should.have.been.calledWith(t.context.req, broadcast.message.template);
   helpers.attachments.add
     .should.have.been.calledWith(t.context.req, broadcast.message.attachments[0]);
+  next.should.have.been.called;
+});
+
+test('parseBroadcast should inject the broadcast.message.topic into req.topic if exists', async (t) => {
+  const next = sinon.stub();
+  const middleware = parseBroadcast();
+  const broadcast = broadcastFactory.getValidAutoReplyBroadcast();
+  t.context.req.broadcast = broadcast;
+  sandbox.stub(helpers.request, 'setOutboundMessageText')
+    .returns(underscore.noop);
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  helpers.request.setCampaignId.should.not.have.been.called;
+  helpers.request.setTopic.should.have.been.calledWith(t.context.req, broadcast.message.topic);
+  helpers.request.setOutboundMessageText
+    .should.have.been.calledWith(t.context.req, broadcast.message.text);
+  helpers.request.setOutboundMessageTemplate
+    .should.have.been.calledWith(t.context.req, broadcast.message.template);
+  helpers.attachments.add
+    .should.have.been.calledWith(t.context.req, broadcast.message.attachments[0]);
+  next.should.have.been.called;
+});
+
+test('parseBroadcast should inject the broadcast into req.topic if broadcast.message.topic is empty', async (t) => {
+  const next = sinon.stub();
+  const middleware = parseBroadcast();
+  const broadcast = broadcastFactory.getValidAskYesNo();
+  t.context.req.broadcast = broadcast;
+  sandbox.stub(helpers.request, 'setOutboundMessageText')
+    .returns(underscore.noop);
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  helpers.request.setTopic.should.have.been.calledWith(t.context.req, broadcast);
   next.should.have.been.called;
 });
 

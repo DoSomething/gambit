@@ -1,13 +1,14 @@
 'use strict';
 
 const stubs = require('../stubs');
+const topicFactory = require('./topic');
 const config = require('../../../config/lib/helpers/broadcast');
 
 /**
  * @see https://github.com/DoSomething/gambit-campaigns/tree/master/documentation
  */
 
-function getBroadcast(type) {
+function getBroadcast(type, topic = {}) {
   const date = Date.now();
   return {
     id: stubs.getBroadcastId(),
@@ -19,9 +20,14 @@ function getBroadcast(type) {
       text: stubs.getBroadcastMessageText(),
       attachments: [stubs.getAttachment()],
       template: type,
+      topic,
     },
     templates: [],
   };
+}
+
+function getValidAutoReplyBroadcast() {
+  return getBroadcast(config.types.autoReplyBroadcast, topicFactory.getValidAutoReply());
 }
 
 function getValidAskSubscriptionStatus() {
@@ -53,6 +59,7 @@ function getValidTopicBroadcast() {
 
 module.exports = {
   getBroadcast,
+  getValidAutoReplyBroadcast,
   getValidAskSubscriptionStatus,
   getValidAskYesNo,
   getValidCampaignBroadcast,
