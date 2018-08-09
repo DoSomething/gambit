@@ -25,6 +25,9 @@ const sandbox = sinon.sandbox.create();
 test.beforeEach((t) => {
   sandbox.stub(helpers.attachments, 'add')
     .returns(underscore.noop);
+  // TODO: Remove me and add tests for non legacy parsing.
+  sandbox.stub(helpers.broadcast, 'isLegacyBroadcast')
+    .returns(true);
   sandbox.stub(helpers.request, 'setCampaignId')
     .returns(underscore.noop);
   sandbox.stub(helpers.request, 'setOutboundMessageTemplate')
