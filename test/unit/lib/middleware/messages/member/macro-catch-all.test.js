@@ -44,10 +44,10 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-test('catchAllMacro should call replies.autoReply if request.isAutoReplyTopic', async (t) => {
+test('catchAllMacro should call replies.autoReply if request.shouldSendAutoReply', async (t) => {
   const next = sinon.stub();
   const middleware = catchAllMacro();
-  sandbox.stub(helpers.request, 'isAutoReplyTopic')
+  sandbox.stub(helpers.request, 'shouldSendAutoReply')
     .returns(true);
   sandbox.stub(helpers.replies, 'autoReply')
     .returns(underscore.noop);
@@ -55,7 +55,7 @@ test('catchAllMacro should call replies.autoReply if request.isAutoReplyTopic', 
   // test
   await middleware(t.context.req, t.context.res, next);
 
-  helpers.request.isAutoReplyTopic.should.have.been.calledWith(t.context.req);
+  helpers.request.shouldSendAutoReply.should.have.been.calledWith(t.context.req);
   next.should.not.have.been.called;
   helpers.replies.autoReply.should.have.been.calledWith(t.context.req, t.context.res);
 });

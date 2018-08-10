@@ -28,6 +28,10 @@ const defaultStats = stubs.getBroadcastStats(true);
 const mockAggregateResults = stubs.getBroadcastAggregateMessagesResults();
 const webhookContentTypeHeader = 'application/json';
 
+const askSubscriptionStatusBroadcast = broadcastFactory.getValidAskSubscriptionStatus();
+const askYesNoBroadcast = broadcastFactory.getValidAskYesNo();
+const legacyBroadcast = broadcastFactory.getValidLegacyCampaignBroadcast();
+
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();
 
@@ -59,7 +63,7 @@ test('aggregateMessagesForBroadcastId should throw if Messages.aggregate fails',
 
 // fetch
 test('fetch should return gambitCampaigns.fetchBroadcasts', async () => {
-  const broadcasts = [broadcastFactory.getValidCampaignBroadcast()];
+  const broadcasts = [broadcastFactory.getValidLegacyCampaignBroadcast()];
   const query = { skip: 11 };
   sandbox.stub(gambitCampaigns, 'fetchBroadcasts')
     .returns(Promise.resolve(broadcasts));
@@ -71,7 +75,7 @@ test('fetch should return gambitCampaigns.fetchBroadcasts', async () => {
 
 // fetchById
 test('fetchById should return gambitCampaigns.fetchBroadcastById', async () => {
-  const broadcast = broadcastFactory.getValidCampaignBroadcast();
+  const broadcast = broadcastFactory.getValidLegacyCampaignBroadcast();
   sandbox.stub(gambitCampaigns, 'fetchBroadcastById')
     .returns(Promise.resolve(broadcast));
 
@@ -119,6 +123,18 @@ test('getWebhook should return an object with body of a POST Broadcast Message r
   result.body.northstarId.should.equal(config.customerIo.userIdField);
   result.body.broadcastId.should.equal(broadcastId);
   result.should.have.property('url');
+});
+
+// isAskSubscriptionStatus
+test('isAskSubscriptionStatus returns whether broadcast type is askSubscriptionStatus', (t) => {
+  t.truthy(broadcastHelper.isAskSubscriptionStatus(askSubscriptionStatusBroadcast));
+  t.falsy(broadcastHelper.isAskSubscriptionStatus(askYesNoBroadcast));
+});
+
+// isLegacyBroadcast
+test('isLegacyBroadcast returns whether broadcast type is legacy', (t) => {
+  t.truthy(broadcastHelper.isLegacyBroadcast(legacyBroadcast));
+  t.falsy(broadcastHelper.isLegacyBroadcast(askYesNoBroadcast));
 });
 
 // parseMessageDirection

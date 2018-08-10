@@ -182,6 +182,9 @@ module.exports = {
   getRandomMessageText: function getRandomMessageText() {
     return chance.paragraph({ sentences: 2 });
   },
+  getRandomName: function getRandomWord() {
+    return `${chance.animal()} ${chance.animal()} - ${chance.month()} ${chance.year()}`;
+  },
   getRandomWord: function getRandomWord() {
     return chance.word();
   },

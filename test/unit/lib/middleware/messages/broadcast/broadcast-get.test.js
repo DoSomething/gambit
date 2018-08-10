@@ -17,7 +17,7 @@ const broadcastFactory = require('../../../../../helpers/factories/broadcast');
 
 // stubs
 const broadcastId = stubs.getBroadcastId();
-const mockBroadcast = broadcastFactory.getValidCampaignBroadcast();
+const mockBroadcast = broadcastFactory.getValidLegacyCampaignBroadcast();
 
 // setup "x.should.y" assertion style
 chai.should();
