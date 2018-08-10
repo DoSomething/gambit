@@ -35,7 +35,7 @@ function getValidAskSubscriptionStatus() {
 }
 
 function getValidAskYesNo() {
-  return module.exports.getBroadcast(config.types.askYesNo);
+  return getBroadcast(config.types.askYesNo);
 }
 
 function getValidLegacyCampaignBroadcast() {
