@@ -17,7 +17,6 @@ const Message = require('../../../../app/models/Message');
 const campaignFactory = require('../../../helpers/factories/campaign');
 const conversationFactory = require('../../../helpers/factories/conversation');
 const messageFactory = require('../../../helpers/factories/message');
-const topicFactory = require('../../../helpers/factories/topic');
 
 // setup "x.should.y" assertion style
 chai.should();
@@ -175,6 +174,11 @@ test('sendReply(): should call sendErrorResponse on failure', async (t) => {
   helpers.sendErrorResponse.should.have.been.called;
 });
 
+test('autoReply(): should call sendReplyWithTopicTemplate', async (t) => {
+  const template = templates.autoReply;
+  await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
+});
+
 test('continueTopic(): sendReplyWithTopicTemplate should be called', async (t) => {
   sandbox.stub(helpers.request, 'postCampaignActivityFromReq')
     .returns(Promise.resolve(gCampResponse.data));
@@ -216,57 +220,6 @@ test('askSignup(): should call sendReplyWithTopicTemplate', async (t) => {
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
 });
 
-// autoReply
-test('autoReply should call postCampaignActivityFromReq if topic has a campaign', async (t) => {
-  t.context.req.topic = topicFactory.getValidTextPostConfig();
-  sandbox.stub(helpers.request, 'postCampaignActivityFromReq')
-    .returns(Promise.resolve(gCampResponse.data));
-  sandbox.stub(repliesHelper, 'sendReplyWithTopicTemplate')
-    .returns(true);
-
-  await repliesHelper.autoReply(t.context.req, t.context.res);
-  helpers.request.postCampaignActivityFromReq.should.have.been.called;
-  repliesHelper.sendReplyWithTopicTemplate.should.have.been.called;
-});
-
-test('autoReply does not call postCampaignActivityFromReq if topic does not have campaign', async (t) => {
-  t.context.req.topic = topicFactory.getValidTopicWithoutCampaign();
-  sandbox.stub(helpers.request, 'postCampaignActivityFromReq')
-    .returns(Promise.resolve(gCampResponse.data));
-  sandbox.stub(repliesHelper, 'sendReplyWithTopicTemplate')
-    .returns(true);
-
-  await repliesHelper.autoReply(t.context.req, t.context.res);
-  helpers.request.postCampaignActivityFromReq.should.not.have.been.called;
-  repliesHelper.sendReplyWithTopicTemplate.should.have.been.called;
-});
-
-test('autoReply calls sendErrorResponse if postCampaignActivityFromReq fails', async (t) => {
-  t.context.req.topic = topicFactory.getValidTextPostConfig();
-  const mockError = { message: 'oh no' };
-  sandbox.stub(helpers.request, 'postCampaignActivityFromReq')
-    .returns(Promise.reject(mockError));
-  sandbox.stub(repliesHelper, 'sendReplyWithTopicTemplate')
-    .returns(true);
-
-  await repliesHelper.autoReply(t.context.req, t.context.res);
-  repliesHelper.sendReplyWithTopicTemplate.should.not.have.been.called;
-  helpers.sendErrorResponse.should.have.been.calledWith(t.context.res, mockError);
-});
-
-test('autoReply calls sendErrorResponse if sendReplyWithTopicTemplate fails', async (t) => {
-  t.context.req.topic = topicFactory.getValidTopicWithoutCampaign();
-  const mockError = { message: 'oh no' };
-  sandbox.stub(helpers.request, 'postCampaignActivityFromReq')
-    .returns(Promise.resolve(gCampResponse.data));
-  sandbox.stub(repliesHelper, 'sendReplyWithTopicTemplate')
-    .throws(mockError);
-
-  await repliesHelper.autoReply(t.context.req, t.context.res);
-  helpers.sendErrorResponse.should.have.been.calledWith(t.context.res, mockError);
-});
-
-// campaignClosed
 test('campaignClosed(): should call sendReplyWithTopicTemplate', async (t) => {
   const template = templates.campaignClosed;
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
