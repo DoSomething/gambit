@@ -32,6 +32,7 @@ const templatesMap = {
     askQuantity: 'askQuantity',
     askText: 'askText',
     askWhyParticipated: 'askWhyParticipated',
+    autoReply: 'autoReply',
     completedPhotoPost: 'completedPhotoPost',
     completedPhotoPostAutoReply: 'completedPhotoPostAutoReply',
     completedTextPost: 'completedTextPost',

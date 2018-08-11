@@ -175,7 +175,7 @@ test('sendReply(): should call sendErrorResponse on failure', async (t) => {
 });
 
 test('autoReply(): should call sendReplyWithTopicTemplate', async (t) => {
-  const template = templates.autoReply;
+  const template = templates.gambitCampaignsTemplates.autoReply;
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
 });
 
