@@ -16,7 +16,7 @@ chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const catchAllMacro = require('../../../../../../lib/middleware/messages/member/macro-catch-all');
+const catchAllMacro = require('../../../../../../lib/middleware/messages/member/catchAll');
 
 const sandbox = sinon.sandbox.create();
 
@@ -42,22 +42,6 @@ test.beforeEach((t) => {
 test.afterEach((t) => {
   sandbox.restore();
   t.context = {};
-});
-
-test('catchAllMacro should call replies.autoReply if request.shouldSendAutoReply', async (t) => {
-  const next = sinon.stub();
-  const middleware = catchAllMacro();
-  sandbox.stub(helpers.request, 'shouldSendAutoReply')
-    .returns(true);
-  sandbox.stub(helpers.replies, 'autoReply')
-    .returns(underscore.noop);
-
-  // test
-  await middleware(t.context.req, t.context.res, next);
-
-  helpers.request.shouldSendAutoReply.should.have.been.calledWith(t.context.req);
-  next.should.not.have.been.called;
-  helpers.replies.autoReply.should.have.been.calledWith(t.context.req, t.context.res);
 });
 
 test('catchAllMacro should call replies.noCampaign if not request.hasCampaign', async (t) => {

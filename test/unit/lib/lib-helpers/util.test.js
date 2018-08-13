@@ -5,7 +5,9 @@ const test = require('ava');
 const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
+const httpMocks = require('node-mocks-http');
 
+const InternalServerError = require('../../../../app/exceptions/InternalServerError');
 const UnprocessibleEntityError = require('../../../../app/exceptions/UnprocessibleEntityError');
 const stubs = require('../../../helpers/stubs');
 
@@ -64,4 +66,74 @@ test('formatMobileNumber should throw an UnprocessibleEntityError if no mobile i
 test('formatMobileNumber should throw an UnprocessibleEntityError if the mobile is passed is not a valid US, E164 formatted mobile number', () => {
   const mobile = stubs.getMobileNumber();
   expect(() => utilHelper.formatMobileNumber(mobile)).to.throw(UnprocessibleEntityError);
+});
+
+// parseStatusAndMessageFromError
+test('parseStatusAndMessageFromError(anyString): should respond with error status 500 and anyString\'s value as message', () => {
+  const errorString = 'omgError';
+
+  // test
+  const result = utilHelper.parseStatusAndMessageFromError(errorString);
+  result.status.should.equal(500);
+  result.message.should.equal(errorString);
+});
+
+test('parseStatusAndMessageFromError(error): should respond with error status and error message', () => {
+  const unprocessibleEntityError = new UnprocessibleEntityError();
+
+  // test
+  const result = utilHelper.parseStatusAndMessageFromError(unprocessibleEntityError);
+  result.status.should.equal(unprocessibleEntityError.status);
+  result.message.should.equal(unprocessibleEntityError.message);
+});
+
+test('parseStatusAndMessageFromError(): not sending an error should use a Generic Internal Server Error response', () => {
+  const genericError = new InternalServerError();
+
+  // test
+  const result = utilHelper.parseStatusAndMessageFromError(genericError);
+  result.status.should.equal(genericError.status);
+  result.message.should.equal(genericError.message);
+});
+
+test('parseStatusAndMessageFromError(res) sets message to res.response.body.error.message if exists', () => {
+  const res = httpMocks.createResponse();
+  const message = 'API key invalid';
+  res.status = 401;
+  res.response = {
+    body: {
+      error: {
+        message,
+      },
+    },
+  };
+  // test
+  const result = utilHelper.parseStatusAndMessageFromError(res);
+  result.status.should.equal(res.status);
+  result.message.should.equal(message);
+});
+
+test('parseStatusAndMessageFromError(res) sets message to res.response.body.message if exists', () => {
+  const res = httpMocks.createResponse();
+  const message = 'API key invalid';
+  res.status = 401;
+  res.response = {
+    body: {
+      message,
+    },
+  };
+  // test
+  const result = utilHelper.parseStatusAndMessageFromError(res);
+  result.status.should.equal(res.status);
+  result.message.should.equal(message);
+});
+
+test('parseStatusAndMessageFromError(error) sets message to error.message if exists', () => {
+  const error = {
+    message: 'API key invalid',
+  };
+  // test
+  const result = utilHelper.parseStatusAndMessageFromError(error);
+  result.status.should.equal(500);
+  result.message.should.equal(error.message);
 });

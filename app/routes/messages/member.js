@@ -27,7 +27,8 @@ const changeTopicMacroMiddleware = require('../../../lib/middleware/messages/mem
 const menuMacroMiddleware = require('../../../lib/middleware/messages/member/macro-menu');
 const replyMacroMiddleware = require('../../../lib/middleware/messages/member/macro-reply');
 const getTopicMiddleware = require('../../../lib/middleware/messages/member/topic-get');
-const catchAllMacroMiddleware = require('../../../lib/middleware/messages/member/macro-catch-all');
+const catchAllAutoReplyMiddleware = require('../../../lib/middleware/messages/member/catchAll-autoReply');
+const catchAllDefaultMiddleware = require('../../../lib/middleware/messages/member/catchAll');
 
 router.use(paramsMiddleware());
 
@@ -81,7 +82,10 @@ router.use(getTopicMiddleware());
 // TODO: Move this into catchall.
 router.use(supportRequestedMiddleware());
 
+// Checks whether to send an autoReply template.
+router.use(catchAllAutoReplyMiddleware());
+
 // Determines whether to start or continue conversation for the current topic.
-router.use(catchAllMacroMiddleware());
+router.use(catchAllDefaultMiddleware());
 
 module.exports = router;
