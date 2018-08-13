@@ -1,6 +1,14 @@
 'use strict';
 
 module.exports = {
+  types: {
+    askSubscriptionStatus: 'askSubscriptionStatus',
+    askYesNo: 'askYesNo',
+    autoReplyBroadcast: 'autoReplyBroadcast',
+    photoPostBroadcast: 'photoPostBroadcast',
+    textPostBroadcast: 'textPostBroadcast',
+    legacy: 'broadcast',
+  },
   default: {
     templates: {
       campaign: 'askSignup',

@@ -54,6 +54,12 @@ test('fetchByCampaignId should call helpers.campaign.fetchById and inject campai
   });
 });
 
+// getAskSubscriptionStatusTopic
+test('getAskSubscriptionStatusTopic should return config.rivescriptTopics.askSubscriptionStatus', () => {
+  const result = topicHelper.getAskSubscriptionStatusTopic();
+  result.should.deep.equal(config.rivescriptTopics.askSubscriptionStatus);
+});
+
 // getDefaultTopic
 test('getDefaultTopic should return config.rivescriptTopics.default', () => {
   const result = topicHelper.getDefaultTopic();
@@ -86,6 +92,18 @@ test('isAskSubscriptionStatus returns whether topic is rivescriptTopics.isAskSub
   const mockTopic = topicFactory.getValidTopic();
   t.truthy(topicHelper.isAskSubscriptionStatus(config.rivescriptTopics.askSubscriptionStatus));
   t.falsy(topicHelper.isAskSubscriptionStatus(mockTopic));
+});
+
+// isAskYesNo
+test('isAskYesNo returns whether topic type is askYesNo', (t) => {
+  t.truthy(topicHelper.isAskYesNo(topicFactory.getValidAskYesNo()));
+  t.falsy(topicHelper.isAskYesNo(topicFactory.getValidAutoReply()));
+});
+
+// isAutoReply
+test('isAutoReply returns whether topic type is autoReply', (t) => {
+  t.truthy(topicHelper.isAutoReply(topicFactory.getValidAutoReply()));
+  t.falsy(topicHelper.isAutoReply(topicFactory.getValidTextPostConfig()));
 });
 
 // isRivescriptTopicId

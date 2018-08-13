@@ -25,7 +25,7 @@ const defaultTopicTriggerFactory = require('../../helpers/factories/defaultTopic
 const topicFactory = require('../../helpers/factories/topic');
 
 const campaign = campaignFactory.getValidCampaign();
-const campaignBroadcast = broadcastFactory.getValidCampaignBroadcast();
+const campaignBroadcast = broadcastFactory.getValidLegacyCampaignBroadcast();
 const defaultTopicTriggers = [
   defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger(),
   defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger(),
@@ -114,7 +114,7 @@ test('fetchBroadcasts should return result of a successful GET /broadcasts reque
   const fetchResponse = {
     data: [
       campaignBroadcast,
-      broadcastFactory.getValidTopicBroadcast(),
+      broadcastFactory.getValidLegacyRivescriptTopicBroadcast(),
     ],
   };
   sandbox.stub(gambitCampaigns, 'executeGet')

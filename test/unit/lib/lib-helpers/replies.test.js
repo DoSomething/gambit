@@ -174,6 +174,11 @@ test('sendReply(): should call sendErrorResponse on failure', async (t) => {
   helpers.sendErrorResponse.should.have.been.called;
 });
 
+test('autoReply(): should call sendReplyWithTopicTemplate', async (t) => {
+  const template = templates.gambitCampaignsTemplates.autoReply;
+  await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
+});
+
 test('continueTopic(): sendReplyWithTopicTemplate should be called', async (t) => {
   sandbox.stub(helpers.request, 'postCampaignActivityFromReq')
     .returns(Promise.resolve(gCampResponse.data));
