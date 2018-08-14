@@ -255,6 +255,11 @@ test('declinedSignup(): should call sendReplyWithTopicTemplate', async (t) => {
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
 });
 
+test('invalidAskYesNoResponse(): should call sendReplyWithTopicTemplate', async (t) => {
+  const template = templates.gambitCampaignsTemplates.invalidAskYesNoResponse;
+  await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
+});
+
 test('invalidAskContinueResponse(): should call sendReplyWithTopicTemplate', async (t) => {
   const template = templates.askContinueTemplates.invalidAskContinueResponse;
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
@@ -262,6 +267,11 @@ test('invalidAskContinueResponse(): should call sendReplyWithTopicTemplate', asy
 
 test('invalidAskSignupResponse(): should call sendReplyWithTopicTemplate', async (t) => {
   const template = templates.askSignupTemplates.invalidAskSignupResponse;
+  await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
+});
+
+test('saidNo(): should call sendReplyWithTopicTemplate', async (t) => {
+  const template = templates.gambitCampaignsTemplates.saidNo;
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
 });
 

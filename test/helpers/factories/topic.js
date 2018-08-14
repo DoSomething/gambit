@@ -32,10 +32,6 @@ function getValidTopicWithoutCampaign() {
   return topic;
 }
 
-function getValidAskYesNo() {
-  return broadcastFactory.getValidAskYesNo();
-}
-
 function getValidAutoReply() {
   return getValidTopic(config.types.autoReply);
 }
@@ -45,7 +41,6 @@ function getValidTextPostConfig() {
 }
 
 module.exports = {
-  getValidAskYesNo,
   getValidAutoReply,
   getValidTextPostConfig,
   getValidTopic,

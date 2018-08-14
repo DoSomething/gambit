@@ -9,6 +9,7 @@ const sinonChai = require('sinon-chai');
 const gambitCampaigns = require('../../../../lib/gambit-campaigns');
 const helpers = require('../../../../lib/helpers');
 const stubs = require('../../../helpers/stubs');
+const broadcastFactory = require('../../../helpers/factories/broadcast');
 const campaignFactory = require('../../../helpers/factories/campaign');
 const topicFactory = require('../../../helpers/factories/topic');
 const config = require('../../../../config/lib/helpers/topic');
@@ -96,7 +97,7 @@ test('isAskSubscriptionStatus returns whether topic is rivescriptTopics.isAskSub
 
 // isAskYesNo
 test('isAskYesNo returns whether topic type is askYesNo', (t) => {
-  t.truthy(topicHelper.isAskYesNo(topicFactory.getValidAskYesNo()));
+  t.truthy(topicHelper.isAskYesNo(broadcastFactory.getValidAskYesNo()));
   t.falsy(topicHelper.isAskYesNo(topicFactory.getValidAutoReply()));
 });
 
