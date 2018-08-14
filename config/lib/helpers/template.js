@@ -5,8 +5,8 @@ const underscore = require('underscore');
 const activeStatusText = 'Hi I\'m Freddie from DoSomething.org! Welcome to my weekly updates (up to 8msg/month). Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.';
 const helpCenterUrl = 'http://doso.me/1jf4/291kep';
 // Note: This url may also appear in hardcoded askSubscriptionStatus topic.
-// @see brain/topics.rive
-const newsUrl = 'https://www.dosomething.org/us/family-separations-us-border';
+// @see brain/topics/askSubscriptionStatus.rive
+const newsUrl = 'https://www.dosomething.org/us/spot-the-signs-guide?user_id={{user.id}}';
 // TODO: DRY menuCommand definition.
 // @see lib/helpers.js
 const menuCommand = 'menu';
@@ -75,11 +75,11 @@ const templatesMap = {
     },
     subscriptionStatusActive: {
       name: 'subscriptionStatusActive',
-      text: activeStatusText,
+      text: `${activeStatusText}\n\nI'll text you again next week, but in the meantime do you wanna take 2 mins to learn how to spot the signs of an abusive relationship and what you can do about it? ${newsUrl}`,
     },
     subscriptionStatusLess: {
       name: 'subscriptionStatusLess',
-      text: `Okay, great! I'll text you once a month with updates on what's happening in the news and/or easy ways for you to take action in your community! Wanna take 2 mins to catch up on what's happening in the news this week and what you can do about it? ${newsUrl}?user_id={{user.id}},broadcastsource=monthly`,
+      text: `Okay, great! I'll text you once a month with updates on what's happening in the news and/or easy ways for you to take action in your community! Wanna take 2 mins to learn how to spot the signs of an abusive relationship and what you can do about it? ${newsUrl}`,
     },
     subscriptionStatusResubscribed: {
       name: 'subscriptionStatusResubscribed',

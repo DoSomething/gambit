@@ -1,4 +1,5 @@
 // topics.rive
+// TODO: Move each of these topics into separate files in /brain/topics
 
 // Unsubcribed users should only receive replies to a select few triggers.
 > topic unsubscribed
@@ -47,42 +48,11 @@
  * (which is hardcoded as the 'random' topic in Rivescript).
  */
 
-// Asks user to update their subscription status.
-+ status
-- Hi it's Freddie at DoSomething! I send texts w updates on news & easy ways to take action. Want texts: A)Weekly B)Monthly C)I need more info D)Text STOP to stop {topic=ask_subscription_status}
-
-> topic ask_subscription_status includes random
-
-+ a
-- subscriptionStatusActive{topic=random}
-
-+ b
-- subscriptionStatusLess{topic=random}
-
-+ c [*]
-- Sure! Maybe it's been a while since you signed up for DoSomething.org texts, so I'll give you the run down of what these texts are all about. Once a week, I text over 3 million young people with updates on what's happening in the news and/or easy ways to take action in your community.\n\nWant an example of the news we share? Take 2 mins to catch up on what's happening in the news this week and learn what you can do about it https://www.dosomething.org/us/family-separations-us-border?user_id={{user.id}},broadcastsource=info
-
-+ d [*]
-- subscriptionStatusStop{topic=unsubscribed}
-
-+ [*] more [*]
-@ c
-
-+ [*]
-- Whoops, I'm sorry I didn't get that - do you want A) Weekly B) Monthly C) Need More Info D) STOP
-
-< topic
-
 // The survey_response topic is commonly used by broadcast entries. This will eventually be
 // deprecated by a content type like an AutoReplyBroadcast that sends a generic auto reply message
 // and changes conversation topic back to random so user gets prompted to continue a campaign.
 
-// NOTE: We're currently survey_response follow up broadcasts to users in askSubscriptionStatus, so
-// we'll duplicate the D unsuscribe trigger for now.
 > topic survey_response includes random
-
-+ d [*]
-- subscriptionStatusStop{topic=unsubscribed}
 
 + [*]
 - I'm sorry I didn't understand that! Text Q if you have a question.{topic=random}
