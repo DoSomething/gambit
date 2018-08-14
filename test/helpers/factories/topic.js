@@ -1,7 +1,6 @@
 'use strict';
 
 const stubs = require('../stubs');
-const broadcastFactory = require('./broadcast');
 const config = require('../../../config/lib/helpers/topic');
 
 
