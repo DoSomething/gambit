@@ -15,7 +15,7 @@
 - subscriptionStatusLess{topic=random}
 
 + c [*]
-- Sure! Maybe it's been a while since you signed up for DoSomething.org texts, so I'll give you the run down of what these texts are all about. Once a week, I text over 3 million young people with updates on what's happening in the news and/or easy ways to take action in your community.\n\nWant an example of an easy way to take action? Take 2 mins to learn how to spot the signs of an abusive relationship and what you can do about it: https://www.dosomething.org/us/spot-the-signs-guide?user_id={{user.id}}
+- Sure! Once a week, I text over 3 million young people with updates on what's happening in the news and/or easy ways to take action in your community.\n\nWant an example of an easy way to take action? Take 2 mins to learn how to spot the signs of an abusive relationship and what you can do about it. Read our guide: https://www.dosomething.org/us/spot-the-signs-guide?source=sms&utm_source=dosomething&utm_medium=sms&utm_campaign=permissioning_moreinfo&user_id={{user.id}}
 
 + [*] more [*]
 @ c

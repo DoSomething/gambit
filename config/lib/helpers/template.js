@@ -6,7 +6,7 @@ const activeStatusText = 'Hi I\'m Freddie from DoSomething.org! Welcome to my we
 const helpCenterUrl = 'http://doso.me/1jf4/291kep';
 // Note: This url may also appear in hardcoded askSubscriptionStatus topic.
 // @see brain/topics/askSubscriptionStatus.rive
-const newsUrl = 'https://www.dosomething.org/us/spot-the-signs-guide?user_id={{user.id}}';
+const newsUrl = 'https://www.dosomething.org/us/spot-the-signs-guide?source=sms&utm_source=dosomething&utm_medium=sms&utm_campaign=permissioning_weekly&user_id={{user.id}}';
 // TODO: DRY menuCommand definition.
 // @see lib/helpers.js
 const menuCommand = 'menu';
@@ -75,11 +75,11 @@ const templatesMap = {
     },
     subscriptionStatusActive: {
       name: 'subscriptionStatusActive',
-      text: `${activeStatusText}\n\nI'll text you again next week, but in the meantime do you wanna take 2 mins to learn how to spot the signs of an abusive relationship and what you can do about it? ${newsUrl}`,
+      text: `${activeStatusText}\n\nOkay, great! I'll text you once a week with updates on what's happening in the news and/or easy ways for you to take action in your community! Wanna take 2 mins to learn how to spot the signs of an abusive relationship and what you can do about it? Read our guide here: ${newsUrl}`,
     },
     subscriptionStatusLess: {
       name: 'subscriptionStatusLess',
-      text: `Okay, great! I'll text you once a month with updates on what's happening in the news and/or easy ways for you to take action in your community! Wanna take 2 mins to learn how to spot the signs of an abusive relationship and what you can do about it? ${newsUrl}`,
+      text: `Okay, great! I'll text you once a month with updates on what's happening in the news and/or easy ways for you to take action in your community! Wanna take 2 mins to learn how to spot the signs of an abusive relationship and what you can do about it? Read our guide here: ${newsUrl}`,
     },
     subscriptionStatusResubscribed: {
       name: 'subscriptionStatusResubscribed',
