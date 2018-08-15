@@ -4,7 +4,7 @@ const test = require('ava');
 const chai = require('chai');
 const nock = require('nock');
 
-
+const tagsHelper = require('../../../../lib/helpers/tags');
 const templatesHelper = require('../../../../lib/helpers/template');
 const integrationHelper = require('../../../helpers/integration');
 const Message = require('../../../../app/models/Message');
@@ -77,7 +77,8 @@ test.serial('POST /api/v2/messages?origin=subscriptionStatusActive should create
   const outboundMessage = await Message.findOne({ conversationId: conversation.id });
   should.exist(outboundMessage);
   outboundMessage.template.should.be.equal(subscriptionStatusActiveData.name);
-  outboundMessage.text.should.be.equal(subscriptionStatusActiveData.text);
+  const renderedText = tagsHelper.render(subscriptionStatusActiveData.text, { user: user.data });
+  outboundMessage.text.should.be.equal(renderedText);
 });
 
 test.serial('POST /api/v2/messages?origin=subscriptionStatusActive should not create a new convo if the user has one already', async (t) => {
@@ -108,7 +109,8 @@ test.serial('POST /api/v2/messages?origin=subscriptionStatusActive should not cr
   messages.length.should.be.equal(1);
   const message = messages[0];
   message.template.should.be.equal(subscriptionStatusActiveData.name);
-  message.text.should.be.equal(subscriptionStatusActiveData.text);
+  const renderedText = tagsHelper.render(subscriptionStatusActiveData.text, { user: user.data });
+  message.text.should.be.equal(renderedText);
 });
 
 test.serial('POST /api/v2/messages?origin=subscriptionStatusActive should not create convo if the user has no mobile', async (t) => {

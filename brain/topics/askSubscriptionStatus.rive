@@ -1,0 +1,26 @@
+/** 
+ * Asks user to update their subscription status.
+ */
+
++ status
+- Hi it's Freddie at DoSomething! I send texts w updates on news & easy ways to take action. Want texts: A)Weekly B)Monthly C)I need more info D)Text STOP to stop {topic=ask_subscription_status}
+
+// Includes 'random' to catch all triggers defined in the default topic
+> topic ask_subscription_status includes random
+
++ a
+- subscriptionStatusActive{topic=random}
+
++ b
+- subscriptionStatusLess{topic=random}
+
++ c [*]
+- Sure! Once a week, I text over 3 million young people with updates on what's happening in the news and/or easy ways to take action in your community.\n\nWant an example of an easy way to take action? Take 2 mins to learn how to spot the signs of an abusive relationship and what you can do about it. Read our guide: https://www.dosomething.org/us/spot-the-signs-guide?source=sms&utm_source=dosomething&utm_medium=sms&utm_campaign=permissioning_moreinfo&user_id={{user.id}}
+
++ [*] more [*]
+@ c
+
++ [*]
+- Whoops, I'm sorry I didn't get that - do you want A) Weekly B) Monthly C) Need More Info
+
+< topic
