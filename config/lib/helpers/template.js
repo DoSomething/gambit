@@ -23,6 +23,7 @@ const templatesMap = {
   },
   askSignupTemplates: {
     askSignup: 'askSignup',
+    askYesNo: 'askYesNo',
     invalidAskSignupResponse: 'invalidAskSignupResponse',
   },
   // TODO: Rename as topicTemplates.
@@ -32,6 +33,7 @@ const templatesMap = {
     askQuantity: 'askQuantity',
     askText: 'askText',
     askWhyParticipated: 'askWhyParticipated',
+    askYesNo: 'askYesNo',
     autoReply: 'autoReply',
     completedPhotoPost: 'completedPhotoPost',
     completedPhotoPostAutoReply: 'completedPhotoPostAutoReply',
@@ -44,6 +46,7 @@ const templatesMap = {
     invalidWhyParticipated: 'invalidWhyParticipated',
     photoPostBroadcast: 'photoPostBroadcast',
     saidNo: 'saidNo',
+    saidYes: 'saidYes',
     startExternalPost: 'startExternalPost',
     startExternalPostAutoReply: 'startExternalPostAutoReply',
     startPhotoPost: 'startPhotoPost',
