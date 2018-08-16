@@ -43,7 +43,7 @@ function getValidAskYesNo() {
     },
     saidNo: {
       text: stubs.getRandomMessageText(),
-      topic: {},
+      topic: topicFactory.getValidTopicWithoutCampaign(),
     },
   };
   return broadcast;

@@ -164,6 +164,22 @@ test('executeChangeTopicMacro should call setKeyword, fetch topic and return cha
   requestHelper.changeTopic.should.have.been.calledWith(t.context.req, topic);
 });
 
+// executeSaidNoMacro
+test('executeSaidNoMacro should change to saidNo topic and send saidNo reply', async (t) => {
+  const askYesNo = broadcastFactory.getValidAskYesNo();
+  const saidNoTemplate = askYesNo.templates.saidNo;
+  t.context.req.topic = askYesNo;
+  sandbox.stub(requestHelper, 'changeTopic')
+    .returns(Promise.resolve(true));
+  sandbox.stub(helpers.replies, 'saidNo')
+    .returns(underscore.noop);
+
+  await requestHelper.executeSaidNoMacro(t.context.req);
+  requestHelper.changeTopic.should.have.been.calledWith(t.context.req, saidNoTemplate.topic);
+  helpers.replies.saidNo
+    .should.have.been.calledWith(t.context.req, t.context.res, saidNoTemplate.text);
+});
+
 // executeSaidYesMacro
 test('executeSaidYesMacro should call setBroadcastId, change to saidYes topic, post campaign activity if new topic has campaign, then send the saidYes reply', async (t) => {
   const askYesNo = broadcastFactory.getValidAskYesNo();
