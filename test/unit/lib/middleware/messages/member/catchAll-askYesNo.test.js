@@ -101,15 +101,16 @@ test('askYesNoCatchAll should changeTopic and send saidYes template if askYesNo 
   helpers.sendErrorResponse.should.not.been.called;
 });
 
-test('askYesNoCatchAll should calls sendErrorResponse if request isSaidYesMacro but saidYes template topic.id undefined', async (t) => {
+test('askYesNoCatchAll should call sendErrorResponse if request isSaidYesMacro but executeSaidYesMacro fails', async (t) => {
   const next = sinon.stub();
   const middleware = askYesNoCatchAll();
   t.context.req.topic = askYesNoBroadcast;
-  t.context.req.topic.templates.saidYes.topic = {};
   sandbox.stub(helpers.request, 'parseAskYesNoResponse')
     .returns(Promise.resolve());
   sandbox.stub(helpers.request, 'isSaidYesMacro')
     .returns(true);
+  sandbox.stub(helpers.request, 'executeSaidYesMacro')
+    .returns(Promise.reject());
   sandbox.stub(helpers.request, 'changeTopic')
     .returns(Promise.resolve());
 
