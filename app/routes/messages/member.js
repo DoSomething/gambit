@@ -27,6 +27,7 @@ const changeTopicMacroMiddleware = require('../../../lib/middleware/messages/mem
 const menuMacroMiddleware = require('../../../lib/middleware/messages/member/macro-menu');
 const replyMacroMiddleware = require('../../../lib/middleware/messages/member/macro-reply');
 const getTopicMiddleware = require('../../../lib/middleware/messages/member/topic-get');
+const catchAllAskYesNoMiddleware = require('../../../lib/middleware/messages/member/catchAll-askYesNo');
 const catchAllAutoReplyMiddleware = require('../../../lib/middleware/messages/member/catchAll-autoReply');
 const catchAllDefaultMiddleware = require('../../../lib/middleware/messages/member/catchAll');
 
@@ -81,6 +82,9 @@ router.use(getTopicMiddleware());
 // override the supportRequested template.
 // TODO: Move this into catchall.
 router.use(supportRequestedMiddleware());
+
+// Handles replies for askYesNo topics.
+router.use(catchAllAskYesNoMiddleware());
 
 // Checks whether to send an autoReply template.
 router.use(catchAllAutoReplyMiddleware());
