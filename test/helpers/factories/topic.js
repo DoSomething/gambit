@@ -1,7 +1,6 @@
 'use strict';
 
 const stubs = require('../stubs');
-const broadcastFactory = require('./broadcast');
 const config = require('../../../config/lib/helpers/topic');
 
 
@@ -32,10 +31,6 @@ function getValidTopicWithoutCampaign() {
   return topic;
 }
 
-function getValidAskYesNo() {
-  return broadcastFactory.getValidAskYesNo();
-}
-
 function getValidAutoReply() {
   return getValidTopic(config.types.autoReply);
 }
@@ -45,7 +40,6 @@ function getValidTextPostConfig() {
 }
 
 module.exports = {
-  getValidAskYesNo,
   getValidAutoReply,
   getValidTextPostConfig,
   getValidTopic,

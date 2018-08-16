@@ -35,7 +35,18 @@ function getValidAskSubscriptionStatus() {
 }
 
 function getValidAskYesNo() {
-  return getBroadcast(config.types.askYesNo);
+  const broadcast = getBroadcast(config.types.askYesNo);
+  broadcast.templates = {
+    saidYes: {
+      text: stubs.getRandomMessageText(),
+      topic: topicFactory.getValidAutoReply(),
+    },
+    saidNo: {
+      text: stubs.getRandomMessageText(),
+      topic: topicFactory.getValidTopicWithoutCampaign(),
+    },
+  };
+  return broadcast;
 }
 
 function getValidLegacyCampaignBroadcast() {

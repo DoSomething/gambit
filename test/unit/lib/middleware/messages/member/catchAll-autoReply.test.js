@@ -32,10 +32,11 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-test('autoReplyCatchAll should call replies.autoReply if request.shouldSendAutoReply is false', async (t) => {
+test('autoReplyCatchAll should call replies.autoReply if topic.isAutoReply is false', async (t) => {
   const next = sinon.stub();
   const middleware = autoReplyCatchAll();
-  sandbox.stub(helpers.request, 'shouldSendAutoReply')
+  t.context.req.topic = topicFactory.getValidTextPostConfig();
+  sandbox.stub(helpers.topic, 'isAutoReply')
     .returns(false);
   sandbox.stub(helpers.replies, 'autoReply')
     .returns(underscore.noop);
@@ -43,7 +44,7 @@ test('autoReplyCatchAll should call replies.autoReply if request.shouldSendAutoR
   // test
   await middleware(t.context.req, t.context.res, next);
 
-  helpers.request.shouldSendAutoReply.should.have.been.calledWith(t.context.req);
+  helpers.topic.isAutoReply.should.have.been.calledWith(t.context.req.topic);
   next.should.have.been.called;
   helpers.replies.autoReply.should.not.have.been.called;
 });
@@ -52,7 +53,7 @@ test('autoReplyCatchAll should call postCampaignActivityFromReq if shouldSendAut
   const next = sinon.stub();
   const middleware = autoReplyCatchAll();
   t.context.req.topic = topicFactory.getValidTextPostConfig();
-  sandbox.stub(helpers.request, 'shouldSendAutoReply')
+  sandbox.stub(helpers.topic, 'isAutoReply')
     .returns(true);
   sandbox.stub(helpers.request, 'hasCampaign')
     .returns(true);
@@ -73,7 +74,7 @@ test('autoReplyCatchAll does not call postCampaignActivityFromReq if shouldSendA
   const next = sinon.stub();
   const middleware = autoReplyCatchAll();
   t.context.req.topic = topicFactory.getValidTopicWithoutCampaign();
-  sandbox.stub(helpers.request, 'shouldSendAutoReply')
+  sandbox.stub(helpers.topic, 'isAutoReply')
     .returns(true);
   sandbox.stub(helpers.request, 'hasCampaign')
     .returns(false);
@@ -93,7 +94,7 @@ test('autoReplyCatchAll calls sendErrorResponse if postCampaignActivityFromReq f
   const next = sinon.stub();
   const middleware = autoReplyCatchAll();
   t.context.req.topic = topicFactory.getValidTextPostConfig();
-  sandbox.stub(helpers.request, 'shouldSendAutoReply')
+  sandbox.stub(helpers.topic, 'isAutoReply')
     .returns(true);
   sandbox.stub(helpers.request, 'hasCampaign')
     .returns(true);
@@ -114,7 +115,7 @@ test('autoReplyCatchAll calls sendErrorResponse if sendReplyWithTopicTemplate fa
   const next = sinon.stub();
   const middleware = autoReplyCatchAll();
   t.context.req.topic = topicFactory.getValidTopicWithoutCampaign();
-  sandbox.stub(helpers.request, 'shouldSendAutoReply')
+  sandbox.stub(helpers.topic, 'isAutoReply')
     .returns(true);
   sandbox.stub(helpers.request, 'hasCampaign')
     .returns(true);

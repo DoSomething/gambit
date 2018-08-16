@@ -11,6 +11,7 @@ const underscore = require('underscore');
 const helpers = require('../../../../lib/helpers');
 const gambitCampaigns = require('../../../../lib/gambit-campaigns');
 const stubs = require('../../../helpers/stubs');
+const broadcastFactory = require('../../../helpers/factories/broadcast');
 const campaignFactory = require('../../../helpers/factories/campaign');
 const conversationFactory = require('../../../helpers/factories/conversation');
 const topicFactory = require('../../../helpers/factories/topic');
@@ -161,6 +162,69 @@ test('executeChangeTopicMacro should call setKeyword, fetch topic and return cha
     .calledWith(t.context.req, t.context.req.rivescriptMatch);
   helpers.topic.fetchById.should.have.been.calledWith(t.context.req.rivescriptReplyTopic.id);
   requestHelper.changeTopic.should.have.been.calledWith(t.context.req, topic);
+});
+
+// executeSaidNoMacro
+test('executeSaidNoMacro should change to saidNo topic and send saidNo reply', async (t) => {
+  const askYesNo = broadcastFactory.getValidAskYesNo();
+  const saidNoTemplate = askYesNo.templates.saidNo;
+  t.context.req.topic = askYesNo;
+  sandbox.stub(requestHelper, 'changeTopic')
+    .returns(Promise.resolve(true));
+  sandbox.stub(helpers.replies, 'saidNo')
+    .returns(underscore.noop);
+
+  await requestHelper.executeSaidNoMacro(t.context.req);
+  requestHelper.changeTopic.should.have.been.calledWith(t.context.req, saidNoTemplate.topic);
+  helpers.replies.saidNo
+    .should.have.been.calledWith(t.context.req, t.context.res, saidNoTemplate.text);
+});
+
+// executeSaidYesMacro
+test('executeSaidYesMacro should call setBroadcastId, change to saidYes topic, post campaign activity if new topic has campaign, then send the saidYes reply', async (t) => {
+  const askYesNo = broadcastFactory.getValidAskYesNo();
+  const saidYesTemplate = askYesNo.templates.saidYes;
+  t.context.req.topic = askYesNo;
+  sandbox.stub(requestHelper, 'setBroadcastId')
+    .returns(underscore.noop);
+  sandbox.stub(requestHelper, 'changeTopic')
+    .returns(Promise.resolve(true));
+  sandbox.stub(requestHelper, 'hasCampaign')
+    .returns(true);
+  sandbox.stub(requestHelper, 'postCampaignActivityFromReq')
+    .returns(Promise.resolve());
+  sandbox.stub(helpers.replies, 'sendReply')
+    .returns(underscore.noop);
+
+  await requestHelper.executeSaidYesMacro(t.context.req);
+  requestHelper.setBroadcastId.should.have.been.calledWith(t.context.req, askYesNo.id);
+  requestHelper.changeTopic.should.have.been.calledWith(t.context.req, saidYesTemplate.topic);
+  requestHelper.postCampaignActivityFromReq.should.have.been.calledWith(t.context.req);
+  helpers.replies.sendReply
+    .should.have.been.calledWith(t.context.req, t.context.res, saidYesTemplate.text, 'saidYes');
+});
+
+test('executeSaidYesMacro should not post campaign activity if new topic does not have campaign', async (t) => {
+  const askYesNo = broadcastFactory.getValidAskYesNo();
+  const saidYesTemplate = askYesNo.templates.saidYes;
+  t.context.req.topic = askYesNo;
+  sandbox.stub(requestHelper, 'setBroadcastId')
+    .returns(underscore.noop);
+  sandbox.stub(requestHelper, 'changeTopic')
+    .returns(Promise.resolve(true));
+  sandbox.stub(requestHelper, 'hasCampaign')
+    .returns(false);
+  sandbox.stub(requestHelper, 'postCampaignActivityFromReq')
+    .returns(Promise.resolve());
+  sandbox.stub(helpers.replies, 'sendReply')
+    .returns(underscore.noop);
+
+  await requestHelper.executeSaidYesMacro(t.context.req);
+  requestHelper.setBroadcastId.should.have.been.calledWith(t.context.req, askYesNo.id);
+  requestHelper.changeTopic.should.have.been.calledWith(t.context.req, saidYesTemplate.topic);
+  requestHelper.postCampaignActivityFromReq.should.not.have.been.called;
+  helpers.replies.sendReply
+    .should.have.been.calledWith(t.context.req, t.context.res, saidYesTemplate.text, 'saidYes');
 });
 
 // getRivescriptReply
@@ -494,32 +558,4 @@ test('setUserId should inject a userId property to req', (t) => {
   requestHelper.setUserId(t.context.req, userId);
   t.context.req.userId.should.equal(userId);
   helpers.analytics.addCustomAttributes.should.have.been.calledWith({ userId });
-});
-
-// shouldSendAutoReply
-test('shouldSendAutoReply returns false if req.topic undefined', (t) => {
-  t.falsy(requestHelper.shouldSendAutoReply(t.context.req));
-});
-
-test('shouldSendAutoReply return true if req.topic isAskYesNo (for now)', (t) => {
-  sandbox.stub(helpers.topic, 'isAskYesNo')
-    .returns(true);
-  t.context.req.topic = topic;
-  t.truthy(requestHelper.shouldSendAutoReply(t.context.req));
-});
-
-test('shouldSendAutoReply return true if req.topic isAutoReply', (t) => {
-  sandbox.stub(helpers.topic, 'isAutoReply')
-    .returns(true);
-  t.context.req.topic = topic;
-  t.truthy(requestHelper.shouldSendAutoReply(t.context.req));
-});
-
-test('shouldSendAutoReply return false if req.topic is neither isAutoReply or isAskYesNo', (t) => {
-  sandbox.stub(helpers.topic, 'isAskYesNo')
-    .returns(false);
-  sandbox.stub(helpers.topic, 'isAutoReply')
-    .returns(false);
-  t.context.req.topic = topic;
-  t.falsy(requestHelper.shouldSendAutoReply(t.context.req));
 });
