@@ -110,7 +110,7 @@ test('askYesNoCatchAll should call sendErrorResponse if request isSaidYesMacro b
   sandbox.stub(helpers.request, 'isSaidYesMacro')
     .returns(true);
   sandbox.stub(helpers.request, 'executeSaidYesMacro')
-    .returns(Promise.reject());
+    .throws();
   sandbox.stub(helpers.request, 'changeTopic')
     .returns(Promise.resolve());
 
@@ -156,7 +156,7 @@ test('askYesNoCatchAll should call sendErrorResponse if request isSaidNoMacro bu
   sandbox.stub(helpers.request, 'isSaidNoMacro')
     .returns(true);
   sandbox.stub(helpers.request, 'executeSaidNoMacro')
-    .returns(Promise.reject());
+    .throws();
   sandbox.stub(helpers.request, 'changeTopic')
     .returns(Promise.resolve());
 
