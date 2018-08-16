@@ -270,10 +270,6 @@ test('invalidAskSignupResponse(): should call sendReplyWithTopicTemplate', async
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
 });
 
-test('saidNo(): should call sendReplyWithTopicTemplate', async (t) => {
-  const template = templates.gambitCampaignsTemplates.saidNo;
-  await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
-});
 
 test('badWords(): should call sendGambitConversationsTemplate', async (t) => {
   const template = gambitConversationsTemplates.badWords.name;
@@ -329,6 +325,28 @@ test('rivescriptReply(): should call sendReply', async (t) => {
     .returns(resolvedPromise);
 
   await repliesHelper.rivescriptReply(t.context.req, t.context.res, text);
+  repliesHelper.sendReply
+    .should.have.been.calledWith(t.context.req, t.context.res, text, template);
+});
+
+test('saidNo(): should call sendReply', async (t) => {
+  const template = templates.gambitCampaignsTemplates.saidNo;
+  const text = 'some text';
+  sandbox.stub(repliesHelper, 'sendReply')
+    .returns(resolvedPromise);
+
+  await repliesHelper.saidNo(t.context.req, t.context.res, text);
+  repliesHelper.sendReply
+    .should.have.been.calledWith(t.context.req, t.context.res, text, template);
+});
+
+test('saidYes(): should call sendReply', async (t) => {
+  const template = templates.gambitCampaignsTemplates.saidYes;
+  const text = 'some text';
+  sandbox.stub(repliesHelper, 'sendReply')
+    .returns(resolvedPromise);
+
+  await repliesHelper.saidYes(t.context.req, t.context.res, text);
   repliesHelper.sendReply
     .should.have.been.calledWith(t.context.req, t.context.res, text, template);
 });
