@@ -141,6 +141,7 @@ module.exports = {
     return {
       outbound: {
         total: empty ? 0 : totalOutbound,
+        macros: empty ? {} : macros,
       },
       inbound: {
         total: empty ? 0 : totalInbound,
