@@ -13,7 +13,6 @@ const helpers = require('../../../../../../lib/helpers');
 const logger = require('../../../../../../lib/logger');
 const stubs = require('../../../../../helpers/stubs');
 
-const cacheHelper = helpers.cache.broadcastStats;
 const broadcastId = stubs.getBroadcastId();
 const broadcastStats = stubs.getBroadcastStats();
 
@@ -21,7 +20,7 @@ chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const getStatsCache = require('../../../../../../lib/middleware/broadcasts/single/stats-cache-get');
+const getStats = require('../../../../../../lib/middleware/broadcasts/single/stats');
 
 const sandbox = sinon.sandbox.create();
 
@@ -42,12 +41,15 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-test('getStatsCache should send response if cached stats exist', async (t) => {
+test('getStats should call aggregateMessagesForBroadcastId, formatStats and send data', async (t) => {
   // setup
   const next = sinon.stub();
-  const middleware = getStatsCache();
-  sandbox.stub(cacheHelper, 'get')
-    .returns(Promise.resolve(broadcastStats));
+  const middleware = getStats();
+  const mockResult = { id: '123' };
+  sandbox.stub(helpers.broadcast, 'aggregateMessagesForBroadcastId')
+    .returns(Promise.resolve(mockResult));
+  sandbox.stub(helpers.broadcast, 'formatStats')
+    .returns(broadcastStats);
 
   // test
   await middleware(t.context.req, t.context.res, next);
@@ -58,30 +60,15 @@ test('getStatsCache should send response if cached stats exist', async (t) => {
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 
-test('getStatsCache should call next if cached stats not found', async (t) => {
+test('getStats should sendErrorResponse if aggregateMessagesForBroadcastId fails', async (t) => {
   // setup
   const next = sinon.stub();
-  const middleware = getStatsCache();
-  sandbox.stub(cacheHelper, 'get')
-    .returns(Promise.resolve(null));
-
-  // test
-  await middleware(t.context.req, t.context.res, next);
-
-  helpers.sendErrorResponse.should.not.have.been.called;
-  next.should.have.been.called;
-});
-
-test('getStatsCache should call next if sendErrorResponse returns null', async (t) => {
-  // setup
-  const next = sinon.stub();
-  const middleware = getStatsCache();
-  sandbox.stub(cacheHelper, 'get')
+  const middleware = getStats();
+  sandbox.stub(helpers.broadcast, 'aggregateMessagesForBroadcastId')
     .returns(Promise.reject(new Error()));
 
   // test
   await middleware(t.context.req, t.context.res, next);
 
   helpers.sendErrorResponse.should.have.been.called;
-  next.should.not.have.been.called;
 });
