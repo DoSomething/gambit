@@ -131,6 +131,12 @@ test('isAskSubscriptionStatus returns whether broadcast type is askSubscriptionS
   t.falsy(broadcastHelper.isAskSubscriptionStatus(askYesNoBroadcast));
 });
 
+// isAskYesNo
+test('isAskYesNo returns whether broadcast type is askYesNo', (t) => {
+  t.truthy(broadcastHelper.isAskYesNo(askYesNoBroadcast));
+  t.falsy(broadcastHelper.isAskYesNo(askSubscriptionStatusBroadcast));
+});
+
 // isLegacyBroadcast
 test('isLegacyBroadcast returns whether broadcast type is legacy', (t) => {
   t.truthy(broadcastHelper.isLegacyBroadcast(legacyBroadcast));
