@@ -17,7 +17,7 @@ const broadcastFactory = require('../../../../../helpers/factories/broadcast');
 
 // stubs
 const broadcastId = stubs.getBroadcastId();
-const mockBroadcast = broadcastFactory.getValidLegacyCampaignBroadcast();
+const legacyBroadcast = broadcastFactory.getValidLegacyCampaignBroadcast();
 
 // setup "x.should.y" assertion style
 chai.should();
@@ -45,33 +45,28 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-/**
- * Tests
- */
-test('getBroadcast should inject broadcast property from fetchById result', async (t) => {
-  // setup
+test('getBroadcast should return error if broadcast is legacy type', async (t) => {
   const next = sinon.stub();
   const middleware = getBroadcast();
   sandbox.stub(helpers.broadcast, 'fetchById')
-    .returns(Promise.resolve(mockBroadcast));
+    .returns(Promise.resolve(legacyBroadcast));
 
   // test
   await middleware(t.context.req, t.context.res, next);
   helpers.broadcast.fetchById.should.have.been.calledWith(broadcastId);
-  next.should.have.been.called;
-  helpers.sendErrorResponse.should.not.have.been.called;
+  next.should.not.have.been.called;
+  helpers.sendErrorResponse.should.have.been.called;
 });
 
 test('getBroadcast should call sendErrorResponse if fetchById fails', async (t) => {
-  // setup
   const next = sinon.stub();
   const middleware = getBroadcast();
+  const stubError = { message: 'Epic fail' };
   sandbox.stub(helpers.broadcast, 'fetchById')
-    .returns(Promise.reject(new Error()));
+    .returns(Promise.reject(stubError));
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  helpers.sendErrorResponse.should.have.been.called;
-  t.context.req.should.not.have.property('broadcast');
+  helpers.sendErrorResponse.should.have.been.calledWith(t.context.res, stubError);
   next.should.not.have.been.called;
 });
