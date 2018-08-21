@@ -17,7 +17,9 @@ const broadcastFactory = require('../../../../../helpers/factories/broadcast');
 
 // stubs
 const broadcastId = stubs.getBroadcastId();
+const askYesNoBroadcast = broadcastFactory.getValidAskYesNo();
 const legacyBroadcast = broadcastFactory.getValidLegacyCampaignBroadcast();
+const saidYesTemplate = askYesNoBroadcast.templates.saidYes;
 
 // setup "x.should.y" assertion style
 chai.should();
@@ -53,9 +55,50 @@ test('getBroadcast should return error if broadcast is legacy type', async (t) =
 
   // test
   await middleware(t.context.req, t.context.res, next);
+  t.context.req.broadcast.should.deep.equal(legacyBroadcast);
   helpers.broadcast.fetchById.should.have.been.calledWith(broadcastId);
   next.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
+});
+
+test('getBroadcast should return error if askYesNo topic campaign is closed', async (t) => {
+  const next = sinon.stub();
+  const middleware = getBroadcast();
+  sandbox.stub(helpers.broadcast, 'fetchById')
+    .returns(Promise.resolve(askYesNoBroadcast));
+  sandbox.stub(helpers.topic, 'hasCampaign')
+    .returns(true);
+  sandbox.stub(helpers.campaign, 'isClosedCampaign')
+    .returns(true);  
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  t.context.req.broadcast.should.deep.equal(askYesNoBroadcast);
+  helpers.broadcast.fetchById.should.have.been.calledWith(broadcastId);
+  helpers.topic.hasCampaign.should.have.been.calledWith(saidYesTemplate.topic);
+  helpers.campaign.isClosedCampaign.should.have.been.calledWith(saidYesTemplate.topic.campaign);
+  next.should.not.have.been.called;
+  helpers.sendErrorResponse.should.have.been.called;
+});
+
+test('getBroadcast should call next if askYesNo topic campaign is not closed', async (t) => {
+  const next = sinon.stub();
+  const middleware = getBroadcast();
+  sandbox.stub(helpers.broadcast, 'fetchById')
+    .returns(Promise.resolve(askYesNoBroadcast));
+  sandbox.stub(helpers.topic, 'hasCampaign')
+    .returns(true);
+  sandbox.stub(helpers.campaign, 'isClosedCampaign')
+    .returns(false);  
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  t.context.req.broadcast.should.deep.equal(askYesNoBroadcast);
+  helpers.broadcast.fetchById.should.have.been.calledWith(broadcastId);
+  helpers.topic.hasCampaign.should.have.been.calledWith(saidYesTemplate.topic);
+  helpers.campaign.isClosedCampaign.should.have.been.calledWith(saidYesTemplate.topic.campaign);
+  next.should.have.have.been.called;
+  helpers.sendErrorResponse.should.not.have.been.called;
 });
 
 test('getBroadcast should call sendErrorResponse if fetchById fails', async (t) => {
