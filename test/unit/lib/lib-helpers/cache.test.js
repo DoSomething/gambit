@@ -18,8 +18,8 @@ chai.use(sinonChai);
 const cacheHelper = rewire('../../../../lib/helpers/cache');
 
 // stubs
-const broadcastId = stubs.getBroadcastId();
-const broadcastStats = stubs.getBroadcastStats();
+const rivescriptCacheId = 'contentApi';
+const rivescript = '+ hello\n- hi';
 
 const sandbox = sinon.sandbox.create();
 
@@ -29,46 +29,46 @@ test.beforeEach(() => {
 
 test.afterEach(() => {
   sandbox.restore();
-  cacheHelper.__set__('broadcastStatsCache', undefined);
+  cacheHelper.__set__('rivescriptCache', undefined);
 });
 
 /**
- * Broadcast Stats
+ * Rivescript cache
  */
-test('broadcastStats.get should return object when cache exists', async () => {
-  cacheHelper.__set__('broadcastStatsCache', {
-    get: () => Promise.resolve(broadcastStats),
+test('rivescript.get should return object when cache exists', async () => {
+  cacheHelper.__set__('rivescriptCache', {
+    get: () => Promise.resolve(rivescript),
   });
-  const result = await cacheHelper.broadcastStats.get(broadcastId);
-  result.should.deep.equal(broadcastStats);
+  const result = await cacheHelper.rivescript.get(rivescriptCacheId);
+  result.should.deep.equal(rivescript);
 });
 
-test('broadcastStats.get should return falsy when cache undefined', async (t) => {
-  cacheHelper.__set__('broadcastStatsCache', {
+test('rivescript.get should return falsy when cache undefined', async (t) => {
+  cacheHelper.__set__('rivescriptCache', {
     get: () => Promise.resolve(null),
   });
-  const result = await cacheHelper.broadcastStats.get(broadcastId);
+  const result = await cacheHelper.rivescript.get(rivescriptCacheId);
   t.falsy(result);
 });
 
-test('broadcastStats.get should throw when cache set fails', async (t) => {
-  cacheHelper.__set__('broadcastStatsCache', {
+test('rivescript.get should throw when cache set fails', async (t) => {
+  cacheHelper.__set__('rivescriptCache', {
     get: () => Promise.reject(new Error()),
   });
-  await t.throws(cacheHelper.broadcastStats.get(broadcastId));
+  await t.throws(cacheHelper.rivescript.get(rivescriptCacheId));
 });
 
-test('broadcastStats.set should return an object', async () => {
-  cacheHelper.__set__('broadcastStatsCache', {
-    set: () => Promise.resolve(broadcastStats),
+test('rivescript.set should return an object', async () => {
+  cacheHelper.__set__('rivescriptCache', {
+    set: () => Promise.resolve(rivescript),
   });
-  const result = await cacheHelper.broadcastStats.set(broadcastId);
-  result.should.deep.equal(broadcastStats);
+  const result = await cacheHelper.rivescript.set(rivescriptCacheId);
+  result.should.deep.equal(rivescript);
 });
 
-test('broadcastStats.set should throw when cache set fails', async (t) => {
-  cacheHelper.__set__('broadcastStatsCache', {
+test('rivescript.set should throw when cache set fails', async (t) => {
+  cacheHelper.__set__('rivescriptCache', {
     set: () => Promise.reject(new Error()),
   });
-  await t.throws(cacheHelper.broadcastStats.set(broadcastId));
+  await t.throws(cacheHelper.rivescript.set(rivescriptCacheId));
 });

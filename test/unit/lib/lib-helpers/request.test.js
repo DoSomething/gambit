@@ -181,25 +181,24 @@ test('executeSaidNoMacro should change to saidNo topic and send saidNo reply', a
 });
 
 // executeSaidYesMacro
-test('executeSaidYesMacro should call setBroadcastId, change to saidYes topic, post campaign activity if new topic has campaign, then send the saidYes reply', async (t) => {
+test('executeSaidYesMacro should call post campaign activity if new topic has campaign, then send the saidYes reply', async (t) => {
   const askYesNo = broadcastFactory.getValidAskYesNo();
   const saidYesTemplate = askYesNo.templates.saidYes;
   t.context.req.topic = askYesNo;
-  sandbox.stub(requestHelper, 'setBroadcastId')
-    .returns(underscore.noop);
+  sandbox.stub(requestHelper, 'getCampaignActivityPayloadFromReq')
+    .returns({});
   sandbox.stub(requestHelper, 'changeTopic')
     .returns(Promise.resolve(true));
   sandbox.stub(requestHelper, 'hasCampaign')
     .returns(true);
-  sandbox.stub(requestHelper, 'postCampaignActivityFromReq')
+  sandbox.stub(gambitCampaigns, 'postCampaignActivity')
     .returns(Promise.resolve());
   sandbox.stub(helpers.replies, 'sendReply')
     .returns(underscore.noop);
 
   await requestHelper.executeSaidYesMacro(t.context.req);
-  requestHelper.setBroadcastId.should.have.been.calledWith(t.context.req, askYesNo.id);
   requestHelper.changeTopic.should.have.been.calledWith(t.context.req, saidYesTemplate.topic);
-  requestHelper.postCampaignActivityFromReq.should.have.been.calledWith(t.context.req);
+  gambitCampaigns.postCampaignActivity.should.have.been.calledWith({ broadcastId: askYesNo.id });
   helpers.replies.sendReply
     .should.have.been.calledWith(t.context.req, t.context.res, saidYesTemplate.text, 'saidYes');
 });
@@ -208,21 +207,18 @@ test('executeSaidYesMacro should not post campaign activity if new topic does no
   const askYesNo = broadcastFactory.getValidAskYesNo();
   const saidYesTemplate = askYesNo.templates.saidYes;
   t.context.req.topic = askYesNo;
-  sandbox.stub(requestHelper, 'setBroadcastId')
-    .returns(underscore.noop);
   sandbox.stub(requestHelper, 'changeTopic')
     .returns(Promise.resolve(true));
   sandbox.stub(requestHelper, 'hasCampaign')
     .returns(false);
-  sandbox.stub(requestHelper, 'postCampaignActivityFromReq')
+  sandbox.stub(gambitCampaigns, 'postCampaignActivity')
     .returns(Promise.resolve());
   sandbox.stub(helpers.replies, 'sendReply')
     .returns(underscore.noop);
 
   await requestHelper.executeSaidYesMacro(t.context.req);
-  requestHelper.setBroadcastId.should.have.been.calledWith(t.context.req, askYesNo.id);
   requestHelper.changeTopic.should.have.been.calledWith(t.context.req, saidYesTemplate.topic);
-  requestHelper.postCampaignActivityFromReq.should.not.have.been.called;
+  gambitCampaigns.postCampaignActivity.should.not.have.been.called;
   helpers.replies.sendReply
     .should.have.been.calledWith(t.context.req, t.context.res, saidYesTemplate.text, 'saidYes');
 });
