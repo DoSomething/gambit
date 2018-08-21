@@ -185,20 +185,20 @@ test('executeSaidYesMacro should call post campaign activity if new topic has ca
   const askYesNo = broadcastFactory.getValidAskYesNo();
   const saidYesTemplate = askYesNo.templates.saidYes;
   t.context.req.topic = askYesNo;
-  sandbox.stub(requestHelper, 'getCampaignActivityPayloadFromReq')
+  sandbox.stub(requestHelper, 'getCampaignActivityPayload')
     .returns({});
   sandbox.stub(requestHelper, 'changeTopic')
     .returns(Promise.resolve(true));
   sandbox.stub(requestHelper, 'hasCampaign')
     .returns(true);
-  sandbox.stub(gambitCampaigns, 'postCampaignActivity')
+  sandbox.stub(requestHelper, 'postCampaignActivity')
     .returns(Promise.resolve());
   sandbox.stub(helpers.replies, 'sendReply')
     .returns(underscore.noop);
 
   await requestHelper.executeSaidYesMacro(t.context.req);
   requestHelper.changeTopic.should.have.been.calledWith(t.context.req, saidYesTemplate.topic);
-  gambitCampaigns.postCampaignActivity.should.have.been.calledWith({ broadcastId: askYesNo.id });
+  requestHelper.postCampaignActivity.should.have.been.calledWith(t.context.req, askYesNo.id);
   helpers.replies.sendReply
     .should.have.been.calledWith(t.context.req, t.context.res, saidYesTemplate.text, 'saidYes');
 });
@@ -392,16 +392,16 @@ test('parseAskYesNoResponse does not update macro if parseAskYesNoResponse does 
   message.updateMacro.should.not.have.been.called;
 });
 
-// postCampaignActivityFromReq
-test('postCampaignActivityFromReq should post getCampaignActivityPayloadFromReq as campaignActivity', async () => {
+// postCampaignActivity
+test('postCampaignActivity should post getCampaignActivityPayload as campaignActivity', async () => {
   const postData = { text: stubs.getRandomMessageText() };
   const postResult = { data: 123 };
-  sandbox.stub(requestHelper, 'getCampaignActivityPayloadFromReq')
+  sandbox.stub(requestHelper, 'getCampaignActivityPayload')
     .returns(postData);
   sandbox.stub(gambitCampaigns, 'postCampaignActivity')
     .returns(Promise.resolve(postResult));
 
-  const result = await requestHelper.postCampaignActivityFromReq();
+  const result = await requestHelper.postCampaignActivity();
   gambitCampaigns.postCampaignActivity.should.have.been.calledWith(postData);
   result.should.deep.equal(postResult);
 });
