@@ -226,7 +226,7 @@ test('executeSaidYesMacro should not post campaign activity if new topic does no
 // getCampaignActivityPayload
 test('getCampaignActivityPayload returns object with properties from req', (t) => {
   t.context.req.userId = userId;
-  t.context.req.broadcastId = stubs.getContentfulId();
+  t.context.req.lastOutboundBroadcastId = stubs.getContentfulId();
   t.context.req.campaign = campaignFactory.getValidCampaign();
   t.context.req.topic = topicFactory.getValidTopic();
   t.context.req.inboundMessageText = stubs.getRandomMessageText();
@@ -241,7 +241,7 @@ test('getCampaignActivityPayload returns object with properties from req', (t) =
   result.mediaUrl.should.equal(t.context.req.mediaUrl);
   result.postType.should.equal(t.context.req.topic.postType);
   result.platform.should.equal(t.context.req.platform);
-  result.broadcastId.should.equal(t.context.req.broadcastId);
+  result.broadcastId.should.equal(t.context.req.lastOutboundBroadcastId);
   result.should.not.have.property('keyword');
 });
 
