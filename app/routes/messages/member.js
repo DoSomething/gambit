@@ -24,7 +24,6 @@ const updateUserMiddleware = require('../../../lib/middleware/messages/member/us
 const supportRequestedMiddleware = require('../../../lib/middleware/messages/member/support-requested');
 const forwardSupportMessageMiddleware = require('../../../lib/middleware/messages/member/support-message');
 const changeTopicMacroMiddleware = require('../../../lib/middleware/messages/member/macro-change-topic');
-const menuMacroMiddleware = require('../../../lib/middleware/messages/member/macro-menu');
 const replyMacroMiddleware = require('../../../lib/middleware/messages/member/macro-reply');
 const getTopicMiddleware = require('../../../lib/middleware/messages/member/topic-get');
 const catchAllAskYesNoMiddleware = require('../../../lib/middleware/messages/member/catchAll-askYesNo');
@@ -64,9 +63,6 @@ router.use(changeTopicMacroMiddleware());
 
 // Executes macros that send a single hardcoded reply.
 router.use(replyMacroMiddleware());
-
-// Responds to a menu command by finding a random campaign to ask user for signup.
-router.use(menuMacroMiddleware());
 
 // Scolds user if message contains bad words.
 router.use(badWordsMiddleware());
