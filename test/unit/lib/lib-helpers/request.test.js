@@ -325,16 +325,6 @@ test('isLastOutboundAskContinue should return whether if req.lastOutboundTemplat
     .should.have.been.calledWith(t.context.req.lastOutboundTemplate);
 });
 
-// isLastOutboundAskSignup
-test('isLastOutboundAskSignup should return whether if req.lastOutboundTemplate is an askSignup template', (t) => {
-  sandbox.stub(helpers.template, 'isAskSignupTemplate')
-    .returns(true);
-  t.context.req.lastOutboundTemplate = stubs.getRandomWord();
-  t.truthy(requestHelper.isLastOutboundAskSignup(t.context.req));
-  helpers.template.isAskSignupTemplate
-    .should.have.been.calledWith(t.context.req.lastOutboundTemplate);
-});
-
 // isLastOutboundTopicTemplate
 test('isLastOutboundTopicTemplate should return whether if req.lastOutboundTemplate is a gambitCampaigns template', (t) => {
   sandbox.stub(helpers.template, 'isGambitCampaignsTemplate')
