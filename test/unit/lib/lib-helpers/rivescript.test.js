@@ -165,7 +165,7 @@ test('loadBot calls fetchDefaultTopicTriggers and creates a new Rivescript bot w
     .returns(Promise.resolve(fetchDefaultTopicTriggers));
   sandbox.stub(rivescriptHelper, 'getRivescriptFromDefaultTopicTrigger')
     .returns(mockRivescript);
-  sandbox.stub(rivescriptApi, 'createNewBot')
+  sandbox.stub(rivescriptApi, 'loadBotWithRivescripts')
     .returns(underscore.noop);
 
   await rivescriptHelper.loadBot();
@@ -173,7 +173,7 @@ test('loadBot calls fetchDefaultTopicTriggers and creates a new Rivescript bot w
   fetchDefaultTopicTriggers.forEach((item) => {
     rivescriptHelper.getRivescriptFromDefaultTopicTrigger.should.have.been.calledWith(item);
   });
-  rivescriptApi.createNewBot.should.have.been
+  rivescriptApi.loadBotWithRivescripts.should.have.been
     .calledWith([mockRivescript, mockRivescript, mockRivescript]);
 });
 
