@@ -287,7 +287,7 @@ test('getRivescriptReply should call helpers.rivescript.getBotReply with req var
 });
 
 // hasCampaign
-test('hasCampaign should return boolean of whether req.campign defined', (t) => {
+test('hasCampaign should return boolean of whether req.campaign defined', (t) => {
   t.context.req.campaign = campaignFactory.getValidCampaign();
   t.truthy(requestHelper.hasCampaign(t.context.req));
   t.context.req.campaign = null;

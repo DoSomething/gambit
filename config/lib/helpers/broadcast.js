@@ -9,12 +9,6 @@ module.exports = {
     textPostBroadcast: 'textPostBroadcast',
     legacy: 'broadcast',
   },
-  default: {
-    templates: {
-      campaign: 'askSignup',
-      topic: 'rivescript',
-    },
-  },
   customerIo: {
     userIdField: '{{customer.id}}',
   },

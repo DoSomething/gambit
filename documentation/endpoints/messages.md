@@ -71,7 +71,7 @@ curl -X "POST" "http://localhost:5100/api/v2/messages?origin=broadcast" \
      -u 'puppet:totallysecret' \
      -d $'{
   "northstarId": "5547be89429c64ec7e8b518d",
-  "broadcastId": "5Akz30ejtKCsiWgwKIkOyo"
+  "broadcastId": "4nwTwvXmfuuYAGYgusGyyW"
 }'
 ```
 
@@ -84,24 +84,31 @@ curl -X "POST" "http://localhost:5100/api/v2/messages?origin=broadcast" \
   "data": {
     "messages": [
       {
-        "_id": "5a5e9bb842ced115e4dbfda4",
-        "updatedAt": "2018-01-17T00:41:28.911Z",
-        "createdAt": "2018-01-17T00:41:28.911Z",
-        "text": "Hi it's Freddie! Want to know how you could enter for the chance to win a $5K scholarship by sharing one of your big regrets? It takes 2 mins! Reply Yes or No",
+        "platformMessageId": "SM9f73c7a8d1fc444faeeec9964a270514",
+        "_id": "5b7c9cea350595000404de44",
+        "updatedAt": "2018-08-21T23:14:50.529Z",
+        "createdAt": "2018-08-21T23:14:50.314Z",
+        "text": "I don't want to wait, for our lives to be over",
         "direction": "outbound-api-send",
-        "template": "askSignup",
-        "conversationId": "5a2c391d36515819a6446d6e",
-        "campaignId": 7978,
-        "topic": "campaign",
-        "broadcastId": "5Akz30ejtKCsiWgwKIkOyo",
+        "template": "autoReplyBroadcast",
+        "conversationId": "5ac7a86b8c02c10004d92577",
+        "campaignId": 8158,
+        "topic": "61RPZx8atiGyeoeaqsckOE",
+        "userId": "5547be89469c64ec7d8b518d",
+        "broadcastId": "4nwTwvXmfuuYAGYgusGyyW",
         "__v": 0,
         "metadata": {
-          "requestId": "17b1ab02-205b-4728-b4c9-d778bf89f561"
+            "requestId": "e8cbf79d-6cd3-4028-b1aa-d8455c166d57",
+            "delivery": {
+                "totalSegments": 1,
+                "queuedAt": "2018-08-21T23:14:50.000Z"
+            }
         },
         "attachments": []
       }
     ]
   }
+}
 ```
 
 </details>
