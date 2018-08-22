@@ -306,16 +306,9 @@ test('subscriptionStatusStop(): should call sendGambitConversationsTemplate', as
   await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template);
 });
 
-test('supportRequested(): should call sendGambitConversationsTemplate if no campaign is found', async (t) => {
-  // Campaign is being set beforeEach test, so we need to unset it here
-  t.context.req.campaign = undefined;
+test('supportRequested(): should call sendGambitConversationsTemplate', async (t) => {
   const template = gambitConversationsTemplates.supportRequested.name;
   await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template);
-});
-
-test('supportRequested(): should call sendReplyWithTopicTemplate if campaign is found', async (t) => {
-  const template = templates.memberSupport;
-  await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template, 'supportRequested');
 });
 
 test('rivescriptReply(): should call sendReply', async (t) => {
