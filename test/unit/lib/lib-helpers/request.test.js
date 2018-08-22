@@ -9,6 +9,7 @@ const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 
 const helpers = require('../../../../lib/helpers');
+const logger = require('../../../../lib/logger');
 const gambitCampaigns = require('../../../../lib/gambit-campaigns');
 const stubs = require('../../../helpers/stubs');
 const broadcastFactory = require('../../../helpers/factories/broadcast');
@@ -33,6 +34,7 @@ const message = conversation.lastOutboundMessage;
 const topic = topicFactory.getValidTopic();
 
 test.beforeEach((t) => {
+  stubs.stubLogger(sandbox, logger);
   sandbox.stub(helpers.analytics, 'addCustomAttributes')
     .returns(underscore.noop);
   t.context.req = httpMocks.createRequest();
@@ -181,25 +183,22 @@ test('executeSaidNoMacro should change to saidNo topic and send saidNo reply', a
 });
 
 // executeSaidYesMacro
-test('executeSaidYesMacro should call setBroadcastId, change to saidYes topic, post campaign activity if new topic has campaign, then send the saidYes reply', async (t) => {
+test('executeSaidYesMacro should call post campaign activity if new topic has campaign, then send the saidYes reply', async (t) => {
   const askYesNo = broadcastFactory.getValidAskYesNo();
   const saidYesTemplate = askYesNo.templates.saidYes;
   t.context.req.topic = askYesNo;
-  sandbox.stub(requestHelper, 'setBroadcastId')
-    .returns(underscore.noop);
   sandbox.stub(requestHelper, 'changeTopic')
     .returns(Promise.resolve(true));
   sandbox.stub(requestHelper, 'hasCampaign')
     .returns(true);
-  sandbox.stub(requestHelper, 'postCampaignActivityFromReq')
+  sandbox.stub(requestHelper, 'postCampaignActivity')
     .returns(Promise.resolve());
   sandbox.stub(helpers.replies, 'sendReply')
     .returns(underscore.noop);
 
   await requestHelper.executeSaidYesMacro(t.context.req);
-  requestHelper.setBroadcastId.should.have.been.calledWith(t.context.req, askYesNo.id);
   requestHelper.changeTopic.should.have.been.calledWith(t.context.req, saidYesTemplate.topic);
-  requestHelper.postCampaignActivityFromReq.should.have.been.calledWith(t.context.req);
+  requestHelper.postCampaignActivity.should.have.been.calledWith(t.context.req, askYesNo.id);
   helpers.replies.sendReply
     .should.have.been.calledWith(t.context.req, t.context.res, saidYesTemplate.text, 'saidYes');
 });
@@ -208,23 +207,62 @@ test('executeSaidYesMacro should not post campaign activity if new topic does no
   const askYesNo = broadcastFactory.getValidAskYesNo();
   const saidYesTemplate = askYesNo.templates.saidYes;
   t.context.req.topic = askYesNo;
-  sandbox.stub(requestHelper, 'setBroadcastId')
-    .returns(underscore.noop);
   sandbox.stub(requestHelper, 'changeTopic')
     .returns(Promise.resolve(true));
   sandbox.stub(requestHelper, 'hasCampaign')
     .returns(false);
-  sandbox.stub(requestHelper, 'postCampaignActivityFromReq')
+  sandbox.stub(gambitCampaigns, 'postCampaignActivity')
     .returns(Promise.resolve());
   sandbox.stub(helpers.replies, 'sendReply')
     .returns(underscore.noop);
 
   await requestHelper.executeSaidYesMacro(t.context.req);
-  requestHelper.setBroadcastId.should.have.been.calledWith(t.context.req, askYesNo.id);
   requestHelper.changeTopic.should.have.been.calledWith(t.context.req, saidYesTemplate.topic);
-  requestHelper.postCampaignActivityFromReq.should.not.have.been.called;
+  gambitCampaigns.postCampaignActivity.should.not.have.been.called;
   helpers.replies.sendReply
     .should.have.been.calledWith(t.context.req, t.context.res, saidYesTemplate.text, 'saidYes');
+});
+
+// getCampaignActivityPayload
+test('getCampaignActivityPayload returns object with properties from req', (t) => {
+  t.context.req.userId = userId;
+  t.context.req.lastOutboundBroadcastId = stubs.getContentfulId();
+  t.context.req.campaign = campaignFactory.getValidCampaign();
+  t.context.req.topic = topicFactory.getValidTopic();
+  t.context.req.inboundMessageText = stubs.getRandomMessageText();
+  t.context.req.mediaUrl = stubs.getAttachment().url;
+  t.context.req.platform = stubs.getPlatform();
+
+  const result = requestHelper.getCampaignActivityPayload(t.context.req);
+  result.userId.should.equal(userId);
+  result.campaignId.should.equal(t.context.req.campaign.id);
+  result.campaignRunId.should.equal(t.context.req.campaign.currentCampaignRun.id);
+  result.text.should.equal(t.context.req.inboundMessageText);
+  result.mediaUrl.should.equal(t.context.req.mediaUrl);
+  result.postType.should.equal(t.context.req.topic.postType);
+  result.platform.should.equal(t.context.req.platform);
+  result.broadcastId.should.equal(t.context.req.lastOutboundBroadcastId);
+  result.should.not.have.property('keyword');
+});
+
+test('getCampaignActivityPayload returns object with broadcastId set to given broadcastId arg', (t) => {
+  const broadcastId = stubs.getContentfulId();
+  t.context.req.campaign = campaignFactory.getValidCampaign();
+  t.context.req.topic = topicFactory.getValidTopic();
+  const result = requestHelper.getCampaignActivityPayload(t.context.req, broadcastId);
+  result.broadcastId.should.equal(broadcastId);
+});
+
+test('getCampaignActivityPayload returns object with keyword set if req.keyword', (t) => {
+  t.context.req.campaign = campaignFactory.getValidCampaign();
+  t.context.req.topic = topicFactory.getValidTopic();
+  t.context.req.keyword = stubs.getRandomWord();
+  const result = requestHelper.getCampaignActivityPayload(t.context.req);
+  result.keyword.should.equal(t.context.req.keyword);
+});
+
+test('getCampaignActivityPayload should throw if req.campaign undefined', (t) => {
+  t.throws(() => requestHelper.getCampaignActivityPayload(t.context.req));
 });
 
 // getRivescriptReply
@@ -396,16 +434,16 @@ test('parseAskYesNoResponse does not update macro if parseAskYesNoResponse does 
   message.updateMacro.should.not.have.been.called;
 });
 
-// postCampaignActivityFromReq
-test('postCampaignActivityFromReq should post getCampaignActivityPayloadFromReq as campaignActivity', async () => {
+// postCampaignActivity
+test('postCampaignActivity should post getCampaignActivityPayload as campaignActivity', async () => {
   const postData = { text: stubs.getRandomMessageText() };
   const postResult = { data: 123 };
-  sandbox.stub(requestHelper, 'getCampaignActivityPayloadFromReq')
+  sandbox.stub(requestHelper, 'getCampaignActivityPayload')
     .returns(postData);
   sandbox.stub(gambitCampaigns, 'postCampaignActivity')
     .returns(Promise.resolve(postResult));
 
-  const result = await requestHelper.postCampaignActivityFromReq();
+  const result = await requestHelper.postCampaignActivity();
   gambitCampaigns.postCampaignActivity.should.have.been.calledWith(postData);
   result.should.deep.equal(postResult);
 });
