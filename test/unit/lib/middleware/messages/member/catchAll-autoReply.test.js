@@ -49,7 +49,7 @@ test('autoReplyCatchAll should call replies.autoReply if topic.isAutoReply is fa
   helpers.replies.autoReply.should.not.have.been.called;
 });
 
-test('autoReplyCatchAll should call postCampaignActivityFromReq if shouldSendAutoReply and hasCampaign', async (t) => {
+test('autoReplyCatchAll should call postCampaignActivity if shouldSendAutoReply and hasCampaign', async (t) => {
   const next = sinon.stub();
   const middleware = autoReplyCatchAll();
   t.context.req.topic = topicFactory.getValidTextPostConfig();
@@ -57,7 +57,7 @@ test('autoReplyCatchAll should call postCampaignActivityFromReq if shouldSendAut
     .returns(true);
   sandbox.stub(helpers.request, 'hasCampaign')
     .returns(true);
-  sandbox.stub(helpers.request, 'postCampaignActivityFromReq')
+  sandbox.stub(helpers.request, 'postCampaignActivity')
     .returns(Promise.resolve());
   sandbox.stub(helpers.replies, 'sendReplyWithTopicTemplate')
     .returns(underscore.noop);
@@ -65,12 +65,12 @@ test('autoReplyCatchAll should call postCampaignActivityFromReq if shouldSendAut
   // test
   await middleware(t.context.req, t.context.res, next);
 
-  helpers.request.postCampaignActivityFromReq.should.have.been.called;
+  helpers.request.postCampaignActivity.should.have.been.called;
   helpers.replies.sendReplyWithTopicTemplate.should.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 
-test('autoReplyCatchAll does not call postCampaignActivityFromReq if shouldSendAutoReply and topic does not have campaign', async (t) => {
+test('autoReplyCatchAll does not call postCampaignActivity if shouldSendAutoReply and topic does not have campaign', async (t) => {
   const next = sinon.stub();
   const middleware = autoReplyCatchAll();
   t.context.req.topic = topicFactory.getValidTopicWithoutCampaign();
@@ -78,7 +78,7 @@ test('autoReplyCatchAll does not call postCampaignActivityFromReq if shouldSendA
     .returns(true);
   sandbox.stub(helpers.request, 'hasCampaign')
     .returns(false);
-  sandbox.stub(helpers.request, 'postCampaignActivityFromReq')
+  sandbox.stub(helpers.request, 'postCampaignActivity')
     .returns(Promise.resolve());
   sandbox.stub(helpers.replies, 'sendReplyWithTopicTemplate')
     .returns(underscore.noop);
@@ -86,11 +86,11 @@ test('autoReplyCatchAll does not call postCampaignActivityFromReq if shouldSendA
   // test
   await middleware(t.context.req, t.context.res, next);
 
-  helpers.request.postCampaignActivityFromReq.should.not.have.been.called;
+  helpers.request.postCampaignActivity.should.not.have.been.called;
   helpers.replies.sendReplyWithTopicTemplate.should.have.been.called;
 });
 
-test('autoReplyCatchAll calls sendErrorResponse if postCampaignActivityFromReq fails', async (t) => {
+test('autoReplyCatchAll calls sendErrorResponse if postCampaignActivity fails', async (t) => {
   const next = sinon.stub();
   const middleware = autoReplyCatchAll();
   t.context.req.topic = topicFactory.getValidTextPostConfig();
@@ -99,7 +99,7 @@ test('autoReplyCatchAll calls sendErrorResponse if postCampaignActivityFromReq f
   sandbox.stub(helpers.request, 'hasCampaign')
     .returns(true);
   const mockError = { message: 'oh no' };
-  sandbox.stub(helpers.request, 'postCampaignActivityFromReq')
+  sandbox.stub(helpers.request, 'postCampaignActivity')
     .returns(Promise.reject(mockError));
   sandbox.stub(helpers.replies, 'sendReplyWithTopicTemplate')
     .returns(true);
@@ -120,7 +120,7 @@ test('autoReplyCatchAll calls sendErrorResponse if sendReplyWithTopicTemplate fa
   sandbox.stub(helpers.request, 'hasCampaign')
     .returns(true);
   const mockError = { message: 'oh no' };
-  sandbox.stub(helpers.request, 'postCampaignActivityFromReq')
+  sandbox.stub(helpers.request, 'postCampaignActivity')
     .returns(Promise.resolve());
   sandbox.stub(helpers.replies, 'sendReplyWithTopicTemplate')
     .throws(mockError);

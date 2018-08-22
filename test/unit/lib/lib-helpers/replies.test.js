@@ -180,7 +180,7 @@ test('autoReply(): should call sendReplyWithTopicTemplate', async (t) => {
 });
 
 test('continueTopic(): sendReplyWithTopicTemplate should be called', async (t) => {
-  sandbox.stub(helpers.request, 'postCampaignActivityFromReq')
+  sandbox.stub(helpers.request, 'postCampaignActivity')
     .returns(Promise.resolve(gCampResponse.data));
   sandbox.stub(repliesHelper, 'sendReplyWithTopicTemplate')
     .returns(resolvedPromise);
@@ -190,7 +190,7 @@ test('continueTopic(): sendReplyWithTopicTemplate should be called', async (t) =
 });
 
 test('continueTopic(): helpers.sendErrorResponse should be called if postCampaignActivity fails', async (t) => {
-  sandbox.stub(helpers.request, 'postCampaignActivityFromReq')
+  sandbox.stub(helpers.request, 'postCampaignActivity')
     .returns(Promise.reject(gCampResponse.data));
   sandbox.stub(repliesHelper, 'sendReplyWithTopicTemplate')
     .returns(resolvedPromise);
