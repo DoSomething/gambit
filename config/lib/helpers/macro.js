@@ -4,7 +4,6 @@ module.exports = {
   macros: {
     catchAll: 'catchAll',
     changeTopic: 'changeTopic',
-    menu: 'menu',
     noReply: 'noReply',
     saidNo: 'saidNo',
     saidYes: 'saidYes',

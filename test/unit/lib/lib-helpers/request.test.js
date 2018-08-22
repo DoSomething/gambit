@@ -345,27 +345,6 @@ test('isLastOutboundTopicTemplate should return whether if req.lastOutboundTempl
     .should.have.been.calledWith(t.context.req.lastOutboundTemplate);
 });
 
-// isMenuMacro
-test('isMenuMacro should return true if req.macro is menu', (t) => {
-  sandbox.stub(helpers.macro, 'isMenu')
-    .returns(true);
-  t.context.req.macro = macro;
-  t.truthy(requestHelper.isMenuMacro(t.context.req));
-});
-
-test('isMenuMacro should return false if req.macro is undefined', (t) => {
-  sandbox.stub(helpers.macro, 'isMenu')
-    .returns(true);
-  t.falsy(requestHelper.isMenuMacro(t.context.req));
-});
-
-test('isMenuMacro should return false if req.macro is not menu', (t) => {
-  sandbox.stub(helpers.macro, 'isMenu')
-    .returns(false);
-  t.context.req.macro = macro;
-  t.falsy(requestHelper.isMenuMacro(t.context.req));
-});
-
 // parseAskYesNoResponse
 test('parseAskYesNoResponse updates macro if parseAskYesNoResponse returns isSaidYesMacro', async (t) => {
   const mockParseAskYesNoResponse = 'dragon';
