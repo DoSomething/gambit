@@ -42,52 +42,6 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-test('parseBroadcast should inject campaignId into req if legacy campaign broadcast', async (t) => {
-  const next = sinon.stub();
-  const middleware = parseBroadcast();
-  const broadcast = broadcastFactory.getValidLegacyCampaignBroadcast();
-  t.context.req.broadcast = broadcast;
-  sandbox.stub(helpers.request, 'setOutboundMessageText')
-    .returns(underscore.noop);
-
-  // test
-  await middleware(t.context.req, t.context.res, next);
-  helpers.request.setCampaignId.should.have.been.calledWith(t.context.req, broadcast.campaignId);
-  helpers.request.setTopic.should.not.have.been.called;
-  helpers.request.setOutboundMessageText
-    .should.have.been.calledWith(t.context.req, broadcast.message.text);
-  helpers.request.setOutboundMessageTemplate
-    .should.have.been.calledWith(t.context.req, broadcast.message.template);
-  helpers.attachments.add
-    .should.have.been.calledWith(t.context.req, broadcast.message.attachments[0]);
-  next.should.have.been.called;
-});
-
-test('parseBroadcast should inject topic into req if legacy rivescript topic broadcast', async (t) => {
-  const next = sinon.stub();
-  const middleware = parseBroadcast();
-  const broadcast = broadcastFactory.getValidLegacyRivescriptTopicBroadcast();
-  t.context.req.broadcast = broadcast;
-  const mockRivescriptTopic = { id: broadcast.topic };
-  sandbox.stub(helpers.topic, 'getRivescriptTopicById')
-    .returns(mockRivescriptTopic);
-
-  sandbox.stub(helpers.request, 'setOutboundMessageText')
-    .returns(underscore.noop);
-
-  // test
-  await middleware(t.context.req, t.context.res, next);
-  helpers.request.setCampaignId.should.not.have.been.called;
-  helpers.request.setTopic.should.have.been.calledWith(t.context.req, mockRivescriptTopic);
-  helpers.request.setOutboundMessageText
-    .should.have.been.calledWith(t.context.req, broadcast.message.text);
-  helpers.request.setOutboundMessageTemplate
-    .should.have.been.calledWith(t.context.req, broadcast.message.template);
-  helpers.attachments.add
-    .should.have.been.calledWith(t.context.req, broadcast.message.attachments[0]);
-  next.should.have.been.called;
-});
-
 test('parseBroadcast should inject the broadcast.message.topic into req.topic if exists', async (t) => {
   const next = sinon.stub();
   const middleware = parseBroadcast();

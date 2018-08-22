@@ -88,6 +88,12 @@ test('getSupportTopic should return config.rivescriptTopics.support', () => {
   result.should.deep.equal(config.rivescriptTopics.support);
 });
 
+// hasCampaign
+test('hasCampaign should return boolean of whether topic.campaign.id exists', (t) => {
+  t.truthy(topicHelper.hasCampaign(topicFactory.getValidTextPostConfig()));
+  t.falsy(topicHelper.hasCampaign(topicFactory.getValidTopicWithoutCampaign()));
+});
+
 // isAskSubscriptionStatus
 test('isAskSubscriptionStatus returns whether topic is rivescriptTopics.isAskSubscriptionStatus', (t) => {
   const mockTopic = topicFactory.getValidTopic();
