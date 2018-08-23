@@ -8,7 +8,6 @@ require('newrelic');
 
 const config = require('./config');
 const logger = require('./lib/logger');
-const helpers = require('./lib/helpers');
 const app = require('./app');
 
 // Start mongoose connection
@@ -33,7 +32,3 @@ db.on('error', (error) => {
 db.once('open', () => {
   app.listen(config.port, () => logger.info(`Conversations API is running on port=${config.port}.`));
 });
-
-helpers.rivescript.loadBot()
-  // TODO: Retry loading Bot if an error occurred.
-  .catch(error => logger.error('loadBot error', { error }));

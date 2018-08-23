@@ -27,6 +27,10 @@ const mockRivescriptLine = `${mockRivescriptCommand}${lineBreak}`;
 const mockRedirectLine = `${config.commands.redirect}${config.separators.command}${mockWord}${lineBreak}`;
 const mockReplyLine = `${config.commands.reply}${config.separators.command}${mockWord}${lineBreak}`;
 const mockRivescript = [mockRivescriptLine, mockReplyLine].join(lineBreak);
+const mockRivescriptReply = {
+  text: stubs.getRandomMessageText(),
+  topic: stubs.getContentfulId(),
+};
 const replyTrigger = defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger();
 const redirectTrigger = defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger();
 
@@ -34,6 +38,33 @@ const sandbox = sinon.sandbox.create();
 
 test.afterEach(() => {
   sandbox.restore();
+});
+
+// getBotReply
+test('getBotReply should call loadBot if rivescript cache is not set', async () => {
+  sandbox.stub(helpers.cache.rivescript, 'get')
+    .returns(Promise.resolve(false));
+  sandbox.stub(rivescriptHelper, 'loadBot')
+    .returns(Promise.resolve(true));
+  sandbox.stub(rivescriptApi, 'getBotReply')
+    .returns(Promise.resolve(mockRivescriptReply));
+
+  const result = await rivescriptHelper.getBotReply();
+  rivescriptHelper.loadBot.should.have.been.called;
+  result.should.deep.equal(mockRivescriptReply);
+});
+
+test('getBotReply does not call loadBot if rivescript cache is set', async () => {
+  sandbox.stub(helpers.cache.rivescript, 'get')
+    .returns(Promise.resolve(true));
+  sandbox.stub(rivescriptHelper, 'loadBot')
+    .returns(Promise.resolve(true));
+  sandbox.stub(rivescriptApi, 'getBotReply')
+    .returns(Promise.resolve(mockRivescriptReply));
+
+  const result = await rivescriptHelper.getBotReply();
+  rivescriptHelper.loadBot.should.not.have.been.called;
+  result.should.deep.equal(mockRivescriptReply);
 });
 
 // getRivescripts
