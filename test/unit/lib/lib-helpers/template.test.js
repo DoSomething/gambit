@@ -53,12 +53,6 @@ test('isAskContinueTemplate should return boolean', (t) => {
   t.falsy(templateHelper.isAskContinueTemplate(undefinedTemplateName));
 });
 
-// isAskSignupTemplate
-test('isAskSignupTemplate should return boolean', (t) => {
-  t.true(templateHelper.isAskSignupTemplate('askSignup'));
-  t.falsy(templateHelper.isAskSignupTemplate(undefinedTemplateName));
-});
-
 // isGambitCampaignsTemplate
 test('isGambitCampaignsTemplate should return boolean', (t) => {
   t.true(templateHelper.isGambitCampaignsTemplate('askQuantity'));
