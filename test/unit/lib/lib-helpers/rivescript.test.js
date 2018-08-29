@@ -22,6 +22,7 @@ const rivescriptHelper = require('../../../../lib/helpers/rivescript');
 
 const lineBreak = config.separators.line;
 const mockWord = stubs.getRandomWord();
+const mockDeparsedRivescript = { topics: { random: [], ask_yes_no: [] } };
 const mockRivescriptCommand = `${config.commands.trigger}${config.separators.command}${mockWord}`;
 const mockRivescriptLine = `${mockRivescriptCommand}${lineBreak}`;
 const mockRedirectLine = `${config.commands.redirect}${config.separators.command}${mockWord}${lineBreak}`;
@@ -67,7 +68,41 @@ test('getBotReply does not call loadBot if rivescript cache is set', async () =>
   result.should.deep.equal(mockRivescriptReply);
 });
 
-// getRivescripts
+// getDeparsedRivescript
+test('getDeparsedRivescript should call loadBot if rivescript cache is not set', async () => {
+  sandbox.stub(helpers.cache.rivescript, 'get')
+    .returns(Promise.resolve(false));
+  sandbox.stub(rivescriptHelper, 'loadBot')
+    .returns(Promise.resolve(true));
+  sandbox.stub(rivescriptApi, 'getBot')
+    .callsFake(() => ({
+      deparse: () => { // eslint-disable-line arrow-body-style
+        return mockDeparsedRivescript;
+      },
+    }));
+
+  const result = await rivescriptHelper.getDeparsedRivescript();
+  rivescriptHelper.loadBot.should.have.been.called;
+  result.should.deep.equal(mockDeparsedRivescript);
+});
+
+test('getDeparsedRivescript does not call loadBot if rivescript cache is set', async () => {
+  sandbox.stub(helpers.cache.rivescript, 'get')
+    .returns(Promise.resolve(true));
+  sandbox.stub(rivescriptHelper, 'loadBot')
+    .returns(Promise.resolve(true));
+  sandbox.stub(rivescriptApi, 'getBot')
+    .callsFake(() => ({
+      deparse: () => { // eslint-disable-line arrow-body-style
+        return mockDeparsedRivescript;
+      },
+    }));
+
+  const result = await rivescriptHelper.getDeparsedRivescript();
+  rivescriptHelper.loadBot.should.not.have.been.called;
+  result.should.deep.equal(mockDeparsedRivescript);
+});
+
 // getRivescripts
 test('getRivescripts should return cache data if cache set', async () => {
   const data = [replyTrigger, redirectTrigger];
