@@ -68,7 +68,21 @@ test('getBotReply does not call loadBot if rivescript cache is set', async () =>
 });
 
 // getRivescripts
-test('getRivescripts should call parseRivescript on gambitCampaigns.fetchDefaultTopicTriggers success', async () => {
+// getRivescripts
+test('getRivescripts should return cache data if cache set', async () => {
+  const data = [replyTrigger, redirectTrigger];
+  sandbox.stub(helpers.cache.rivescript, 'get')
+    .returns(Promise.resolve(data));
+  sandbox.stub(gambitCampaigns, 'fetchDefaultTopicTriggers')
+    .returns(Promise.resolve(true));
+
+  const result = await rivescriptHelper.getRivescripts();
+
+  gambitCampaigns.fetchDefaultTopicTriggers.should.not.have.been.called;
+  result.should.deep.equal(data);
+});
+
+test('getRivescripts should call gambitCampaigns.fetchDefaultTopicTriggers if cache not set', async () => {
   const data = [replyTrigger, redirectTrigger];
   const mockParsedTrigger = defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger();
   sandbox.stub(helpers.cache.rivescript, 'get')

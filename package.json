@@ -59,7 +59,7 @@
     "newrelic": "4.7.0",
     "request": "^2.81.0",
     "request-promise": "^4.2.1",
-    "rivescript": "^1.17.2",
+    "rivescript": "^2.0.0-alpha.6",
     "superagent": "^3.5.2",
     "twilio": "^3.5.0",
     "underscore": "^1.8.3",

@@ -161,6 +161,8 @@ test('fetchDefaultTopicTriggers should return result of a successful GET /fetchD
   const fetchResponse = { data: defaultTopicTriggers };
   sandbox.stub(gambitCampaigns, 'executeGet')
     .returns(Promise.resolve(fetchResponse));
+  // Why is a line break fixing this broken test? It's failing on this line below saying
+  // gambitCampaigns.getRivescripts is not a function.
   const result = await gambitCampaigns.fetchDefaultTopicTriggers(queryParams);
   result.should.deep.equal(fetchResponse);
   gambitCampaigns.executeGet
