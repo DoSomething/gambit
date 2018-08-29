@@ -325,16 +325,6 @@ test('isLastOutboundAskContinue should return whether if req.lastOutboundTemplat
     .should.have.been.calledWith(t.context.req.lastOutboundTemplate);
 });
 
-// isLastOutboundAskSignup
-test('isLastOutboundAskSignup should return whether if req.lastOutboundTemplate is an askSignup template', (t) => {
-  sandbox.stub(helpers.template, 'isAskSignupTemplate')
-    .returns(true);
-  t.context.req.lastOutboundTemplate = stubs.getRandomWord();
-  t.truthy(requestHelper.isLastOutboundAskSignup(t.context.req));
-  helpers.template.isAskSignupTemplate
-    .should.have.been.calledWith(t.context.req.lastOutboundTemplate);
-});
-
 // isLastOutboundTopicTemplate
 test('isLastOutboundTopicTemplate should return whether if req.lastOutboundTemplate is a gambitCampaigns template', (t) => {
   sandbox.stub(helpers.template, 'isGambitCampaignsTemplate')
@@ -343,27 +333,6 @@ test('isLastOutboundTopicTemplate should return whether if req.lastOutboundTempl
   t.truthy(requestHelper.isLastOutboundTopicTemplate(t.context.req));
   helpers.template.isGambitCampaignsTemplate
     .should.have.been.calledWith(t.context.req.lastOutboundTemplate);
-});
-
-// isMenuMacro
-test('isMenuMacro should return true if req.macro is menu', (t) => {
-  sandbox.stub(helpers.macro, 'isMenu')
-    .returns(true);
-  t.context.req.macro = macro;
-  t.truthy(requestHelper.isMenuMacro(t.context.req));
-});
-
-test('isMenuMacro should return false if req.macro is undefined', (t) => {
-  sandbox.stub(helpers.macro, 'isMenu')
-    .returns(true);
-  t.falsy(requestHelper.isMenuMacro(t.context.req));
-});
-
-test('isMenuMacro should return false if req.macro is not menu', (t) => {
-  sandbox.stub(helpers.macro, 'isMenu')
-    .returns(false);
-  t.context.req.macro = macro;
-  t.falsy(requestHelper.isMenuMacro(t.context.req));
 });
 
 // parseAskYesNoResponse

@@ -63,12 +63,6 @@ test('isMacro returns whether text exists for given macro', (t) => {
   t.falsy(macroHelper.isMacro(undefinedMacroName));
 });
 
-// isMenu
-test('isMenu should return boolean', (t) => {
-  t.true(macroHelper.isMenu(macros.menu));
-  t.falsy(macroHelper.isMenu(undefinedMacroName));
-});
-
 test('macro.macros.x() should be equal to macro.macroNameValues.x', () => {
   Object.keys(config.macros).forEach((macroName) => {
     macroHelper.macros[macroName]().should.be.equal(macroName);

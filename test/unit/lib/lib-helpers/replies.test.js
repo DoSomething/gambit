@@ -215,11 +215,6 @@ test('askContinue(): should call sendReplyWithTopicTemplate', async (t) => {
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
 });
 
-test('askSignup(): should call sendReplyWithTopicTemplate', async (t) => {
-  const template = templates.askSignupTemplates.askSignup;
-  await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
-});
-
 test('campaignClosed(): should call sendReplyWithTopicTemplate', async (t) => {
   const template = templates.campaignClosed;
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
@@ -235,23 +230,8 @@ test('confirmedContinue(): should call continueTopic', async (t) => {
   repliesHelper.continueTopic.getCall(0).args[0].keyword.should.equal('continue');
 });
 
-test('confirmedSignup(): should call continueTopic', async (t) => {
-  sandbox.stub(repliesHelper, 'continueTopic')
-    .returns(resolvedPromise);
-
-  await repliesHelper.confirmedSignup(t.context.req, t.context.res);
-  repliesHelper.continueTopic.should.have.been.called;
-  // TODO: Should not be testing hardcoded strings
-  repliesHelper.continueTopic.getCall(0).args[0].keyword.should.equal('confirmed');
-});
-
 test('declinedContinue(): should call sendReplyWithTopicTemplate', async (t) => {
   const template = templates.declinedContinue;
-  await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
-});
-
-test('declinedSignup(): should call sendReplyWithTopicTemplate', async (t) => {
-  const template = templates.declinedSignup;
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
 });
 
@@ -264,12 +244,6 @@ test('invalidAskContinueResponse(): should call sendReplyWithTopicTemplate', asy
   const template = templates.askContinueTemplates.invalidAskContinueResponse;
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
 });
-
-test('invalidAskSignupResponse(): should call sendReplyWithTopicTemplate', async (t) => {
-  const template = templates.askSignupTemplates.invalidAskSignupResponse;
-  await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
-});
-
 
 test('badWords(): should call sendGambitConversationsTemplate', async (t) => {
   const template = gambitConversationsTemplates.badWords.name;

@@ -7,9 +7,7 @@ const helpCenterUrl = 'http://doso.me/1jf4/291kep';
 // Note: This url may also appear in hardcoded askSubscriptionStatus topic.
 // @see brain/topics/askSubscriptionStatus.rive
 const newsUrl = 'https://www.dosomething.org/us/spot-the-signs-guide?source=sms&utm_source=dosomething&utm_medium=sms&utm_campaign=permissioning_weekly&user_id={{user.id}}';
-// TODO: DRY menuCommand definition.
-// @see lib/helpers.js
-const menuCommand = 'menu';
+const supportCommand = 'Q';
 
 const templatesMap = {
   campaignClosed: 'campaignClosed',
@@ -72,7 +70,7 @@ const templatesMap = {
     },
     noCampaign: {
       name: 'noCampaign',
-      text: `Sorry, I'm not sure how to respond to that.\n\nSay ${menuCommand.toUpperCase()} to find a Campaign to join.`,
+      text: `Sorry, I'm not sure how to respond to that.\n\nText ${supportCommand} if you have a question.`,
     },
     noReply: {
       name: 'noReply',
