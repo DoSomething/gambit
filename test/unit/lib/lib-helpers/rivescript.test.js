@@ -69,9 +69,9 @@ test('getBotReply does not call loadBot if rivescript cache is set', async () =>
 });
 
 // getDeparsedRivescript
-test('getDeparsedRivescript should call loadBot if rivescript cache is not set', async () => {
-  sandbox.stub(helpers.cache.rivescript, 'get')
-    .returns(Promise.resolve(false));
+test('getDeparsedRivescript should call loadBot if rivescript is not ready', async () => {
+  sandbox.stub(rivescriptApi, 'isReady')
+    .returns(false);
   sandbox.stub(rivescriptHelper, 'loadBot')
     .returns(Promise.resolve(true));
   sandbox.stub(rivescriptApi, 'getBot')
@@ -86,9 +86,9 @@ test('getDeparsedRivescript should call loadBot if rivescript cache is not set',
   result.should.deep.equal(mockDeparsedRivescript);
 });
 
-test('getDeparsedRivescript does not call loadBot if rivescript cache is set', async () => {
-  sandbox.stub(helpers.cache.rivescript, 'get')
-    .returns(Promise.resolve(true));
+test('getDeparsedRivescript does not call loadBot if rivescript is ready', async () => {
+  sandbox.stub(rivescriptApi, 'isReady')
+    .returns(true);
   sandbox.stub(rivescriptHelper, 'loadBot')
     .returns(Promise.resolve(true));
   sandbox.stub(rivescriptApi, 'getBot')
