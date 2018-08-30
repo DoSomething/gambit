@@ -6,13 +6,19 @@ GET /api/v2/rivescript
 
 Returns the deparsed rivescript used for outbound replies.
 
+### Query parameters
+
+Name | Type | Description
+-----|------|------------
+`cache` | string | If set to `false`, fetches additional Rivescript from Contentful and sorts bot replies.
+
 ## Examples
 
 <details>
 <summary><strong>Example Request</strong></summary>
 
 ```
-curl -X "GET" "http://localhost:5100/api/v2/rivescript" \
+curl -X "GET" "http://localhost:5100/api/v2/rivescript?cache=false" \
      -H "Authorization: Basic cHVwcGV0OnRvdGFsbHlzZWNyZXQ="
 ```
 </details>
