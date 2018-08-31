@@ -1,6 +1,7 @@
 box: node:8.11.3
 services:
   - id: mongo
+  - id: redis
 build:
   steps:
     - npm-install
