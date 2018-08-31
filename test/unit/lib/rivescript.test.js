@@ -82,3 +82,9 @@ test('getBotReply should return object if brain exists and hasSortedReplies', as
   result.match.should.equal('mockMatch');
 });
 
+// isReady
+test('isReady should return hasSortedReplies', (t) => {
+  t.falsy(rivescript.isReady());
+  rivescript.__set__('hasSortedReplies', true);
+  t.truthy(rivescript.isReady());
+});
