@@ -62,3 +62,23 @@ test('getBotReply should throw an error if not hasSortedReplies', async (t) => {
   rivescript.__set__('brain', new RiveScript());
   await t.throws(rivescript.getBotReply(userId, topicId, messageText));
 });
+
+test('getBotReply should return object if brain exists and hasSortedReplies', async () => {
+  const getUservarsResponse = {};
+  getUservarsResponse[userId] = {
+    topic: 'mockTopicId',
+    __initialmatch__: 'mockMatch',
+  };
+  rivescript.__set__('brain', {
+    getUservars: () => Promise.resolve(getUservarsResponse),
+    setUservar: () => Promise.resolve(),
+    reply: () => Promise.resolve('mockReplyText'),
+  });
+  rivescript.__set__('hasSortedReplies', true);
+
+  const result = await rivescript.getBotReply(userId, topicId, messageText);
+  result.text.should.equal('mockReplyText');
+  result.topicId.should.equal('mockTopicId');
+  result.match.should.equal('mockMatch');
+});
+
