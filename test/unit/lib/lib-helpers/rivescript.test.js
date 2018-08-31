@@ -86,6 +86,23 @@ test('getDeparsedRivescript should call loadBot if rivescript is not ready', asy
   result.should.deep.equal(mockDeparsedRivescript);
 });
 
+test('getDeparsedRivescript should call loadBot if resetCache arg is true', async () => {
+  sandbox.stub(rivescriptApi, 'isReady')
+    .returns(true);
+  sandbox.stub(rivescriptHelper, 'loadBot')
+    .returns(Promise.resolve(true));
+  sandbox.stub(rivescriptApi, 'getBot')
+    .callsFake(() => ({
+      deparse: () => { // eslint-disable-line arrow-body-style
+        return mockDeparsedRivescript;
+      },
+    }));
+
+  const result = await rivescriptHelper.getDeparsedRivescript(true);
+  rivescriptHelper.loadBot.should.have.been.called;
+  result.should.deep.equal(mockDeparsedRivescript);
+});
+
 test('getDeparsedRivescript does not call loadBot if rivescript is ready', async () => {
   sandbox.stub(rivescriptApi, 'isReady')
     .returns(true);
