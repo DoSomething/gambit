@@ -128,7 +128,8 @@ test('changeTopicByCampaign should call setCampaign and return error if campaign
   sandbox.stub(conversation, 'setTopic')
     .returns(Promise.resolve(true));
   t.context.req.conversation = conversation;
-  const campaign = campaignFactory.getValidCampaignWithoutTopics();
+  const campaign = campaignFactory.getValidCampaign();
+  campaign.topics = [];
 
   await t.throws(requestHelper.changeTopicByCampaign(t.context.req, campaign));
   requestHelper.setCampaign.should.have.been.calledWith(t.context.req, campaign);
