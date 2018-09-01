@@ -22,7 +22,7 @@ chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const getTopic = require('../../../../../../lib/middleware/messages/signup/topic-get');
+const getCampaign = require('../../../../../../lib/middleware/messages/signup/campaign-get');
 
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();
@@ -49,10 +49,10 @@ test.afterEach((t) => {
 /**
  * Tests
  */
-test('getTopic should call fetchByCampaignId and setTopic', async (t) => {
+test('getCampaign should call campaign.fetchById and setTopic', async (t) => {
   const next = sinon.stub();
-  const middleware = getTopic();
-  sandbox.stub(helpers.topic, 'fetchByCampaignId')
+  const middleware = getCampaign();
+  sandbox.stub(helpers.campaign, 'fetchById')
     .returns(Promise.resolve([topicStub]));
 
   // test
@@ -63,9 +63,9 @@ test('getTopic should call fetchByCampaignId and setTopic', async (t) => {
   next.should.have.been.called;
 });
 
-test('getTopic should send 204 status if no topics found for campaignId', async (t) => {
+test('getCampaign should send 204 status if no topics found for campaignId', async (t) => {
   const next = sinon.stub();
-  const middleware = getTopic();
+  const middleware = getCampaign();
   sandbox.stub(helpers.topic, 'fetchByCampaignId')
     .returns(Promise.resolve([]));
   // TODO: Move this hardcoded message into config to DRY.
@@ -81,9 +81,9 @@ test('getTopic should send 204 status if no topics found for campaignId', async 
   next.should.not.have.been.called;
 });
 
-test('getTopic should call sendErrorResponse if fetchByCampaignId fails', async (t) => {
+test('getCampaign should call sendErrorResponse if fetchByCampaignId fails', async (t) => {
   const next = sinon.stub();
-  const middleware = getTopic();
+  const middleware = getCampaign();
   const error = { message: 'Epic fail' };
   sandbox.stub(helpers.topic, 'fetchByCampaignId')
     .returns(Promise.reject(error));

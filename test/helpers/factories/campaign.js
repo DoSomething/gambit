@@ -24,8 +24,7 @@ function getValidCampaign() {
       id: chance.integer(numericIdRange),
     },
     keywords: [stubs.getKeyword()],
-    botConfig: {
-      postType: stubs.getPostType(),
+    config: {
       templates: {},
     },
     topics: [topicFactory.getValidTopicWithoutCampaign()],
