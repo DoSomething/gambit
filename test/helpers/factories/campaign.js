@@ -22,6 +22,7 @@ function getValidCampaign() {
       id: chance.integer(numericIdRange),
     },
     config: {
+      id: stubs.getContentfulId(),
       templates: {
         webSignup: {
           text: stubs.getRandomMessageText(),

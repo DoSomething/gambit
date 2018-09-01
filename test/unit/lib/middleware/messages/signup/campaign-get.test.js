@@ -74,6 +74,26 @@ test('getCampaign should call campaign.fetchById and setTopic if campaign is not
   next.should.have.been.called;
 });
 
+test('getCampaign should send 204 status if campaign config does not existe', async (t) => {
+  const next = sinon.stub();
+  const middleware = getCampaign();
+  const configlessCampaign = campaignFactory.getValidCampaign();
+  configlessCampaign.config = {};
+  sandbox.stub(helpers.campaign, 'fetchById')
+    .returns(Promise.resolve(configlessCampaign));
+  // TODO: Move this hardcoded message into config to DRY.
+  const apiResponseMessage = 'Campaign does not have a config.';
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  helpers.sendResponseWithStatusCode
+    .should.have.been.calledWith(t.context.res, 204, apiResponseMessage);
+  helpers.addBlinkSuppressHeaders.should.have.been.called;
+  helpers.sendErrorResponse.should.not.have.been.called;
+  helpers.request.setTopic.should.not.have.been.called;
+  next.should.not.have.been.called;
+});
+
 test('getCampaign should send 204 status if campaign config does not have webSignup template', async (t) => {
   const next = sinon.stub();
   const middleware = getCampaign();
