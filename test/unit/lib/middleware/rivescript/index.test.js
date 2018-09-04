@@ -21,7 +21,7 @@ const getRivescript = require('../../../../../lib/middleware/rivescript/index');
 
 const sandbox = sinon.sandbox.create();
 
-const deparsedRivescript = { topics: [] };
+const deparsedRivescript = { topics: { random: [] } };
 
 test.beforeEach((t) => {
   stubs.stubLogger(sandbox, logger);
