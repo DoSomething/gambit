@@ -30,6 +30,7 @@ test.afterEach(() => {
   rivescript.__set__('brain', undefined);
   rivescript.__set__('config', config);
   rivescript.__set__('hasSortedReplies', false);
+  rivescript.__set__('RiveScript', undefined);
 });
 
 // getBot
