@@ -118,7 +118,7 @@ test('getDeparsedRivescript should call loadBot if resetCache arg is true', asyn
     }));
 
   const result = await rivescriptHelper.getDeparsedRivescript(true);
-  rivescriptHelper.loadBot.should.have.been.called;
+  rivescriptHelper.loadBot.should.have.been.calledWith(true);
   result.should.deep.equal(mockDeparsedRivescript);
 });
 
@@ -144,26 +144,50 @@ test('getRivescripts should return cache data if cache set', async () => {
   const data = [replyTrigger, redirectTrigger];
   sandbox.stub(helpers.cache.rivescript, 'get')
     .returns(Promise.resolve(data));
-  sandbox.stub(gambitCampaigns, 'fetchDefaultTopicTriggers')
+  sandbox.stub(rivescriptHelper, 'fetchRivescripts')
     .returns(Promise.resolve(true));
 
   const result = await rivescriptHelper.getRivescripts();
-
-  gambitCampaigns.fetchDefaultTopicTriggers.should.not.have.been.called;
+  rivescriptHelper.fetchRivescripts.should.not.have.been.called;
   result.should.deep.equal(data);
 });
 
-test('getRivescripts should call gambitCampaigns.fetchDefaultTopicTriggers if cache not set', async () => {
+test('getRivescripts should call fetchRivescripts if not cache set', async () => {
+  const data = [replyTrigger, redirectTrigger];
+  sandbox.stub(helpers.cache.rivescript, 'get')
+    .returns(Promise.resolve(false));
+  sandbox.stub(rivescriptHelper, 'fetchRivescripts')
+    .returns(Promise.resolve(data));
+
+  const result = await rivescriptHelper.getRivescripts();
+  rivescriptHelper.fetchRivescripts.should.have.been.called;
+  result.should.deep.equal(data);
+});
+
+test('getRivescripts should call fetchRivescripts if resetCache arg is true', async () => {
+  const data = [replyTrigger, redirectTrigger];
+  sandbox.stub(helpers.cache.rivescript, 'get')
+    .returns(Promise.resolve({ test: 123 }));
+  sandbox.stub(rivescriptHelper, 'fetchRivescripts')
+    .returns(Promise.resolve(data));
+
+  const result = await rivescriptHelper.getRivescripts(true);
+  rivescriptHelper.fetchRivescripts.should.have.been.called;
+  helpers.cache.rivescript.get.should.not.have.been.called;
+  result.should.deep.equal(data);
+});
+
+test('fetchRivescripts should call gambitCampaigns.fetchDefaultTopicTriggers and parseRivescript', async () => {
   const data = [replyTrigger, redirectTrigger];
   const mockParsedTrigger = defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger();
-  sandbox.stub(helpers.cache.rivescript, 'get')
-    .returns(Promise.resolve(null));
   sandbox.stub(gambitCampaigns, 'fetchDefaultTopicTriggers')
     .returns(Promise.resolve({ data }));
   sandbox.stub(rivescriptHelper, 'parseRivescript')
     .returns(mockParsedTrigger);
+  sandbox.stub(helpers.cache.rivescript, 'set')
+    .returns(Promise.resolve([mockParsedTrigger, mockParsedTrigger]));
 
-  const result = await rivescriptHelper.getRivescripts();
+  const result = await rivescriptHelper.fetchRivescripts();
   data.forEach((item) => {
     rivescriptHelper.parseRivescript.should.have.been.calledWith(item);
   });
@@ -171,16 +195,14 @@ test('getRivescripts should call gambitCampaigns.fetchDefaultTopicTriggers if ca
   result.should.deep.equal([mockParsedTrigger, mockParsedTrigger]);
 });
 
-test('getRivescripts should throw on gambitCampaigns.fetchDefaultTopicTriggers fail', async (t) => {
+test('fetchRivescripts should throw on gambitCampaigns.fetchDefaultTopicTriggers fail', async (t) => {
   const mockError = new Error('epic fail');
-  sandbox.stub(helpers.cache.rivescript, 'get')
-    .returns(Promise.resolve(null));
   sandbox.stub(gambitCampaigns, 'fetchDefaultTopicTriggers')
     .returns(Promise.reject(mockError));
   sandbox.stub(rivescriptHelper, 'parseRivescript')
     .returns(replyTrigger);
 
-  const result = await t.throws(rivescriptHelper.getRivescripts());
+  const result = await t.throws(rivescriptHelper.fetchRivescripts());
   gambitCampaigns.fetchDefaultTopicTriggers.should.have.been.called;
   rivescriptHelper.parseRivescript.should.not.have.been.called;
   result.should.deep.equal(mockError);
@@ -286,8 +308,8 @@ test('loadBot calls getRivescripts and creates a new Rivescript bot with result'
   sandbox.stub(rivescriptApi, 'loadBotWithRivescripts')
     .returns(underscore.noop);
 
-  await rivescriptHelper.loadBot();
-  rivescriptHelper.getRivescripts.should.have.been.called;
+  await rivescriptHelper.loadBot(true);
+  rivescriptHelper.getRivescripts.should.have.been.calledWith(true);
   rivescriptApi.loadBotWithRivescripts.should.have.been
     .calledWith(getRivescripts);
 });
