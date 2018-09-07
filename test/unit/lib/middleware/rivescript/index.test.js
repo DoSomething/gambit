@@ -38,43 +38,90 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-test('getRivescript should call helpers.rivescript.getDeparsedRivescript with true if cache query is set to false', async (t) => {
+test('getRivescript should call loadBot with true if cache query is set to false', async (t) => {
   const middleware = getRivescript();
+  sandbox.stub(helpers.rivescript, 'loadBot')
+    .returns(Promise.resolve());
   sandbox.stub(helpers.rivescript, 'getDeparsedRivescript')
-    .returns(Promise.resolve(deparsedRivescript));
+    .returns(deparsedRivescript);
   t.context.req.query = { cache: 'false' };
 
   // test
   await middleware(t.context.req, t.context.res);
 
-  helpers.rivescript.getDeparsedRivescript.should.have.been.calledWith(true);
+  helpers.rivescript.loadBot.should.have.been.calledWith(true);
   t.context.res.send.should.have.been.calledWith({ data: deparsedRivescript });
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 
-test('getRivescript should call helpers.rivescript.getDeparsedRivescript with false if cache query is not', async (t) => {
+test('getRivescript should call loadBot if bot is not ready', async (t) => {
   const middleware = getRivescript();
+  sandbox.stub(helpers.rivescript, 'isBotReady')
+    .returns(false);
+  sandbox.stub(helpers.rivescript, 'loadBot')
+    .returns(Promise.resolve());
   sandbox.stub(helpers.rivescript, 'getDeparsedRivescript')
-    .returns(Promise.resolve(deparsedRivescript));
+    .returns(deparsedRivescript);
 
   // test
   await middleware(t.context.req, t.context.res);
 
-  helpers.rivescript.getDeparsedRivescript.should.have.been.calledWith(false);
+  helpers.rivescript.loadBot.should.have.been.called;
   t.context.res.send.should.have.been.calledWith({ data: deparsedRivescript });
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 
-test('getRivescript should return  helpers.rivescript.getDeparsedRivescript error upon fail', async (t) => {
+test('getRivescript should call loadBot if Rivescript is not current', async (t) => {
+  const middleware = getRivescript();
+  sandbox.stub(helpers.rivescript, 'isBotReady')
+    .returns(true);
+  sandbox.stub(helpers.rivescript, 'loadBot')
+    .returns(Promise.resolve());
+  sandbox.stub(helpers.rivescript, 'isRivescriptCurrent')
+    .returns(false);
+  sandbox.stub(helpers.rivescript, 'getDeparsedRivescript')
+    .returns(deparsedRivescript);
+
+  // test
+  await middleware(t.context.req, t.context.res);
+
+  helpers.rivescript.loadBot.should.have.been.called;
+  helpers.rivescript.getDeparsedRivescript.should.have.been.called;
+  t.context.res.send.should.have.been.calledWith({ data: deparsedRivescript });
+  helpers.sendErrorResponse.should.not.have.been.called;
+});
+
+test('getRivescript does not call loadBot if bot is ready, Rivescript is current, and cache param is not set to false', async (t) => {
+  const middleware = getRivescript();
+  sandbox.stub(helpers.rivescript, 'isBotReady')
+    .returns(true);
+  sandbox.stub(helpers.rivescript, 'loadBot')
+    .returns(Promise.resolve());
+  sandbox.stub(helpers.rivescript, 'isRivescriptCurrent')
+    .returns(true);
+  sandbox.stub(helpers.rivescript, 'getDeparsedRivescript')
+    .returns(deparsedRivescript);
+
+  // test
+  await middleware(t.context.req, t.context.res);
+
+  helpers.rivescript.loadBot.should.not.have.been.called;
+  helpers.rivescript.getDeparsedRivescript.should.have.been.called;
+  t.context.res.send.should.have.been.calledWith({ data: deparsedRivescript });
+  helpers.sendErrorResponse.should.not.have.been.called;
+});
+
+test('getRivescript should send error upon helpers.rivescript.loadBot fail', async (t) => {
   const error = new Error({ message: 'Epic fail' });
   const middleware = getRivescript();
-  sandbox.stub(helpers.rivescript, 'getDeparsedRivescript')
+  sandbox.stub(helpers.rivescript, 'isBotReady')
+    .returns(false);
+  sandbox.stub(helpers.rivescript, 'loadBot')
     .returns(Promise.reject(error));
 
   // test
   await middleware(t.context.req, t.context.res);
 
-  helpers.rivescript.getDeparsedRivescript.should.have.been.called;
   t.context.res.send.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.calledWith(t.context.res, error);
 });
