@@ -60,26 +60,6 @@
 < topic
 
 /**
- * Replies we maintain for DoSomething Strategic.
- * These may eventually get deprecated by defaultTopicTriggers if we add a new changeTopicMessage
- * content type to use as the defaultTopicTrigger.response.
- */
-
-/**
- * Footlocker Scholarship Application topic should reply with link and *not* prompt user to join DS,
- * just auto reply with the link.
- */
-+ flsa
-- Foot Locker is awarding $20,000 scholarship to student athletes. Visit http://bit.ly/1vyEsZB to apply or nominate a friend. (Txt Stop to quit, Msg&DataRatesMayApply){topic=flsa}
-
-> topic flsa includes random
-
-+ [*]
-- Visit http://bit.ly/1vyEsZB to apply or nominate a friend.
- 
-< topic
-
-/**
  * DoSomething Strategic newsletter topics. Our data team queries inbound messages with these topics
  * to add subscribers to the DoSomething Strategic email newsletter.
  */

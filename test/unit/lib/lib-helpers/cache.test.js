@@ -60,7 +60,7 @@ test('rivescript.get should throw when cache set fails', async (t) => {
 
 test('rivescript.set should return an object', async () => {
   cacheHelper.__set__('rivescriptCache', {
-    set: () => Promise.resolve(rivescript),
+    set: () => Promise.resolve(JSON.stringify(rivescript)),
   });
   const result = await cacheHelper.rivescript.set(rivescriptCacheId);
   result.should.deep.equal(rivescript);
