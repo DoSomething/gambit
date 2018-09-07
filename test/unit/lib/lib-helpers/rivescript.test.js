@@ -274,6 +274,47 @@ test('getRivescriptFromDefaultTopicTrigger returns replyRivescript if defaultTop
   result.should.equal(mockRivescript);
 });
 
+// isBotCurrent
+test('isBotCurrent returns false if rivescript not ready', async () => {
+  sandbox.stub(rivescriptApi, 'isReady')
+    .returns(false);
+  const result = await rivescriptHelper.isBotCurrent();
+  result.should.equal(false);
+});
+
+test('isBotCurrent returns false if rivescript cache is not set', async () => {
+  sandbox.stub(rivescriptApi, 'isReady')
+    .returns(true);
+  sandbox.stub(helpers.cache.rivescript, 'get')
+    .returns(Promise.resolve(null));
+  const result = await rivescriptHelper.isBotCurrent();
+  result.should.equal(false);
+});
+
+test('isBotCurrent returns true if cache is equal to additionalRivescripts and rivescript is ready', async () => {
+  const rivescripts = [mockRivescript, mockRivescript];
+  sandbox.stub(rivescriptApi, 'isReady')
+    .returns(true);
+  sandbox.stub(helpers.cache.rivescript, 'get')
+    .returns(Promise.resolve(rivescripts));
+  sandbox.stub(rivescriptApi, 'getAdditionalRivescripts')
+    .returns(rivescripts);
+  const result = await rivescriptHelper.isBotCurrent();
+  result.should.equal(true);
+});
+
+test('isBotCurrent returns false if cache is not equal to additionalRivescripts and rivescript is ready', async () => {
+  const rivescripts = [mockRivescript, mockRivescript];
+  sandbox.stub(rivescriptApi, 'isReady')
+    .returns(true);
+  sandbox.stub(helpers.cache.rivescript, 'get')
+    .returns(Promise.resolve([mockRivescript]));
+  sandbox.stub(rivescriptApi, 'getAdditionalRivescripts')
+    .returns(rivescripts);
+  const result = await rivescriptHelper.isBotCurrent();
+  result.should.equal(false);
+});
+
 // joinRivescriptLines
 test('joinRivescriptLines returns input array joined by the config line separator', () => {
   const lines = [mockRivescript, mockRivescript, mockRivescript];
