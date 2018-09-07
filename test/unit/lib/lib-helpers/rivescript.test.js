@@ -42,7 +42,7 @@ test.afterEach(() => {
 });
 
 // getBotReply
-test('getBotReply should call loadBot if bot is not current', async () => {
+test('getBotReply should call loadBot if Rivescript is not current', async () => {
   sandbox.stub(rivescriptHelper, 'isRivescriptCurrent')
     .returns(Promise.resolve(false));
   sandbox.stub(rivescriptHelper, 'loadBot')
@@ -55,7 +55,7 @@ test('getBotReply should call loadBot if bot is not current', async () => {
   result.should.deep.equal(mockRivescriptReply);
 });
 
-test('getBotReply does not call loadBot if bot is current', async () => {
+test('getBotReply does not call loadBot if Rivescript is current', async () => {
   sandbox.stub(rivescriptHelper, 'isRivescriptCurrent')
     .returns(Promise.resolve(true));
   sandbox.stub(rivescriptHelper, 'loadBot')
@@ -235,17 +235,23 @@ test('getRivescriptFromDefaultTopicTrigger returns replyRivescript if defaultTop
   result.should.equal(mockRivescript);
 });
 
-// isRivescriptCurrent
-test('isRivescriptCurrent returns false if rivescript not ready', async () => {
+// isBotReady
+test('isBotReady returns false if not rivescript.isReady', async () => {
   sandbox.stub(rivescriptApi, 'isReady')
     .returns(false);
-  const result = await rivescriptHelper.isRivescriptCurrent();
+  const result = await rivescriptHelper.isBotReady();
   result.should.equal(false);
 });
 
-test('isRivescriptCurrent returns false if rivescript cache is not set', async () => {
+test('isBotReady returns true if rivescript.isReady', async () => {
   sandbox.stub(rivescriptApi, 'isReady')
     .returns(true);
+  const result = await rivescriptHelper.isBotReady();
+  result.should.equal(true);
+});
+
+// isRivescriptCurrent
+test('isRivescriptCurrent returns false if rivescript cache is not set', async () => {
   sandbox.stub(helpers.cache.rivescript, 'get')
     .returns(Promise.resolve(null));
   const result = await rivescriptHelper.isRivescriptCurrent();
@@ -254,8 +260,6 @@ test('isRivescriptCurrent returns false if rivescript cache is not set', async (
 
 test('isRivescriptCurrent returns true if cache is equal to additionalRivescripts and rivescript is ready', async () => {
   const rivescripts = [mockRivescript, mockRivescript];
-  sandbox.stub(rivescriptApi, 'isReady')
-    .returns(true);
   sandbox.stub(helpers.cache.rivescript, 'get')
     .returns(Promise.resolve(rivescripts));
   sandbox.stub(rivescriptApi, 'getAdditionalRivescripts')
@@ -266,8 +270,6 @@ test('isRivescriptCurrent returns true if cache is equal to additionalRivescript
 
 test('isRivescriptCurrent returns false if cache is not equal to additionalRivescripts and rivescript is ready', async () => {
   const rivescripts = [mockRivescript, mockRivescript];
-  sandbox.stub(rivescriptApi, 'isReady')
-    .returns(true);
   sandbox.stub(helpers.cache.rivescript, 'get')
     .returns(Promise.resolve([mockRivescript]));
   sandbox.stub(rivescriptApi, 'getAdditionalRivescripts')
