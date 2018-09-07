@@ -42,25 +42,8 @@ test.afterEach(() => {
 });
 
 // getBotReply
-test('getBotReply should call loadBot if rivescript is not ready', async () => {
-  sandbox.stub(helpers.cache.rivescript, 'get')
-    .returns(Promise.resolve(true));
-  sandbox.stub(rivescriptApi, 'isReady')
-    .returns(false);
-  sandbox.stub(rivescriptHelper, 'loadBot')
-    .returns(Promise.resolve(true));
-  sandbox.stub(rivescriptApi, 'getBotReply')
-    .returns(Promise.resolve(mockRivescriptReply));
-
-  const result = await rivescriptHelper.getBotReply();
-  rivescriptHelper.loadBot.should.have.been.called;
-  result.should.deep.equal(mockRivescriptReply);
-});
-
-test('getBotReply should call loadBot if rivescript is ready but cache is not set', async () => {
-  sandbox.stub(rivescriptApi, 'isReady')
-    .returns(true);
-  sandbox.stub(helpers.cache.rivescript, 'get')
+test('getBotReply should call loadBot if Rivescript is not current', async () => {
+  sandbox.stub(rivescriptHelper, 'isRivescriptCurrent')
     .returns(Promise.resolve(false));
   sandbox.stub(rivescriptHelper, 'loadBot')
     .returns(Promise.resolve(true));
@@ -72,10 +55,8 @@ test('getBotReply should call loadBot if rivescript is ready but cache is not se
   result.should.deep.equal(mockRivescriptReply);
 });
 
-test('getBotReply does not call loadBot if rivescript is ready adn cache is set', async () => {
-  sandbox.stub(rivescriptApi, 'isReady')
-    .returns(true);
-  sandbox.stub(helpers.cache.rivescript, 'get')
+test('getBotReply does not call loadBot if Rivescript is current', async () => {
+  sandbox.stub(rivescriptHelper, 'isRivescriptCurrent')
     .returns(Promise.resolve(true));
   sandbox.stub(rivescriptHelper, 'loadBot')
     .returns(Promise.resolve(true));
@@ -88,11 +69,7 @@ test('getBotReply does not call loadBot if rivescript is ready adn cache is set'
 });
 
 // getDeparsedRivescript
-test('getDeparsedRivescript should call loadBot if rivescript is not ready', async () => {
-  sandbox.stub(rivescriptApi, 'isReady')
-    .returns(false);
-  sandbox.stub(rivescriptHelper, 'loadBot')
-    .returns(Promise.resolve(true));
+test('getDeparsedRivescript should call Rivescript getBot.deparse', () => {
   sandbox.stub(rivescriptApi, 'getBot')
     .callsFake(() => ({
       deparse: () => { // eslint-disable-line arrow-body-style
@@ -100,42 +77,7 @@ test('getDeparsedRivescript should call loadBot if rivescript is not ready', asy
       },
     }));
 
-  const result = await rivescriptHelper.getDeparsedRivescript();
-  rivescriptHelper.loadBot.should.have.been.called;
-  result.should.deep.equal(mockDeparsedRivescript);
-});
-
-test('getDeparsedRivescript should call loadBot if resetCache arg is true', async () => {
-  sandbox.stub(rivescriptApi, 'isReady')
-    .returns(true);
-  sandbox.stub(rivescriptHelper, 'loadBot')
-    .returns(Promise.resolve(true));
-  sandbox.stub(rivescriptApi, 'getBot')
-    .callsFake(() => ({
-      deparse: () => { // eslint-disable-line arrow-body-style
-        return mockDeparsedRivescript;
-      },
-    }));
-
-  const result = await rivescriptHelper.getDeparsedRivescript(true);
-  rivescriptHelper.loadBot.should.have.been.calledWith(true);
-  result.should.deep.equal(mockDeparsedRivescript);
-});
-
-test('getDeparsedRivescript does not call loadBot if rivescript is ready', async () => {
-  sandbox.stub(rivescriptApi, 'isReady')
-    .returns(true);
-  sandbox.stub(rivescriptHelper, 'loadBot')
-    .returns(Promise.resolve(true));
-  sandbox.stub(rivescriptApi, 'getBot')
-    .callsFake(() => ({
-      deparse: () => { // eslint-disable-line arrow-body-style
-        return mockDeparsedRivescript;
-      },
-    }));
-
-  const result = await rivescriptHelper.getDeparsedRivescript();
-  rivescriptHelper.loadBot.should.not.have.been.called;
+  const result = rivescriptHelper.getDeparsedRivescript();
   result.should.deep.equal(mockDeparsedRivescript);
 });
 
@@ -291,6 +233,49 @@ test('getRivescriptFromDefaultTopicTrigger returns replyRivescript if defaultTop
   rivescriptHelper.getReplyRivescript.should.have.been
     .calledWith(replyDefaultTopicTrigger.trigger, replyDefaultTopicTrigger.reply);
   result.should.equal(mockRivescript);
+});
+
+// isBotReady
+test('isBotReady returns false if not rivescript.isReady', async () => {
+  sandbox.stub(rivescriptApi, 'isReady')
+    .returns(false);
+  const result = await rivescriptHelper.isBotReady();
+  result.should.equal(false);
+});
+
+test('isBotReady returns true if rivescript.isReady', async () => {
+  sandbox.stub(rivescriptApi, 'isReady')
+    .returns(true);
+  const result = await rivescriptHelper.isBotReady();
+  result.should.equal(true);
+});
+
+// isRivescriptCurrent
+test('isRivescriptCurrent returns false if rivescript cache is not set', async () => {
+  sandbox.stub(helpers.cache.rivescript, 'get')
+    .returns(Promise.resolve(null));
+  const result = await rivescriptHelper.isRivescriptCurrent();
+  result.should.equal(false);
+});
+
+test('isRivescriptCurrent returns true if cache is equal to additionalRivescripts and rivescript is ready', async () => {
+  const rivescripts = [mockRivescript, mockRivescript];
+  sandbox.stub(helpers.cache.rivescript, 'get')
+    .returns(Promise.resolve(rivescripts));
+  sandbox.stub(rivescriptApi, 'getAdditionalRivescripts')
+    .returns(rivescripts);
+  const result = await rivescriptHelper.isRivescriptCurrent();
+  result.should.equal(true);
+});
+
+test('isRivescriptCurrent returns false if cache is not equal to additionalRivescripts and rivescript is ready', async () => {
+  const rivescripts = [mockRivescript, mockRivescript];
+  sandbox.stub(helpers.cache.rivescript, 'get')
+    .returns(Promise.resolve([mockRivescript]));
+  sandbox.stub(rivescriptApi, 'getAdditionalRivescripts')
+    .returns(rivescripts);
+  const result = await rivescriptHelper.isRivescriptCurrent();
+  result.should.equal(false);
 });
 
 // joinRivescriptLines
