@@ -1,0 +1,17 @@
+> topic ask_yes_no
+
++ @yes [*]
+- saidYes
+
+// TODO: Should we just replace this with [*] yes [*]?
++ (heck|hell|hells|hm|uh|why) @yes [*]
+- saidYes
+
+// And add a leading wildcard here too? If so, maybe we should check for any signs of no before yes.
++ @no [*]
+- saidNo
+
++ [*]
+- invalid
+
+< topic
