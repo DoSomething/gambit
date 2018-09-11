@@ -1,0 +1,21 @@
+> topic unsubscribed
+
++ info 
+- sendInfoMessage
+
++ help
+@ info
+
++ less
+- subscriptionStatusLess{topic=random}
+
++ join
+- subscriptionStatusResubscribed{topic=random}
+
++ @unsubscribe
+- subscriptionStatusStop
+
++ [*]
+- These are DoSomething.org Alerts. Reply HELP for help. Text JOIN to receive 4-8 msgs/mth or LESS for 1msg/mth.
+
+< topic
