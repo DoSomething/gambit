@@ -1,6 +1,7 @@
 + flsa
 - Hi I'm Freddie from DoSomething.org! Welcome to my weekly updates (up to 8msg/month). Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop\n\n.Foot Locker is awarding $20,000 scholarships to student athletes. Visit http://bit.ly/2MVO0Ru to apply or nominate a friend. (Txt Stop to quit, Msg&DataRatesMayApply){topic=flsa}
 
+// Includes 'random' to catch all triggers defined in the default topic
 > topic flsa includes random
 
 + [*]
