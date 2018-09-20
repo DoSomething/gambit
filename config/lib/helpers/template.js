@@ -78,7 +78,7 @@ const templatesMap = {
     },
     subscriptionStatusActive: {
       name: 'subscriptionStatusActive',
-      text: `Okay, great! I'll text you once a week with updates on what's happening in the news and/or easy ways for you to take action in your community! Wanna take 2 mins to learn how to spot the signs of an abusive relationship and what you can do about it? Read our guide here: ${newsUrl}`,
+      text: activeStatusText,
     },
     subscriptionStatusLess: {
       name: 'subscriptionStatusLess',
