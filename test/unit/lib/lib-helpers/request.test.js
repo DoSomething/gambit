@@ -17,6 +17,8 @@ const campaignFactory = require('../../../helpers/factories/campaign');
 const conversationFactory = require('../../../helpers/factories/conversation');
 const topicFactory = require('../../../helpers/factories/topic');
 
+const config = require('../../../../config/lib/helpers/request');
+
 chai.should();
 chai.use(sinonChai);
 
@@ -333,6 +335,26 @@ test('isLastOutboundTopicTemplate should return whether if req.lastOutboundTempl
   t.truthy(requestHelper.isLastOutboundTopicTemplate(t.context.req));
   helpers.template.isGambitCampaignsTemplate
     .should.have.been.calledWith(t.context.req.lastOutboundTemplate);
+});
+
+// isTwilio
+test('isTwilio should return true if req.query.origin is set to twilio', (t) => {
+  t.falsy(requestHelper.isTwilio(t.context.req));
+  t.context.req.query.origin = config.origin.twilio;
+  t.truthy(requestHelper.isTwilio(t.context.req));
+});
+
+test('isTwilio should return true if isTwilioStudio', (t) => {
+  sandbox.stub(requestHelper, 'isTwilioStudio')
+    .returns(true);
+  t.truthy(requestHelper.isTwilio(t.context.req));
+});
+
+// isTwilioStudio
+test('isTwilioStudio should return true if req.query.origin is set to twilioStudio', (t) => {
+  t.falsy(requestHelper.isTwilioStudio(t.context.req));
+  t.context.req.query.origin = config.origin.twilioStudio;
+  t.truthy(requestHelper.isTwilioStudio(t.context.req));
 });
 
 // parseAskYesNoResponse
