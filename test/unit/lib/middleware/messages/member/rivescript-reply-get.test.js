@@ -11,6 +11,8 @@ const underscore = require('underscore');
 
 const helpers = require('../../../../../../lib/helpers');
 const conversationFactory = require('../../../../../helpers/factories/conversation');
+const userFactory = require('../../../../../helpers/factories/user');
+const stubs = require('../../../../../helpers/stubs');
 
 const macroHelper = helpers.macro;
 const mockConversation = conversationFactory.getValidConversation();
@@ -22,6 +24,7 @@ const mockRivescriptReply = {
   topic: mockTopic,
   match: mockMatch,
 };
+const mockUser = userFactory.getValidUser();
 
 // setup "x.should.y" assertion style
 chai.should();
@@ -36,9 +39,11 @@ const sandbox = sinon.sandbox.create();
 test.beforeEach((t) => {
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(underscore.noop);
+  sandbox.stub(helpers.response, 'sendData')
+    .returns(underscore.noop);
   t.context.req = httpMocks.createRequest();
   t.context.req.conversation = mockConversation;
-  t.context.req.inboundMessageText = 'King of the North';
+  t.context.req.inboundMessageText = stubs.getRandomMessageText();
   t.context.res = httpMocks.createResponse();
 });
 
@@ -124,4 +129,23 @@ test('getRivescriptReply should not set req.macro if helpers.macro.isMacro fails
   macroHelper.isMacro.should.have.been.called;
   next.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
+});
+
+test('getRivescriptReply should send data with user and reply if request is twilioStudio', async (t) => {
+  // setup
+  const next = sinon.stub();
+  const middleware = getRivescriptReply();
+  sandbox.stub(helpers.request, 'getRivescriptReply')
+    .returns(Promise.resolve(mockRivescriptReply));
+  sandbox.stub(helpers.request, 'isTwilioStudio')
+    .returns(true);
+  t.context.req.user = mockUser;
+  const data = {
+    user: mockUser,
+    reply: mockRivescriptReply,
+  };
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  helpers.response.sendData.should.have.been.calledWith(t.context.res, data);
 });
