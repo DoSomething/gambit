@@ -39,11 +39,12 @@ const sandbox = sinon.sandbox.create();
 test.beforeEach((t) => {
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(underscore.noop);
+  sandbox.stub(helpers.response, 'sendData')
+    .returns(underscore.noop);
   t.context.req = httpMocks.createRequest();
   t.context.req.conversation = mockConversation;
   t.context.req.inboundMessageText = stubs.getRandomMessageText();
   t.context.res = httpMocks.createResponse();
-  sandbox.spy(t.context.res, 'send');
 });
 
 test.afterEach((t) => {
@@ -146,5 +147,5 @@ test('getRivescriptReply should send data with user and reply if request is twil
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  t.context.res.send.should.have.been.calledWith({ data });
+  helpers.response.sendData.should.have.been.calledWith(t.context.res, data);
 });
