@@ -7,6 +7,7 @@ const router = express.Router();
 
 const analyticsHelper = require('../../../lib/helpers/analytics');
 const broadcastMessagesRoute = require('./broadcast');
+const broadcastLiteMessagesRoute = require('./broadcast-lite');
 const frontMessagesRoute = require('./front');
 const memberMessagesRoute = require('./member');
 const signupMessagesRoute = require('./signup');
@@ -22,16 +23,26 @@ router.post('/', (req, res, next) => {
   const origin = req.query.origin;
   logger.debug('Origin', { origin }, req);
   analyticsHelper.addCustomAttributes({ origin });
-  if (origin === 'broadcast') {
-    broadcastMessagesRoute(req, res, next);
-  } else if (origin === 'front') {
-    frontMessagesRoute(req, res, next);
-  } else if (origin === 'signup') {
-    signupMessagesRoute(req, res, next);
-  } else if (origin === 'subscriptionStatusActive') {
-    subscriptionStatusActiveRoute(req, res, next);
-  } else {
-    memberMessagesRoute(req, res, next);
+
+  switch (origin) {
+    case 'broadcast':
+      broadcastMessagesRoute(req, res, next);
+      break;
+    case 'broadcast-lite':
+      broadcastLiteMessagesRoute(req, res, next);
+      break;
+    case 'front':
+      frontMessagesRoute(req, res, next);
+      break;
+    case 'signup':
+      signupMessagesRoute(req, res, next);
+      break;
+    case 'subscriptionStatusActive':
+      subscriptionStatusActiveRoute(req, res, next);
+      break;
+    default:
+      memberMessagesRoute(req, res, next);
+      break;
   }
 });
 
