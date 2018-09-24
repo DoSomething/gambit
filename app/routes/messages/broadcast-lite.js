@@ -8,15 +8,16 @@ const router = express.Router();
 const outboundMessageConfig = require('../../../config/lib/middleware/messages/message-outbound');
 
 // Middleware
-const paramsMiddleware = require('../../../lib/middleware/messages/broadcast/params');
-const getBroadcastMiddleware = require('../../../lib/middleware/messages/broadcast/broadcast-get');
-const parseBroadcastMiddleware = require('../../../lib/middleware/messages/broadcast/broadcast-parse');
-const getConversationMiddleware = require('../../../lib/middleware/messages/conversation-get');
-const createConversationMiddleware = require('../../../lib/middleware/messages/conversation-create');
-const updateConversationMiddleware = require('../../../lib/middleware/messages/broadcast/conversation-update');
-const loadOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-load');
 const createOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-create');
+const createConversationMiddleware = require('../../../lib/middleware/messages/conversation-create');
+const getBroadcastMiddleware = require('../../../lib/middleware/messages/broadcast/broadcast-get');
+const getConversationMiddleware = require('../../../lib/middleware/messages/conversation-get');
+const loadOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-load');
+const paramsMiddleware = require('../../../lib/middleware/messages/broadcast/params');
+const parseBroadcastMiddleware = require('../../../lib/middleware/messages/broadcast/broadcast-parse');
 const sendOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-send');
+const updateConversationMiddleware = require('../../../lib/middleware/messages/broadcast/conversation-update');
+const validateOutboundMessageMiddleware = require('../../../lib/middleware/messages/broadcast-lite/message-outbound-validate');
 
 router.use(paramsMiddleware());
 router.use(getBroadcastMiddleware());
@@ -27,10 +28,7 @@ router.use(parseBroadcastMiddleware());
  * Removed: router.use(getUserMiddleware(getUserConfig));
  */
 
-/**
- * TODO: Here we will validate the subscription status and mobile Validation
- * Removed: router.use(validateOutboundMessageMiddleware(outboundMessageConfig));
- * */
+router.use(validateOutboundMessageMiddleware());
 
 router.use(getConversationMiddleware());
 router.use(createConversationMiddleware());
