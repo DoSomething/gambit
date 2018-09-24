@@ -28,7 +28,7 @@ router.post('/', (req, res, next) => {
     case 'broadcast':
       broadcastMessagesRoute(req, res, next);
       break;
-    case 'broadcast-lite':
+    case 'broadcastLite':
       broadcastLiteMessagesRoute(req, res, next);
       break;
     case 'front':
