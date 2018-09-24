@@ -73,6 +73,22 @@ module.exports = {
         },
       };
     },
+    getBroadcastSingleResponse: () => ({
+      data: {
+        id: '2HdYviqiK46skcgKW6OSGk',
+        name: 'VoterRegistration2018_Jun27_Pending_TestG',
+        type: 'broadcast',
+        createdAt: '2018-06-27T16:53:41.058Z',
+        updatedAt: '2018-06-27T16:54:34.766Z',
+        message: {
+          text: "It's Freddie from DoSomething. There's an election coming up in Nov. I wanna hear from you. Tell me: What issue do you want to see Americans vote for this year?",
+          attachments: [],
+          template: 'askText',
+        },
+        campaignId: 7059,
+        topic: null,
+      },
+    }),
   },
   stubLogger: function stubLogger(sandbox, logger) {
     sandbox.stub(logger, 'warn').returns(() => {});
@@ -108,17 +124,14 @@ module.exports = {
     };
   },
   broadcast: {
-    getCioWebhookPayload: () => {
-      const validMobileNumber = true;
-      return {
-        userId: module.exports.getUserId(),
-        broadcastId: module.exports.getBroadcastId(),
-        mobile: module.exports.getPlatformUserId(validMobileNumber),
-      };
-    },
+    getCioWebhookPayload: (validMobileNumber = true) => ({
+      userId: module.exports.getUserId(),
+      broadcastId: module.exports.getBroadcastId(),
+      mobile: module.exports.getPlatformUserId(validMobileNumber),
+    }),
   },
   getBroadcastId: function getBroadcastId() {
-    return '72mon4jUeQOaokEIkQMaoa';
+    return '2HdYviqiK46skcgKW6OSGk';
   },
   getBroadcastMessageText: function getBroadcastMessageText() {
     return 'Winter is coming, will you be prepared? Yes or No.';

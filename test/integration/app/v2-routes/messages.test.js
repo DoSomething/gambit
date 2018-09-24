@@ -41,7 +41,7 @@ test('GET /api/v2/messages should return 404', async (t) => {
   res.status.should.be.equal(404);
 });
 
-test('POST /api/v2/messages?origin=broadcastLite should return 422 is userId is not found', async (t) => {
+test('POST /api/v2/messages?origin=broadcastLite should return 422 if userId is not found', async (t) => {
   const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
   cioWebhookPayload.userId = null;
   const res = await t.context.request
@@ -53,7 +53,7 @@ test('POST /api/v2/messages?origin=broadcastLite should return 422 is userId is 
   res.status.should.be.equal(422);
 });
 
-test('POST /api/v2/messages?origin=broadcastLite should return 422 is broadcastId is not found', async (t) => {
+test('POST /api/v2/messages?origin=broadcastLite should return 422 if broadcastId is not found', async (t) => {
   const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
   cioWebhookPayload.broadcastId = null;
   const res = await t.context.request
@@ -65,7 +65,7 @@ test('POST /api/v2/messages?origin=broadcastLite should return 422 is broadcastI
   res.status.should.be.equal(422);
 });
 
-test('POST /api/v2/messages?origin=broadcastLite should return 422 is mobile is not found', async (t) => {
+test('POST /api/v2/messages?origin=broadcastLite should return 422 if mobile is not found', async (t) => {
   const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
   cioWebhookPayload.mobile = null;
   const res = await t.context.request
@@ -74,5 +74,23 @@ test('POST /api/v2/messages?origin=broadcastLite should return 422 is mobile is 
     }))
     .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
     .send(cioWebhookPayload);
+  res.status.should.be.equal(422);
+});
+
+test('POST /api/v2/messages?origin=broadcastLite should return 422 if mobile is not valid', async (t) => {
+  const validMobileNumber = false;
+  const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload(validMobileNumber);
+
+  nock(integrationHelper.routes.gambitCampaigns.baseURI)
+    .get(`/broadcasts/${stubs.getBroadcastId()}`)
+    .reply(200, stubs.gambitCampaigns.getBroadcastSingleResponse());
+
+  const res = await t.context.request
+    .post(integrationHelper.routes.v2.messages(false, {
+      origin: 'broadcastLite',
+    }))
+    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
+    .send(cioWebhookPayload);
+
   res.status.should.be.equal(422);
 });
