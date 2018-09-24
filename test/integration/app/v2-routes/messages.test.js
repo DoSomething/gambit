@@ -5,6 +5,7 @@ const chai = require('chai');
 const nock = require('nock');
 
 const integrationHelper = require('../../../helpers/integration');
+const stubs = require('../../../helpers/stubs');
 
 chai.should();
 
@@ -38,4 +39,40 @@ test('GET /api/v2/messages should return 404', async (t) => {
   const res = await t.context.request.get(integrationHelper.routes.v2.messages())
     .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`);
   res.status.should.be.equal(404);
+});
+
+test('POST /api/v2/messages?origin=broadcastLite should return 422 is userId is not found', async (t) => {
+  const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
+  cioWebhookPayload.userId = null;
+  const res = await t.context.request
+    .post(integrationHelper.routes.v2.messages(false, {
+      origin: 'broadcastLite',
+    }))
+    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
+    .send(cioWebhookPayload);
+  res.status.should.be.equal(422);
+});
+
+test('POST /api/v2/messages?origin=broadcastLite should return 422 is broadcastId is not found', async (t) => {
+  const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
+  cioWebhookPayload.broadcastId = null;
+  const res = await t.context.request
+    .post(integrationHelper.routes.v2.messages(false, {
+      origin: 'broadcastLite',
+    }))
+    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
+    .send(cioWebhookPayload);
+  res.status.should.be.equal(422);
+});
+
+test('POST /api/v2/messages?origin=broadcastLite should return 422 is mobile is not found', async (t) => {
+  const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
+  cioWebhookPayload.mobile = null;
+  const res = await t.context.request
+    .post(integrationHelper.routes.v2.messages(false, {
+      origin: 'broadcastLite',
+    }))
+    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
+    .send(cioWebhookPayload);
+  res.status.should.be.equal(422);
 });

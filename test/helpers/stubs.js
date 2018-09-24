@@ -107,6 +107,16 @@ module.exports = {
       contentType: 'image/png',
     };
   },
+  broadcast: {
+    getCioWebhookPayload: () => {
+      const validMobileNumber = true;
+      return {
+        userId: module.exports.getUserId(),
+        broadcastId: module.exports.getBroadcastId(),
+        mobile: module.exports.getPlatformUserId(validMobileNumber),
+      };
+    },
+  },
   getBroadcastId: function getBroadcastId() {
     return '72mon4jUeQOaokEIkQMaoa';
   },
