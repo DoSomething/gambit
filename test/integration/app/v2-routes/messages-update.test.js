@@ -36,12 +36,12 @@ test.after.always(async () => {
  * PATCH /api/v2/messages/:id
  */
 
-test.serial('PATCH /api/v2/messages/:id should return 401 if not using valid credentials', async (t) => {
+test('PATCH /api/v2/messages/:id should return 401 if not using valid credentials', async (t) => {
   const res = await t.context.request.patch(integrationHelper.routes.v2.messages('12345'));
   res.status.should.be.equal(401);
 });
 
-test.serial('PATCH /api/v2/messages/:id should update the message deliveredAt delivery metadata', async (t) => {
+test('PATCH /api/v2/messages/:id should update the message deliveredAt delivery metadata', async (t) => {
   // setup
   const { outboundMessage } = await seederHelper.seed.conversationMessages();
   const updateBody = stubs.twilio.getDeliveredMessageUpdate();
@@ -57,7 +57,7 @@ test.serial('PATCH /api/v2/messages/:id should update the message deliveredAt de
   should.exist(updatedMessage.metadata.delivery.deliveredAt);
 });
 
-test.serial('PATCH /api/v2/messages/:id should update the message failedAt and failureData metadata', async (t) => {
+test('PATCH /api/v2/messages/:id should update the message failedAt and failureData metadata', async (t) => {
   // setup
   const { outboundMessage } = await seederHelper.seed.conversationMessages();
   const updateBody = stubs.twilio.getFailedMessageUpdate(true);
