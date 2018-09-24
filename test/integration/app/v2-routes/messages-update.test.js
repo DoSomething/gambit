@@ -36,12 +36,12 @@ test.after.always(async () => {
  * PATCH /api/v2/messages/:id
  */
 
-test('PATCH /api/v2/messages/:id should return 401 if not using valid credentials', async (t) => {
+test.serial('PATCH /api/v2/messages/:id should return 401 if not using valid credentials', async (t) => {
   const res = await t.context.request.patch(integrationHelper.routes.v2.messages('12345'));
   res.status.should.be.equal(401);
 });
 
-test('PATCH /api/v2/messages/:id should update the message deliveredAt delivery metadata', async (t) => {
+test.serial('PATCH /api/v2/messages/:id should update the message deliveredAt delivery metadata', async (t) => {
   // setup
   const { outboundMessage } = await seederHelper.seed.conversationMessages();
   const updateBody = stubs.twilio.getDeliveredMessageUpdate();
@@ -57,7 +57,7 @@ test('PATCH /api/v2/messages/:id should update the message deliveredAt delivery 
   should.exist(updatedMessage.metadata.delivery.deliveredAt);
 });
 
-test('PATCH /api/v2/messages/:id should update the message failedAt and failureData metadata', async (t) => {
+test.serial('PATCH /api/v2/messages/:id should update the message failedAt and failureData metadata', async (t) => {
   // setup
   const { outboundMessage } = await seederHelper.seed.conversationMessages();
   const updateBody = stubs.twilio.getFailedMessageUpdate(true);
@@ -76,11 +76,9 @@ test('PATCH /api/v2/messages/:id should update the message failedAt and failureD
    */
   nock(integrationHelper.routes.northstar.baseURI)
     .put(`/users/_id/${stubs.getUserId()}`)
-    .reply((uri, body) => {
-      const parsedBody = JSON.parse(body);
-
+    .reply((uri, requestBody) => {
       // Assert that the payload includes the undeliverable sms_status
-      expect(parsedBody.sms_status)
+      expect(requestBody.sms_status)
         .to.be.eql(subscriptionHelper.subscriptionStatuses.undeliverable);
       return [
         200,
