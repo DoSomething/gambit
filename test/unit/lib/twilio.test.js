@@ -67,22 +67,14 @@ test('getClient should return the existing Twilio client if already created', ()
 });
 
 // useTwilioTestCreds
-test('useTwilioTestCreds should return false when config var is not set to \'true\'', () => {
-  const result = twilio.useTwilioTestCreds();
-  result.should.equal(false);
-});
-
-test('useTwilioTestCreds should return true when config var is set to \'true\'', () => {
-  const testConfig = underscore.extend({}, config, {
-    useTwilioTestCreds: 'true',
-  });
-  twilio.__set__('config', testConfig);
+test('useTwilioTestCreds should return true while testing', () => {
   const result = twilio.useTwilioTestCreds();
   result.should.equal(true);
 });
 
 // getMessagePayload
 test('getMessagePayload should return object with valid to/from numbers when not testing', () => {
+  sandbox.stub(twilio, 'useTwilioTestCreds').returns(false);
   const result = twilio.getMessagePayload(mockToNumber, mockMessageText);
   result.from.should.equal(config.fromNumber);
   result.to.should.equal(mockToNumber);
@@ -90,11 +82,11 @@ test('getMessagePayload should return object with valid to/from numbers when not
   result.smartEncoded.should.equal(true);
 });
 
-test('getMessagePayload should return object with test to/from numbers when testing', () => {
+test('getMessagePayload should return object with test from number when testing', () => {
   sandbox.stub(twilio, 'useTwilioTestCreds').returns(true);
   const result = twilio.getMessagePayload(mockToNumber, mockMessageText);
   result.from.should.equal(config.testFromNumber);
-  result.to.should.equal(config.testToNumber);
+  result.to.should.equal(mockToNumber);
   result.body.should.equal(mockMessageText);
   result.smartEncoded.should.equal(true);
 });
