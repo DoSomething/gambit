@@ -9,9 +9,9 @@
     "url": "git+https://github.com/DoSomething/gambit-conversations.git"
   },
   "scripts": {
-    "test-fast": "NODE=test ava --serial --fail-fast",
-    "test:unit": "NODE=test ava --serial test/unit",
-    "test:integration": "NODE=test ava --serial test/integration",
+    "test-fast": "NODE_ENV=test ava --serial --fail-fast",
+    "test:unit": "NODE_ENV=test ava --serial test/unit",
+    "test:integration": "NODE_ENV=test ava --serial test/integration",
     "test:full": "npm run lint && npm run coverage && npm run test:integration",
     "coverage": "NODE_ENV=test nyc --all ava --serial test/unit",
     "html-coverage-report": "nyc report --reporter=html",
