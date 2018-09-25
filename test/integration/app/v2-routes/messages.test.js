@@ -94,3 +94,27 @@ test('POST /api/v2/messages?origin=broadcastLite should return 422 if mobile is 
 
   res.status.should.be.equal(422);
 });
+
+test('POST /api/v2/messages?origin=broadcastLite should return 200 if broadcast is sent successfully', async (t) => {
+  const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
+
+  nock(integrationHelper.routes.gambitCampaigns.baseURI)
+    .get(`/broadcasts/${stubs.getBroadcastId()}`)
+    .reply(200, stubs.gambitCampaigns.getBroadcastSingleResponse());
+
+  /**
+   * We are using Twilio Test credentials in Wercker.
+   * When this runs on wercker we are indeed making a call to the Twilio API.
+   * But we do it with the Test credentials so its free and we are not actually
+   * sending the text.
+   */
+  const res = await t.context.request
+    .post(integrationHelper.routes.v2.messages(false, {
+      origin: 'broadcastLite',
+    }))
+    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
+    .send(cioWebhookPayload);
+
+  res.status.should.be.equal(200);
+  res.body.data.messages.length.should.be.equal(1);
+});
