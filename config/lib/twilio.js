@@ -4,7 +4,7 @@ let useTwilioTestCreds = process.env.DS_GAMBIT_CONVERSATIONS_USE_TWILIO_TEST_CRE
 
 /**
  * TODO: We should be overriding this in the config/env/override-test.js,
- * but since it only override basic app variables it wouldn't work so we do it here.
+ * but since it only overrides basic app variables it wouldn't work so we do it here.
  * It would be a good idea to import all configs into the main config/index.js and require
  * that everywhere, this way we could override any config through the env override files.
  */
