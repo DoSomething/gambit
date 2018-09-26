@@ -140,7 +140,7 @@ curl -X "POST" "http://localhost:5100/api/v2/messages?origin=broadcastLite" \
      -H 'Content-Type: application/json; charset=utf-8' \
      -u 'puppet:totallysecret' \
      -d $'{
-  "northstarId": "5547be89429c64ec7e8b518d",
+  "userId": "5547be89429c64ec7e8b518d",
   "broadcastId": "4nwTwvXmfuuYAGYgusGyyW",
   "mobile": "+15554443322"
 }'
