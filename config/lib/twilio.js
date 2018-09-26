@@ -1,6 +1,6 @@
 'use strict';
 
-let useTwilioTestCreds = process.env.DS_GAMBIT_CONVERSATIONS_USE_TWILIO_TEST_CREDS || 'false';
+let useTwilioTestCreds = process.env.DS_GAMBIT_CONVERSATIONS_USE_TWILIO_TEST_CREDS === 'true';
 
 /**
  * TODO: We should be overriding this in the config/env/override-test.js,
@@ -9,15 +9,17 @@ let useTwilioTestCreds = process.env.DS_GAMBIT_CONVERSATIONS_USE_TWILIO_TEST_CRE
  * that everywhere, this way we could override any config through the env override files.
  */
 if (process.env.NODE_ENV === 'test') {
-  useTwilioTestCreds = 'true';
+  useTwilioTestCreds = true;
 }
 
-const accountSid = useTwilioTestCreds === 'true' ?
-  process.env.TWILIO_TEST_ACCOUNT_SID :
-  process.env.TWILIO_ACCOUNT_SID;
-const authToken = useTwilioTestCreds === 'true' ?
-  process.env.TWILIO_TEST_AUTH_TOKEN :
-  process.env.TWILIO_AUTH_TOKEN;
+/**
+ * The Twilio test account credentials is used for integration tests that require the use
+ * of the Twilio API.
+ */
+const accountSid = useTwilioTestCreds ?
+  process.env.TWILIO_TEST_ACCOUNT_SID : process.env.TWILIO_ACCOUNT_SID;
+const authToken = useTwilioTestCreds ?
+  process.env.TWILIO_TEST_AUTH_TOKEN : process.env.TWILIO_AUTH_TOKEN;
 
 // @see https://www.twilio.com/docs/api/rest/test-credentials#test-sms-messages-parameters-From
 const testFromNumber = process.env.TWILIO_TEST_FROM_NUMBER || '+15005550006';
