@@ -50,7 +50,13 @@ test('POST /api/v2/messages?origin=broadcastLite should return 422 if userId is 
     }))
     .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
     .send(cioWebhookPayload);
+
   res.status.should.be.equal(422);
+  /**
+   * TODO: checking against a hard coded string is brittle.
+   * Will break w/ updating the error sent to user. Let's update when we cross that bridge.
+   */
+  res.body.message.should.include('Missing required userId');
 });
 
 test('POST /api/v2/messages?origin=broadcastLite should return 422 if broadcastId is not found', async (t) => {
@@ -63,6 +69,7 @@ test('POST /api/v2/messages?origin=broadcastLite should return 422 if broadcastI
     .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
     .send(cioWebhookPayload);
   res.status.should.be.equal(422);
+  res.body.message.should.include('Missing required broadcastId');
 });
 
 test('POST /api/v2/messages?origin=broadcastLite should return 422 if mobile is not found', async (t) => {
@@ -75,6 +82,7 @@ test('POST /api/v2/messages?origin=broadcastLite should return 422 if mobile is 
     .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
     .send(cioWebhookPayload);
   res.status.should.be.equal(422);
+  res.body.message.should.include('Missing required mobile');
 });
 
 test('POST /api/v2/messages?origin=broadcastLite should return 422 if mobile is not valid', async (t) => {
@@ -91,8 +99,8 @@ test('POST /api/v2/messages?origin=broadcastLite should return 422 if mobile is 
     }))
     .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
     .send(cioWebhookPayload);
-
   res.status.should.be.equal(422);
+  res.body.message.should.include('Cannot format mobile number');
 });
 
 test('POST /api/v2/messages?origin=broadcastLite should return 200 if broadcast is sent successfully', async (t) => {
