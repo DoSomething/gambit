@@ -119,7 +119,7 @@ curl -X "POST" "http://localhost:5100/api/v2/messages?origin=broadcast" \
 POST /v2/messages?origin=broadcastLite
 ```
 
-Sends a Broadcast message to a Member. Uses properties cached values in Fastly and the member's `mobile` sent from C.io.
+Sends a Broadcast message to a Member. It uses the public user's properties (by requesting the user resource anonymously), cached by Fastly, to validate the outbound message.
 
 ### Input
 
