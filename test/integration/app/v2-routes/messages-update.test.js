@@ -76,11 +76,9 @@ test('PATCH /api/v2/messages/:id should update the message failedAt and failureD
    */
   nock(integrationHelper.routes.northstar.baseURI)
     .put(`/users/_id/${stubs.getUserId()}`)
-    .reply((uri, body) => {
-      const parsedBody = JSON.parse(body);
-
+    .reply((uri, requestBody) => {
       // Assert that the payload includes the undeliverable sms_status
-      expect(parsedBody.sms_status)
+      expect(requestBody.sms_status)
         .to.be.eql(subscriptionHelper.subscriptionStatuses.undeliverable);
       return [
         200,

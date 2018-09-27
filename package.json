@@ -9,9 +9,9 @@
     "url": "git+https://github.com/DoSomething/gambit-conversations.git"
   },
   "scripts": {
-    "test-fast": "NODE=test ava --serial --fail-fast",
-    "test:unit": "NODE=test ava --serial test/unit",
-    "test:integration": "NODE=test ava --serial test/integration",
+    "test-fast": "NODE_ENV=test ava --serial --fail-fast",
+    "test:unit": "NODE_ENV=test ava --serial test/unit",
+    "test:integration": "NODE_ENV=test ava --serial test/integration",
     "test:full": "npm run lint && npm run coverage && npm run test:integration",
     "coverage": "NODE_ENV=test nyc --all ava --serial test/unit",
     "html-coverage-report": "nyc report --reporter=html",
@@ -33,8 +33,8 @@
     ]
   },
   "engines": {
-    "node": "8.11.3",
-    "npm": "5.7.1"
+    "node": "8.12.0",
+    "npm": "6.4.1"
   },
   "dependencies": {
     "@dosomething/northstar-js": "git://github.com/DoSomething/northstar-js.git",
@@ -45,44 +45,44 @@
     "cacheman": "^2.2.1",
     "cacheman-redis": "^2.0.0",
     "colors": "^1.1.2",
-    "deep-extend": "^0.5.0",
+    "deep-extend": "^0.6.0",
     "dotenv": "^4.0.0",
     "express": "^4.16.3",
     "express-restify-mongoose": "^4.1.3",
     "express-sslify": "^1.2.0",
     "google-libphonenumber": "^3.0.5",
-    "heroku-logger": "^0.1.1",
+    "heroku-logger": "^0.3.1",
     "linkify-it": "^2.0.3",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.11",
     "moment": "^2.21.0",
     "mongoose": "^4.10.6",
     "mustache": "^2.3.0",
-    "newrelic": "4.7.0",
+    "newrelic": "^4.8.1",
     "redis": "^2.8.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.1",
     "rivescript": "^2.0.0-alpha.6",
-    "superagent": "^3.5.2",
+    "superagent": "^3.8.3",
     "twilio": "^3.19.2",
     "underscore": "^1.8.3",
     "uuid": "^3.1.0"
   },
   "devDependencies": {
-    "@dosomething/eslint-config": "^3.1.2",
+    "@dosomething/eslint-config": "^4.0.0",
     "ajv": "^5.5.2",
     "ava": "^0.25.0",
     "chai": "^4.1.2",
     "chance": "^1.0.13",
-    "codecov": "^3.0.2",
-    "eslint": "^4.19.1",
-    "eslint-plugin-ava": "^4.5.1",
-    "nock": "^9.2.6",
+    "codecov": "^3.1.0",
+    "eslint": "^5.6.0",
+    "eslint-plugin-ava": "^5.1.1",
+    "nock": "^10.0.0",
     "node-mocks-http": "^1.7.0",
-    "nyc": "^11.6.0",
+    "nyc": "^13.0.1",
     "readline": "^1.3.0",
     "rewire": "^4.0.1",
     "sinon": "^4.5.0",
     "sinon-chai": "^3.0.0",
-    "supertest": "^3.0.0"
+    "supertest": "^3.3.0"
   }
 }

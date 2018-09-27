@@ -62,3 +62,14 @@ Input is posted to your localhost `api/v2/messages?origin=twilio` endpoint on be
 
 * Run `npm test:full` to lint code and run automated tests.
 * Pull Requests are expected to contain reasonable test coverage.
+
+## Troubleshooting
+
+##### I get an `ERR! cb() never called!` error when running `npm install`.
+I ran into this error when upgrading npm from 5.x to 6.x. There seems to be a bug that affects apps w/ a lot of dependencies. Here's the [Link](https://npm.community/t/crash-npm-err-cb-never-called/858)
+
+Steps I took to fix it:
+- Raised the `maxfiles` and `maxproc` system limits, [Link](https://unix.stackexchange.com/questions/108174/how-to-persistently-control-maximum-system-resource-consumption-on-mac/293062#answer-293062).
+- Exit out of all terminals and re-open.
+- Removed `node_modules` and `package-lock.json`.
+- Run `npm install` again.

@@ -8,6 +8,7 @@ const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
 
 const InternalServerError = require('../../../../app/exceptions/InternalServerError');
+// TODO: Change file name
 const UnprocessibleEntityError = require('../../../../app/exceptions/UnprocessibleEntityError');
 const stubs = require('../../../helpers/stubs');
 

@@ -113,6 +113,77 @@ curl -X "POST" "http://localhost:5100/api/v2/messages?origin=broadcast" \
 
 </details>
 
+## Broadcast Lite
+
+```
+POST /v2/messages?origin=broadcastLite
+```
+
+Sends a Broadcast message to a Member. It uses the public user's properties (by requesting the user resource anonymously), cached by Fastly, to validate the outbound message.
+
+### Input
+
+Name | Type | Description
+--- | --- | ---
+`userId` or `northstarId`** | `string` | User Id to send Broadcast message to
+`broadcastId` | `string` | Broadcast Id to send
+`mobile` | `string` | Member's mobile number in E164 format
+`platform` | `string` | Optional, defaults to `'sms'`.
+
+> `northstarId` is deprecated but still accepted for backwards compatibility
+
+<details>
+<summary><strong>Example Request</strong></summary>
+
+```
+curl -X "POST" "http://localhost:5100/api/v2/messages?origin=broadcastLite" \
+     -H 'Content-Type: application/json; charset=utf-8' \
+     -u 'puppet:totallysecret' \
+     -d $'{
+  "userId": "5547be89429c64ec7e8b518d",
+  "broadcastId": "4nwTwvXmfuuYAGYgusGyyW",
+  "mobile": "+15554443322"
+}'
+```
+
+</details>
+<details>
+<summary><strong>Example Response</strong></summary>
+
+```
+{
+  "data": {
+    "messages": [
+      {
+        "platformMessageId": "SM9f73c7a8d1fc444faeeec9964a270514",
+        "_id": "5b7c9cea350595000404de44",
+        "updatedAt": "2018-08-21T23:14:50.529Z",
+        "createdAt": "2018-08-21T23:14:50.314Z",
+        "text": "I don't want to wait, for our lives to be over",
+        "direction": "outbound-api-send",
+        "template": "autoReplyBroadcast",
+        "conversationId": "5ac7a86b8c02c10004d92577",
+        "campaignId": 8158,
+        "topic": "61RPZx8atiGyeoeaqsckOE",
+        "userId": "5547be89469c64ec7d8b518d",
+        "broadcastId": "4nwTwvXmfuuYAGYgusGyyW",
+        "__v": 0,
+        "metadata": {
+            "requestId": "e8cbf79d-6cd3-4028-b1aa-d8455c166d57",
+            "delivery": {
+                "totalSegments": 1,
+                "queuedAt": "2018-08-21T23:14:50.000Z"
+            }
+        },
+        "attachments": []
+      }
+    ]
+  }
+}
+```
+
+</details>
+
 ## Front
 
 ```

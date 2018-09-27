@@ -140,7 +140,6 @@ test.serial('POST /api/v2/messages?origin=subscriptionStatusActive should not cr
   const user = stubs.northstar.getUser({
     subscription: 'undeliverable',
   });
-  // const subscriptionStatusActiveData = templatesHelper.getSubscriptionStatusActive();
 
   nock(integrationHelper.routes.northstar.baseURI)
     .get(`/users/${northstarConfig.getUserFields.id}/${stubs.getUserId()}`)

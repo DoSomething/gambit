@@ -8,6 +8,7 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
 
+// TODO: Change file name
 const UnprocessibleEntityError = require('../../../app/exceptions/UnprocessibleEntityError.js');
 
 chai.should();
