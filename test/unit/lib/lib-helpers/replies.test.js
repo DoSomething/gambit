@@ -35,7 +35,6 @@ const gambitConversationsTemplates = templates.gambitConversationsTemplates;
 const resolvedPromise = Promise.resolve({});
 const rejectedPromise = Promise.reject({});
 
-// Setup
 test.beforeEach((t) => {
   stubs.stubLogger(sandbox, logger);
   t.context.req = httpMocks.createRequest();
@@ -44,13 +43,11 @@ test.beforeEach((t) => {
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(() => {});
 
-  // add a campaign object
   t.context.req.campaign = campaignFactory.getValidCampaign();
-  // TODO: Remove this -- placeholder for now.
+  // TODO: Remove this placeholder and add to tests.
   sandbox.stub(helpers.user, 'updateByMemberMessageReq')
     .returns(Promise.resolve({}));
 });
-
 
 test.afterEach((t) => {
   sandbox.restore();

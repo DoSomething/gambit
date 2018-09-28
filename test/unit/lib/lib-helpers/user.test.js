@@ -174,3 +174,13 @@ test('setPendingSubscriptionStatusForUserId should call northstar.updateUser wit
   northstar.updateUser.should.have.been
     .calledWith(userId, { sms_status: subscriptionHelper.statuses.pending() });
 });
+
+// updateByMemberMessageReq
+test('updateByMemberMessageReq should return rejected error if getDefaultUpdatePayloadFromReq throws', async (t) => {
+  const error = { message: 'Epic fail' };
+  sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
+    .throws(error);
+
+  const result = await t.throws(userHelper.updateByMemberMessageReq(t.context.req));
+  result.should.deep.equal(error);
+});
