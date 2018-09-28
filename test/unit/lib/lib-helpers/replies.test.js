@@ -46,11 +46,13 @@ test.beforeEach((t) => {
 
   // add a campaign object
   t.context.req.campaign = campaignFactory.getValidCampaign();
+  // TODO: Remove this -- placeholder for now.
+  sandbox.stub(helpers.user, 'updateByMemberMessageReq')
+    .returns(Promise.resolve({}));
 });
 
-// Cleanup
+
 test.afterEach((t) => {
-  // reset stubs, spies, and mocks
   sandbox.restore();
   t.context = {};
 });

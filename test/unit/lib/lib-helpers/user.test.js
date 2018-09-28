@@ -145,52 +145,33 @@ test('hasAddress should return false if user does not have address properties se
   t.falsy(userHelper.hasAddress(user));
 });
 
-// getSubscriptionStatusUpdate
-test('getSubscriptionStatusUpdate should return active value if active macro is passed', () => {
-  const user = userFactory.getValidUser();
+// parseSubscriptionStatusMacro
+test('parseSubscriptionStatusMacro should return active value if active macro is passed', () => {
   const activeMacro = helpers.macro.macros.subscriptionStatusActive();
-  const result = userHelper.getSubscriptionStatusUpdate(user, activeMacro);
+  const result = userHelper.parseSubscriptionStatusMacro(activeMacro);
   result.should.equal(subscriptionHelper.statuses.active());
 });
 
-test('getSubscriptionStatusUpdate should return active value if resubscribed macro is passed', () => {
-  const user = userFactory.getValidUser();
+test('parseSubscriptionStatusMacro should return active value if resubscribed macro is passed', () => {
   const resubscribedMacro = helpers.macro.macros.subscriptionStatusResubscribed();
-  const result = userHelper.getSubscriptionStatusUpdate(user, resubscribedMacro);
+  const result = userHelper.parseSubscriptionStatusMacro(resubscribedMacro);
   result.should.equal(subscriptionHelper.statuses.active());
 });
 
-test('getSubscriptionStatusUpdate should return stop value if stop macro is passed', () => {
-  const user = userFactory.getValidUser();
+test('parseSubscriptionStatusMacro should return stop value if stop macro is passed', () => {
   const stopMacro = helpers.macro.macros.subscriptionStatusStop();
-  const result = userHelper.getSubscriptionStatusUpdate(user, stopMacro);
+  const result = userHelper.parseSubscriptionStatusMacro(stopMacro);
   result.should.equal(subscriptionHelper.statuses.stop());
 });
 
-test('getSubscriptionStatusUpdate should return less value if less macro is passed', () => {
-  const user = userFactory.getValidUser();
+test('parseSubscriptionStatusMacro should return less value if less macro is passed', () => {
   const lessMacro = helpers.macro.macros.subscriptionStatusLess();
-  const result = userHelper.getSubscriptionStatusUpdate(user, lessMacro);
+  const result = userHelper.parseSubscriptionStatusMacro(lessMacro);
   result.should.equal(subscriptionHelper.statuses.less());
 });
 
-test('getSubscriptionStatusUpdate should return active value if current status is null', () => {
-  const user = userFactory.getValidUser();
-  user.sms_status = null;
-  const result = userHelper.getSubscriptionStatusUpdate(user, stubs.getRandomMessageText());
-  result.should.equal(subscriptionHelper.statuses.active());
-});
-
-test('getSubscriptionStatusUpdate should return null if current status exists and non macro is passed', (t) => {
-  const user = userFactory.getValidUser();
-  user.sms_status = subscriptionHelper.statuses.active();
-  let result = userHelper.getSubscriptionStatusUpdate(user, stubs.getRandomMessageText());
-  t.is(result, null);
-  user.sms_status = subscriptionHelper.statuses.stop();
-  result = userHelper.getSubscriptionStatusUpdate(user, stubs.getRandomMessageText());
-  t.is(result, null);
-  user.sms_status = subscriptionHelper.statuses.undeliverable();
-  result = userHelper.getSubscriptionStatusUpdate(user, stubs.getRandomMessageText());
+test('parseSubscriptionStatusMacro should return null if subscriptionStatus macro is not passed', (t) => {
+  const result = userHelper.parseSubscriptionStatusMacro(stubs.getRandomMessageText());
   t.is(result, null);
 });
 

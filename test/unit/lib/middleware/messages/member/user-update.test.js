@@ -57,7 +57,7 @@ test('updateUser should call next if req.user undefined', async (t) => {
   const middleware = updateUser();
   sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
     .returns(mockDefaultUserUpdateData);
-  sandbox.stub(userHelper, 'getSubscriptionStatusUpdate')
+  sandbox.stub(userHelper, 'parseSubscriptionStatusMacro')
     .returns(null);
   sandbox.stub(northstar, 'updateUser')
     .callsFake(userUpdateStub);
@@ -66,7 +66,7 @@ test('updateUser should call next if req.user undefined', async (t) => {
   await middleware(t.context.req, t.context.res, next);
   next.should.have.been.called;
   userHelper.getDefaultUpdatePayloadFromReq.should.not.have.been.called;
-  userHelper.getSubscriptionStatusUpdate.should.not.have.been.called;
+  userHelper.parseSubscriptionStatusMacro.should.not.have.been.called;
   northstar.updateUser.should.not.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
 });
@@ -77,7 +77,7 @@ test('updateUser should call next if Northstar.updateUser success', async (t) =>
   const middleware = updateUser();
   sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
     .returns(mockDefaultUserUpdateData);
-  sandbox.stub(userHelper, 'getSubscriptionStatusUpdate')
+  sandbox.stub(userHelper, 'parseSubscriptionStatusMacro')
     .returns(null);
   sandbox.stub(northstar, 'updateUser')
     .callsFake(userUpdateStub);
@@ -85,7 +85,7 @@ test('updateUser should call next if Northstar.updateUser success', async (t) =>
   // test
   await middleware(t.context.req, t.context.res, next);
   userHelper.getDefaultUpdatePayloadFromReq.should.have.been.called;
-  userHelper.getSubscriptionStatusUpdate.should.have.been.called;
+  userHelper.parseSubscriptionStatusMacro.should.have.been.called;
   t.context.req.userUpdateData.should.deep.equal(mockDefaultUserUpdateData);
   northstar.updateUser.should.have.been.called;
   next.should.have.been.called;
@@ -98,7 +98,7 @@ test('updateUser should call sendErrorResponse if Northstar.updateUser fails', a
   const middleware = updateUser();
   sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
     .returns(mockDefaultUserUpdateData);
-  sandbox.stub(userHelper, 'getSubscriptionStatusUpdate')
+  sandbox.stub(userHelper, 'parseSubscriptionStatusMacro')
     .returns(null);
   sandbox.stub(northstar, 'updateUser')
     .callsFake(userUpdateFailStub);
@@ -106,7 +106,7 @@ test('updateUser should call sendErrorResponse if Northstar.updateUser fails', a
   // test
   await middleware(t.context.req, t.context.res, next);
   userHelper.getDefaultUpdatePayloadFromReq.should.have.been.called;
-  userHelper.getSubscriptionStatusUpdate.should.have.been.called;
+  userHelper.parseSubscriptionStatusMacro.should.have.been.called;
   northstar.updateUser.should.have.been.called;
   next.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
@@ -118,7 +118,7 @@ test('updateUser should call sendErrorResponse if getDefaultUpdatePayloadFromReq
   const middleware = updateUser();
   sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
     .throws();
-  sandbox.stub(userHelper, 'getSubscriptionStatusUpdate')
+  sandbox.stub(userHelper, 'parseSubscriptionStatusMacro')
     .returns(null);
   sandbox.stub(userHelper, 'hasAddress')
     .returns(false);
@@ -128,20 +128,20 @@ test('updateUser should call sendErrorResponse if getDefaultUpdatePayloadFromReq
   // test
   await middleware(t.context.req, t.context.res, next);
   userHelper.getDefaultUpdatePayloadFromReq.should.have.been.called;
-  userHelper.getSubscriptionStatusUpdate.should.not.have.been.called;
+  userHelper.parseSubscriptionStatusMacro.should.not.have.been.called;
   userHelper.hasAddress.should.not.have.been.called;
   northstar.updateUser.should.not.have.been.called;
   next.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
 });
 
-test('updateUser should call getSubscriptionStatusUpdate if hasAddress throws', async (t) => {
+test('updateUser should call parseSubscriptionStatusMacro if hasAddress throws', async (t) => {
   // setup
   const next = sinon.stub();
   const middleware = updateUser();
   sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
     .returns(mockDefaultUserUpdateData);
-  sandbox.stub(userHelper, 'getSubscriptionStatusUpdate')
+  sandbox.stub(userHelper, 'parseSubscriptionStatusMacro')
     .throws();
   sandbox.stub(userHelper, 'hasAddress')
     .returns(false);
@@ -151,7 +151,7 @@ test('updateUser should call getSubscriptionStatusUpdate if hasAddress throws', 
   // test
   await middleware(t.context.req, t.context.res, next);
   userHelper.getDefaultUpdatePayloadFromReq.should.have.been.called;
-  userHelper.getSubscriptionStatusUpdate.should.have.been.called;
+  userHelper.parseSubscriptionStatusMacro.should.have.been.called;
   userHelper.hasAddress.should.not.have.been.called;
   northstar.updateUser.should.not.have.been.called;
   next.should.not.have.been.called;
@@ -164,7 +164,7 @@ test('updateUser should not set address if req.user.platformUserAddress undefine
   const middleware = updateUser();
   sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
     .returns(mockDefaultUserUpdateData);
-  sandbox.stub(userHelper, 'getSubscriptionStatusUpdate')
+  sandbox.stub(userHelper, 'parseSubscriptionStatusMacro')
     .returns(null);
   sandbox.stub(userHelper, 'hasAddress')
     .returns(false);
@@ -174,7 +174,7 @@ test('updateUser should not set address if req.user.platformUserAddress undefine
   // test
   await middleware(t.context.req, t.context.res, next);
   userHelper.getDefaultUpdatePayloadFromReq.should.have.been.called;
-  userHelper.getSubscriptionStatusUpdate.should.have.been.called;
+  userHelper.parseSubscriptionStatusMacro.should.have.been.called;
   userHelper.hasAddress.should.not.have.been.called;
   t.context.req.userUpdateData.should.not.have.property('country');
   northstar.updateUser.should.have.been.called;
@@ -188,7 +188,7 @@ test('updateUser should set address when req.user does not have address', async 
   const middleware = updateUser();
   sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
     .returns(mockDefaultUserUpdateData);
-  sandbox.stub(userHelper, 'getSubscriptionStatusUpdate')
+  sandbox.stub(userHelper, 'parseSubscriptionStatusMacro')
     .returns(null);
   sandbox.stub(userHelper, 'hasAddress')
     .returns(false);
@@ -200,7 +200,7 @@ test('updateUser should set address when req.user does not have address', async 
   // test
   await middleware(t.context.req, t.context.res, next);
   userHelper.getDefaultUpdatePayloadFromReq.should.have.been.called;
-  userHelper.getSubscriptionStatusUpdate.should.have.been.called;
+  userHelper.parseSubscriptionStatusMacro.should.have.been.called;
   userHelper.hasAddress.should.have.been.called;
   t.context.req.userUpdateData.should.have.property('country');
   northstar.updateUser
