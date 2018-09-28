@@ -145,36 +145,19 @@ test('hasAddress should return false if user does not have address properties se
   t.falsy(userHelper.hasAddress(user));
 });
 
-// parseSubscriptionStatusMacro
-test('parseSubscriptionStatusMacro should return active value if active macro is passed', () => {
-  const activeMacro = helpers.macro.macros.subscriptionStatusActive();
-  const result = userHelper.parseSubscriptionStatusMacro(activeMacro);
-  result.should.equal(subscriptionHelper.statuses.active());
-});
-
-test('parseSubscriptionStatusMacro should return active value if resubscribed macro is passed', () => {
-  const resubscribedMacro = helpers.macro.macros.subscriptionStatusResubscribed();
-  const result = userHelper.parseSubscriptionStatusMacro(resubscribedMacro);
-  result.should.equal(subscriptionHelper.statuses.active());
-});
-
-test('parseSubscriptionStatusMacro should return stop value if stop macro is passed', () => {
-  const stopMacro = helpers.macro.macros.subscriptionStatusStop();
-  const result = userHelper.parseSubscriptionStatusMacro(stopMacro);
-  result.should.equal(subscriptionHelper.statuses.stop());
-});
-
-test('parseSubscriptionStatusMacro should return less value if less macro is passed', () => {
+// parseProfileUpdate
+test('parseProfileUpdate should return config.updatesByMacro if exists for macro', () => {
   const lessMacro = helpers.macro.macros.subscriptionStatusLess();
-  const result = userHelper.parseSubscriptionStatusMacro(lessMacro);
-  result.should.equal(subscriptionHelper.statuses.less());
+  const result = userHelper.parseProfileUpdate(lessMacro);
+  result.should.deep.equal(config.updatesByMacro[lessMacro]);
 });
 
-test('parseSubscriptionStatusMacro should return null if subscriptionStatus macro is not passed', (t) => {
-  const result = userHelper.parseSubscriptionStatusMacro(stubs.getRandomMessageText());
-  t.is(result, null);
+test('parseProfileUpdate should return empty object if config.updatesByMacro undefined', () => {
+  const result = userHelper.parseProfileUpdate(stubs.getRandomMessageText());
+  result.should.deep.equal({});
 });
 
+// isPaused
 test('isPaused should return user.sms_paused', (t) => {
   const user = userFactory.getValidUser();
   const result = userHelper.isPaused(user);
