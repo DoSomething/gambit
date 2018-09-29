@@ -1,6 +1,12 @@
 'use strict';
 
+// TODO: Deprecate subscription config by defining profile field values in this file, as we'll soon
+// be adding more profile fields/values to update via new macros.
+const subscriptionStatusValues = require('./subscription').subscriptionStatuses;
+
 const userFields = {
+  // Note: All conversations save subscription status to sms_status field for now: sms is the only
+  // supported platform where users message us (Slack is internal to staff via gambit-slack app)
   subscriptionStatus: 'sms_status',
 };
 
@@ -16,17 +22,11 @@ module.exports = {
     passwordKey: process.env.DS_GAMBIT_CREATE_USER_PASSWORD_KEY || 'puppetSlothForever',
     passwordLength: 6,
   },
-  fields: {
-    // Note: All platforms are storing subscription status on sms_status for now, as sms is the only
-    // supported medium our users can message us (Slack is internal to staff via gambit-slack app)
-    subscriptionStatus: 'sms_status',
-  },
-  // TODO: DRY subscription helper config, hardcoding these values for now.
   updatesByMacro: {
-    subscriptionStatusActive: getSubscriptionStatusUpdate('active'),
-    subscriptionStatusLess: getSubscriptionStatusUpdate('less'),
-    subscriptionStatusResubscribed: getSubscriptionStatusUpdate('active'),
-    subscriptionStatusStop: getSubscriptionStatusUpdate('stop'),
+    subscriptionStatusActive: getSubscriptionStatusUpdate(subscriptionStatusValues.active),
+    subscriptionStatusLess: getSubscriptionStatusUpdate(subscriptionStatusValues.less),
+    subscriptionStatusResubscribed: getSubscriptionStatusUpdate(subscriptionStatusValues.active),
+    subscriptionStatusStop: getSubscriptionStatusUpdate(subscriptionStatusValues.stop),
     // TODO: Add more macros to save values to voting plan fields
     // e.g. votingPlanStatusVoting, votingPlanAttendingWithFriends
   },
