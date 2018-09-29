@@ -145,15 +145,15 @@ test('hasAddress should return false if user does not have address properties se
   t.falsy(userHelper.hasAddress(user));
 });
 
-// parseProfileUpdate
-test('parseProfileUpdate should return config.updatesByMacro if exists for macro', () => {
+// getProfileUpdate
+test('getProfileUpdate should return config.updatesByMacro if exists for macro', () => {
   const lessMacro = helpers.macro.macros.subscriptionStatusLess();
-  const result = userHelper.parseProfileUpdate(lessMacro);
+  const result = userHelper.getProfileUpdate(lessMacro);
   result.should.deep.equal(config.updatesByMacro[lessMacro]);
 });
 
-test('parseProfileUpdate should return empty object if config.updatesByMacro undefined', () => {
-  const result = userHelper.parseProfileUpdate(stubs.getRandomMessageText());
+test('getProfileUpdate should return empty object if config.updatesByMacro undefined', () => {
+  const result = userHelper.getProfileUpdate(stubs.getRandomMessageText());
   result.should.deep.equal({});
 });
 
