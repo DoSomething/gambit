@@ -89,26 +89,6 @@ test('isSendInfoMessage should return boolean', (t) => {
   t.falsy(macroHelper.isSendInfoMessage(undefinedMacroName));
 });
 
-test('isSubscriptionStatusActive should return boolean', (t) => {
-  t.true(macroHelper.isSubscriptionStatusActive(macros.subscriptionStatusActive));
-  t.falsy(macroHelper.isSubscriptionStatusActive(undefinedMacroName));
-});
-
-test('isSubscriptionStatusLess should return boolean', (t) => {
-  t.true(macroHelper.isSubscriptionStatusLess(macros.subscriptionStatusLess));
-  t.falsy(macroHelper.isSubscriptionStatusLess(undefinedMacroName));
-});
-
-test('isSubscriptionStatusResubscribed should return boolean', (t) => {
-  t.true(macroHelper.isSubscriptionStatusResubscribed(macros.subscriptionStatusResubscribed));
-  t.falsy(macroHelper.isSubscriptionStatusResubscribed(undefinedMacroName));
-});
-
-test('isSubscriptionStatusStop should return boolean', (t) => {
-  t.true(macroHelper.isSubscriptionStatusStop(macros.subscriptionStatusStop));
-  t.falsy(macroHelper.isSubscriptionStatusStop(undefinedMacroName));
-});
-
 test('isSupportRequested should return boolean', (t) => {
   t.true(macroHelper.isSupportRequested(macros.supportRequested));
   t.falsy(macroHelper.isSupportRequested(undefinedMacroName));
