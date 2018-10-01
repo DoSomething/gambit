@@ -14,6 +14,22 @@ module.exports = {
     subscriptionStatusResubscribed: 'subscriptionStatusResubscribed',
     subscriptionStatusStop: 'subscriptionStatusStop',
     supportRequested: 'supportRequested',
+    votingPlanStatusCantVote: {
+      name: 'votingPlanStatusCantVote',
+      text: 'Ok.',
+    },
+    votingPlanStatusVoted: {
+      name: 'votingPlanStatusVoted',
+      text: 'Awesome! Thank you for voting.',
+    },
+    votingPlanStatusVoting: {
+      name: 'votingPlanStatusVoting',
+      text: 'How are you getting to the polls? A) Drive B) Walk C) Bike D) Public transportation',
+    },
+    votingPlanStatusNotVoting: {
+      name: 'votingPlanStatusNotVoting',
+      text: 'Mind sharing why you aren\t not voting?',
+    },
   },
   replies: {
     noReply: 'noReply',

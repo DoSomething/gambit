@@ -1,0 +1,28 @@
++ make a plan
+- Are you planning on voting? A) Yes B) No C) Already voted D) Can't vote{topic=ask_voting_plan_status}
+
+> topic ask_voting_plan_status includes random
+
++ a
+- votingPlanStatusVoting{topic=ask_voting_plan_method_of_transport}
+
++ [*] @yes [*]
+@ a
+
++ b
+- votingPlanStatusNotVoting{topic=random}
+
++ @no [*]
+@ b
+
++ c
+- votingPlanStatusVoted{topic=random}
+
++ d
+- votingPlanCantVote{topic=random}
+
++ [*]
+- Sorry, I didn't get that. Are you planning on voting? A) Yes B) No C) Already voted D) Can't vote
+
+< topic
+

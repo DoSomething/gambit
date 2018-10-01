@@ -1,0 +1,31 @@
+> topic ask_voting_plan_method_of_transport includes random
+
++ a
+- votingPlanMethodOfTransportDrive{topic=random}
+
++ [*] (drive|driving) [*]
+@ a
+
++ b
+- votingPlanMethodOfTransportWalk{topic=random}
+
++ [*] (walk|walking) [*]
+@ b
+
++ c
+- votingPlanMethodOfTransportBike{topic=random}
+
++ [*] (bike|biking) [*]
+@ c
+
++ d
+- votingPlanMethodOfTransportPublicTransport{topic=random}
+
++ [*] (bart|bus|metro|mta|muni|subway|train) [*]
+@ d
+
++ [*]
+- Sorry, I didn't get that. How are you getting there? A) Drive B) Walk C) Bike D) Can't vote
+
+< topic
+
