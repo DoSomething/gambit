@@ -35,22 +35,16 @@ const gambitConversationsTemplates = templates.gambitConversationsTemplates;
 const resolvedPromise = Promise.resolve({});
 const rejectedPromise = Promise.reject({});
 
-// Setup
 test.beforeEach((t) => {
   stubs.stubLogger(sandbox, logger);
   t.context.req = httpMocks.createRequest();
   t.context.res = httpMocks.createResponse();
-
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(() => {});
-
-  // add a campaign object
   t.context.req.campaign = campaignFactory.getValidCampaign();
 });
 
-// Cleanup
 test.afterEach((t) => {
-  // reset stubs, spies, and mocks
   sandbox.restore();
   t.context = {};
 });
@@ -89,6 +83,17 @@ function getReqWithProps(opts = {}) {
 /**
  * Tests --------------------------------------------------
  */
+test('sendReply(): sends error if updateByMemberMessageReq fails', async (t) => {
+  // setup
+  const error = { message: 'Epic fail' };
+  sandbox.stub(helpers.user, 'updateByMemberMessageReq')
+    .returns(Promise.reject(error));
+  // test
+  await repliesHelper.sendReply(t.context.req, t.context.res, 'text', templates.campaignClosed);
+
+  // asserts
+  helpers.sendErrorResponse.should.have.been.calledWith(t.context.res, error);
+});
 
 test('sendReply(): responds with the inbound and outbound messages', async (t) => {
   // setup
@@ -98,6 +103,8 @@ test('sendReply(): responds with the inbound and outbound messages', async (t) =
     inboundMessage,
     lastOutboundMessage,
   });
+  sandbox.stub(helpers.user, 'updateByMemberMessageReq')
+    .returns(Promise.resolve({}));
   sandbox.stub(req.conversation, 'createAndSetLastOutboundMessage')
     .returns(resolvedPromise);
   sandbox.stub(req.conversation, 'postLastOutboundMessageToPlatform')
@@ -124,6 +131,8 @@ test('sendReply(): should not call createAndSetLastOutboundMessage if outbound m
     outboundMessage,
     isARetryRequest: () => true,
   });
+  sandbox.stub(helpers.user, 'updateByMemberMessageReq')
+    .returns(Promise.resolve({}));
   sandbox.stub(req.conversation, 'createAndSetLastOutboundMessage')
     .returns(resolvedPromise);
   sandbox.stub(req.conversation, 'postLastOutboundMessageToPlatform')
@@ -148,6 +157,8 @@ test('sendReply(): should createAndSetLastOutboundMessage outbound message if no
     lastOutboundMessage,
     isARetryRequest: () => true,
   });
+  sandbox.stub(helpers.user, 'updateByMemberMessageReq')
+    .returns(Promise.resolve({}));
   sandbox.stub(req.conversation, 'createAndSetLastOutboundMessage')
     .returns(resolvedPromise);
   sandbox.stub(req.conversation, 'postLastOutboundMessageToPlatform')
@@ -164,6 +175,8 @@ test('sendReply(): should createAndSetLastOutboundMessage outbound message if no
 test('sendReply(): should call sendErrorResponse on failure', async (t) => {
   // setup
   const req = getReqWithProps();
+  sandbox.stub(helpers.user, 'updateByMemberMessageReq')
+    .returns(Promise.resolve({}));
   sandbox.stub(req.conversation, 'createAndSetLastOutboundMessage')
     .returns(rejectedPromise);
 

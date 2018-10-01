@@ -20,7 +20,6 @@ const loadOutboundMessageMiddleware = require('../../../lib/middleware/messages/
 const badWordsMiddleware = require('../../../lib/middleware/messages/member/bad-words');
 const getRivescriptReplyMiddleware = require('../../../lib/middleware/messages/member/rivescript-reply-get');
 const parseRivescriptReplyMiddleware = require('../../../lib/middleware/messages/member/rivescript-reply-parse');
-const updateUserMiddleware = require('../../../lib/middleware/messages/member/user-update');
 const supportRequestedMiddleware = require('../../../lib/middleware/messages/member/support-requested');
 const forwardSupportMessageMiddleware = require('../../../lib/middleware/messages/member/support-message');
 const changeTopicMacroMiddleware = require('../../../lib/middleware/messages/member/macro-change-topic');
@@ -51,9 +50,6 @@ router.use(createInboundMessageMiddleware());
 
 // Checks if this is a retry request, and loads outbound reply message if it exists already.
 router.use(loadOutboundMessageMiddleware(loadOutboundMessageConfig));
-
-// Updates Last Messaged At, Subscription Status, Paused.
-router.use(updateUserMiddleware());
 
 // Sends the Rivescript reply if it's not a macro.
 router.use(parseRivescriptReplyMiddleware());
