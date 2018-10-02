@@ -238,7 +238,6 @@ const badWords = [
   'schlong',
   'scissoring',
   'semen',
-  'sex',
   'sexo',
   'sexy',
   'shavedbeaver',
