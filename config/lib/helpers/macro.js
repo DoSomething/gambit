@@ -38,7 +38,7 @@ module.exports = {
     },
     sendCrisisMessage: {
       name: 'sendCrisisMessage',
-      text: 'Thanks for being brave and sharing that. If you want to talk to someone, our friends at CTL are here for you 24/7. Just send a text to 741741. Theyll listen!',
+      text: 'Thanks for being brave and sharing that. If you want to talk to someone, our friends at CTL are here for you 24/7. Just send a text to 741741. They\'ll listen!',
     },
     sendInfoMessage: {
       name: 'sendInfoMessage',
