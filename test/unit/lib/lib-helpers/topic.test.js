@@ -20,7 +20,7 @@ chai.use(sinonChai);
 // module to be tested
 const topicHelper = require('../../../../lib/helpers/topic');
 
-const mockRivescriptTopicId = 'randomHardcodedTopicName';
+const mockRivescriptTopicId = config.rivescriptTopics.default.id;
 const mockDeparsedRivescript = { topics: {} };
 mockDeparsedRivescript.topics[mockRivescriptTopicId] = [];
 const sandbox = sinon.sandbox.create();
@@ -81,7 +81,6 @@ test('getDefaultTopicId should return config.rivescriptTopics.default.id', (t) =
 
 // getRivescriptTopicById
 test('getRivescriptTopicById returns object with type rivescript and given id', () => {
-  const mockRivescriptTopicId = config.rivescriptTopics.default.id;
   const result = topicHelper.getRivescriptTopicById(mockRivescriptTopicId);
   result.id.should.equal(mockRivescriptTopicId);
   result.type.should.equal('rivescript');

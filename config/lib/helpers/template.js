@@ -2,11 +2,6 @@
 
 const underscore = require('underscore');
 
-const activeStatusText = 'Hi I\'m Freddie from DoSomething.org! Welcome to my weekly updates (up to 8msg/month). Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.';
-const helpCenterUrl = 'http://doso.me/1jf4/291kep';
-// Note: This url may also appear in hardcoded askSubscriptionStatus topic.
-// @see brain/topics/askSubscriptionStatus.rive
-const newsUrl = 'https://www.dosomething.org/us/spot-the-signs-guide?source=sms&utm_source=dosomething&utm_medium=sms&utm_campaign=permissioning_weekly&user_id={{user.id}}';
 const supportCommand = 'Q';
 
 const templatesMap = {

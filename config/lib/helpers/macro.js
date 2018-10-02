@@ -9,10 +9,10 @@ module.exports = {
   // If a macro contains a text property, it's sent as the reply to the inbound message.
   // If it doesn't, the reply text is sourced from the current topic.
   macros: {
-    catchAll:{
+    catchAll: {
       name: 'catchAll',
     },
-    changeTopic:{ 
+    changeTopic: {
       name: 'changeTopic',
     },
     noReply: {
@@ -41,7 +41,7 @@ module.exports = {
       name: 'subscriptionStatusLess',
       text: `Okay, great! I'll text you once a month with updates on what's happening in the news and/or easy ways for you to take action in your community! Wanna take 2 mins to learn how to spot the signs of an abusive relationship and what you can do about it? Read our guide here: ${newsUrl}`,
     },
-    subscriptionStatusResubscribed:{
+    subscriptionStatusResubscribed: {
       name: 'subscriptionStatusResubscribed',
       text: activeSubscriptionStatusText,
     },

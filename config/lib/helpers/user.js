@@ -19,10 +19,10 @@ function getSubscriptionStatusUpdate(value) {
 
 const updatesByMacro = {};
 /* eslint-disable max-len */
-updatesByMacro[macros.subscriptionStatusActive] = getSubscriptionStatusUpdate(subscriptionStatusValues.active);
-updatesByMacro[macros.subscriptionStatusLess] = getSubscriptionStatusUpdate(subscriptionStatusValues.less);
-updatesByMacro[macros.subscriptionStatusResubscribed] = getSubscriptionStatusUpdate(subscriptionStatusValues.active);
-updatesByMacro[macros.subscriptionStatusStop] = getSubscriptionStatusUpdate(subscriptionStatusValues.stop);
+updatesByMacro[macros.subscriptionStatusActive.name] = getSubscriptionStatusUpdate(subscriptionStatusValues.active);
+updatesByMacro[macros.subscriptionStatusLess.name] = getSubscriptionStatusUpdate(subscriptionStatusValues.less);
+updatesByMacro[macros.subscriptionStatusResubscribed.name] = getSubscriptionStatusUpdate(subscriptionStatusValues.active);
+updatesByMacro[macros.subscriptionStatusStop.name] = getSubscriptionStatusUpdate(subscriptionStatusValues.stop);
 // TODO: Add more macros to save values to voting plan fields
 // e.g. votingPlanStatusVoting, votingPlanAttendingWithFriends
 /* eslint-enable max-len */

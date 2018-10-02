@@ -13,6 +13,7 @@ chai.use(sinonChai);
 
 // app modules
 const config = require('../../../../config/lib/helpers/template');
+const macroConfig = require('../../../../config/lib/helpers/macro');
 
 const undefinedTemplateName = 'oathKeeper';
 
@@ -31,8 +32,7 @@ test.afterEach(() => {
 // getSubscriptionStatusActive
 test('getSubscriptionStatusActive should return subscriptionStatusActive config object', () => {
   const result = templateHelper.getSubscriptionStatusActive();
-  result.should.deep.equal(config.templatesMap
-    .gambitConversationsTemplates.subscriptionStatusActive);
+  result.should.deep.equal(macroConfig.macros.subscriptionStatusActive);
 });
 
 // getTextForTemplate

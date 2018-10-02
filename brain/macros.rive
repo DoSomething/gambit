@@ -6,16 +6,8 @@
 + help
 @ info
 
-+ subscribe
-- subscriptionStatusActive
-
-// Join currently gets overridden in Contentful: once it's unpublished, this trigger will catch.
-// @see https://app.contentful.com/spaces/owik07lyerdj/entries/2OSVbOpFGEyGOYqqcgsyqM
-+ join
-@ subscribe
-
 + q
-- supportRequested
+- supportRequested{topic=support}
 
 + question
 @ q
@@ -23,6 +15,12 @@
 /**
  * Subscription update triggers.
  */
++ subscribe
+- subscriptionStatusActive
+
++ join
+@ subscribe
+
 + (week|weekly)
 - subscriptionStatusActive{topic=random}
 
