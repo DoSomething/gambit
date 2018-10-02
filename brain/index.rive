@@ -83,6 +83,10 @@
   ^ suicidal|suicidial|suicide
 ! array messaging = text|texts|txt|texting|txting|talking|talkign
   ^ messaging|contacting|sending|list|this list
+! array bike = bicycle|bike|bikin|biking|cycling
+! array drive = car|driv|drive|drivin|driving|truck
+! array walk = walk|walki|walkin|walking|feet
+! array publictransport = bart|bus|ferry|metro|meta|muni|subway|train
 ! array my        = my this
 ! array no        = n no nah nope nay
 ! array photo     = photo photos mms pic pics pix image image img

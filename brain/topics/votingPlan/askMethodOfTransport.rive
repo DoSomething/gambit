@@ -1,0 +1,33 @@
+// Current options are A) Drive B) Walk C) Bike D) Public transportation
+// @see config/lib/macro
+
+> topic ask_voting_plan_method_of_transport includes random
+
++ a
+- votingPlanMethodOfTransportDrive
+
++ [*] @drive [*]
+@ a
+
++ b
+- votingPlanMethodOfTransportWalk
+
++ [*] @walk [*]
+@ b
+
++ c
+- votingPlanMethodOfTransportBike
+
++ [*]  @bike [*]
+@ c
+
++ d
+- votingPlanMethodOfTransportPublicTransport
+
++ [*]  @publictransport [*]
+@ d
+
++ [*]
+- invalidVotingPlanMethodOfTransport
+
+< topic
