@@ -83,18 +83,34 @@ module.exports = {
     votingPlanStatusCantVote: {
       name: 'votingPlanStatusCantVote',
       text: 'Ok -- we\'ll check in with you next election.',
-    },
-    votingPlanStatusVoted: {
-      name: 'votingPlanStatusVoted',
-      text: 'Awesome! Thank you for voting.',
-    },
-    votingPlanStatusVoting: {
-      name: 'votingPlanStatusVoting',
-      text: 'How are you getting to the polls? A) Drive B) Walk C) Bike D) Public transportation',
+      profileUpdate: {
+        field: profile.votingPlanStatus.name,
+        value: profile.votingPlanStatus.values.cantVote,
+      },
     },
     votingPlanStatusNotVoting: {
       name: 'votingPlanStatusNotVoting',
       text: 'Mind sharing why you aren\t not voting?',
+      profileUpdate: {
+        field: profile.votingPlanStatus.name,
+        value: profile.votingPlanStatus.values.notVoting,
+      },
+    },
+    votingPlanStatusVoted: {
+      name: 'votingPlanStatusVoted',
+      text: 'Awesome! Thank you for voting.',
+      profileUpdate: {
+        field: profile.votingPlanStatus.name,
+        value: profile.votingPlanStatus.values.voted,
+      },
+    },
+    votingPlanStatusVoting: {
+      name: 'votingPlanStatusVoting',
+      text: 'How are you getting to the polls? A) Drive B) Walk C) Bike D) Public transportation',
+      profileUpdate: {
+        field: profile.votingPlanStatus.name,
+        value: profile.votingPlanStatus.values.voting,
+      },
     },
   },
 };
