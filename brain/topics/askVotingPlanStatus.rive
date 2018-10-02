@@ -1,5 +1,8 @@
 + make a plan
-- Are you planning on voting? A) Yes B) No C) Already voted D) Can't vote{topic=ask_voting_plan_status}
+- askVotingPlanStatus{topic=ask_voting_plan_status}
+
+// Current options are A) Yes B) No C) Already voted D) Can't vote
+// @see config/lib/macro
 
 > topic ask_voting_plan_status includes random
 
@@ -22,7 +25,7 @@
 - votingPlanCantVote{topic=random}
 
 + [*]
-- Sorry, I didn't get that. Are you planning on voting? A) Yes B) No C) Already voted D) Can't vote
+- invalidVotingPlanStatus
 
 < topic
 

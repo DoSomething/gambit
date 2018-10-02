@@ -2,6 +2,7 @@
 
 const profile = require('./user').fields;
 
+const askVotingPlanStatusText = 'Are you planning on voting? A) Yes B) No C) Already voted D) Can\'t vote';
 const activeSubscriptionStatusText = 'Hi I\'m Freddie from DoSomething.org! Welcome to my weekly updates (up to 8msg/month). Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.';
 // Note: This url may also appear in hardcoded askSubscriptionStatus topic.
 // @see brain/topics/askSubscriptionStatus.rive
@@ -11,11 +12,19 @@ module.exports = {
   // If a macro contains a text property, it's sent as the reply to the inbound message.
   // If it doesn't, the reply text is sourced from the current topic.
   macros: {
+    askVotingPlanStatus: {
+      name: 'askVotingPlanStatus',
+      text: askVotingPlanStatusText,
+    },
     catchAll: {
       name: 'catchAll',
     },
     changeTopic: {
       name: 'changeTopic',
+    },
+    invalidVotingPlanStatus: {
+      name: 'invalidVotingPlanStatus',
+      text: `Sorry, I didn't get that. ${askVotingPlanStatusText}`,
     },
     noReply: {
       name: 'noReply',
