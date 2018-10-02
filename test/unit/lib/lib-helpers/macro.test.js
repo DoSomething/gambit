@@ -92,8 +92,3 @@ test('isSaidNo should return boolean', (t) => {
   t.true(macroHelper.isSaidNo(macros.saidNo.name));
   t.falsy(macroHelper.isSaidNo(undefinedMacroName));
 });
-
-test('isSupportRequested should return boolean', (t) => {
-  t.true(macroHelper.isSupportRequested(macros.supportRequested.name));
-  t.falsy(macroHelper.isSupportRequested(undefinedMacroName));
-});
