@@ -106,7 +106,7 @@ module.exports = {
     },
     votingPlanStatusVoting: {
       name: 'votingPlanStatusVoting',
-      text: 'How are you getting to the polls? A) Drive B) Walk C) Bike D) Public transportation',
+      text: 'Great! I\'ll check in with you soon to make a plan.',
       profileUpdate: {
         field: profile.votingPlanStatus.name,
         value: profile.votingPlanStatus.values.voting,
