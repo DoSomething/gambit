@@ -49,6 +49,19 @@ test('getChangeTopicMacroFromTopicId returns string with changeTopicMacro prefix
   result.should.equal(changeTopicMacroName);
 });
 
+// TODO: Fix me
+// getProfileUpdate
+// test('getProfileUpdate should return config.updatesByMacro if exists for macro', () => {
+//   const lessMacro = config.macros.subscriptionStatusLess;
+//   const result = macroHelper.getProfileUpdate(lessMacro.name);
+//   result[lessMacro.profileUpdate.name].should.equal(lessMacro.profileUpdate.value);
+// });
+
+test('getProfileUpdate should return empty object if config.updatesByMacro undefined', () => {
+  const result = macroHelper.getProfileUpdate(stubs.getRandomMessageText());
+  result.should.deep.equal({});
+});
+
 // isChangeTopic
 test('isChangeTopic should return boolean', (t) => {
   t.true(macroHelper.isChangeTopic(macros.changeTopic.name));

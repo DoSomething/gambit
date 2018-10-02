@@ -1,5 +1,7 @@
 'use strict';
 
+const profile = require('./user').fields;
+
 const activeSubscriptionStatusText = 'Hi I\'m Freddie from DoSomething.org! Welcome to my weekly updates (up to 8msg/month). Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.';
 // Note: This url may also appear in hardcoded askSubscriptionStatus topic.
 // @see brain/topics/askSubscriptionStatus.rive
@@ -36,18 +38,34 @@ module.exports = {
     subscriptionStatusActive: {
       name: 'subscriptionStatusActive',
       text: activeSubscriptionStatusText,
+      profileUpdate: {
+        field: profile.subscriptionStatus.name,
+        value: profile.subscriptionStatus.values.active,
+      },
     },
     subscriptionStatusLess: {
       name: 'subscriptionStatusLess',
       text: `Okay, great! I'll text you once a month with updates on what's happening in the news and/or easy ways for you to take action in your community! Wanna take 2 mins to learn how to spot the signs of an abusive relationship and what you can do about it? Read our guide here: ${newsUrl}`,
+      profileUpdate: {
+        field: profile.subscriptionStatus.name,
+        value: profile.subscriptionStatus.values.less,
+      },
     },
     subscriptionStatusResubscribed: {
       name: 'subscriptionStatusResubscribed',
       text: activeSubscriptionStatusText,
+      profileUpdate: {
+        field: profile.subscriptionStatus.name,
+        value: profile.subscriptionStatus.values.active,
+      },
     },
     subscriptionStatusStop: {
       name: 'subscriptionStatusStop',
       text: 'You\'re unsubscribed from DoSomething.org Alerts. No more msgs will be sent. Reply HELP for help. Text JOIN to receive 4-8 msgs/mth or LESS for 1msg/mth.',
+      profileUpdate: {
+        field: profile.subscriptionStatus.name,
+        value: profile.subscriptionStatus.values.stop,
+      },
     },
     supportRequested: {
       name: 'supportRequested',
