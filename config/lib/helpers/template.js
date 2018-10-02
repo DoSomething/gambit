@@ -49,7 +49,8 @@ const templatesMap = {
     webStartExternalPost: 'webStartExternalPost',
     webStartPhotoPost: 'webStartPhotoPost',
   },
-  // TODO: Rename as macroTemplates.
+  // TODO: Move these into the replies helper config, or set on config via middleware that checks
+  // for each condition.
   gambitConversationsTemplates: {
     badWords: {
       name: 'badWords',
