@@ -113,6 +113,77 @@ curl -X "POST" "http://localhost:5100/api/v2/messages?origin=broadcast" \
 
 </details>
 
+## Broadcast Lite
+
+```
+POST /v2/messages?origin=broadcastLite
+```
+
+Sends a Broadcast message to a Member. It uses the public user's properties (by requesting the user resource anonymously), cached by Fastly, to validate the outbound message.
+
+### Input
+
+Name | Type | Description
+--- | --- | ---
+`userId` or `northstarId`** | `string` | User Id to send Broadcast message to
+`broadcastId` | `string` | Broadcast Id to send
+`mobile` | `string` | Member's mobile number in E164 format
+`platform` | `string` | Optional, defaults to `'sms'`.
+
+> `northstarId` is deprecated but still accepted for backwards compatibility
+
+<details>
+<summary><strong>Example Request</strong></summary>
+
+```
+curl -X "POST" "http://localhost:5100/api/v2/messages?origin=broadcastLite" \
+     -H 'Content-Type: application/json; charset=utf-8' \
+     -u 'puppet:totallysecret' \
+     -d $'{
+  "userId": "5547be89429c64ec7e8b518d",
+  "broadcastId": "4nwTwvXmfuuYAGYgusGyyW",
+  "mobile": "+15554443322"
+}'
+```
+
+</details>
+<details>
+<summary><strong>Example Response</strong></summary>
+
+```
+{
+  "data": {
+    "messages": [
+      {
+        "platformMessageId": "SM9f73c7a8d1fc444faeeec9964a270514",
+        "_id": "5b7c9cea350595000404de44",
+        "updatedAt": "2018-08-21T23:14:50.529Z",
+        "createdAt": "2018-08-21T23:14:50.314Z",
+        "text": "I don't want to wait, for our lives to be over",
+        "direction": "outbound-api-send",
+        "template": "autoReplyBroadcast",
+        "conversationId": "5ac7a86b8c02c10004d92577",
+        "campaignId": 8158,
+        "topic": "61RPZx8atiGyeoeaqsckOE",
+        "userId": "5547be89469c64ec7d8b518d",
+        "broadcastId": "4nwTwvXmfuuYAGYgusGyyW",
+        "__v": 0,
+        "metadata": {
+            "requestId": "e8cbf79d-6cd3-4028-b1aa-d8455c166d57",
+            "delivery": {
+                "totalSegments": 1,
+                "queuedAt": "2018-08-21T23:14:50.000Z"
+            }
+        },
+        "attachments": []
+      }
+    ]
+  }
+}
+```
+
+</details>
+
 ## Front
 
 ```
@@ -501,6 +572,67 @@ curl -X "POST" "http://localhost:5100/api/v2/messages?origin=gambit-slack" \
           "attachments": []
         }
       ]
+    }
+  }
+}
+```
+</details>
+
+## Twilio Studio
+
+```
+POST /v2/messages?origin=twilioStudio
+```
+ 
+ Receives an inbound Twilio message, and returns the corresponding Northstar user and Rivescript reply. This used by Twilio Functions via a Twilio Studio flow prototyping Gambit integration -- see [pull#404](https://github.com/DoSomething/gambit-conversations/pull/404)
+
+* Creates a new Northstar User if it doesn't exist for the sender.
+
+* Does not create any documents in the `messages` collection for now, as outbound messages are sent via the Twilio Studio flow that use the Functions that post here.
+
+### Input
+
+See https://www.twilio.com/docs/api/messaging/message.
+
+<details>
+<summary><strong>Example Request</strong></summary>
+
+```
+curl -X "POST" "http://localhost:5100/api/v2/messages?origin=twilioStudio" \
+     -H "Content-Type: application/json; charset=utf-8" \
+     -u puppet:totallysecret \
+     -d $'{
+  "MessageSid": "MM09a8f657567f807443191c1e7exxxxxx",
+  "MediaUrl0": "http://www.fillmurray.com/g/200/300",
+  "From":  "+5555555555",
+  "Body": "hi",
+  "MediaContentType0": "image/png"
+}'
+
+```
+
+</details>
+
+<details>
+<summary><strong>Example Response</strong></summary>
+
+```
+{
+  "user": {
+    "id": "5547be89469c64ec7d8b518d",
+    ...
+    "last_authenticated_at": "2018-09-07T20:01:28+00:00",
+    "last_messaged_at": "2018-09-19T04:48:39+00:00",
+    "updated_at": "2018-09-19T04:48:39+00:00",
+    "created_at": "2013-01-23T02:47:30+00:00"
+  },
+  "reply": {
+    "text": "Thanks for your interest in DoSomething Strategic's newsletter, 'Til Next Tuesday! Trust us, it's way less boring than the other ones you get. Text back your email to sign up now.",
+    "match": "tmi",
+    "topic": {
+      "id": "tmi_level1",
+      "type": "rivescript",
+      "name": "tmi_level1"
     }
   }
 }

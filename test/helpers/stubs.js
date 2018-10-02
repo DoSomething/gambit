@@ -73,6 +73,35 @@ module.exports = {
         },
       };
     },
+    getBroadcastSingleResponse: () => ({
+      data: {
+        id: '429qioxAt2swYoMQUUymYW',
+        name: 'VoterRegistration2018_Sept24_NVRD_Staff_Test',
+        type: 'autoReplyBroadcast',
+        createdAt: '2018-09-24T16:29:02.299Z',
+        updatedAt: '2018-09-24T20:55:31.249Z',
+        message: {
+          text: "It's Freddie! Happy National Voter Registration Day! Did you know 1 in 8 registrations are invalid? Don't miss out & register now. <Link>",
+          attachments: [],
+          template: 'autoReplyBroadcast',
+          topic: {
+            id: '6DPUt3MrTymOo4yWgUWYqk',
+            name: 'NVRD autoReply',
+            type: 'autoReply',
+            createdAt: '2018-09-24T16:30:58.210Z',
+            updatedAt: '2018-09-24T20:54:45.601Z',
+            campaign: {},
+            templates: {
+              autoReply: {
+                text: "I'm sorry, I didn't understand that! National Voter Registration Day is a national holiday where millions around the country make sure they're registered to vote. It takes just 2 mins: <Link>\n\nHave a question? Text Q. ",
+                topic: {},
+              },
+            },
+          },
+        },
+        templates: {},
+      },
+    }),
   },
   stubLogger: function stubLogger(sandbox, logger) {
     sandbox.stub(logger, 'warn').returns(() => {});
@@ -107,8 +136,15 @@ module.exports = {
       contentType: 'image/png',
     };
   },
+  broadcast: {
+    getCioWebhookPayload: (validMobileNumber = true) => ({
+      userId: module.exports.getUserId(),
+      broadcastId: module.exports.getBroadcastId(),
+      mobile: module.exports.getPlatformUserId(validMobileNumber),
+    }),
+  },
   getBroadcastId: function getBroadcastId() {
-    return '72mon4jUeQOaokEIkQMaoa';
+    return '429qioxAt2swYoMQUUymYW';
   },
   getBroadcastMessageText: function getBroadcastMessageText() {
     return 'Winter is coming, will you be prepared? Yes or No.';

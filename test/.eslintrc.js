@@ -1,5 +1,5 @@
 module.exports = {
-  extends: '@dosomething/eslint-config/nodejs/ava',
+  extends: '@dosomething/eslint-config/server/ava',
   rules:  {
     'no-underscore-dangle': [
       'error',

@@ -145,55 +145,19 @@ test('hasAddress should return false if user does not have address properties se
   t.falsy(userHelper.hasAddress(user));
 });
 
-// getSubscriptionStatusUpdate
-test('getSubscriptionStatusUpdate should return active value if active macro is passed', () => {
-  const user = userFactory.getValidUser();
-  const activeMacro = helpers.macro.macros.subscriptionStatusActive();
-  const result = userHelper.getSubscriptionStatusUpdate(user, activeMacro);
-  result.should.equal(subscriptionHelper.statuses.active());
-});
-
-test('getSubscriptionStatusUpdate should return active value if resubscribed macro is passed', () => {
-  const user = userFactory.getValidUser();
-  const resubscribedMacro = helpers.macro.macros.subscriptionStatusResubscribed();
-  const result = userHelper.getSubscriptionStatusUpdate(user, resubscribedMacro);
-  result.should.equal(subscriptionHelper.statuses.active());
-});
-
-test('getSubscriptionStatusUpdate should return stop value if stop macro is passed', () => {
-  const user = userFactory.getValidUser();
-  const stopMacro = helpers.macro.macros.subscriptionStatusStop();
-  const result = userHelper.getSubscriptionStatusUpdate(user, stopMacro);
-  result.should.equal(subscriptionHelper.statuses.stop());
-});
-
-test('getSubscriptionStatusUpdate should return less value if less macro is passed', () => {
-  const user = userFactory.getValidUser();
+// getProfileUpdate
+test('getProfileUpdate should return config.updatesByMacro if exists for macro', () => {
   const lessMacro = helpers.macro.macros.subscriptionStatusLess();
-  const result = userHelper.getSubscriptionStatusUpdate(user, lessMacro);
-  result.should.equal(subscriptionHelper.statuses.less());
+  const result = userHelper.getProfileUpdate(lessMacro);
+  result.should.deep.equal(config.updatesByMacro[lessMacro]);
 });
 
-test('getSubscriptionStatusUpdate should return active value if current status is null', () => {
-  const user = userFactory.getValidUser();
-  user.sms_status = null;
-  const result = userHelper.getSubscriptionStatusUpdate(user, stubs.getRandomMessageText());
-  result.should.equal(subscriptionHelper.statuses.active());
+test('getProfileUpdate should return empty object if config.updatesByMacro undefined', () => {
+  const result = userHelper.getProfileUpdate(stubs.getRandomMessageText());
+  result.should.deep.equal({});
 });
 
-test('getSubscriptionStatusUpdate should return null if current status exists and non macro is passed', (t) => {
-  const user = userFactory.getValidUser();
-  user.sms_status = subscriptionHelper.statuses.active();
-  let result = userHelper.getSubscriptionStatusUpdate(user, stubs.getRandomMessageText());
-  t.is(result, null);
-  user.sms_status = subscriptionHelper.statuses.stop();
-  result = userHelper.getSubscriptionStatusUpdate(user, stubs.getRandomMessageText());
-  t.is(result, null);
-  user.sms_status = subscriptionHelper.statuses.undeliverable();
-  result = userHelper.getSubscriptionStatusUpdate(user, stubs.getRandomMessageText());
-  t.is(result, null);
-});
-
+// isPaused
 test('isPaused should return user.sms_paused', (t) => {
   const user = userFactory.getValidUser();
   const result = userHelper.isPaused(user);
@@ -209,4 +173,78 @@ test('setPendingSubscriptionStatusForUserId should call northstar.updateUser wit
   await userHelper.setPendingSubscriptionStatusForUserId(userId);
   northstar.updateUser.should.have.been
     .calledWith(userId, { sms_status: subscriptionHelper.statuses.pending() });
+});
+
+// updateByMemberMessageReq
+test('updateByMemberMessageReq should return rejected error if getDefaultUpdatePayloadFromReq throws', async (t) => {
+  const error = { message: 'Epic fail' };
+  sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
+    .throws(error);
+
+  const result = await t.throws(userHelper.updateByMemberMessageReq(t.context.req));
+  result.should.deep.equal(error);
+});
+
+test('updateByMemberMessageReq should return rejected error if getProfileUpdate throws', async (t) => {
+  const error = { message: 'Epic fail' };
+  sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
+    .returns({});
+  sandbox.stub(userHelper, 'getProfileUpdate')
+    .throws(error);
+
+  const result = await t.throws(userHelper.updateByMemberMessageReq(t.context.req));
+  result.should.deep.equal(error);
+});
+
+test('updateByMemberMessageReq should return northstar.updateUser', async (t) => {
+  t.context.req.user = mockUser;
+  sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
+    .returns({ abc: 1 });
+  sandbox.stub(userHelper, 'getProfileUpdate')
+    .returns({ def: 2 });
+  sandbox.stub(northstar, 'updateUser')
+    .returns(Promise.resolve(mockUser));
+  sandbox.stub(userHelper, 'hasAddress')
+    .returns(false);
+
+  const result = await userHelper.updateByMemberMessageReq(t.context.req);
+  northstar.updateUser.should.have.been.calledWith(mockUser.id, { abc: 1, def: 2 });
+  userHelper.hasAddress.should.not.have.been.called;
+  result.should.deep.equal(mockUser);
+});
+
+test('updateByMemberMessageReq should not send req.platformUserAddress if user has address', async (t) => {
+  t.context.req.user = mockUser;
+  sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
+    .returns({ abc: 1 });
+  sandbox.stub(userHelper, 'getProfileUpdate')
+    .returns({ def: 2 });
+  sandbox.stub(northstar, 'updateUser')
+    .returns(Promise.resolve(mockUser));
+  t.context.req.platformUserAddress = { ghi: 3 };
+  sandbox.stub(userHelper, 'hasAddress')
+    .returns(true);
+
+  const result = await userHelper.updateByMemberMessageReq(t.context.req);
+  northstar.updateUser.should.have.been.calledWith(mockUser.id, { abc: 1, def: 2 });
+  userHelper.hasAddress.should.have.been.calledWith(t.context.req.user);
+  result.should.deep.equal(mockUser);
+});
+
+test('updateByMemberMessageReq should not send req.platformUserAddress if user does not have address', async (t) => {
+  t.context.req.user = mockUser;
+  sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
+    .returns({ abc: 1 });
+  sandbox.stub(userHelper, 'getProfileUpdate')
+    .returns({ def: 2 });
+  sandbox.stub(northstar, 'updateUser')
+    .returns(Promise.resolve(mockUser));
+  t.context.req.platformUserAddress = { ghi: 3 };
+  sandbox.stub(userHelper, 'hasAddress')
+    .returns(false);
+
+  const result = await userHelper.updateByMemberMessageReq(t.context.req);
+  northstar.updateUser.should.have.been.calledWith(mockUser.id, { abc: 1, def: 2, ghi: 3 });
+  userHelper.hasAddress.should.have.been.calledWith(t.context.req.user);
+  result.should.deep.equal(mockUser);
 });
