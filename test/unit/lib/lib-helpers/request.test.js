@@ -445,7 +445,7 @@ test('isSaidNoMacro returns whether req.askYesNoResponse equals no', (t) => {
   t.falsy(requestHelper.isSaidNoMacro(t.context.req));
   t.context.req.macro = helpers.macro.macros.saidNo();
   t.truthy(requestHelper.isSaidNoMacro(t.context.req));
-  t.context.req.macro = helpers.macro.macros.catchAll();
+  t.context.req.macro = helpers.macro.macros.changeTopic();
   t.falsy(requestHelper.isSaidNoMacro(t.context.req));
 });
 
@@ -455,7 +455,7 @@ test('isSaidYesMacro returns whether req.askYesNoResponse equals yes', (t) => {
   t.truthy(requestHelper.isSaidYesMacro(t.context.req));
   t.context.req.macro = helpers.macro.macros.saidNo();
   t.falsy(requestHelper.isSaidYesMacro(t.context.req));
-  t.context.req.macro = helpers.macro.macros.catchAll();
+  t.context.req.macro = helpers.macro.macros.changeTopic();
   t.falsy(requestHelper.isSaidYesMacro(t.context.req));
 });
 

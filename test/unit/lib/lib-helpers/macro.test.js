@@ -43,19 +43,18 @@ test('getReply should return falsy for undefined macro reply', (t) => {
   t.falsy(macroHelper.getReplyText(undefinedMacroName));
 });
 
-// getChangeTopicMacroFromTopicI
+// getChangeTopicMacroFromTopic
 test('getChangeTopicMacroFromTopicId returns string with changeTopicMacro prefix and topicId', () => {
   const result = macroHelper.getChangeTopicMacroFromTopicId(topicId);
   result.should.equal(changeTopicMacroName);
 });
 
-// TODO: Fix me
 // getProfileUpdate
-// test('getProfileUpdate should return config.updatesByMacro if exists for macro', () => {
-//   const lessMacro = config.macros.subscriptionStatusLess;
-//   const result = macroHelper.getProfileUpdate(lessMacro.name);
-//   result[lessMacro.profileUpdate.name].should.equal(lessMacro.profileUpdate.value);
-// });
+test('getProfileUpdate should return config.updatesByMacro if exists for macro', () => {
+  const lessMacro = config.macros.subscriptionStatusLess;
+  const result = macroHelper.getProfileUpdate(lessMacro.name);
+  result[lessMacro.profileUpdate.field].should.equal(lessMacro.profileUpdate.value);
+});
 
 test('getProfileUpdate should return empty object if config.updatesByMacro undefined', () => {
   const result = macroHelper.getProfileUpdate(stubs.getRandomMessageText());
@@ -75,13 +74,12 @@ test('isMacro returns whether text exists for given macro', (t) => {
   t.falsy(macroHelper.isMacro(undefinedMacroName));
 });
 
-// TODO: Fix me
-// test('macro.macros.x() should be equal to macro.macroNameValues.x', () => {
-//   Object.keys(config.macros).forEach((macroConfig) => {
-//     const macroName = macroConfig.name;
-//     macroHelper.macros[macroName]().should.be.equal(macroName);
-//   });
-// });
+// macros
+test('macro.macros.x() should be equal to macro.macroNameValues.x', () => {
+  macroHelper.macros.changeTopic().should.be.equal(config.macros.changeTopic.name);
+  macroHelper.macros.saidNo().should.be.equal(config.macros.saidNo.name);
+  macroHelper.macros.saidYes().should.be.equal(config.macros.saidYes.name);
+});
 
 test('isSaidYes should return boolean', (t) => {
   t.true(macroHelper.isSaidYes(macros.saidYes.name));
