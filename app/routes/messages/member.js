@@ -24,6 +24,7 @@ const forwardSupportMessageMiddleware = require('../../../lib/middleware/message
 const changeTopicMacroMiddleware = require('../../../lib/middleware/messages/member/macro-change-topic');
 const replyMacroMiddleware = require('../../../lib/middleware/messages/member/macro-reply');
 const getTopicMiddleware = require('../../../lib/middleware/messages/member/topic-get');
+const catchAllAskVotingPlanStatusMiddleware = require('../../../lib/middleware/messages/member/catchAll-askVotingPlanStatus');
 const catchAllAskYesNoMiddleware = require('../../../lib/middleware/messages/member/catchAll-askYesNo');
 const catchAllAutoReplyMiddleware = require('../../../lib/middleware/messages/member/catchAll-autoReply');
 const catchAllDefaultMiddleware = require('../../../lib/middleware/messages/member/catchAll');
@@ -68,6 +69,9 @@ router.use(forwardSupportMessageMiddleware());
 
 // Otherwise, fetch the current conversation topic.
 router.use(getTopicMiddleware());
+
+// Handles replies for askVotingPlanStatus topics.
+router.use(catchAllAskVotingPlanStatusMiddleware());
 
 // Handles replies for askYesNo topics.
 router.use(catchAllAskYesNoMiddleware());

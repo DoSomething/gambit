@@ -3,6 +3,7 @@
 module.exports = {
   types: {
     askSubscriptionStatus: 'askSubscriptionStatus',
+    askVotingPlanStatus: 'askVotingPlanStatus',
     askYesNo: 'askYesNo',
     autoReplyBroadcast: 'autoReplyBroadcast',
     photoPostBroadcast: 'photoPostBroadcast',
