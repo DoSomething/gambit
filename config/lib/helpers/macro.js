@@ -198,9 +198,6 @@ module.exports = {
     votingPlanMethodOfTransportWalk: votingPlanMethodOfTransport('walk'),
     votingPlanStatusCantVote: {
       name: 'votingPlanStatusCantVote',
-      // Placeholder text and topic, these will be set via askVotingPlanStatus topic.
-      text: 'Ok -- we\'ll check in with you next election.',
-      topic: defaultTopic,
       profileUpdate: {
         field: profile.votingPlanStatus.name,
         value: profile.votingPlanStatus.values.cantVote,
@@ -208,19 +205,12 @@ module.exports = {
     },
     votingPlanStatusNotVoting: {
       name: 'votingPlanStatusNotVoting',
-      // Placeholder text and topic, these will be set via askVotingPlanStatus topic.
-      text: 'Mind sharing why you aren\'t not voting?',
-      topic: defaultTopic,
       profileUpdate: {
         field: profile.votingPlanStatus.name,
         value: profile.votingPlanStatus.values.notVoting,
       },
     },
     votingPlanStatusVoted: {
-      name: 'votingPlanStatusVoted',
-      // Placeholder text and topic, these will be set via askVotingPlanStatus topic.
-      text: 'Awesome! Thank you for voting.',
-      topic: defaultTopic,
       profileUpdate: {
         field: profile.votingPlanStatus.name,
         value: profile.votingPlanStatus.values.voted,
