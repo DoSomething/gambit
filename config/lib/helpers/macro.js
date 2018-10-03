@@ -16,12 +16,11 @@ const askVotingPlanAttendingWithText = 'Who are you planning on voting with A) A
 const askVotingPlanMethodOfTransportText = 'How are you getting there? A) Drive B) Walk C) Bike D) Public transportation';
 const askVotingPlanStatusText = 'Are you planning on voting? A) Yes B) No C) Already voted D) Can\'t vote';
 const askVotingPlanTimeOfDayText = 'What time are you planning on voting? A) Morning B) Afternoon C) Evening';
-// Voting plan conversations begin via askVotingPlanStatus broadcast or macro.
-// The votingPlanStatusVoting macro will begin collecting data for a voting plan via topic changes:
+// The votingPlanStatusVoting macro begins collecting voting plan data via topic changes:
 // 1 - askVotingPlanTimeOfDay
 // 2 - askVotingPlanAttendingWith
 // 3 - askVotingPlanMethodOfTransport
-// 4 - completed voting plan
+// 4 - completed
 const beginVotingPlanText = `Let's make a plan! ${askVotingPlanTimeOfDayText}`;
 const beginVotingPlanTopic = rivescriptTopics.askVotingPlanTimeOfDay;
 const completedVotingPlanText = 'Thanks for making the plan, we’ll remind you tomorrow.';
@@ -69,7 +68,7 @@ function votingPlanAttendingWith(macroName, valueKey) {
 function votingPlanMethodOfTransport(macroName, valueKey) {
   return {
     name: macroName,
-    // After saving method of transport, we're done!
+    // After saving method of transport, the voting plan is complete.
     text: completedVotingPlanText,
     topic: defaultTopic,
     profileUpdate: {
@@ -192,7 +191,7 @@ module.exports = {
     votingPlanMethodOfTransportWalk: votingPlanMethodOfTransport('votingPlanMethodOfTransportWalk', 'walk'),
     votingPlanStatusCantVote: {
       name: 'votingPlanStatusCantVote',
-      // Placeholder template: this will be set on an askVotingPlanStatus topic.
+      // Placeholder text and topic, these will be set via askVotingPlanStatus topic.
       text: 'Ok -- we\'ll check in with you next election.',
       topic: defaultTopic,
       profileUpdate: {
@@ -222,7 +221,6 @@ module.exports = {
     },
     votingPlanStatusVoting: {
       name: 'votingPlanStatusVoting',
-      // This text could potentially be set (or overriden?) via the askVotingPlanStatus topic.
       text: beginVotingPlanText,
       topic: beginVotingPlanTopic,
       profileUpdate: {

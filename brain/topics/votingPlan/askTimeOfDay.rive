@@ -1,6 +1,8 @@
 // Current options are A) Morning B) Afternoon C) Evening
 // @see config/lib/macro
 
+// TODO: Add more substitutions and triggers for each option
+
 > topic ask_voting_plan_time_of_day includes random
 
 + a

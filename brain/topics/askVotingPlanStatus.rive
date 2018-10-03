@@ -4,6 +4,8 @@
 // Current options are A) Yes B) No C) Already voted D) Can't vote
 // @see config/lib/macro
 
+// TODO: Add more substitutions and triggers for each option
+
 > topic ask_voting_plan_status includes random
 
 + a
