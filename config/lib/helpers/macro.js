@@ -1,30 +1,29 @@
 'use strict';
 
 const profile = require('./user').fields;
+const rivescriptTopics = require('./topic').rivescriptTopics;
 
-
-// TODO: DRY with topic helper definitions.
-const defaultTopic = { id: 'random' };
+const defaultTopic = rivescriptTopics.default;
 const invalidAnswerText = 'Sorry, I didn\'t get that.';
 
-// Subscription status constants:
+// Subscription status.
 const activeSubscriptionStatusText = 'Hi I\'m Freddie from DoSomething.org! Welcome to my weekly updates (up to 8msg/month). Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.';
 const askSubscriptionStatusText = 'Do you want texts: A)Weekly B)Monthly C)I need more info';
 const newsUrl = 'https://www.dosomething.org/us/spot-the-signs-guide?source=sms&utm_source=dosomething&utm_medium=sms&utm_campaign=permissioning_weekly&user_id={{user.id}}';
 
-// Voting plan constants:
+// Voting plan.
 const askVotingPlanAttendingWithText = 'Who are you planning on voting with A) Alone B) Friends C) Family D) Co-workers';
 const askVotingPlanMethodOfTransportText = 'How are you getting there? A) Drive B) Walk C) Bike D) Public transportation';
 const askVotingPlanStatusText = 'Are you planning on voting? A) Yes B) No C) Already voted D) Can\'t vote';
 const askVotingPlanTimeOfDayText = 'What time are you planning on voting? A) Morning B) Afternoon C) Evening';
 // Voting plan conversations begin via askVotingPlanStatus broadcast or macro.
-// If votingPlanStatusVoting macro is returned, topic changes to:
+// The votingPlanStatusVoting macro will begin collecting data for a voting plan via topic changes:
 // 1 - askVotingPlanTimeOfDay
 // 2 - askVotingPlanAttendingWith
 // 3 - askVotingPlanMethodOfTransport
 // 4 - completed voting plan
 const beginVotingPlanText = `Let's make a plan! ${askVotingPlanTimeOfDayText}`;
-const beginVotingPlanTopic = { id: 'ask_voting_plan_time_of_day' };
+const beginVotingPlanTopic = rivescriptTopics.askVotingPlanTimeOfDay;
 const completedVotingPlanText = 'Thanks for making the plan, we’ll remind you tomorrow.';
 /**
  * @param {String} macroName
@@ -36,7 +35,7 @@ function votingPlanTimeOfDay(macroName, valueKey) {
     name: macroName,
     // After saving time of day, ask for attending with.
     text: askVotingPlanAttendingWithText,
-    topic: { id: 'ask_voting_plan_attending_with' },
+    topic: rivescriptTopics.askVotingPlanAttendingWith,
     profileUpdate: {
       field: profile.votingPlanTimeOfDay.name,
       value: profile.votingPlanTimeOfDay.values[valueKey],
@@ -54,7 +53,7 @@ function votingPlanAttendingWith(macroName, valueKey) {
     name: macroName,
     // After saving attending with, ask for method of transport.
     text: askVotingPlanMethodOfTransportText,
-    topic: { id: 'ask_voting_plan_method_of_transport' },
+    topic: rivescriptTopics.askVotingPlanMethodOfTransport,
     profileUpdate: {
       field: profile.votingPlanAttendingWith.name,
       value: profile.votingPlanAttendingWith.values[valueKey],
@@ -87,12 +86,12 @@ module.exports = {
     askVotingPlanStatus: {
       name: 'askVotingPlanStatus',
       text: askVotingPlanStatusText,
-      topic: { id: 'ask_voting_plan_status' },
+      topic: rivescriptTopics.askVotingPlanStatus,
     },
     askSubscriptionStatus: {
       name: 'askSubscriptionStatus',
       text: askSubscriptionStatusText,
-      topic: { id: 'ask_subscription_status' },
+      topic: rivescriptTopics.askSubscriptionStatus,
     },
     catchAll: {
       name: 'catchAll',
@@ -115,6 +114,10 @@ module.exports = {
     invalidVotingPlanStatus: {
       name: 'invalidVotingPlanStatus',
       text: `${invalidAnswerText} ${askVotingPlanStatusText}`,
+    },
+    invalidVotingPlanTimeOfDay: {
+      name: 'invalidVotingPlanTimeOfDay',
+      text: `${invalidAnswerText} ${askVotingPlanTimeOfDayText}`,
     },
     noReply: {
       name: 'noReply',
@@ -168,7 +171,7 @@ module.exports = {
     subscriptionStatusStop: {
       name: 'subscriptionStatusStop',
       text: 'You\'re unsubscribed from DoSomething.org Alerts. No more msgs will be sent. Reply HELP for help. Text JOIN to receive 4-8 msgs/mth or LESS for 1msg/mth.',
-      topic: { id: 'unsubscribed' },
+      topic: rivescriptTopics.unsubscribed,
       profileUpdate: {
         field: profile.subscriptionStatus.name,
         value: profile.subscriptionStatus.values.stop,
@@ -177,7 +180,7 @@ module.exports = {
     supportRequested: {
       name: 'supportRequested',
       text: 'What\'s your question? I\'ll try my best to answer it.',
-      topic: { id: 'support' },
+      topic: rivescriptTopics.support,
     },
     votingPlanAttendingWithAlone: votingPlanAttendingWith('votingPlanAttendingWithAlone', 'alone'),
     votingPlanAttendingWithCoWorkers: votingPlanAttendingWith('votingPlanAttendingWithCoWorkers', 'coWorkers'),
