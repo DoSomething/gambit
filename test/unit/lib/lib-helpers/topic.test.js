@@ -20,9 +20,15 @@ chai.use(sinonChai);
 // module to be tested
 const topicHelper = require('../../../../lib/helpers/topic');
 
-const hardcodedTopicId = config.hardcodedTopicIds[0];
-
+const mockRivescriptTopicId = config.rivescriptTopics.default.id;
+const mockDeparsedRivescript = { topics: {} };
+mockDeparsedRivescript.topics[mockRivescriptTopicId] = [];
 const sandbox = sinon.sandbox.create();
+
+test.beforeEach(() => {
+  sandbox.stub(helpers.rivescript, 'getDeparsedRivescript')
+    .returns(mockDeparsedRivescript);
+});
 
 test.afterEach(() => {
   sandbox.restore();
@@ -75,7 +81,6 @@ test('getDefaultTopicId should return config.rivescriptTopics.default.id', (t) =
 
 // getRivescriptTopicById
 test('getRivescriptTopicById returns object with type rivescript and given id', () => {
-  const mockRivescriptTopicId = config.rivescriptTopics.default.id;
   const result = topicHelper.getRivescriptTopicById(mockRivescriptTopicId);
   result.id.should.equal(mockRivescriptTopicId);
   result.type.should.equal('rivescript');
@@ -114,8 +119,8 @@ test('isAutoReply returns whether topic type is autoReply', (t) => {
 });
 
 // isRivescriptTopicId
-test('isRivescriptTopicId should return whether topicId exists in config.hardcodedTopicIds', (t) => {
-  t.truthy(topicHelper.isRivescriptTopicId(hardcodedTopicId));
+test('isRivescriptTopicId should return whether topicId exists deparsed rivescript topics', (t) => {
+  t.truthy(topicHelper.isRivescriptTopicId(mockRivescriptTopicId));
   t.falsy(topicHelper.isRivescriptTopicId(stubs.getContentfulId()));
 });
 

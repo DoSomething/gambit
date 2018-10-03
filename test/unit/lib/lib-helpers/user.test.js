@@ -145,18 +145,6 @@ test('hasAddress should return false if user does not have address properties se
   t.falsy(userHelper.hasAddress(user));
 });
 
-// getProfileUpdate
-test('getProfileUpdate should return config.updatesByMacro if exists for macro', () => {
-  const lessMacro = helpers.macro.macros.subscriptionStatusLess();
-  const result = userHelper.getProfileUpdate(lessMacro);
-  result.should.deep.equal(config.updatesByMacro[lessMacro]);
-});
-
-test('getProfileUpdate should return empty object if config.updatesByMacro undefined', () => {
-  const result = userHelper.getProfileUpdate(stubs.getRandomMessageText());
-  result.should.deep.equal({});
-});
-
 // isPaused
 test('isPaused should return user.sms_paused', (t) => {
   const user = userFactory.getValidUser();
@@ -189,7 +177,7 @@ test('updateByMemberMessageReq should return rejected error if getProfileUpdate 
   const error = { message: 'Epic fail' };
   sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
     .returns({});
-  sandbox.stub(userHelper, 'getProfileUpdate')
+  sandbox.stub(helpers.macro, 'getProfileUpdate')
     .throws(error);
 
   const result = await t.throws(userHelper.updateByMemberMessageReq(t.context.req));
@@ -200,7 +188,7 @@ test('updateByMemberMessageReq should return northstar.updateUser', async (t) =>
   t.context.req.user = mockUser;
   sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
     .returns({ abc: 1 });
-  sandbox.stub(userHelper, 'getProfileUpdate')
+  sandbox.stub(helpers.macro, 'getProfileUpdate')
     .returns({ def: 2 });
   sandbox.stub(northstar, 'updateUser')
     .returns(Promise.resolve(mockUser));
@@ -217,7 +205,7 @@ test('updateByMemberMessageReq should not send req.platformUserAddress if user h
   t.context.req.user = mockUser;
   sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
     .returns({ abc: 1 });
-  sandbox.stub(userHelper, 'getProfileUpdate')
+  sandbox.stub(helpers.macro, 'getProfileUpdate')
     .returns({ def: 2 });
   sandbox.stub(northstar, 'updateUser')
     .returns(Promise.resolve(mockUser));
@@ -235,7 +223,7 @@ test('updateByMemberMessageReq should not send req.platformUserAddress if user d
   t.context.req.user = mockUser;
   sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
     .returns({ abc: 1 });
-  sandbox.stub(userHelper, 'getProfileUpdate')
+  sandbox.stub(helpers.macro, 'getProfileUpdate')
     .returns({ def: 2 });
   sandbox.stub(northstar, 'updateUser')
     .returns(Promise.resolve(mockUser));

@@ -263,15 +263,6 @@ test('badWords(): should call sendGambitConversationsTemplate', async (t) => {
   await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template);
 });
 
-test('crisis(): should call sendGambitConversationsTemplate', async (t) => {
-  const template = gambitConversationsTemplates.crisis.name;
-  await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template, 'crisisMessage');
-});
-
-test('info(): should call sendGambitConversationsTemplate', async (t) => {
-  const template = gambitConversationsTemplates.info.name;
-  await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template, 'infoMessage');
-});
 
 test('noCampaign(): should call sendGambitConversationsTemplate', async (t) => {
   const template = gambitConversationsTemplates.noCampaign.name;
@@ -279,23 +270,11 @@ test('noCampaign(): should call sendGambitConversationsTemplate', async (t) => {
 });
 
 test('noReply(): should call sendGambitConversationsTemplate', async (t) => {
-  const template = gambitConversationsTemplates.noReply.name;
-  await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template);
-});
-
-test('subscriptionStatusLess(): should call sendGambitConversationsTemplate', async (t) => {
-  const template = gambitConversationsTemplates.subscriptionStatusLess.name;
-  await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template);
-});
-
-test('subscriptionStatusStop(): should call sendGambitConversationsTemplate', async (t) => {
-  const template = gambitConversationsTemplates.subscriptionStatusStop.name;
-  await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template);
-});
-
-test('supportRequested(): should call sendGambitConversationsTemplate', async (t) => {
-  const template = gambitConversationsTemplates.supportRequested.name;
-  await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template);
+  sandbox.stub(repliesHelper, 'sendReply')
+    .returns(resolvedPromise);
+  await repliesHelper.noReply(t.context.req, t.context.res);
+  repliesHelper.sendReply
+    .should.have.been.calledWith(t.context.req, t.context.res, '', 'noReply');
 });
 
 test('rivescriptReply(): should call sendReply', async (t) => {
