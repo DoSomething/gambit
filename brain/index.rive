@@ -62,12 +62,15 @@
 ! sub wuts    = what is
 
 // Arrays
+! array bike      = bicycle|bike|bikin|biking|cycling
 ! array bot       = bot robot machine computer
 ! array botname   = freddie freddi alicia alysa alysha
 ! array die       = die|kill myself|killing myself
   ^ commit suicide|committing suicide|commiting suicide
 ! array dosomething = dosomething|dosomethingorg|do something
-! array greetings     = hola|howdy
+! array drive     = car|driv|drive|drivin|driving|truck\
+]''
+! array greetings = hola|howdy
   ^ hi|hii|hiii|hiiii|hiiiii|hiiiiii
   ^ hello|helloo|hellooo|hellloooo
   ^ hey|heyy|heyyy|heyyyy|heyyyy|heyyyyyy 
@@ -83,20 +86,18 @@
   ^ suicidal|suicidial|suicide
 ! array messaging = text|texts|txt|texting|txting|talking|talkign
   ^ messaging|contacting|sending|list|this list
-! array bike = bicycle|bike|bikin|biking|cycling
-! array drive = car|driv|drive|drivin|driving|truck
-! array walk = walk|walki|walkin|walking|feet
-! array publictransport = bart|bus|ferry|metro|meta|muni|subway|train
 ! array my        = my this
 ! array no        = n no nah nope nay
 ! array photo     = photo photos mms pic pics pix image image img
 ! array please    = pls|plz|please|can you|will you
+! array publictransport = bart|bus|ferry|metro|meta|muni|subway|train|trans|transport|transportation
 ! array question  = is there|who|what|when|why|how
 ! array send      = send submit text
 ! array social    = social media|facebook|twitter|instagram|social
 ! array unsubscribe = unsubscribe|cancel
   ^ leave|remove|quit|end|exit|opt out|optout|discontinue|take me off
   ^ atop|dtop|sotp|srop|stip|stop|stop all|stopp|stopall|stp
+! array walk      = walk|walki|walkin|walking|feet
 ! array want      = want|am going|am thinking about
 ! array why       = why y how
 ! array yes       = y ya yas yea yeah yep yes yup
