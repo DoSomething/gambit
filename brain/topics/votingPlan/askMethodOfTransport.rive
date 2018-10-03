@@ -18,13 +18,13 @@
 + c
 - votingPlanMethodOfTransportBike
 
-+ [*]  @bike [*]
++ [*] @bike [*]
 @ c
 
 + d
 - votingPlanMethodOfTransportPublicTransport
 
-+ [*]  @publictransport [*]
++ [*] @publictransport [*]
 @ d
 
 + [*] (mass|public) [*]
