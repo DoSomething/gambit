@@ -7,7 +7,7 @@
 @ info
 
 + q
-- supportRequested{topic=support}
+- supportRequested
 
 + question
 @ q
@@ -22,13 +22,13 @@
 @ subscribe
 
 + (week|weekly)
-- subscriptionStatusActive{topic=random}
+- subscriptionStatusActive
 
 + (less|month|monthly)
-- subscriptionStatusLess{topic=random}
+- subscriptionStatusLess
 
 + stop
-- subscriptionStatusStop{topic=unsubscribed}
+- subscriptionStatusStop
 
 + @unsubscribe
 @ stop
