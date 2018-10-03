@@ -17,6 +17,7 @@ const Message = require('../../../../app/models/Message');
 const campaignFactory = require('../../../helpers/factories/campaign');
 const conversationFactory = require('../../../helpers/factories/conversation');
 const messageFactory = require('../../../helpers/factories/message');
+const userFactory = require('../../../helpers/factories/user');
 
 // setup "x.should.y" assertion style
 chai.should();
@@ -103,8 +104,9 @@ test('sendReply(): responds with the inbound and outbound messages', async (t) =
     inboundMessage,
     lastOutboundMessage,
   });
+  const updatedUser = userFactory.getValidUser();
   sandbox.stub(helpers.user, 'updateByMemberMessageReq')
-    .returns(Promise.resolve({}));
+    .returns(Promise.resolve(updatedUser));
   sandbox.stub(req.conversation, 'createAndSetLastOutboundMessage')
     .returns(resolvedPromise);
   sandbox.stub(req.conversation, 'postLastOutboundMessageToPlatform')
@@ -117,6 +119,8 @@ test('sendReply(): responds with the inbound and outbound messages', async (t) =
 
   // asserts
   t.context.res.send.should.have.been.called;
+  helpers.user.updateByMemberMessageReq.should.have.been.calledWith(req);
+  req.user.should.deep.equal(updatedUser);
   req.conversation.createAndSetLastOutboundMessage.should.have.been.called;
   req.conversation.postLastOutboundMessageToPlatform.should.have.been.called;
   responseMessages.inbound[0].should.be.equal(inboundMessage);
@@ -263,15 +267,6 @@ test('badWords(): should call sendGambitConversationsTemplate', async (t) => {
   await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template);
 });
 
-test('crisis(): should call sendGambitConversationsTemplate', async (t) => {
-  const template = gambitConversationsTemplates.crisis.name;
-  await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template, 'crisisMessage');
-});
-
-test('info(): should call sendGambitConversationsTemplate', async (t) => {
-  const template = gambitConversationsTemplates.info.name;
-  await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template, 'infoMessage');
-});
 
 test('noCampaign(): should call sendGambitConversationsTemplate', async (t) => {
   const template = gambitConversationsTemplates.noCampaign.name;
@@ -279,23 +274,11 @@ test('noCampaign(): should call sendGambitConversationsTemplate', async (t) => {
 });
 
 test('noReply(): should call sendGambitConversationsTemplate', async (t) => {
-  const template = gambitConversationsTemplates.noReply.name;
-  await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template);
-});
-
-test('subscriptionStatusLess(): should call sendGambitConversationsTemplate', async (t) => {
-  const template = gambitConversationsTemplates.subscriptionStatusLess.name;
-  await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template);
-});
-
-test('subscriptionStatusStop(): should call sendGambitConversationsTemplate', async (t) => {
-  const template = gambitConversationsTemplates.subscriptionStatusStop.name;
-  await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template);
-});
-
-test('supportRequested(): should call sendGambitConversationsTemplate', async (t) => {
-  const template = gambitConversationsTemplates.supportRequested.name;
-  await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template);
+  sandbox.stub(repliesHelper, 'sendReply')
+    .returns(resolvedPromise);
+  await repliesHelper.noReply(t.context.req, t.context.res);
+  repliesHelper.sendReply
+    .should.have.been.calledWith(t.context.req, t.context.res, '', 'noReply');
 });
 
 test('rivescriptReply(): should call sendReply', async (t) => {

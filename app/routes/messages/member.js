@@ -20,7 +20,6 @@ const loadOutboundMessageMiddleware = require('../../../lib/middleware/messages/
 const badWordsMiddleware = require('../../../lib/middleware/messages/member/bad-words');
 const getRivescriptReplyMiddleware = require('../../../lib/middleware/messages/member/rivescript-reply-get');
 const parseRivescriptReplyMiddleware = require('../../../lib/middleware/messages/member/rivescript-reply-parse');
-const supportRequestedMiddleware = require('../../../lib/middleware/messages/member/support-requested');
 const forwardSupportMessageMiddleware = require('../../../lib/middleware/messages/member/support-message');
 const changeTopicMacroMiddleware = require('../../../lib/middleware/messages/member/macro-change-topic');
 const replyMacroMiddleware = require('../../../lib/middleware/messages/member/macro-reply');
@@ -69,11 +68,6 @@ router.use(forwardSupportMessageMiddleware());
 
 // Otherwise, fetch the current conversation topic.
 router.use(getTopicMiddleware());
-
-// Now that that the topic templates are loaded, check if this is a support request, as topics may
-// override the supportRequested template.
-// TODO: Move this into catchall.
-router.use(supportRequestedMiddleware());
 
 // Handles replies for askYesNo topics.
 router.use(catchAllAskYesNoMiddleware());

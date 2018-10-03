@@ -17,7 +17,7 @@ const stubs = require('../../../helpers/stubs');
 
 const macros = config.macros;
 const topicId = stubs.getTopicId();
-const changeTopicMacroName = `${config.macros.changeTopic}{topic=${topicId}}`;
+const changeTopicMacroName = `${config.macros.changeTopic.name}{topic=${topicId}}`;
 const undefinedMacroName = 'trialByCombat';
 
 // module to be tested
@@ -32,64 +32,61 @@ test.afterEach(() => {
   sandbox.restore();
 });
 
-// getReply
-test('getReply should return text for given macro', () => {
+// getMacro
+test('getMacro should return config for given macro if defined', () => {
   const macro = config.macros.subscriptionStatusStop;
-  const reply = config.replies[macro];
-  const result = macroHelper.getReply(macro);
-  reply.should.equal(result);
+  const result = macroHelper.getMacro(macro.name);
+  result.should.deep.equal(macro);
 });
 
-test('getReply should return falsy for undefined macro reply', (t) => {
-  t.falsy(macroHelper.getReply(undefinedMacroName));
+test('getMacro should return falsy for undefined macro', (t) => {
+  t.falsy(macroHelper.getMacro(undefinedMacroName));
 });
 
-// getChangeTopicMacroFromTopicId
+// getChangeTopicMacroFromTopic
 test('getChangeTopicMacroFromTopicId returns string with changeTopicMacro prefix and topicId', () => {
   const result = macroHelper.getChangeTopicMacroFromTopicId(topicId);
   result.should.equal(changeTopicMacroName);
 });
 
+// getProfileUpdate
+test('getProfileUpdate should return config.updatesByMacro if exists for macro', () => {
+  const lessMacro = config.macros.subscriptionStatusLess;
+  const result = macroHelper.getProfileUpdate(lessMacro.name);
+  result[lessMacro.profileUpdate.field].should.equal(lessMacro.profileUpdate.value);
+});
+
+test('getProfileUpdate should return empty object if config.updatesByMacro undefined', () => {
+  const result = macroHelper.getProfileUpdate(stubs.getRandomMessageText());
+  result.should.deep.equal({});
+});
+
 // isChangeTopic
 test('isChangeTopic should return boolean', (t) => {
-  t.true(macroHelper.isChangeTopic(macros.changeTopic));
+  t.true(macroHelper.isChangeTopic(macros.changeTopic.name));
   t.falsy(macroHelper.isChangeTopic(undefinedMacroName));
 });
 
 // isMacro
 test('isMacro returns whether text exists for given macro', (t) => {
   const macro = config.macros.subscriptionStatusStop;
-  t.truthy(macroHelper.isMacro(macro));
+  t.truthy(macroHelper.isMacro(macro.name));
   t.falsy(macroHelper.isMacro(undefinedMacroName));
 });
 
+// macros
 test('macro.macros.x() should be equal to macro.macroNameValues.x', () => {
-  Object.keys(config.macros).forEach((macroName) => {
-    macroHelper.macros[macroName]().should.be.equal(macroName);
-  });
+  macroHelper.macros.changeTopic().should.be.equal(config.macros.changeTopic.name);
+  macroHelper.macros.saidNo().should.be.equal(config.macros.saidNo.name);
+  macroHelper.macros.saidYes().should.be.equal(config.macros.saidYes.name);
 });
 
 test('isSaidYes should return boolean', (t) => {
-  t.true(macroHelper.isSaidYes(macros.saidYes));
+  t.true(macroHelper.isSaidYes(macros.saidYes.name));
   t.falsy(macroHelper.isSaidYes(undefinedMacroName));
 });
 
 test('isSaidNo should return boolean', (t) => {
-  t.true(macroHelper.isSaidNo(macros.saidNo));
+  t.true(macroHelper.isSaidNo(macros.saidNo.name));
   t.falsy(macroHelper.isSaidNo(undefinedMacroName));
-});
-
-test('isSendCrisisMessage should return boolean', (t) => {
-  t.true(macroHelper.isSendCrisisMessage(macros.sendCrisisMessage));
-  t.falsy(macroHelper.isSendCrisisMessage(undefinedMacroName));
-});
-
-test('isSendInfoMessage should return boolean', (t) => {
-  t.true(macroHelper.isSendInfoMessage(macros.sendInfoMessage));
-  t.falsy(macroHelper.isSendInfoMessage(undefinedMacroName));
-});
-
-test('isSupportRequested should return boolean', (t) => {
-  t.true(macroHelper.isSupportRequested(macros.supportRequested));
-  t.falsy(macroHelper.isSupportRequested(undefinedMacroName));
 });

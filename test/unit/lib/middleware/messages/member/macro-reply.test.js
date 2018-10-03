@@ -20,7 +20,16 @@ chai.use(sinonChai);
 const replyMacro = require('../../../../../../lib/middleware/messages/member/macro-reply');
 
 const mockConversation = conversationFactory.getValidConversation();
-const mockMacro = 'subscriptionStatusStop';
+const mockMacro = {
+  name: 'subscriptionStatusStop',
+  text: stubs.getRandomMessageText(),
+};
+const mockTopic = { id: stubs.getRandomWord() };
+const mockMacroWithTopic = {
+  name: stubs.getRandomWord(),
+  text: stubs.getRandomMessageText(),
+  topic: mockTopic,
+};
 
 const sandbox = sinon.sandbox.create();
 
@@ -37,34 +46,52 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-test('replyMacro calls next if macro does not have a reply', async (t) => {
+test('replyMacro calls next if macro text is not defined', async (t) => {
   const next = sinon.stub();
   const middleware = replyMacro();
-  sandbox.stub(helpers.macro, 'getReply')
-    .returns(null);
+  sandbox.stub(helpers.macro, 'getMacro')
+    .returns({ name: stubs.getRandomWord() });
 
   // test
   await middleware(t.context.req, t.context.res, next);
   next.should.have.been.called;
 });
 
-test('replyMacro calls helpers.request.changeTopic and sends reply if macro has reply', async (t) => {
+test('replyMacro sends reply if macro text is set', async (t) => {
   const next = sinon.stub();
   const middleware = replyMacro();
-  t.context.req.macro = mockMacro;
-  const mockTopic = stubs.getRandomWord();
-  t.context.req.rivescriptReplyTopic = mockTopic;
-  sandbox.stub(helpers.macro, 'getReply')
+  sandbox.stub(helpers.macro, 'getMacro')
     .returns(mockMacro);
-  sandbox.stub(helpers.replies, mockMacro)
+  sandbox.stub(helpers.request, 'changeTopic')
+    .returns(Promise.resolve());
+  sandbox.stub(helpers.replies, 'sendReply')
+    .returns(underscore.noop);
+  t.context.req.macro = mockMacro.name;
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  helpers.macro.getMacro.should.have.been.calledWith(t.context.req.macro);
+  helpers.request.changeTopic.should.not.have.been.called;
+  helpers.replies.sendReply
+    .should.have.been.calledWith(t.context.req, t.context.res, mockMacro.text, mockMacro.name);
+});
+
+test('replyMacro calls helpers.request.changeTopic if macro topic is set', async (t) => {
+  const next = sinon.stub();
+  const middleware = replyMacro();
+  t.context.req.macro = mockMacro.name;
+  sandbox.stub(helpers.macro, 'getMacro')
+    .returns(mockMacroWithTopic);
+  sandbox.stub(helpers.replies, 'sendReply')
     .returns(underscore.noop);
   sandbox.stub(helpers.request, 'changeTopic')
     .returns(Promise.resolve());
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  helpers.macro.getReply.should.have.been.calledWith(t.context.req.macro);
-  helpers.replies[mockMacro].should.have.been.calledWith(t.context.req, t.context.res);
+  helpers.macro.getMacro.should.have.been.calledWith(t.context.req.macro);
+  helpers.replies.sendReply.should.have.been
+    .calledWith(t.context.req, t.context.res, mockMacroWithTopic.text, mockMacroWithTopic.name);
   helpers.request.changeTopic.should.have.been.calledWith(t.context.req, mockTopic);
   next.should.not.have.been.called;
 });
@@ -73,11 +100,9 @@ test('replyMacro calls sendErrorResponse if changeTopic fails', async (t) => {
   const next = sinon.stub();
   const middleware = replyMacro();
   t.context.req.macro = mockMacro;
-  const mockTopic = stubs.getRandomWord();
-  t.context.req.rivescriptReplyTopic = mockTopic;
-  sandbox.stub(helpers.macro, 'getReply')
-    .returns(mockMacro);
-  sandbox.stub(helpers.replies, mockMacro)
+  sandbox.stub(helpers.macro, 'getMacro')
+    .returns(mockMacroWithTopic);
+  sandbox.stub(helpers.replies, 'sendReply')
     .returns(underscore.noop);
   const mockError = { message: 'Epic fail' };
   sandbox.stub(helpers.request, 'changeTopic')
@@ -85,8 +110,8 @@ test('replyMacro calls sendErrorResponse if changeTopic fails', async (t) => {
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  helpers.macro.getReply.should.have.been.calledWith(t.context.req.macro);
-  helpers.replies[mockMacro].should.not.have.been.called;
+  helpers.macro.getMacro.should.have.been.calledWith(t.context.req.macro);
+  helpers.replies.sendReply.should.not.have.been.called;
   helpers.request.changeTopic.should.have.been.calledWith(t.context.req, mockTopic);
   next.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.calledWith(t.context.res, mockError);
