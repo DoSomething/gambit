@@ -68,8 +68,7 @@
 ! array die       = die|kill myself|killing myself
   ^ commit suicide|committing suicide|commiting suicide
 ! array dosomething = dosomething|dosomethingorg|do something
-! array drive     = car|driv|drive|drivin|driving|truck\
-]''
+! array drive     = car|driv|drive|drivin|driving|truck|whip
 ! array greetings = hola|howdy
   ^ hi|hii|hiii|hiiii|hiiiii|hiiiiii
   ^ hello|helloo|hellooo|hellloooo

@@ -3,11 +3,11 @@
 const profile = require('./user').fields;
 
 const activeSubscriptionStatusText = 'Hi I\'m Freddie from DoSomething.org! Welcome to my weekly updates (up to 8msg/month). Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.';
+const askSubscriptionStatusText = 'Do you want texts: A)Weekly B)Monthly C)I need more info';
 const askVotingPlanMethodOfTransportText = 'How are you getting there? A) Drive B) Walk C) Bike D) Public transportation';
 const askVotingPlanStatusText = 'Are you planning on voting? A) Yes B) No C) Already voted D) Can\'t vote';
 const completedVotingPlanText = 'Sounds good -- don\'t forget to {{user.voting_plan_method_of_transport}} to the polls on Election Day!';
-// TODO: Define askSubscriptionStatus replies as macros to DRY the news URL promo that changes.
-// @see brain/topics/askSubscriptionStatus.rive
+const invalidAnswerText = 'Sorry, I didn\'t get that.';
 const newsUrl = 'https://www.dosomething.org/us/spot-the-signs-guide?source=sms&utm_source=dosomething&utm_medium=sms&utm_campaign=permissioning_weekly&user_id={{user.id}}';
 // TODO: DRY with topic helper definitions.
 const defaultTopic = { id: 'random' };
@@ -21,19 +21,28 @@ module.exports = {
       text: askVotingPlanStatusText,
       topic: { id: 'ask_voting_plan_status' },
     },
+    askSubscriptionStatus: {
+      name: 'askSubscriptionStatus',
+      text: askSubscriptionStatusText,
+      topic: { id: 'ask_subscription_status' },
+    },
     catchAll: {
       name: 'catchAll',
     },
     changeTopic: {
       name: 'changeTopic',
     },
+    invalidSubscriptionStatus: {
+      name: 'invalidSubscriptionStatus',
+      text: `${invalidAnswerText} ${askSubscriptionStatusText}`,
+    },
     invalidVotingPlanMethodOfTransport: {
       name: 'invalidVotingPlanMethodOfTransport',
-      text: `Sorry, I didn't get that. ${askVotingPlanMethodOfTransportText}`,
+      text: `${invalidAnswerText} ${askVotingPlanMethodOfTransportText}`,
     },
     invalidVotingPlanStatus: {
       name: 'invalidVotingPlanStatus',
-      text: `Sorry, I didn't get that. ${askVotingPlanStatusText}`,
+      text: `${invalidAnswerText} ${askVotingPlanStatusText}`,
     },
     noReply: {
       name: 'noReply',
@@ -70,6 +79,10 @@ module.exports = {
         field: profile.subscriptionStatus.name,
         value: profile.subscriptionStatus.values.less,
       },
+    },
+    subscriptionStatusNeedMoreInfo: {
+      name: 'subscriptionStatusNeedMoreInfo',
+      text: `Sure! Once a week, I text over 3 million young people with updates on what's happening in the news and/or easy ways to take action in your community.\n\nWant an example of an easy way to take action? Take 2 mins to learn how to spot the signs of an abusive relationship and what you can do about it. Read our guide: ${newsUrl}`,
     },
     subscriptionStatusResubscribed: {
       name: 'subscriptionStatusResubscribed',
