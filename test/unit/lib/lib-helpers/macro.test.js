@@ -32,15 +32,15 @@ test.afterEach(() => {
   sandbox.restore();
 });
 
-// getReplyText
-test('getReplyText should return text for given macro if defined', () => {
+// getMacro
+test('getMacro should return config for given macro if defined', () => {
   const macro = config.macros.subscriptionStatusStop;
-  const result = macroHelper.getReplyText(macro.name);
-  result.should.equal(macro.text);
+  const result = macroHelper.getMacro(macro.name);
+  result.should.deep.equal(macro);
 });
 
-test('getReply should return falsy for undefined macro reply', (t) => {
-  t.falsy(macroHelper.getReplyText(undefinedMacroName));
+test('getMacro should return falsy for undefined macro', (t) => {
+  t.falsy(macroHelper.getMacro(undefinedMacroName));
 });
 
 // getChangeTopicMacroFromTopic

@@ -7,10 +7,10 @@
 @ info
 
 + less
-- subscriptionStatusLess{topic=random}
+- subscriptionStatusLess
 
 + join
-- subscriptionStatusResubscribed{topic=random}
+- subscriptionStatusResubscribed
 
 + @unsubscribe
 - subscriptionStatusStop

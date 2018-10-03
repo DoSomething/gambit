@@ -1,5 +1,5 @@
 + make a plan
-- askVotingPlanStatus{topic=ask_voting_plan_status}
+- askVotingPlanStatus
 
 // Current options are A) Yes B) No C) Already voted D) Can't vote
 // @see config/lib/macro
@@ -7,22 +7,22 @@
 > topic ask_voting_plan_status includes random
 
 + a
-- votingPlanStatusVoting{topic=ask_voting_plan_method_of_transport}
+- votingPlanStatusVoting
 
 + [*] @yes [*]
 @ a
 
 + b
-- votingPlanStatusNotVoting{topic=random}
+- votingPlanStatusNotVoting
 
 + @no [*]
 @ b
 
 + c
-- votingPlanStatusVoted{topic=random}
+- votingPlanStatusVoted
 
 + d
-- votingPlanCantVote{topic=random}
+- votingPlanCantVote
 
 + [*]
 - invalidVotingPlanStatus

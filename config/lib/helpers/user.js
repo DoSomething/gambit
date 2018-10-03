@@ -10,6 +10,15 @@ const userFields = {
     name: 'sms_status',
     values: subscriptionStatusValues,
   },
+  votingPlanMethodOfTransport: {
+    name: 'voting_plan_method_of_transport',
+    values: {
+      bike: 'bike',
+      drive: 'drive',
+      publicTransport: 'public_transport',
+      walk: 'walk',
+    },
+  },
   votingPlanStatus: {
     name: 'voting_plan_status',
     values: {
