@@ -73,6 +73,7 @@
   ^ hi|hii|hiii|hiiii|hiiiii|hiiiiii
   ^ hello|helloo|hellooo|hellloooo
   ^ hey|heyy|heyyy|heyyyy|heyyyy|heyyyyyy 
+  ^ yo|yoo|yoyo|yoyoyo
 ! array human     = human person real
 ! array is        = is|will not stop|keeps|was|was being|gets|am|am being|have been
 ! array hurting   = hurt|hurting|hurting|hurts
@@ -89,14 +90,16 @@
 ! array no        = n no nah nope nay
 ! array photo     = photo photos mms pic pics pix image image img
 ! array please    = pls|plz|please|can you|will you
-! array publictransport = bart|bus|ferry|metro|mta|muni|subwaytrain|trans|transport|transportation
+! array publictransport = bart|bus|cable car|ferry
+   ^ lirr|metro|mta|muni|rail|subway|train|tram|trans|transport|transportation|trolley
 ! array question  = is there|who|what|when|why|how
 ! array send      = send submit text
 ! array social    = social media|facebook|twitter|instagram|social
 ! array unsubscribe = unsubscribe|cancel
   ^ leave|remove|quit|end|exit|opt out|optout|discontinue|take me off
   ^ atop|dtop|sotp|srop|stip|stop|stop all|stopp|stopall|stp
-! array walk      = walk|walki|walkin|walking|feet
+! array walk      = walk|walki|walkin|walking
+   ^ feet|jog|joggin|jogging|run|runnin|running|step|steppin|steps
 ! array want      = want|am going|am thinking about
 ! array why       = why y how
 ! array yes       = y ya yas yea yeah yep yes yup
