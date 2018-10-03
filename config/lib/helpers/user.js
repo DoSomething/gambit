@@ -37,6 +37,14 @@ const userFields = {
       voting: 'voting',
     },
   },
+  votingPlanTimeOfDay: {
+    name: 'voting_plan_time_of_day',
+    values: {
+      afternoon: 'afternoon',
+      evening: 'evening',
+      morning: 'morning',
+    },
+  },
 };
 
 module.exports = {

@@ -2,19 +2,83 @@
 
 const profile = require('./user').fields;
 
+
+// TODO: DRY with topic helper definitions.
+const defaultTopic = { id: 'random' };
+const invalidAnswerText = 'Sorry, I didn\'t get that.';
+
+// Subscription status constants:
 const activeSubscriptionStatusText = 'Hi I\'m Freddie from DoSomething.org! Welcome to my weekly updates (up to 8msg/month). Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.';
 const askSubscriptionStatusText = 'Do you want texts: A)Weekly B)Monthly C)I need more info';
+const newsUrl = 'https://www.dosomething.org/us/spot-the-signs-guide?source=sms&utm_source=dosomething&utm_medium=sms&utm_campaign=permissioning_weekly&user_id={{user.id}}';
+
+// Voting plan constants:
 const askVotingPlanAttendingWithText = 'Who are you planning on voting with A) Alone B) Friends C) Family D) Co-workers';
 const askVotingPlanMethodOfTransportText = 'How are you getting there? A) Drive B) Walk C) Bike D) Public transportation';
 const askVotingPlanStatusText = 'Are you planning on voting? A) Yes B) No C) Already voted D) Can\'t vote';
-const completedVotingPlanText = 'Sounds good -- don\'t forget to {{user.voting_plan_method_of_transport}} with {{user.voting_plan_attending_with}} to the polls on Election Day!';
-const invalidAnswerText = 'Sorry, I didn\'t get that.';
-const newsUrl = 'https://www.dosomething.org/us/spot-the-signs-guide?source=sms&utm_source=dosomething&utm_medium=sms&utm_campaign=permissioning_weekly&user_id={{user.id}}';
-// TODO: DRY with topic helper definitions.
-const defaultTopic = { id: 'random' };
-const savedVotingPlanAttendingWithText = askVotingPlanMethodOfTransportText;
-const savedVotingPlanAttendingWithTopic = { id: 'ask_voting_plan_method_of_transport' };
-const savedVotingPlanMethodOfTransportTopic = defaultTopic;
+const askVotingPlanTimeOfDayText = 'What time are you planning on voting? A) Morning B) Afternoon C) Evening';
+// Voting plan conversations begin via askVotingPlanStatus broadcast or macro.
+// If votingPlanStatusVoting macro is returned, topic changes to:
+// 1 - askVotingPlanTimeOfDay
+// 2 - askVotingPlanAttendingWith
+// 3 - askVotingPlanMethodOfTransport
+// 4 - completed voting plan
+const beginVotingPlanText = `Let's make a plan! ${askVotingPlanTimeOfDayText}`;
+const beginVotingPlanTopic = { id: 'ask_voting_plan_time_of_day' };
+const completedVotingPlanText = 'Thanks for making the plan, we’ll remind you tomorrow.';
+/**
+ * @param {String} macroName
+ * @param {String} valueKey
+ * @return {Object}
+ */
+function votingPlanTimeOfDay(macroName, valueKey) {
+  return {
+    name: macroName,
+    // After saving time of day, ask for attending with.
+    text: askVotingPlanAttendingWithText,
+    topic: { id: 'ask_voting_plan_attending_with' },
+    profileUpdate: {
+      field: profile.votingPlanTimeOfDay.name,
+      value: profile.votingPlanTimeOfDay.values[valueKey],
+    },
+  };
+}
+
+/**
+ * @param {String} macroName
+ * @param {String} valueKey
+ * @return {Object}
+ */
+function votingPlanAttendingWith(macroName, valueKey) {
+  return {
+    name: macroName,
+    // After saving attending with, ask for method of transport.
+    text: askVotingPlanMethodOfTransportText,
+    topic: { id: 'ask_voting_plan_method_of_transport' },
+    profileUpdate: {
+      field: profile.votingPlanAttendingWith.name,
+      value: profile.votingPlanAttendingWith.values[valueKey],
+    },
+  };
+}
+
+/**
+ * @param {String} macroName
+ * @param {String} valueKey
+ * @return {Object}
+ */
+function votingPlanMethodOfTransport(macroName, valueKey) {
+  return {
+    name: macroName,
+    // After saving method of transport, we're done!
+    text: completedVotingPlanText,
+    topic: defaultTopic,
+    profileUpdate: {
+      field: profile.votingPlanMethodOfTransport.name,
+      value: profile.votingPlanMethodOfTransport.values[valueKey],
+    },
+  };
+}
 
 module.exports = {
   // If a macro contains a text property, it's sent as the reply to the inbound message.
@@ -115,81 +179,17 @@ module.exports = {
       text: 'What\'s your question? I\'ll try my best to answer it.',
       topic: { id: 'support' },
     },
-    votingPlanAttendingWithAlone: {
-      name: 'votingPlanAttendingWithAlone',
-      text: savedVotingPlanAttendingWithText,
-      topic: savedVotingPlanAttendingWithTopic,
-      profileUpdate: {
-        field: profile.votingPlanAttendingWith.name,
-        value: profile.votingPlanAttendingWith.values.alone,
-      },
-    },
-    votingPlanAttendingWithCoWorkers: {
-      name: 'votingPlanAttendingWithCoWorkers',
-      text: savedVotingPlanAttendingWithText,
-      topic: savedVotingPlanAttendingWithTopic,
-      profileUpdate: {
-        field: profile.votingPlanAttendingWith.name,
-        value: profile.votingPlanAttendingWith.values.coWorkers,
-      },
-    },
-    votingPlanAttendingWithFamily: {
-      name: 'votingPlanAttendingWithFamily',
-      text: savedVotingPlanAttendingWithText,
-      topic: savedVotingPlanAttendingWithTopic,
-      profileUpdate: {
-        field: profile.votingPlanAttendingWith.name,
-        value: profile.votingPlanAttendingWith.values.family,
-      },
-    },
-    votingPlanAttendingWithFriends: {
-      name: 'votingPlanAttendingWithFriends',
-      text: savedVotingPlanAttendingWithText,
-      topic: savedVotingPlanAttendingWithTopic,
-      profileUpdate: {
-        field: profile.votingPlanAttendingWith.name,
-        value: profile.votingPlanAttendingWith.values.friends,
-      },
-    },
-    votingPlanMethodOfTransportBike: {
-      name: 'votingPlanMethodOfTransportBike',
-      text: completedVotingPlanText,
-      topic: defaultTopic,
-      profileUpdate: {
-        field: profile.votingPlanMethodOfTransport.name,
-        value: profile.votingPlanMethodOfTransport.values.bike,
-      },
-    },
-    votingPlanMethodOfTransportDrive: {
-      name: 'votingPlanMethodOfTransportDrive',
-      text: completedVotingPlanText,
-      topic: defaultTopic,
-      profileUpdate: {
-        field: profile.votingPlanMethodOfTransport.name,
-        value: profile.votingPlanMethodOfTransport.values.drive,
-      },
-    },
-    votingPlanMethodOfTransportPublicTransport: {
-      name: 'votingPlanMethodOfTransportPublicTransport',
-      text: completedVotingPlanText,
-      topic: defaultTopic,
-      profileUpdate: {
-        field: profile.votingPlanMethodOfTransport.name,
-        value: profile.votingPlanMethodOfTransport.values.publicTransport,
-      },
-    },
-    votingPlanMethodOfTransportWalk: {
-      name: 'votingPlanMethodOfTransportWalk',
-      text: completedVotingPlanText,
-      topic: defaultTopic,
-      profileUpdate: {
-        field: profile.votingPlanMethodOfTransport.name,
-        value: profile.votingPlanMethodOfTransport.values.walk,
-      },
-    },
+    votingPlanAttendingWithAlone: votingPlanAttendingWith('votingPlanAttendingWithAlone', 'alone'),
+    votingPlanAttendingWithCoWorkers: votingPlanAttendingWith('votingPlanAttendingWithCoWorkers', 'coWorkers'),
+    votingPlanAttendingWithFamily: votingPlanAttendingWith('votingPlanAttendingWithFamily', 'family'),
+    votingPlanAttendingWithFriends: votingPlanAttendingWith('votingPlanAttendingWithFriends', 'friends'),
+    votingPlanMethodOfTransportBike: votingPlanMethodOfTransport('votingPlanMethodOfTransportBike', 'bike'),
+    votingPlanMethodOfTransportDrive: votingPlanMethodOfTransport('votingPlanMethodOfTransportDrive', 'drive'),
+    votingPlanMethodOfTransportPublicTransport: votingPlanMethodOfTransport('votingPlanMethodOfTransportPublicTransport', 'publicTransport'),
+    votingPlanMethodOfTransportWalk: votingPlanMethodOfTransport('votingPlanMethodOfTransportWalk', 'walk'),
     votingPlanStatusCantVote: {
       name: 'votingPlanStatusCantVote',
-      // Placeholder template: this will be set on an askVotingPlanStatus broadcast.
+      // Placeholder template: this will be set on an askVotingPlanStatus topic.
       text: 'Ok -- we\'ll check in with you next election.',
       topic: defaultTopic,
       profileUpdate: {
@@ -199,7 +199,7 @@ module.exports = {
     },
     votingPlanStatusNotVoting: {
       name: 'votingPlanStatusNotVoting',
-      // Placeholder template: this will be set on an askVotingPlanStatus broadcast.
+      // Placeholder text and topic, these will be set via askVotingPlanStatus topic.
       text: 'Mind sharing why you aren\'t not voting?',
       topic: defaultTopic,
       profileUpdate: {
@@ -209,6 +209,7 @@ module.exports = {
     },
     votingPlanStatusVoted: {
       name: 'votingPlanStatusVoted',
+      // Placeholder text and topic, these will be set via askVotingPlanStatus topic.
       text: 'Awesome! Thank you for voting.',
       topic: defaultTopic,
       profileUpdate: {
@@ -218,12 +219,16 @@ module.exports = {
     },
     votingPlanStatusVoting: {
       name: 'votingPlanStatusVoting',
-      text: askVotingPlanAttendingWithText,
-      topic: { id: 'ask_voting_plan_attending_with' },
+      // This text could potentially be set (or overriden?) via the askVotingPlanStatus topic.
+      text: beginVotingPlanText,
+      topic: beginVotingPlanTopic,
       profileUpdate: {
         field: profile.votingPlanStatus.name,
         value: profile.votingPlanStatus.values.voting,
       },
     },
+    votingPlanTimeOfDayAfternoon: votingPlanTimeOfDay('votingPlanTimeOfDayAfternoon', 'afternoon'),
+    votingPlanTimeOfDayEvening: votingPlanTimeOfDay('votingPlanTimeOfDayEvening', 'evening'),
+    votingPlanTimeOfDayMorning: votingPlanTimeOfDay('votingPlanTimeOfDayMorning', 'morning'),
   },
 };

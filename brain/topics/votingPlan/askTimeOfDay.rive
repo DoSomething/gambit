@@ -1,0 +1,18 @@
+// Current options are A) Morning B) Afternoon C) Evening
+// @see config/lib/macro
+
+> topic ask_voting_plan_time_of_day includes random
+
++ a
+- votingPlanTimeOfDayMorning
+
++ b
+- votingPlanTimeOfDayAfternoon
+
++ c
+- votingPlanTimeOfDayEvening
+
++ [*]
+- invalidVotingPlanTimeOfDay
+
+< topic
