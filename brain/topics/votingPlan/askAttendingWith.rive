@@ -1,0 +1,21 @@
+// Current options are A) Alone B) Friends C) Family D) Co-workers
+// @see config/lib/macro
+
+> topic ask_voting_plan_attending_with includes random
+
++ a
+- votingPlanAttendingWithAlone
+
++ b
+- votingPlanAttendingWithFriends
+
++ c
+- votingPlanAttendingWithFamily
+
++ d
+- votingPlanAttendingWithCoWorkers
+
++ [*]
+- invalidVotingPlanAttendingWith
+
+< topic

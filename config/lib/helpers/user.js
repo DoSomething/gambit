@@ -10,6 +10,15 @@ const userFields = {
     name: 'sms_status',
     values: subscriptionStatusValues,
   },
+  votingPlanAttendingWith: {
+    name: 'voting_plan_attending_with',
+    values: {
+      alone: 'alone',
+      coWorkers: 'co_workers',
+      family: 'family',
+      friends: 'friends',
+    },
+  },
   votingPlanMethodOfTransport: {
     name: 'voting_plan_method_of_transport',
     values: {

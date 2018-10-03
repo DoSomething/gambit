@@ -22,7 +22,7 @@
 - votingPlanStatusVoted
 
 + d
-- votingPlanCantVote
+- votingPlanStatusCantVote
 
 + [*]
 - invalidVotingPlanStatus

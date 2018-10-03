@@ -4,13 +4,17 @@ const profile = require('./user').fields;
 
 const activeSubscriptionStatusText = 'Hi I\'m Freddie from DoSomething.org! Welcome to my weekly updates (up to 8msg/month). Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.';
 const askSubscriptionStatusText = 'Do you want texts: A)Weekly B)Monthly C)I need more info';
+const askVotingPlanAttendingWithText = 'Who are you planning on voting with A) Alone B) Friends C) Family D) Co-workers';
 const askVotingPlanMethodOfTransportText = 'How are you getting there? A) Drive B) Walk C) Bike D) Public transportation';
 const askVotingPlanStatusText = 'Are you planning on voting? A) Yes B) No C) Already voted D) Can\'t vote';
-const completedVotingPlanText = 'Sounds good -- don\'t forget to {{user.voting_plan_method_of_transport}} to the polls on Election Day!';
+const completedVotingPlanText = 'Sounds good -- don\'t forget to {{user.voting_plan_method_of_transport}} with {{user.voting_plan_attending_with}} to the polls on Election Day!';
 const invalidAnswerText = 'Sorry, I didn\'t get that.';
 const newsUrl = 'https://www.dosomething.org/us/spot-the-signs-guide?source=sms&utm_source=dosomething&utm_medium=sms&utm_campaign=permissioning_weekly&user_id={{user.id}}';
 // TODO: DRY with topic helper definitions.
 const defaultTopic = { id: 'random' };
+const savedVotingPlanAttendingWithText = askVotingPlanMethodOfTransportText;
+const savedVotingPlanAttendingWithTopic = { id: 'ask_voting_plan_method_of_transport' };
+const savedVotingPlanMethodOfTransportTopic = defaultTopic;
 
 module.exports = {
   // If a macro contains a text property, it's sent as the reply to the inbound message.
@@ -35,6 +39,10 @@ module.exports = {
     invalidSubscriptionStatus: {
       name: 'invalidSubscriptionStatus',
       text: `${invalidAnswerText} ${askSubscriptionStatusText}`,
+    },
+    invalidVotingPlanAttendingWith: {
+      name: 'invalidVotingPlanAttendingWith',
+      text: `${invalidAnswerText} ${askVotingPlanAttendingWithText}`,
     },
     invalidVotingPlanMethodOfTransport: {
       name: 'invalidVotingPlanMethodOfTransport',
@@ -107,6 +115,42 @@ module.exports = {
       text: 'What\'s your question? I\'ll try my best to answer it.',
       topic: { id: 'support' },
     },
+    votingPlanAttendingWithAlone: {
+      name: 'votingPlanAttendingWithAlone',
+      text: savedVotingPlanAttendingWithText,
+      topic: savedVotingPlanAttendingWithTopic,
+      profileUpdate: {
+        field: profile.votingPlanAttendingWith.name,
+        value: profile.votingPlanAttendingWith.values.alone,
+      },
+    },
+    votingPlanAttendingWithCoWorkers: {
+      name: 'votingPlanAttendingWithCoWorkers',
+      text: savedVotingPlanAttendingWithText,
+      topic: savedVotingPlanAttendingWithTopic,
+      profileUpdate: {
+        field: profile.votingPlanAttendingWith.name,
+        value: profile.votingPlanAttendingWith.values.coWorkers,
+      },
+    },
+    votingPlanAttendingWithFamily: {
+      name: 'votingPlanAttendingWithFamily',
+      text: savedVotingPlanAttendingWithText,
+      topic: savedVotingPlanAttendingWithTopic,
+      profileUpdate: {
+        field: profile.votingPlanAttendingWith.name,
+        value: profile.votingPlanAttendingWith.values.family,
+      },
+    },
+    votingPlanAttendingWithFriends: {
+      name: 'votingPlanAttendingWithFriends',
+      text: savedVotingPlanAttendingWithText,
+      topic: savedVotingPlanAttendingWithTopic,
+      profileUpdate: {
+        field: profile.votingPlanAttendingWith.name,
+        value: profile.votingPlanAttendingWith.values.friends,
+      },
+    },
     votingPlanMethodOfTransportBike: {
       name: 'votingPlanMethodOfTransportBike',
       text: completedVotingPlanText,
@@ -174,8 +218,8 @@ module.exports = {
     },
     votingPlanStatusVoting: {
       name: 'votingPlanStatusVoting',
-      text: askVotingPlanMethodOfTransportText,
-      topic: { id: 'ask_voting_plan_method_of_transport' },
+      text: askVotingPlanAttendingWithText,
+      topic: { id: 'ask_voting_plan_attending_with' },
       profileUpdate: {
         field: profile.votingPlanStatus.name,
         value: profile.votingPlanStatus.values.voting,
