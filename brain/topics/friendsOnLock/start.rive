@@ -1,0 +1,9 @@
++ friends on lock
+- Itching to know what the key to your friendship is? It’s having each other’s backs, no matter what.\n\nYour friend would do anything for you -- from helping you with homework to helping you play it cool in front of your crush. They also want to keep you safe on the road. Want to find out how you can do that? Text Y.{topic=friends_on_lock_start}
+
+// Intro
+
+> topic friends_on_lock_start includes random
++ [*]
+- I don’t have tips on your love life (sorry!), but I can definitely help you avoid and prevent others from driving drunk, high, or drowsy.\n\nDid you know that by preventing impaired driving, we could help save over 15,000 lives per year? That could include the people closest to you. We’ve got 3 scenarios where you’ll make decisions on how to keep your friends safe on the road. Text NEXT to start!{topic=friends_on_lock_ask_first_question}
+< topic

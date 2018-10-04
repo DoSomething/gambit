@@ -1,0 +1,12 @@
+> topic friends_on_lock_ask_first_question includes random
++ [*]
+- 1/3: Picture this -- you’re leaving a party a see a friend get in their car to drive home. Problem is, you’ve seen them drink three or four “Cokes” (read: beers). Do you A) call them a rideshare or B) offer to drive them home? Text back A or B.{topic=friends_on_lock_parse_ask_first_question}
+< topic
+
+> topic friends_on_lock_parse_ask_first_question includes random
++ a
+- Smart! If you're unable to drive, call your friend a Lyft, Uber, or yellow cab.\n\nYou could even offer to help them pick up their car the next morning. Who knows...maybe they'll repay you with breakfast? Text Y for the second scenario.{topic=friends_on_lock_ask_second_question}
++ [*]
+- Great choice! Wayyy nicer (and safer) than making them walk home. Plus, since you're being a clutch designated driver, your friend officially owes you one. But who’s counting...
+^ And if you're unable to drive, call your friend a Lyft, Uber, or yellow cab. Text Y for the second scenario.{topic=friends_on_lock_ask_second_question}
+< topic
