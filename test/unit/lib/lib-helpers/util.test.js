@@ -8,8 +8,7 @@ const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
 
 const InternalServerError = require('../../../../app/exceptions/InternalServerError');
-// TODO: Change file name
-const UnprocessibleEntityError = require('../../../../app/exceptions/UnprocessibleEntityError');
+const UnprocessableEntityError = require('../../../../app/exceptions/UnprocessableEntityError');
 const stubs = require('../../../helpers/stubs');
 
 chai.should();
@@ -60,13 +59,13 @@ test('deepUpdateWithDotNotationParser should parse nested objects and return mon
 });
 
 // formatMobileNumber
-test('formatMobileNumber should throw an UnprocessibleEntityError if no mobile is passed for formatting', () => {
-  expect(utilHelper.formatMobileNumber).to.throw(UnprocessibleEntityError);
+test('formatMobileNumber should throw an UnprocessableEntityError if no mobile is passed for formatting', () => {
+  expect(utilHelper.formatMobileNumber).to.throw(UnprocessableEntityError);
 });
 
-test('formatMobileNumber should throw an UnprocessibleEntityError if the mobile is passed is not a valid US, E164 formatted mobile number', () => {
+test('formatMobileNumber should throw an UnprocessableEntityError if the mobile is passed is not a valid US, E164 formatted mobile number', () => {
   const mobile = stubs.getMobileNumber();
-  expect(() => utilHelper.formatMobileNumber(mobile)).to.throw(UnprocessibleEntityError);
+  expect(() => utilHelper.formatMobileNumber(mobile)).to.throw(UnprocessableEntityError);
 });
 
 // parseStatusAndMessageFromError
@@ -80,12 +79,12 @@ test('parseStatusAndMessageFromError(anyString): should respond with error statu
 });
 
 test('parseStatusAndMessageFromError(error): should respond with error status and error message', () => {
-  const unprocessibleEntityError = new UnprocessibleEntityError();
+  const unprocessableEntityError = new UnprocessableEntityError();
 
   // test
-  const result = utilHelper.parseStatusAndMessageFromError(unprocessibleEntityError);
-  result.status.should.equal(unprocessibleEntityError.status);
-  result.message.should.equal(unprocessibleEntityError.message);
+  const result = utilHelper.parseStatusAndMessageFromError(unprocessableEntityError);
+  result.status.should.equal(unprocessableEntityError.status);
+  result.message.should.equal(unprocessableEntityError.message);
 });
 
 test('parseStatusAndMessageFromError(): not sending an error should use a Generic Internal Server Error response', () => {

@@ -8,8 +8,7 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
 
-// TODO: Change file name
-const UnprocessibleEntityError = require('../../../app/exceptions/UnprocessibleEntityError.js');
+const UnprocessableEntityError = require('../../../app/exceptions/UnprocessableEntityError.js');
 
 chai.should();
 chai.use(sinonChai);
@@ -33,7 +32,7 @@ test.afterEach(() => {
 // sendErrorResponse
 test('helpers.sendErrorResponse(res, error): should respond with error status and error message', () => {
   const res = httpMocks.createResponse();
-  const error = new UnprocessibleEntityError();
+  const error = new UnprocessableEntityError();
   sandbox.stub(helpers.util, 'parseStatusAndMessageFromError')
     .returns({ status: error.status, message: error.message });
   sandbox.stub(helpers, 'sendResponseWithStatusCode').returns(true);
