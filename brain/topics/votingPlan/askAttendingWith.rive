@@ -1,5 +1,5 @@
 // Current options are A) Alone B) Friends C) Family D) Co-workers
-// @see config/lib/macro
+// @see config/lib/helpers/macro
 
 // TODO: Add more substitutions and triggers for each option
 
