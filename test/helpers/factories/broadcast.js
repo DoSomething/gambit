@@ -49,6 +49,25 @@ function getValidAskYesNo() {
   return broadcast;
 }
 
+function getValidAskVotingPlanStatus() {
+  const broadcast = getBroadcast(config.types.askVotingPlanStatus);
+  broadcast.templates = {
+    votingPlanStatusCantVote: {
+      text: stubs.getRandomMessageText(),
+      topic: topicFactory.getValidAutoReply(),
+    },
+    votingPlanStatusNotVoting: {
+      text: stubs.getRandomMessageText(),
+      topic: topicFactory.getValidTopicWithoutCampaign(),
+    },
+    votingPlanStatusVoted: {
+      text: stubs.getRandomMessageText(),
+      topic: topicFactory.getValidTopicWithoutCampaign(),
+    },
+  };
+  return broadcast;
+}
+
 function getValidLegacyCampaignBroadcast() {
   const broadcast = getBroadcast(config.types.legacy);
   broadcast.message.template = 'askSignup';
@@ -72,6 +91,7 @@ module.exports = {
   getBroadcast,
   getValidAutoReplyBroadcast,
   getValidAskSubscriptionStatus,
+  getValidAskVotingPlanStatus,
   getValidAskYesNo,
   getValidLegacyCampaignBroadcast,
   getValidLegacyRivescriptTopicBroadcast,
