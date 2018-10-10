@@ -24,14 +24,23 @@ const askVotingPlanTimeOfDayText = 'What time are you planning on voting? A) Mor
 const beginVotingPlanText = `Let's make a plan! ${askVotingPlanTimeOfDayText}`;
 const beginVotingPlanTopic = rivescriptTopics.askVotingPlanTimeOfDay;
 const completedVotingPlanText = 'Thanks for making the plan, we’ll remind you tomorrow.';
+
 /**
- * @param {String} macroName
+ * @param {String} prefix
+ * @param {String} valueKey
+ * @return {String}
+ */
+function macroName(prefix, valueKey) {
+  return `${prefix}${valueKey.charAt(0).toUpperCase() + valueKey.slice(1)}`;
+}
+
+/**
  * @param {String} valueKey
  * @return {Object}
  */
-function votingPlanTimeOfDay(macroName, valueKey) {
+function votingPlanTimeOfDay(valueKey) {
   return {
-    name: macroName,
+    name: macroName('votingPlanTimeOfDay', valueKey),
     // After saving time of day, ask for attending with.
     text: askVotingPlanAttendingWithText,
     topic: rivescriptTopics.askVotingPlanAttendingWith,
@@ -43,13 +52,12 @@ function votingPlanTimeOfDay(macroName, valueKey) {
 }
 
 /**
- * @param {String} macroName
  * @param {String} valueKey
  * @return {Object}
  */
-function votingPlanAttendingWith(macroName, valueKey) {
+function votingPlanAttendingWith(valueKey) {
   return {
-    name: macroName,
+    name: macroName('votingPlanAttendingWith', valueKey),
     // After saving attending with, ask for method of transport.
     text: askVotingPlanMethodOfTransportText,
     topic: rivescriptTopics.askVotingPlanMethodOfTransport,
@@ -61,13 +69,12 @@ function votingPlanAttendingWith(macroName, valueKey) {
 }
 
 /**
- * @param {String} macroName
  * @param {String} valueKey
  * @return {Object}
  */
-function votingPlanMethodOfTransport(macroName, valueKey) {
+function votingPlanMethodOfTransport(valueKey) {
   return {
-    name: macroName,
+    name: macroName('votingPlanMethodOfTransport', valueKey),
     // After saving method of transport, the voting plan is complete.
     text: completedVotingPlanText,
     topic: defaultTopic,
@@ -181,14 +188,14 @@ module.exports = {
       text: 'What\'s your question? I\'ll try my best to answer it.',
       topic: rivescriptTopics.support,
     },
-    votingPlanAttendingWithAlone: votingPlanAttendingWith('votingPlanAttendingWithAlone', 'alone'),
-    votingPlanAttendingWithCoWorkers: votingPlanAttendingWith('votingPlanAttendingWithCoWorkers', 'coWorkers'),
-    votingPlanAttendingWithFamily: votingPlanAttendingWith('votingPlanAttendingWithFamily', 'family'),
-    votingPlanAttendingWithFriends: votingPlanAttendingWith('votingPlanAttendingWithFriends', 'friends'),
-    votingPlanMethodOfTransportBike: votingPlanMethodOfTransport('votingPlanMethodOfTransportBike', 'bike'),
-    votingPlanMethodOfTransportDrive: votingPlanMethodOfTransport('votingPlanMethodOfTransportDrive', 'drive'),
-    votingPlanMethodOfTransportPublicTransport: votingPlanMethodOfTransport('votingPlanMethodOfTransportPublicTransport', 'publicTransport'),
-    votingPlanMethodOfTransportWalk: votingPlanMethodOfTransport('votingPlanMethodOfTransportWalk', 'walk'),
+    votingPlanAttendingWithAlone: votingPlanAttendingWith('alone'),
+    votingPlanAttendingWithCoWorkers: votingPlanAttendingWith('coWorkers'),
+    votingPlanAttendingWithFamily: votingPlanAttendingWith('family'),
+    votingPlanAttendingWithFriends: votingPlanAttendingWith('friends'),
+    votingPlanMethodOfTransportBike: votingPlanMethodOfTransport('bike'),
+    votingPlanMethodOfTransportDrive: votingPlanMethodOfTransport('drive'),
+    votingPlanMethodOfTransportPublicTransport: votingPlanMethodOfTransport('publicTransport'),
+    votingPlanMethodOfTransportWalk: votingPlanMethodOfTransport('walk'),
     votingPlanStatusCantVote: {
       name: 'votingPlanStatusCantVote',
       // Placeholder text and topic, these will be set via askVotingPlanStatus topic.
@@ -228,8 +235,8 @@ module.exports = {
         value: profile.votingPlanStatus.values.voting,
       },
     },
-    votingPlanTimeOfDayAfternoon: votingPlanTimeOfDay('votingPlanTimeOfDayAfternoon', 'afternoon'),
-    votingPlanTimeOfDayEvening: votingPlanTimeOfDay('votingPlanTimeOfDayEvening', 'evening'),
-    votingPlanTimeOfDayMorning: votingPlanTimeOfDay('votingPlanTimeOfDayMorning', 'morning'),
+    votingPlanTimeOfDayAfternoon: votingPlanTimeOfDay('afternoon'),
+    votingPlanTimeOfDayEvening: votingPlanTimeOfDay('evening'),
+    votingPlanTimeOfDayMorning: votingPlanTimeOfDay('morning'),
   },
 };
