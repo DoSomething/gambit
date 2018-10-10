@@ -76,7 +76,7 @@ test('askVotingPlanStatusCatchAll should call sendErrorResponse if parseAskVotin
   helpers.sendErrorResponse.should.have.been.calledWith(t.context.res, error);
 });
 
-test('askVotingPlanStatusCatchAll should not call changeTopic, should call sendReply if macro isInvalidVotingPlanStatus', async (t) => {
+test('askVotingPlanStatusCatchAll should not call changeTopic, sends macro text if status is invalid', async (t) => {
   const next = sinon.stub();
   const macro = 'invalidVotingPlanStatus';
   const middleware = askVotingPlanStatusCatchAll();
@@ -101,7 +101,7 @@ test('askVotingPlanStatusCatchAll should not call changeTopic, should call sendR
     .should.have.been.calledWith(t.context.req, t.context.res, messageText, macro);
 });
 
-test('askVotingPlanStatusCatchAll should call changeTopic and sendReply if macro isVotingPlanStatusVoting', async (t) => {
+test('askVotingPlanStatusCatchAll should change topic to macro topic and send macro text if status is voting', async (t) => {
   const next = sinon.stub();
   const macro = 'votingPlanStatusVoting';
   const middleware = askVotingPlanStatusCatchAll();
@@ -127,4 +127,30 @@ test('askVotingPlanStatusCatchAll should call changeTopic and sendReply if macro
   helpers.request.changeTopic.should.have.been.calledWith(t.context.req, topic);
   helpers.replies.sendReply
     .should.have.been.calledWith(t.context.req, t.context.res, messageText, macro);
+});
+
+test('askVotingPlanStatusCatchAll should change topic to template topic and send template text if status is not voting or invalid', async (t) => {
+  const next = sinon.stub();
+  const macro = 'votingPlanStatusVoted';
+  const middleware = askVotingPlanStatusCatchAll();
+  sandbox.stub(helpers.request, 'parseAskVotingPlanStatusResponse')
+    .returns(Promise.resolve(true));
+  sandbox.stub(helpers.topic, 'isAskVotingPlanStatus')
+    .returns(true);
+  sandbox.stub(helpers.macro, 'isInvalidVotingPlanStatus')
+    .returns(false);
+  sandbox.stub(helpers.macro, 'isVotingPlanStatusVoting')
+    .returns(false);
+  t.context.req.topic = askVotingPlanStatus;
+  t.context.req.macro = macro;
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+
+  helpers.topic.isAskVotingPlanStatus.should.have.been.calledWith(t.context.req.topic);
+  next.should.not.have.been.called;
+  const template = askVotingPlanStatus.templates[macro];
+  helpers.request.changeTopic.should.have.been.calledWith(t.context.req, template.topic);
+  helpers.replies.sendReply
+    .should.have.been.calledWith(t.context.req, t.context.res, template.text, macro);
 });
