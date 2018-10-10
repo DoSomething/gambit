@@ -1,0 +1,23 @@
+// Current options are A) Alone B) Friends C) Family D) Co-workers
+// @see config/lib/helpers/macro
+
+// TODO: Add more substitutions and triggers for each option
+
+> topic ask_voting_plan_attending_with includes random
+
++ a
+- votingPlanAttendingWithAlone
+
++ b
+- votingPlanAttendingWithFriends
+
++ c
+- votingPlanAttendingWithFamily
+
++ d
+- votingPlanAttendingWithCoWorkers
+
++ [*]
+- invalidVotingPlanAttendingWith
+
+< topic

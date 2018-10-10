@@ -1,16 +1,89 @@
 'use strict';
 
 const profile = require('./user').fields;
+const rivescriptTopics = require('./topic').rivescriptTopics;
 
+const defaultTopic = rivescriptTopics.default;
+const invalidAnswerText = 'Sorry, I didn\'t get that.';
+
+// Subscription status.
 const activeSubscriptionStatusText = 'Hi I\'m Freddie from DoSomething.org! Welcome to my weekly updates (up to 8msg/month). Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.';
 const askSubscriptionStatusText = 'Do you want texts: A)Weekly B)Monthly C)I need more info';
+const newsUrl = 'https://www.dosomething.org/us/spot-the-signs-guide?source=sms&utm_source=dosomething&utm_medium=sms&utm_campaign=permissioning_weekly&user_id={{user.id}}';
+
+// Voting plan.
+const askVotingPlanAttendingWithText = 'Who are you planning on voting with A) Alone B) Friends C) Family D) Co-workers';
 const askVotingPlanMethodOfTransportText = 'How are you getting there? A) Drive B) Walk C) Bike D) Public transportation';
 const askVotingPlanStatusText = 'Are you planning on voting? A) Yes B) No C) Already voted D) Can\'t vote';
-const completedVotingPlanText = 'Sounds good -- don\'t forget to {{user.voting_plan_method_of_transport}} to the polls on Election Day!';
-const invalidAnswerText = 'Sorry, I didn\'t get that.';
-const newsUrl = 'https://www.dosomething.org/us/spot-the-signs-guide?source=sms&utm_source=dosomething&utm_medium=sms&utm_campaign=permissioning_weekly&user_id={{user.id}}';
-// TODO: DRY with topic helper definitions.
-const defaultTopic = { id: 'random' };
+const askVotingPlanTimeOfDayText = 'What time are you planning on voting? A) Morning B) Afternoon C) Evening';
+// The votingPlanStatusVoting macro begins collecting voting plan data via topic changes:
+// 1 - askVotingPlanTimeOfDay
+// 2 - askVotingPlanAttendingWith
+// 3 - askVotingPlanMethodOfTransport
+// 4 - completed
+const beginVotingPlanText = `Let's make a plan! ${askVotingPlanTimeOfDayText}`;
+const beginVotingPlanTopic = rivescriptTopics.askVotingPlanTimeOfDay;
+const completedVotingPlanText = process.env.DS_GAMBIT_CONVERSATIONS_COMPLETED_VOTING_PLAN_TEXT || 'Thanks for making the plan, we’ll remind you to {{user.voting_plan_method_of_transport}} to the polls.';
+
+/**
+ * @param {String} prefix
+ * @param {String} valueKey
+ * @return {String}
+ */
+function macroName(prefix, valueKey) {
+  return `${prefix}${valueKey.charAt(0).toUpperCase() + valueKey.slice(1)}`;
+}
+
+/**
+ * @param {String} valueKey
+ * @return {Object}
+ */
+function votingPlanTimeOfDay(valueKey) {
+  return {
+    name: macroName('votingPlanTimeOfDay', valueKey),
+    // After saving time of day, ask for attending with.
+    text: askVotingPlanAttendingWithText,
+    topic: rivescriptTopics.askVotingPlanAttendingWith,
+    profileUpdate: {
+      field: profile.votingPlanTimeOfDay.name,
+      value: profile.votingPlanTimeOfDay.values[valueKey],
+    },
+  };
+}
+
+/**
+ * @param {String} valueKey
+ * @return {Object}
+ */
+function votingPlanAttendingWith(valueKey) {
+  return {
+    name: macroName('votingPlanAttendingWith', valueKey),
+    // After saving attending with, ask for method of transport.
+    text: askVotingPlanMethodOfTransportText,
+    topic: rivescriptTopics.askVotingPlanMethodOfTransport,
+    profileUpdate: {
+      field: profile.votingPlanAttendingWith.name,
+      value: profile.votingPlanAttendingWith.values[valueKey],
+    },
+  };
+}
+
+/**
+ * @param {String} valueKey
+ * @return {Object}
+ */
+function votingPlanMethodOfTransport(valueKey) {
+  return {
+    name: macroName('votingPlanMethodOfTransport', valueKey),
+    // After saving method of transport, the voting plan is complete.
+    text: completedVotingPlanText,
+    topic: defaultTopic,
+    profileUpdate: {
+      field: profile.votingPlanMethodOfTransport.name,
+      value: profile.votingPlanMethodOfTransport.values[valueKey],
+    },
+  };
+}
 
 module.exports = {
   // If a macro contains a text property, it's sent as the reply to the inbound message.
@@ -19,12 +92,12 @@ module.exports = {
     askVotingPlanStatus: {
       name: 'askVotingPlanStatus',
       text: askVotingPlanStatusText,
-      topic: { id: 'ask_voting_plan_status' },
+      topic: rivescriptTopics.askVotingPlanStatus,
     },
     askSubscriptionStatus: {
       name: 'askSubscriptionStatus',
       text: askSubscriptionStatusText,
-      topic: { id: 'ask_subscription_status' },
+      topic: rivescriptTopics.askSubscriptionStatus,
     },
     catchAll: {
       name: 'catchAll',
@@ -36,6 +109,10 @@ module.exports = {
       name: 'invalidSubscriptionStatus',
       text: `${invalidAnswerText} ${askSubscriptionStatusText}`,
     },
+    invalidVotingPlanAttendingWith: {
+      name: 'invalidVotingPlanAttendingWith',
+      text: `${invalidAnswerText} ${askVotingPlanAttendingWithText}`,
+    },
     invalidVotingPlanMethodOfTransport: {
       name: 'invalidVotingPlanMethodOfTransport',
       text: `${invalidAnswerText} ${askVotingPlanMethodOfTransportText}`,
@@ -43,6 +120,10 @@ module.exports = {
     invalidVotingPlanStatus: {
       name: 'invalidVotingPlanStatus',
       text: `${invalidAnswerText} ${askVotingPlanStatusText}`,
+    },
+    invalidVotingPlanTimeOfDay: {
+      name: 'invalidVotingPlanTimeOfDay',
+      text: `${invalidAnswerText} ${askVotingPlanTimeOfDayText}`,
     },
     noReply: {
       name: 'noReply',
@@ -96,7 +177,7 @@ module.exports = {
     subscriptionStatusStop: {
       name: 'subscriptionStatusStop',
       text: 'You\'re unsubscribed from DoSomething.org Alerts. No more msgs will be sent. Reply HELP for help. Text JOIN to receive 4-8 msgs/mth or LESS for 1msg/mth.',
-      topic: { id: 'unsubscribed' },
+      topic: rivescriptTopics.unsubscribed,
       profileUpdate: {
         field: profile.subscriptionStatus.name,
         value: profile.subscriptionStatus.values.stop,
@@ -105,47 +186,19 @@ module.exports = {
     supportRequested: {
       name: 'supportRequested',
       text: 'What\'s your question? I\'ll try my best to answer it.',
-      topic: { id: 'support' },
+      topic: rivescriptTopics.support,
     },
-    votingPlanMethodOfTransportBike: {
-      name: 'votingPlanMethodOfTransportBike',
-      text: completedVotingPlanText,
-      topic: defaultTopic,
-      profileUpdate: {
-        field: profile.votingPlanMethodOfTransport.name,
-        value: profile.votingPlanMethodOfTransport.values.bike,
-      },
-    },
-    votingPlanMethodOfTransportDrive: {
-      name: 'votingPlanMethodOfTransportDrive',
-      text: completedVotingPlanText,
-      topic: defaultTopic,
-      profileUpdate: {
-        field: profile.votingPlanMethodOfTransport.name,
-        value: profile.votingPlanMethodOfTransport.values.drive,
-      },
-    },
-    votingPlanMethodOfTransportPublicTransport: {
-      name: 'votingPlanMethodOfTransportPublicTransport',
-      text: completedVotingPlanText,
-      topic: defaultTopic,
-      profileUpdate: {
-        field: profile.votingPlanMethodOfTransport.name,
-        value: profile.votingPlanMethodOfTransport.values.publicTransport,
-      },
-    },
-    votingPlanMethodOfTransportWalk: {
-      name: 'votingPlanMethodOfTransportWalk',
-      text: completedVotingPlanText,
-      topic: defaultTopic,
-      profileUpdate: {
-        field: profile.votingPlanMethodOfTransport.name,
-        value: profile.votingPlanMethodOfTransport.values.walk,
-      },
-    },
+    votingPlanAttendingWithAlone: votingPlanAttendingWith('alone'),
+    votingPlanAttendingWithCoWorkers: votingPlanAttendingWith('coWorkers'),
+    votingPlanAttendingWithFamily: votingPlanAttendingWith('family'),
+    votingPlanAttendingWithFriends: votingPlanAttendingWith('friends'),
+    votingPlanMethodOfTransportBike: votingPlanMethodOfTransport('bike'),
+    votingPlanMethodOfTransportDrive: votingPlanMethodOfTransport('drive'),
+    votingPlanMethodOfTransportPublicTransport: votingPlanMethodOfTransport('publicTransport'),
+    votingPlanMethodOfTransportWalk: votingPlanMethodOfTransport('walk'),
     votingPlanStatusCantVote: {
       name: 'votingPlanStatusCantVote',
-      // Placeholder template: this will be set on an askVotingPlanStatus broadcast.
+      // Placeholder text and topic, these will be set via askVotingPlanStatus topic.
       text: 'Ok -- we\'ll check in with you next election.',
       topic: defaultTopic,
       profileUpdate: {
@@ -155,7 +208,7 @@ module.exports = {
     },
     votingPlanStatusNotVoting: {
       name: 'votingPlanStatusNotVoting',
-      // Placeholder template: this will be set on an askVotingPlanStatus broadcast.
+      // Placeholder text and topic, these will be set via askVotingPlanStatus topic.
       text: 'Mind sharing why you aren\'t not voting?',
       topic: defaultTopic,
       profileUpdate: {
@@ -165,6 +218,7 @@ module.exports = {
     },
     votingPlanStatusVoted: {
       name: 'votingPlanStatusVoted',
+      // Placeholder text and topic, these will be set via askVotingPlanStatus topic.
       text: 'Awesome! Thank you for voting.',
       topic: defaultTopic,
       profileUpdate: {
@@ -174,12 +228,15 @@ module.exports = {
     },
     votingPlanStatusVoting: {
       name: 'votingPlanStatusVoting',
-      text: askVotingPlanMethodOfTransportText,
-      topic: { id: 'ask_voting_plan_method_of_transport' },
+      text: beginVotingPlanText,
+      topic: beginVotingPlanTopic,
       profileUpdate: {
         field: profile.votingPlanStatus.name,
         value: profile.votingPlanStatus.values.voting,
       },
     },
+    votingPlanTimeOfDayAfternoon: votingPlanTimeOfDay('afternoon'),
+    votingPlanTimeOfDayEvening: votingPlanTimeOfDay('evening'),
+    votingPlanTimeOfDayMorning: votingPlanTimeOfDay('morning'),
   },
 };

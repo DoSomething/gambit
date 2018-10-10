@@ -2,7 +2,9 @@
 - askVotingPlanStatus
 
 // Current options are A) Yes B) No C) Already voted D) Can't vote
-// @see config/lib/macro
+// @see config/lib/helpers/macro
+
+// TODO: Add more substitutions and triggers for each option
 
 > topic ask_voting_plan_status includes random
 
@@ -22,7 +24,7 @@
 - votingPlanStatusVoted
 
 + d
-- votingPlanCantVote
+- votingPlanStatusCantVote
 
 + [*]
 - invalidVotingPlanStatus

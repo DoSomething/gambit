@@ -1,5 +1,5 @@
 // Current options are A) Weekly B) Monthly C) Need more info
-// @see config/lib/macro
+// @see config/lib/helpers/macro
 
 + status
 - askSubscriptionStatus
