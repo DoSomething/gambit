@@ -89,6 +89,12 @@ test('POST /api/v2/messages?origin=broadcastLite should return 422 if mobile is 
   const validMobileNumber = false;
   const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload(validMobileNumber);
 
+  nock(integrationHelper.routes.northstar.baseURI)
+    .get(`/users/id/${cioWebhookPayload.userId}`)
+    .reply(200, stubs.northstar.getUser({
+      noMobile: true,
+    }));
+
   nock(integrationHelper.routes.gambitCampaigns.baseURI)
     .get(`/broadcasts/${stubs.getBroadcastId()}`)
     .reply(200, stubs.gambitCampaigns.getBroadcastSingleResponse());
@@ -105,6 +111,12 @@ test('POST /api/v2/messages?origin=broadcastLite should return 422 if mobile is 
 
 test('POST /api/v2/messages?origin=broadcastLite should return 200 if broadcast is sent successfully', async (t) => {
   const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
+
+  nock(integrationHelper.routes.northstar.baseURI)
+    .get(`/users/id/${cioWebhookPayload.userId}`)
+    .reply(200, stubs.northstar.getUser({
+      noMobile: true,
+    }));
 
   nock(integrationHelper.routes.gambitCampaigns.baseURI)
     .get(`/broadcasts/${stubs.getBroadcastId()}`)
