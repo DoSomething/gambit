@@ -1,6 +1,6 @@
 'use strict';
 
-// Load enviroment vars.
+// Load environment vars.
 require('dotenv').config();
 
 // @see https://docs.newrelic.com/docs/agents/nodejs-agent/installation-configuration

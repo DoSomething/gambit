@@ -1,6 +1,6 @@
 'use strict';
 
-// Load enviroment vars.
+// Load environment vars.
 require('dotenv').config();
 
 const Consolebot = require('./lib/consolebot');
