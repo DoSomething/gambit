@@ -37,6 +37,7 @@
     "npm": "6.4.1"
   },
   "dependencies": {
+    "@dosomething/gateway": "^1.4.0",
     "@dosomething/northstar-js": "git://github.com/DoSomething/northstar-js.git",
     "bad-words": "^1.6.0",
     "basic-auth": "^1.1.0",
