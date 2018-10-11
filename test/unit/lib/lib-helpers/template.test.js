@@ -53,8 +53,11 @@ test('isAskContinueTemplate should return boolean', (t) => {
   t.falsy(templateHelper.isAskContinueTemplate(undefinedTemplateName));
 });
 
-// isGambitCampaignsTemplate
-test('isGambitCampaignsTemplate should return boolean', (t) => {
-  t.true(templateHelper.isGambitCampaignsTemplate('askQuantity'));
-  t.falsy(templateHelper.isGambitCampaignsTemplate(undefinedTemplateName));
+// isTopicTemplate
+test('isTopicTemplate should return boolean', (t) => {
+  const topicTemplates = config.templatesMap.topicTemplates;
+  Object.keys(topicTemplates).forEach((templateName) => {
+    t.true(templateHelper.isTopicTemplate(templateName));
+  });
+  t.falsy(templateHelper.isTopicTemplate(undefinedTemplateName));
 });

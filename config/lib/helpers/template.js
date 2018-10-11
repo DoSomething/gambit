@@ -19,8 +19,7 @@ const templatesMap = {
     askYesNo: 'askYesNo',
     invalidAskSignupResponse: 'invalidAskSignupResponse',
   },
-  // TODO: Rename as topicTemplates.
-  gambitCampaignsTemplates: {
+  topicTemplates: {
     askCaption: 'askCaption',
     askPhoto: 'askPhoto',
     askQuantity: 'askQuantity',
@@ -77,6 +76,6 @@ module.exports = {
     templatesMap.gambitConversationsTemplates, val => val.text),
   askContinueTemplates: underscore.values(templatesMap.askContinueTemplates),
   askSignupTemplates: underscore.values(templatesMap.askSignupTemplates),
-  gambitCampaignsTemplates: underscore.values(templatesMap.gambitCampaignsTemplates),
   gambitConversationsTemplates: underscore.pluck(underscore.values(templatesMap.gambitConversationsTemplates), 'name'),
+  topicTemplates: underscore.values(templatesMap.topicTemplates),
 };
