@@ -6,12 +6,14 @@ const router = express.Router();
 
 // Middleware configs
 const outboundMessageConfig = require('../../../config/lib/middleware/messages/message-outbound');
+const getUserConfig = require('../../../config/lib/middleware/messages/broadcast-lite/user-get');
 
 // Middleware
 const createOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-create');
 const createConversationMiddleware = require('../../../lib/middleware/messages/conversation-create');
 const getBroadcastMiddleware = require('../../../lib/middleware/messages/broadcast/broadcast-get');
 const getConversationMiddleware = require('../../../lib/middleware/messages/conversation-get');
+const getUserMiddleware = require('../../../lib/middleware/messages/user-get');
 const loadOutboundMessageMiddleware = require('../../../lib/middleware/messages/message-outbound-load');
 const paramsMiddleware = require('../../../lib/middleware/messages/broadcast-lite/params');
 const parseBroadcastMiddleware = require('../../../lib/middleware/messages/broadcast/broadcast-parse');
@@ -23,11 +25,7 @@ router.use(paramsMiddleware());
 router.use(getBroadcastMiddleware());
 router.use(parseBroadcastMiddleware());
 
-/**
- * TODO: Here we will get the sms_status from the Fastly cache
- * Removed: router.use(getUserMiddleware(getUserConfig));
- */
-
+router.use(getUserMiddleware(getUserConfig));
 router.use(validateOutboundMessageMiddleware());
 
 router.use(getConversationMiddleware());

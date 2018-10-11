@@ -1,5 +1,9 @@
 'use strict';
 
+/**
+ * TODO: This helper needs some more refactoring love.
+ */
+
 const httpMocks = require('node-mocks-http');
 const url = require('url');
 const Chance = require('chance');
@@ -38,25 +42,36 @@ function getTopicId() {
   return module.exports.getContentfulId();
 }
 
+function stubLogger(sandbox, logger) {
+  sandbox.stub(logger, 'warn').returns(() => { });
+  sandbox.stub(logger, 'error').returns(() => { });
+  sandbox.stub(logger, 'debug').returns(() => { });
+  sandbox.stub(logger, 'info').returns(() => { });
+}
+
 module.exports = {
   config: {
-    getMessageOutbound: function getMessageOutbound(shouldSendWhenPaused = false) {
+    getMessageOutbound(shouldSendWhenPaused = false) {
       return {
         messageDirection: 'outbound-api-send',
         shouldSendWhenPaused,
       };
     },
-    getUser: function getUser(shouldSendErrorIfNotFound = true) {
+    /**
+     * TODO: broadcastLite config differs from this default, should we have a separate stub
+     * for that?
+     */
+    getUser(shouldSendErrorIfNotFound = true) {
       return {
         shouldSendErrorIfNotFound,
       };
     },
   },
   gambitCampaigns: {
-    getSignupId: function getSignupId() {
+    getSignupId() {
       return 8496477;
     },
-    getReceiveMessageResponse: function getReceiveMessageResponse() {
+    getReceiveMessageResponse() {
       return {
         data: {
           replyTemplate: module.exports.getTemplate(),
@@ -103,13 +118,8 @@ module.exports = {
       },
     }),
   },
-  stubLogger: function stubLogger(sandbox, logger) {
-    sandbox.stub(logger, 'warn').returns(() => {});
-    sandbox.stub(logger, 'error').returns(() => {});
-    sandbox.stub(logger, 'debug').returns(() => {});
-    sandbox.stub(logger, 'info').returns(() => {});
-  },
-  getMockRequest: function getMockRequest(options) {
+  stubLogger,
+  getMockRequest(options) {
     const defaults = {
       method: 'POST',
       url: 'http://localhost:5100/testpath',
@@ -129,7 +139,7 @@ module.exports = {
 
     return req;
   },
-  getAttachment: function getAttachment() {
+  getAttachment() {
     return {
       url: '//images.ctfassets.net/owik07lyerdj/55kiwuII4oWWG2OiWM2E6e/fb93ab4a76c2f4a5d6c6afb1a2fc810f/doge-code.png',
       fileName: 'doge-code.png',
@@ -137,25 +147,27 @@ module.exports = {
     };
   },
   broadcast: {
-    getCioWebhookPayload: (validMobileNumber = true) => ({
-      userId: module.exports.getUserId(),
-      broadcastId: module.exports.getBroadcastId(),
-      mobile: module.exports.getPlatformUserId(validMobileNumber),
-    }),
+    getCioWebhookPayload(validMobileNumber = true) {
+      return {
+        userId: module.exports.getUserId(),
+        broadcastId: module.exports.getBroadcastId(),
+        mobile: module.exports.getPlatformUserId(validMobileNumber),
+      };
+    },
   },
-  getBroadcastId: function getBroadcastId() {
+  getBroadcastId() {
     return '429qioxAt2swYoMQUUymYW';
   },
-  getBroadcastMessageText: function getBroadcastMessageText() {
+  getBroadcastMessageText() {
     return 'Winter is coming, will you be prepared? Yes or No.';
   },
-  getBroadcastMessageTextWithLink: function getBroadcastMessageTextWithLink() {
+  getBroadcastMessageTextWithLink() {
     return 'Winter is coming! https://78.media.tumblr.com/tumblr_m3vkxqpZ6N1qcrd6qo1_500.gif';
   },
-  getBroadcastName: function getBroadcastName() {
+  getBroadcastName() {
     return 'NightsWatch2017';
   },
-  getBroadcastAggregateMessagesResults: function getBroadcastAggregateMessagesResults() {
+  getBroadcastAggregateMessagesResults() {
     return [
       { _id: { direction: 'inbound' }, count: totalInboundNoMacro },
       {
@@ -169,7 +181,7 @@ module.exports = {
       { _id: { direction: 'outbound-api-import' }, count: totalOutbound },
     ];
   },
-  getBroadcastStats: function getBroadcastStats(empty = false) {
+  getBroadcastStats(empty = false) {
     const macros = {
       confirmedCampaign: totalInboundConfirmedCampaign,
       declinedCampaign: totalInboundDeclinedCampaign,
@@ -185,18 +197,18 @@ module.exports = {
       },
     };
   },
-  getCampaignId: function getCampaignId() {
+  getCampaignId() {
     return 2299;
   },
-  getCampaignRunId: function getCampaignRunId() {
+  getCampaignRunId() {
     return 6441;
   },
   getContentfulId,
-  getKeyword: function getKeyword() {
+  getKeyword() {
     return chance.word();
   },
   getMacro,
-  getMobileNumber: function getMobileNumber(valid) {
+  getMobileNumber(valid) {
     /**
      * If the `valid` flag is set to a truthy value. We return a "valid" E164 formatted, US number.
      * Otherwise, return the default number which is not a valid E164 formatted, US number.
@@ -207,53 +219,53 @@ module.exports = {
     }
     return mobileNumber;
   },
-  getPlatform: function getPlatform() {
+  getPlatform() {
     return 'sms';
   },
-  getPlatformUserId: function getPlatformUserId(valid) {
+  getPlatformUserId(valid) {
     return module.exports.getMobileNumber(valid);
   },
-  getPostType: function getPostType() {
+  getPostType() {
     return 'text';
   },
-  getRandomMessageText: function getRandomMessageText() {
+  getRandomMessageText() {
     return chance.paragraph({ sentences: 2 });
   },
-  getRandomName: function getRandomWord() {
+  getRandomName() {
     return `${chance.animal()} ${chance.animal()} - ${chance.month()} ${chance.year()}`;
   },
   getRandomWord: function getRandomWord() {
     return chance.word();
   },
-  getRequestId: function getRequestId() {
+  getRequestId() {
     return '2512b2e5-76b1-4efb-916b-5d14bbb2555f';
   },
-  getSignupMessageTemplateName: function getSignupMessageTemplateName() {
+  getSignupMessageTemplateName() {
     return 'webAskText';
   },
-  getTemplate: function getTemplate() {
+  getTemplate() {
     return 'askSignup';
   },
-  getTopic: function getTopic() {
+  getTopic() {
     return 'random';
   },
   getTopicId,
-  getUserId: function getUserId() {
+  getUserId() {
     return '597b9ef910707d07c84b00aa';
   },
   front: {
     // @see https://dev.frontapp.com/#get-conversation
-    getConversationUrl: function getConversationUrl() {
+    getConversationUrl() {
       return 'https://api2.frontapp.com/conversations/cnv_55c8c149';
     },
-    getConversationSuccessBody: function getConversationSuccessBody(status = 'archived') {
+    getConversationSuccessBody(status = 'archived') {
       return {
         id: 'cnv_55c8c149',
         subject: 'You broke my heart, Hubert.',
         status,
       };
     },
-    getInboundRequestBody: function getInboundRequestBody() {
+    getInboundRequestBody() {
       const data = {
         _links: {
           self: 'https://api2.frontapp.com/messages/msg_55c8c149',
@@ -283,7 +295,7 @@ module.exports = {
     },
   },
   twilio: {
-    getDeliveredMessageUpdate: function getDeliveredMessageUpdate() {
+    getDeliveredMessageUpdate() {
       return {
         metadata: {
           delivery: {
@@ -292,7 +304,7 @@ module.exports = {
         },
       };
     },
-    getFailedMessageUpdate: function getFailedMessageUpdate(undeliverable) {
+    getFailedMessageUpdate(undeliverable) {
       const undeliverableErrorCodes = Object.keys(twilioHelperConfig.undeliverableErrorCodes);
       const failedAt = chance.date({ year: chance.year({ min: 2017, max: 2018 }) }).toISOString();
       const failureData = {
@@ -314,10 +326,10 @@ module.exports = {
         },
       };
     },
-    getSmsMessageSid: function getSmsMessageSid() {
+    getSmsMessageSid() {
       return 'SMe62bd767ea4438d7f7f307ff9d3212e0';
     },
-    getInboundRequestBody: function getInboundRequestBody() {
+    getInboundRequestBody() {
       const sid = this.getSmsMessageSid();
       return {
         Body: module.exports.getRandomMessageText(),
@@ -336,7 +348,7 @@ module.exports = {
         SmsStatus: 'received',
       };
     },
-    getPostMessageSuccess: function getPostMessageSuccess() {
+    getPostMessageSuccess() {
       return {
         sid: this.getSmsMessageSid(),
         status: 'queued',
@@ -344,7 +356,7 @@ module.exports = {
         dateCreated: moment().format(),
       };
     },
-    getPostMessageError: function getPostMessageError() {
+    getPostMessageError() {
       return {
         status: 400,
         message: 'The From phone number 38383 is not a valid, SMS-capable inbound phone number or short code for your account.',
@@ -357,17 +369,22 @@ module.exports = {
     /**
      * getUser
      *
-     * @param  {Object} opts = {}
-     * @return {Object}            An User data object
+     * @param  {Object}   opts = {}
+     * @param  {Boolean}  opts.noMobile       Removes mobile property if true
+     * @param  {Boolean}  opts.validUsNumber  Uses valid mobile # if true
+     * @param  {String}   opts.subscription   Subscription type
+     * @return {Object}                       An User data object
      */
-    getUser: function getUser(opts = {}) {
+    getUser(opts = {}) {
+      const { noMobile, validUsNumber, subscription } = opts;
+
       const mobileData = {
         mobile: module.exports.getMobileNumber(),
       };
 
-      if (opts.noMobile) {
+      if (noMobile) {
         delete mobileData.mobile;
-      } else if (opts.validUsNumber) {
+      } else if (validUsNumber) {
         mobileData.mobile = module.exports.getMobileNumber(true);
       }
 
@@ -375,8 +392,8 @@ module.exports = {
         sms_status: subscriptionHelper.statuses.active(),
       };
 
-      if (opts.subscription) {
-        const subscriptionFn = subscriptionHelper.statuses[opts.subscription];
+      if (subscription) {
+        const subscriptionFn = subscriptionHelper.statuses[subscription];
 
         if (typeof subscriptionFn === 'function') {
           smsStatusData.sms_status = subscriptionFn();
@@ -387,6 +404,18 @@ module.exports = {
         data: {
           id: module.exports.getUserId(),
           _id: module.exports.getUserId(),
+          first_name: module.exports.getRandomWord(),
+          last_initial: 'O',
+          photo: null,
+          // TODO: We are missing voting_plan_status in the public response as of 10/10/18
+          voting_plan_method_of_transport: null,
+          voting_plan_time_of_day: null,
+          voting_plan_attending_with: null,
+          language: null,
+          country: 'US',
+          drupal_id: module.exports.getCampaignRunId(),
+          role: 'user',
+          // TODO: These are private properties, should we differentiate the returned user?
           ...mobileData,
           ...smsStatusData,
         },

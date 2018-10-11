@@ -329,11 +329,11 @@ test('isLastOutboundAskContinue should return whether if req.lastOutboundTemplat
 
 // isLastOutboundTopicTemplate
 test('isLastOutboundTopicTemplate should return whether if req.lastOutboundTemplate is a gambitCampaigns template', (t) => {
-  sandbox.stub(helpers.template, 'isGambitCampaignsTemplate')
+  sandbox.stub(helpers.template, 'isTopicTemplate')
     .returns(true);
   t.context.req.lastOutboundTemplate = stubs.getRandomWord();
   t.truthy(requestHelper.isLastOutboundTopicTemplate(t.context.req));
-  helpers.template.isGambitCampaignsTemplate
+  helpers.template.isTopicTemplate
     .should.have.been.calledWith(t.context.req.lastOutboundTemplate);
 });
 

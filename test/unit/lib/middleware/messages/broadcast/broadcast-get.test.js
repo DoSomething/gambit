@@ -17,6 +17,7 @@ const broadcastFactory = require('../../../../../helpers/factories/broadcast');
 
 // stubs
 const broadcastId = stubs.getBroadcastId();
+const askVotingPlanStatusBroadcast = broadcastFactory.getValidAskVotingPlanStatus();
 const askYesNoBroadcast = broadcastFactory.getValidAskYesNo();
 const autoReplyBroadcast = broadcastFactory.getValidAutoReplyBroadcast();
 const legacyBroadcast = broadcastFactory.getValidLegacyCampaignBroadcast();
@@ -98,6 +99,26 @@ test('getBroadcast should call next if askYesNo topic campaign is not closed', a
   helpers.broadcast.fetchById.should.have.been.calledWith(broadcastId);
   helpers.topic.hasCampaign.should.have.been.calledWith(saidYesTemplate.topic);
   helpers.campaign.isClosedCampaign.should.have.been.calledWith(saidYesTemplate.topic.campaign);
+  next.should.have.have.been.called;
+  helpers.sendErrorResponse.should.not.have.been.called;
+});
+
+test('getBroadcast should call next if broadcast type is askVotingPlanStatus', async (t) => {
+  const next = sinon.stub();
+  const middleware = getBroadcast();
+  sandbox.stub(helpers.broadcast, 'fetchById')
+    .returns(Promise.resolve(askVotingPlanStatusBroadcast));
+  sandbox.stub(helpers.topic, 'hasCampaign')
+    .returns(true);
+  sandbox.stub(helpers.campaign, 'isClosedCampaign')
+    .returns(false);
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  t.context.req.broadcast.should.deep.equal(askVotingPlanStatusBroadcast);
+  helpers.broadcast.fetchById.should.have.been.calledWith(broadcastId);
+  helpers.topic.hasCampaign.should.not.have.been.called;
+  helpers.campaign.isClosedCampaign.should.not.have.been.called;
   next.should.have.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
 });
