@@ -89,6 +89,12 @@ test('POST /api/v2/messages?origin=broadcastLite should return 422 if mobile is 
   const validMobileNumber = false;
   const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload(validMobileNumber);
 
+  nock(integrationHelper.routes.northstar.baseURI)
+    .get(`/users/id/${cioWebhookPayload.userId}`)
+    .reply(200, stubs.northstar.getUser({
+      noMobile: true,
+    }));
+
   nock(integrationHelper.routes.gambitCampaigns.baseURI)
     .get(`/broadcasts/${stubs.getBroadcastId()}`)
     .reply(200, stubs.gambitCampaigns.getBroadcastSingleResponse());
@@ -103,8 +109,61 @@ test('POST /api/v2/messages?origin=broadcastLite should return 422 if mobile is 
   res.body.message.should.include('Cannot format mobile number');
 });
 
+test('POST /api/v2/messages?origin=broadcastLite should return 404 if user is not found', async (t) => {
+  const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
+
+  nock(integrationHelper.routes.northstar.baseURI)
+    .get(`/users/id/${cioWebhookPayload.userId}`)
+    .reply(404, {});
+
+  nock(integrationHelper.routes.gambitCampaigns.baseURI)
+    .get(`/broadcasts/${stubs.getBroadcastId()}`)
+    .reply(200, stubs.gambitCampaigns.getBroadcastSingleResponse());
+
+  const res = await t.context.request
+    .post(integrationHelper.routes.v2.messages(false, {
+      origin: 'broadcastLite',
+    }))
+    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
+    .send(cioWebhookPayload);
+
+  res.status.should.be.equal(404);
+  res.body.message.should.include('Northstar user not found');
+});
+
+test('POST /api/v2/messages?origin=broadcastLite should return 422 if user is unsubscribed', async (t) => {
+  const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
+
+  nock(integrationHelper.routes.northstar.baseURI)
+    .get(`/users/id/${cioWebhookPayload.userId}`)
+    .reply(200, stubs.northstar.getUser({
+      noMobile: true,
+      subscription: 'stop',
+    }));
+
+  nock(integrationHelper.routes.gambitCampaigns.baseURI)
+    .get(`/broadcasts/${stubs.getBroadcastId()}`)
+    .reply(200, stubs.gambitCampaigns.getBroadcastSingleResponse());
+
+  const res = await t.context.request
+    .post(integrationHelper.routes.v2.messages(false, {
+      origin: 'broadcastLite',
+    }))
+    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
+    .send(cioWebhookPayload);
+
+  res.status.should.be.equal(422);
+  res.body.message.should.include('Northstar User is unsubscribed');
+});
+
 test('POST /api/v2/messages?origin=broadcastLite should return 200 if broadcast is sent successfully', async (t) => {
   const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
+
+  nock(integrationHelper.routes.northstar.baseURI)
+    .get(`/users/id/${cioWebhookPayload.userId}`)
+    .reply(200, stubs.northstar.getUser({
+      noMobile: true,
+    }));
 
   nock(integrationHelper.routes.gambitCampaigns.baseURI)
     .get(`/broadcasts/${stubs.getBroadcastId()}`)
