@@ -192,7 +192,7 @@ test('sendReply(): should call sendErrorResponse on failure', async (t) => {
 });
 
 test('autoReply(): should call sendReplyWithTopicTemplate', async (t) => {
-  const template = templates.gambitCampaignsTemplates.autoReply;
+  const template = templates.topicTemplates.autoReply;
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
 });
 
@@ -253,7 +253,7 @@ test('declinedContinue(): should call sendReplyWithTopicTemplate', async (t) => 
 });
 
 test('invalidAskYesNoResponse(): should call sendReplyWithTopicTemplate', async (t) => {
-  const template = templates.gambitCampaignsTemplates.invalidAskYesNoResponse;
+  const template = templates.topicTemplates.invalidAskYesNoResponse;
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
 });
 
@@ -293,7 +293,7 @@ test('rivescriptReply(): should call sendReply', async (t) => {
 });
 
 test('saidNo(): should call sendReply', async (t) => {
-  const template = templates.gambitCampaignsTemplates.saidNo;
+  const template = templates.topicTemplates.saidNo;
   const text = 'some text';
   sandbox.stub(repliesHelper, 'sendReply')
     .returns(resolvedPromise);
@@ -304,7 +304,7 @@ test('saidNo(): should call sendReply', async (t) => {
 });
 
 test('saidYes(): should call sendReply', async (t) => {
-  const template = templates.gambitCampaignsTemplates.saidYes;
+  const template = templates.topicTemplates.saidYes;
   const text = 'some text';
   sandbox.stub(repliesHelper, 'sendReply')
     .returns(resolvedPromise);

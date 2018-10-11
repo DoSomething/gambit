@@ -2,6 +2,7 @@
 
 module.exports = {
   types: {
+    askVotingPlanStatus: 'askVotingPlanStatus',
     askYesNo: 'askYesNo',
     autoReply: 'autoReply',
     photoPostConfig: 'photoPostConfig',

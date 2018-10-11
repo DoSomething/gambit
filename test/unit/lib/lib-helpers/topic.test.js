@@ -100,10 +100,17 @@ test('hasCampaign should return boolean of whether topic.campaign.id exists', (t
 });
 
 // isAskSubscriptionStatus
-test('isAskSubscriptionStatus returns whether topic is rivescriptTopics.isAskSubscriptionStatus', (t) => {
+test('isAskSubscriptionStatus returns whether topic is rivescriptTopics.askSubscriptionStatus', (t) => {
   const mockTopic = topicFactory.getValidTopic();
   t.truthy(topicHelper.isAskSubscriptionStatus(config.rivescriptTopics.askSubscriptionStatus));
   t.falsy(topicHelper.isAskSubscriptionStatus(mockTopic));
+});
+
+// isAskVotingPlanStatus
+test('isAskVotingPlanStatus returns whether topic is rivescriptTopics.askVotingPlanStatus', (t) => {
+  const mockTopic = topicFactory.getValidTopic();
+  t.truthy(topicHelper.isAskVotingPlanStatus(broadcastFactory.getValidAskVotingPlanStatus()));
+  t.falsy(topicHelper.isAskVotingPlanStatus(mockTopic));
 });
 
 // isAskYesNo
