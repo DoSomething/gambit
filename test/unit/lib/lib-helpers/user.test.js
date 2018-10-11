@@ -5,14 +5,12 @@ const test = require('ava');
 const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
-const crypto = require('crypto');
 const underscore = require('underscore');
 const httpMocks = require('node-mocks-http');
 const northstar = require('../../../../lib/northstar');
 const helpers = require('../../../../lib/helpers');
 
 const subscriptionHelper = require('../../../../lib/helpers/subscription');
-const config = require('../../../../config/lib/helpers/user');
 
 chai.should();
 chai.use(sinonChai);
@@ -31,11 +29,6 @@ const userFactory = require('../../../helpers/factories/user');
 
 const mockUser = userFactory.getValidUser();
 const userLookupStub = () => Promise.resolve(mockUser);
-const cryptoCreateHmacStub = {
-  update() { return this; },
-  digest() { return this; },
-  substring() { return this; },
-};
 const platformUserAddressStub = {
   country: 'US',
 };
@@ -94,14 +87,6 @@ test('fetchFromReq calls fetchByMobile if req.platformUserId', async (t) => {
   userHelper.fetchById.should.not.have.been.called;
 });
 
-// createPassword
-test('generatePassword', () => {
-  const opts = config.createOptions;
-  sandbox.stub(crypto, 'createHmac').returns(cryptoCreateHmacStub);
-  userHelper.generatePassword('taco');
-  crypto.createHmac.should.have.been.calledWithExactly(opts.passwordAlgorithm, opts.passwordKey);
-});
-
 // getCreatePayloadFromReq
 test('getCreatePayloadFromReq should return object', () => {
   const req = {
@@ -111,12 +96,9 @@ test('getCreatePayloadFromReq should return object', () => {
   };
   sandbox.stub(underscore, 'extend')
     .returns(platformUserAddressStub);
-  sandbox.stub(userHelper, 'generatePassword')
-    .returns('taco');
   const result = userHelper.getCreatePayloadFromReq(req);
   result.source.should.equal(req.platform);
   result.mobile.should.equal(req.platformUserId);
-  userHelper.generatePassword.should.have.been.called;
 });
 
 // getDefaultUpdatePayloadFromReq
