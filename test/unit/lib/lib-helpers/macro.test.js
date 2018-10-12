@@ -67,6 +67,12 @@ test('isChangeTopic should return boolean', (t) => {
   t.falsy(macroHelper.isChangeTopic(undefinedMacroName));
 });
 
+// isCompletedVotingPlan
+test('isCompletedVotingPlan should return boolean', (t) => {
+  t.true(macroHelper.isCompletedVotingPlan(macros.votingPlanMethodOfTransportWalk.name));
+  t.falsy(macroHelper.isCompletedVotingPlan(undefinedMacroName));
+});
+
 // isInvalidVotingPlanStatus
 test('isInvalidVotingPlanStatus should return boolean', (t) => {
   t.true(macroHelper.isInvalidVotingPlanStatus(macros.invalidVotingPlanStatus.name));
