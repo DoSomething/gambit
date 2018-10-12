@@ -23,8 +23,8 @@ const askVotingPlanTimeOfDayText = 'What time are you planning on voting? A) Mor
 // 4 - completed
 const beginVotingPlanText = `Let's make a plan! ${askVotingPlanTimeOfDayText}`;
 const beginVotingPlanTopic = rivescriptTopics.askVotingPlanTimeOfDay;
-const completedVotingPlanText = process.env.DS_GAMBIT_CONVERSATIONS_COMPLETED_VOTING_PLAN_TEXT || 'Thanks for making the plan, we’ll remind you to {{user.voting_plan_method_of_transport}} to the polls.';
 const completedVotingPlanMacro = 'votingPlanMethodOfTransport';
+const completedVotingPlanText = process.env.DS_GAMBIT_CONVERSATIONS_COMPLETED_VOTING_PLAN_TEXT || 'Thanks for making the plan, we’ll remind you to {{user.voting_plan_method_of_transport}} to the polls.';
 
 /**
  * @param {String} prefix
