@@ -1,6 +1,6 @@
 'use strict';
 
-// Load enviroment vars.
+// Load environment vars.
 require('dotenv').config();
 
 // @see https://docs.newrelic.com/docs/agents/nodejs-agent/installation-configuration
@@ -9,6 +9,9 @@ require('newrelic');
 const config = require('./config');
 const logger = require('./lib/logger');
 const app = require('./app');
+
+// Setup rogue client.
+require('./lib/rogue').getClient();
 
 // Start mongoose connection
 require('./config/mongoose')(config.dbUri);

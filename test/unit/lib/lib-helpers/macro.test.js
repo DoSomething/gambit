@@ -67,6 +67,14 @@ test('isChangeTopic should return boolean', (t) => {
   t.falsy(macroHelper.isChangeTopic(undefinedMacroName));
 });
 
+// isCompletedVotingPlan
+test('isCompletedVotingPlan should return boolean', (t) => {
+  t.true(macroHelper.isCompletedVotingPlan(macros.votingPlanMethodOfTransportWalk.name));
+  t.true(macroHelper.isCompletedVotingPlan(macros.votingPlanMethodOfTransportBike.name));
+  t.falsy(macroHelper.isCompletedVotingPlan(macros.votingPlanTimeOfDayMorning.name));
+  t.falsy(macroHelper.isCompletedVotingPlan(undefinedMacroName));
+});
+
 // isInvalidVotingPlanStatus
 test('isInvalidVotingPlanStatus should return boolean', (t) => {
   t.true(macroHelper.isInvalidVotingPlanStatus(macros.invalidVotingPlanStatus.name));
