@@ -231,7 +231,6 @@ test('updateByMemberMessageReq should not send req.platformUserAddress if user d
   const result = await userHelper.updateByMemberMessageReq(t.context.req);
   northstar.updateUser.should.have.been.calledWith(mockUser.id, { abc: 1, def: 2, ghi: 3 });
   userHelper.hasAddress.should.have.been.calledWith(t.context.req.user);
-  userHelper.hasAddress.should.have.been.calledWith(t.context.req.user);
   helpers.user.createVotingPlan.should.not.have.been.called;
   result.should.deep.equal(mockUser);
 });
