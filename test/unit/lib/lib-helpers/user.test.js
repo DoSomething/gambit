@@ -35,7 +35,7 @@ const platformUserAddressStub = {
 
 test.beforeEach((t) => {
   t.context.req = httpMocks.createRequest();
-  sandbox.stub(helpers.user, 'createVotingPlan')
+  sandbox.stub(helpers.user, 'createVotingPlanIfDoesntExist')
     .returns(Promise.resolve(mockUser));
 });
 
@@ -181,13 +181,10 @@ test('updateByMemberMessageReq should return northstar.updateUser', async (t) =>
   sandbox.stub(userHelper, 'hasAddress')
     .returns(false);
   t.context.req.macro = stubs.getMacro();
-  sandbox.stub(helpers.macro, 'isCompletedVotingPlan')
-    .returns(false);
 
   const result = await userHelper.updateByMemberMessageReq(t.context.req);
   northstar.updateUser.should.have.been.calledWith(mockUser.id, { abc: 1, def: 2 });
   userHelper.hasAddress.should.not.have.been.called;
-  helpers.user.createVotingPlan.should.not.have.been.called;
   result.should.deep.equal(mockUser);
 });
 
@@ -203,13 +200,10 @@ test('updateByMemberMessageReq should not send req.platformUserAddress if user h
   sandbox.stub(userHelper, 'hasAddress')
     .returns(true);
   t.context.req.macro = stubs.getMacro();
-  sandbox.stub(helpers.macro, 'isCompletedVotingPlan')
-    .returns(false);
 
   const result = await userHelper.updateByMemberMessageReq(t.context.req);
   northstar.updateUser.should.have.been.calledWith(mockUser.id, { abc: 1, def: 2 });
   userHelper.hasAddress.should.have.been.calledWith(t.context.req.user);
-  helpers.user.createVotingPlan.should.not.have.been.called;
   result.should.deep.equal(mockUser);
 });
 
@@ -225,13 +219,10 @@ test('updateByMemberMessageReq should not send req.platformUserAddress if user d
   sandbox.stub(userHelper, 'hasAddress')
     .returns(false);
   t.context.req.macro = stubs.getMacro();
-  sandbox.stub(helpers.macro, 'isCompletedVotingPlan')
-    .returns(false);
 
   const result = await userHelper.updateByMemberMessageReq(t.context.req);
   northstar.updateUser.should.have.been.calledWith(mockUser.id, { abc: 1, def: 2, ghi: 3 });
   userHelper.hasAddress.should.have.been.calledWith(t.context.req.user);
-  helpers.user.createVotingPlan.should.not.have.been.called;
   result.should.deep.equal(mockUser);
 });
 
@@ -253,6 +244,6 @@ test('updateByMemberMessageReq should call createVotingPlan if macro isCompleted
   const result = await userHelper.updateByMemberMessageReq(t.context.req);
   northstar.updateUser.should.have.been.calledWith(mockUser.id, { abc: 1, def: 2, ghi: 3 });
   userHelper.hasAddress.should.have.been.calledWith(t.context.req.user);
-  helpers.user.createVotingPlan.should.have.been.calledWith(t.context.req.user);
+  helpers.user.createVotingPlanIfDoesntExist.should.have.been.calledWith(t.context.req.user);
   result.should.deep.equal(mockUser);
 });
