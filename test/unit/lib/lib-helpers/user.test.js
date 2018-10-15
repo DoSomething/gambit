@@ -68,25 +68,25 @@ test('createVotingPlan passes user voting plan info to rogue.createPost', async 
 
 // createVotingPlanIfDoesntExist
 test('createVotingPlanIfDoesntExist returns null if voting plan exists for user', async (t) => {
-  sandbox.stub(userHelper, 'getVotingPlan')
+  sandbox.stub(userHelper, 'fetchVotingPlan')
     .returns(Promise.resolve(mockPost));
   sandbox.stub(userHelper, 'createVotingPlan')
     .returns(Promise.resolve(mockPost));
 
   const result = await userHelper.createVotingPlanIfDoesntExist(mockUser, source);
-  userHelper.getVotingPlan.should.have.been.calledWith(mockUser);
+  userHelper.fetchVotingPlan.should.have.been.calledWith(mockUser);
   userHelper.createVotingPlan.should.not.have.been.called;
   t.is(result, null);
 });
 
 test('createVotingPlanIfDoesntExist creates voting plan if voting plan does not exist for user', async () => {
-  sandbox.stub(userHelper, 'getVotingPlan')
+  sandbox.stub(userHelper, 'fetchVotingPlan')
     .returns(Promise.resolve(null));
   sandbox.stub(userHelper, 'createVotingPlan')
     .returns(Promise.resolve(mockPost));
 
   const result = await userHelper.createVotingPlanIfDoesntExist(mockUser, source);
-  userHelper.getVotingPlan.should.have.been.calledWith(mockUser);
+  userHelper.fetchVotingPlan.should.have.been.calledWith(mockUser);
   userHelper.createVotingPlan.should.have.been.calledWith(mockUser, source);
   result.should.deep.equal(mockPost);
 });
