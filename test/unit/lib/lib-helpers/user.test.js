@@ -28,16 +28,18 @@ const conversationFactory = require('../../../helpers/factories/conversation');
 const messageFactory = require('../../../helpers/factories/message');
 const userFactory = require('../../../helpers/factories/user');
 
+const mockPost = { id: stubs.getCampaignRunId() };
 const mockUser = userFactory.getValidUser();
 const userLookupStub = () => Promise.resolve(mockUser);
 const platformUserAddressStub = {
   country: 'US',
 };
+const source = stubs.getPlatform();
 
 test.beforeEach((t) => {
   t.context.req = httpMocks.createRequest();
-  sandbox.stub(helpers.user, 'createVotingPlanIfDoesntExist')
-    .returns(Promise.resolve(mockUser));
+  sandbox.stub(rogue, 'createPost')
+    .returns(Promise.resolve(mockPost));
 });
 
 test.afterEach((t) => {
@@ -47,15 +49,11 @@ test.afterEach((t) => {
 
 // createVotingPlan
 test('createVotingPlan passes user voting plan info to rogue.createPost', async () => {
-  const mockPost = { id: stubs.getCampaignRunId() };
-  sandbox.stub(rogue, 'createPost')
-    .returns(Promise.resolve(mockPost));
   const votingPlan = {
     attending_with: mockUser[config.fields.votingPlanAttendingWith.name],
     method_of_transport: mockUser[config.fields.votingPlanMethodOfTransport.name],
     time_of_day: mockUser[config.fields.votingPlanTimeOfDay.name],
   };
-  const source = stubs.getPlatform();
 
   const result = await userHelper.createVotingPlan(mockUser, source);
   rogue.createPost.should.have.been.calledWith({
@@ -65,6 +63,31 @@ test('createVotingPlan passes user voting plan info to rogue.createPost', async 
     type: config.posts.votingPlan.type,
     source,
   });
+  result.should.deep.equal(mockPost);
+});
+
+// createVotingPlanIfDoesntExist
+test('createVotingPlanIfDoesntExist returns null if voting plan exists for user', async (t) => {
+  sandbox.stub(userHelper, 'getVotingPlan')
+    .returns(Promise.resolve(mockPost));
+  sandbox.stub(userHelper, 'createVotingPlan')
+    .returns(Promise.resolve(mockPost));
+
+  const result = await userHelper.createVotingPlanIfDoesntExist(mockUser, source);
+  userHelper.getVotingPlan.should.have.been.calledWith(mockUser);
+  userHelper.createVotingPlan.should.not.have.been.called;
+  t.is(result, null);
+});
+
+test('createVotingPlanIfDoesntExist creates voting plan if voting plan does not exist for user', async () => {
+  sandbox.stub(userHelper, 'getVotingPlan')
+    .returns(Promise.resolve(null));
+  sandbox.stub(userHelper, 'createVotingPlan')
+    .returns(Promise.resolve(mockPost));
+
+  const result = await userHelper.createVotingPlanIfDoesntExist(mockUser, source);
+  userHelper.getVotingPlan.should.have.been.calledWith(mockUser);
+  userHelper.createVotingPlan.should.have.been.calledWith(mockUser, source);
   result.should.deep.equal(mockPost);
 });
 
@@ -264,6 +287,8 @@ test('updateByMemberMessageReq should call createVotingPlan if macro isCompleted
   t.context.req.macro = stubs.getMacro();
   sandbox.stub(helpers.macro, 'isCompletedVotingPlan')
     .returns(true);
+  sandbox.stub(helpers.user, 'createVotingPlanIfDoesntExist')
+    .returns(Promise.resolve(mockPost));
 
   const result = await userHelper.updateByMemberMessageReq(t.context.req);
   northstar.updateUser.should.have.been.calledWith(mockUser.id, { abc: 1, def: 2, ghi: 3 });
