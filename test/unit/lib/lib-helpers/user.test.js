@@ -8,9 +8,10 @@ const sinonChai = require('sinon-chai');
 const underscore = require('underscore');
 const httpMocks = require('node-mocks-http');
 const northstar = require('../../../../lib/northstar');
+const rogue = require('../../../../lib/rogue');
 const helpers = require('../../../../lib/helpers');
-
 const subscriptionHelper = require('../../../../lib/helpers/subscription');
+const config = require('../../../../config/lib/helpers/user');
 
 chai.should();
 chai.use(sinonChai);
@@ -42,6 +43,29 @@ test.beforeEach((t) => {
 test.afterEach((t) => {
   t.context = {};
   sandbox.restore();
+});
+
+// createVotingPlan
+test('createVotingPlan passes user voting plan info to rogue.createPost', async () => {
+  const mockPost = { id: stubs.getCampaignRunId() };
+  sandbox.stub(rogue, 'createPost')
+    .returns(Promise.resolve(mockPost));
+  const votingPlan = {
+    attending_with: mockUser[config.fields.votingPlanAttendingWith.name],
+    method_of_transport: mockUser[config.fields.votingPlanMethodOfTransport.name],
+    time_of_day: mockUser[config.fields.votingPlanTimeOfDay.name],
+  };
+  const source = stubs.getPlatform();
+
+  const result = await userHelper.createVotingPlan(mockUser, source);
+  rogue.createPost.should.have.been.calledWith({
+    text: JSON.stringify(votingPlan),
+    campaign_id: config.posts.votingPlan.campaignId,
+    northstar_id: mockUser.id,
+    type: config.posts.votingPlan.type,
+    source,
+  });
+  result.should.deep.equal(mockPost);
 });
 
 // fetchById
