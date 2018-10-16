@@ -49,15 +49,12 @@ test.afterEach((t) => {
 
 // createVotingPlan
 test('createVotingPlan passes user voting plan info to rogue.createPost', async () => {
-  const votingPlan = {
-    attending_with: mockUser[config.fields.votingPlanAttendingWith.name],
-    method_of_transport: mockUser[config.fields.votingPlanMethodOfTransport.name],
-    time_of_day: mockUser[config.fields.votingPlanTimeOfDay.name],
-  };
-
+  const description = stubs.getRandomWord();
+  sandbox.stub(userHelper, 'getVotingPlanDescription')
+    .returns(description);
   const result = await userHelper.createVotingPlan(mockUser, source);
   rogue.createPost.should.have.been.calledWith({
-    text: JSON.stringify(votingPlan),
+    text: description,
     campaign_id: config.posts.votingPlan.campaignId,
     northstar_id: mockUser.id,
     type: config.posts.votingPlan.type,
@@ -186,6 +183,17 @@ test('getFetchVotingPlanQuery should return object with user id and voting plan 
     'filter[campaign_id]': config.posts.votingPlan.campaignId,
     'filter[type]': config.posts.votingPlan.type,
   });
+});
+
+// getVotingPlanDescription
+test('getVotingPlanDescription should return string with voting plan field values', () => {
+  const votingPlan = {
+    attending_with: mockUser[config.fields.votingPlanAttendingWith.name],
+    method_of_transport: mockUser[config.fields.votingPlanMethodOfTransport.name],
+    time_of_day: mockUser[config.fields.votingPlanTimeOfDay.name],
+  };
+  const result = userHelper.getVotingPlanDescription(mockUser);
+  result.should.deep.equal(JSON.stringify(votingPlan));
 });
 
 // hasAddress
