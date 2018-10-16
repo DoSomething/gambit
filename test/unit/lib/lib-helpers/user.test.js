@@ -52,37 +52,40 @@ test('createVotingPlan passes user voting plan info to rogue.createPost', async 
   const mockValues = { test: stubs.getRandomWord() };
   sandbox.stub(userHelper, 'getVotingPlanValues')
     .returns(mockValues);
+  const details = JSON.stringify(mockValues);
+
   const result = await userHelper.createVotingPlan(mockUser, source);
   rogue.createPost.should.have.been.calledWith({
-    text: JSON.stringify(mockValues),
     campaign_id: config.posts.votingPlan.campaignId,
+    details,
     northstar_id: mockUser.id,
-    type: config.posts.votingPlan.type,
     source,
+    text: details,
+    type: config.posts.votingPlan.type,
   });
   result.should.deep.equal(mockPost);
 });
 
-// createVotingPlanIfDoesntExist
-test('createVotingPlanIfDoesntExist returns null if voting plan exists for user', async (t) => {
+// fetchOrCreateVotingPlan
+test('fetchOrCreateVotingPlan returns fetchVotingPlan result if exists', async () => {
   sandbox.stub(userHelper, 'fetchVotingPlan')
     .returns(Promise.resolve(mockPost));
   sandbox.stub(userHelper, 'createVotingPlan')
-    .returns(Promise.resolve(mockPost));
+    .returns(Promise.resolve({ id: stubs.getRandomWord() }));
 
-  const result = await userHelper.createVotingPlanIfDoesntExist(mockUser, source);
+  const result = await userHelper.fetchOrCreateVotingPlan(mockUser, source);
   userHelper.fetchVotingPlan.should.have.been.calledWith(mockUser);
   userHelper.createVotingPlan.should.not.have.been.called;
-  t.is(result, null);
+  result.should.deep.equal(mockPost);
 });
 
-test('createVotingPlanIfDoesntExist creates voting plan if voting plan does not exist for user', async () => {
+test('fetchOrCreateVotingPlan returns createVotingPlan result if fetchVotingPlan result is null', async () => {
   sandbox.stub(userHelper, 'fetchVotingPlan')
     .returns(Promise.resolve(null));
   sandbox.stub(userHelper, 'createVotingPlan')
     .returns(Promise.resolve(mockPost));
 
-  const result = await userHelper.createVotingPlanIfDoesntExist(mockUser, source);
+  const result = await userHelper.fetchOrCreateVotingPlan(mockUser, source);
   userHelper.fetchVotingPlan.should.have.been.calledWith(mockUser);
   userHelper.createVotingPlan.should.have.been.calledWith(mockUser, source);
   result.should.deep.equal(mockPost);
@@ -318,12 +321,12 @@ test('updateByMemberMessageReq should call createVotingPlan if macro isCompleted
   t.context.req.macro = stubs.getMacro();
   sandbox.stub(helpers.macro, 'isCompletedVotingPlan')
     .returns(true);
-  sandbox.stub(helpers.user, 'createVotingPlanIfDoesntExist')
+  sandbox.stub(helpers.user, 'fetchOrCreateVotingPlan')
     .returns(Promise.resolve(mockPost));
 
   const result = await userHelper.updateByMemberMessageReq(t.context.req);
   northstar.updateUser.should.have.been.calledWith(mockUser.id, { abc: 1, def: 2, ghi: 3 });
   userHelper.hasAddress.should.have.been.calledWith(t.context.req.user);
-  helpers.user.createVotingPlanIfDoesntExist.should.have.been.calledWith(t.context.req.user);
+  helpers.user.fetchOrCreateVotingPlan.should.have.been.calledWith(t.context.req.user);
   result.should.deep.equal(mockUser);
 });
