@@ -4,26 +4,42 @@
 // Current options are A) Yes B) No C) Already voted D) Can't vote
 // @see config/lib/helpers/macro
 
-// TODO: Add more substitutions and triggers for each option
-
 > topic ask_voting_plan_status includes random
 
 + a
 - votingPlanStatusVoting
 
-+ [*] @yes [*]
-@ a
-
 + b
 - votingPlanStatusNotVoting
-
-+ @no [*]
-@ b
 
 + c
 - votingPlanStatusVoted
 
 + d
+- votingPlanStatusCantVote
+
++ @no [*]
+- votingPlanStatusNotVoting
+
++ [*] am voting [*]
+- votingPlanStatusVoting
+
++ [*] can not vote [*]
+- votingPlanStatusCantVote
+
++ [*] not old [*]
+- votingPlanStatusCantVote
+
++ [*] not voting [*]
+- votingPlanStatusNotVoting
+
++ [*] voted [*]
+- votingPlanStatusVoted
+
++ [*] @yes [*]
+- votingPlanStatusVoting
+
++ [*] young [*]
 - votingPlanStatusCantVote
 
 + [*]
