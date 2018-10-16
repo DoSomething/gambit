@@ -66,10 +66,11 @@
  *
  * Note: although Rivescript doesn't throw an error, using an array with underscore in its name in a 
  * trigger will fail to match... which is why some of these have names like 'publictransport'.
- * Rivescript does  throw an error if an uppercase letter appears within a trigger.
+ * Rivescript does throw an error if an uppercase letter appears within a trigger.
  * @see https://github.com/aichaos/rivescript-js/issues/118#issuecomment-220413307
  */
 ! array afternoon = afternoon lunch lunchtime noon
+! array alone     = alone|me|myself|self|solo
 ! array bike      = bicycle|bike|bikin|biking|cycling
 ! array bot       = bot robot machine computer
 ! array botname   = freddie freddi alicia alysa alysha
@@ -79,6 +80,16 @@
 ! array dosomething = dosomething|dosomethingorg|do something
 ! array drive     = car|driv|drive|drivin|driving|truck|whip
 ! array evening   = even eveni evenin evening night nighttime nite
+! array family    = abeula|abeulas|aunt|aunts|auntie|bro|bros|brother|brothers
+^ cousin|cousins|cuz|cuzzies
+^ dad|daddy|father|fam|family|fams|famz
+^ grandfather|grandpa|grandma|grandmother|grandma|grandmama|hermana|hermanas|hermano|hermanos
+^ ma|madre|mama|mom|mommy|mother|pa|padre|papi|stepdad|stepfather|stepmom|stepmother|uncle|uncles
+! array friends   = amigo|amgios|bf|bff|bffs|boi|bois|boiz|boo|boy|boyfriend|boyfriends|boys|boyz
+^ fiend|friend|friends
+^ gf|girl|girlfriend|girlfriends|girls|grl|grls|grrl|grrls|grlz
+^ homey|homeys|homie|homies
+^ man|mans|woman|women
 ! array greetings = hola|howdy
   ^ hi|hii|hiii|hiiii|hiiiii|hiiiiii
   ^ hello|helloo|hellooo|hellloooo
