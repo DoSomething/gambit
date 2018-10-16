@@ -61,11 +61,19 @@
 ! sub wut     = what
 ! sub wuts    = what is
 
-// Arrays
+/**
+ * Arrays
+ *
+ * Note: although Rivescript doesn't throw an error, using an array with underscore in its name in a 
+ * trigger will fail to match... which is why some of these have names like 'publictransport'.
+ * Rivescript does  throw an error if an uppercase letter appears within a trigger.
+ * @see https://github.com/aichaos/rivescript-js/issues/118#issuecomment-220413307
+ */
 ! array afternoon = afternoon lunch lunchtime noon
 ! array bike      = bicycle|bike|bikin|biking|cycling
 ! array bot       = bot robot machine computer
 ! array botname   = freddie freddi alicia alysa alysha
+! array coworkers = co-workers coworkers work
 ! array die       = die|kill myself|killing myself
   ^ commit suicide|committing suicide|commiting suicide
 ! array dosomething = dosomething|dosomethingorg|do something
@@ -93,8 +101,8 @@
 ! array no        = n no nah nope nay
 ! array photo     = photo photos mms pic pics pix image image img
 ! array please    = pls|plz|please|can you|will you
-! array publictransport = bart|bus|cable car|ferry
-   ^ lirr|metro|mta|muni|rail|subway|train|tram|trans|transport|transportation|trolley
+! array publictransport = bart|bus|cable car|ferry|lirr|public|mass|metro
+   ^ mta|muni|rail|subway|train|tram|trans|transit|transport|transportation|trolley
 ! array question  = is there|who|what|when|why|how
 ! array send      = send submit text
 ! array social    = social media|facebook|twitter|instagram|social
