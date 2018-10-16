@@ -8,9 +8,10 @@ const sinonChai = require('sinon-chai');
 const underscore = require('underscore');
 const httpMocks = require('node-mocks-http');
 const northstar = require('../../../../lib/northstar');
+const rogue = require('../../../../lib/rogue');
 const helpers = require('../../../../lib/helpers');
-
 const subscriptionHelper = require('../../../../lib/helpers/subscription');
+const config = require('../../../../config/lib/helpers/user');
 
 chai.should();
 chai.use(sinonChai);
@@ -27,21 +28,64 @@ const conversationFactory = require('../../../helpers/factories/conversation');
 const messageFactory = require('../../../helpers/factories/message');
 const userFactory = require('../../../helpers/factories/user');
 
+const mockPost = { id: stubs.getCampaignRunId() };
 const mockUser = userFactory.getValidUser();
 const userLookupStub = () => Promise.resolve(mockUser);
 const platformUserAddressStub = {
   country: 'US',
 };
+const source = stubs.getPlatform();
 
 test.beforeEach((t) => {
   t.context.req = httpMocks.createRequest();
-  sandbox.stub(helpers.user, 'createVotingPlan')
-    .returns(Promise.resolve(mockUser));
+  sandbox.stub(rogue, 'createPost')
+    .returns(Promise.resolve(mockPost));
 });
 
 test.afterEach((t) => {
   t.context = {};
   sandbox.restore();
+});
+
+// createVotingPlan
+test('createVotingPlan passes user voting plan info to rogue.createPost', async () => {
+  const mockValues = { test: stubs.getRandomWord() };
+  sandbox.stub(userHelper, 'getVotingPlanValues')
+    .returns(mockValues);
+  const result = await userHelper.createVotingPlan(mockUser, source);
+  rogue.createPost.should.have.been.calledWith({
+    text: JSON.stringify(mockValues),
+    campaign_id: config.posts.votingPlan.campaignId,
+    northstar_id: mockUser.id,
+    type: config.posts.votingPlan.type,
+    source,
+  });
+  result.should.deep.equal(mockPost);
+});
+
+// createVotingPlanIfDoesntExist
+test('createVotingPlanIfDoesntExist returns null if voting plan exists for user', async (t) => {
+  sandbox.stub(userHelper, 'fetchVotingPlan')
+    .returns(Promise.resolve(mockPost));
+  sandbox.stub(userHelper, 'createVotingPlan')
+    .returns(Promise.resolve(mockPost));
+
+  const result = await userHelper.createVotingPlanIfDoesntExist(mockUser, source);
+  userHelper.fetchVotingPlan.should.have.been.calledWith(mockUser);
+  userHelper.createVotingPlan.should.not.have.been.called;
+  t.is(result, null);
+});
+
+test('createVotingPlanIfDoesntExist creates voting plan if voting plan does not exist for user', async () => {
+  sandbox.stub(userHelper, 'fetchVotingPlan')
+    .returns(Promise.resolve(null));
+  sandbox.stub(userHelper, 'createVotingPlan')
+    .returns(Promise.resolve(mockPost));
+
+  const result = await userHelper.createVotingPlanIfDoesntExist(mockUser, source);
+  userHelper.fetchVotingPlan.should.have.been.calledWith(mockUser);
+  userHelper.createVotingPlan.should.have.been.calledWith(mockUser, source);
+  result.should.deep.equal(mockPost);
 });
 
 // fetchById
@@ -89,6 +133,19 @@ test('fetchFromReq calls fetchByMobile if req.platformUserId', async (t) => {
   userHelper.fetchById.should.not.have.been.called;
 });
 
+// fetchVotingPlan
+test('fetchVotingPlan should call rogue.getPosts with query for user voting plan', async () => {
+  const mockQuery = { test: '123' };
+  sandbox.stub(userHelper, 'getFetchVotingPlanQuery')
+    .returns(mockQuery);
+  sandbox.stub(rogue, 'getPosts')
+    .returns(Promise.resolve({ data: [mockPost] }));
+
+  const result = await userHelper.fetchVotingPlan(mockUser);
+  rogue.getPosts.should.have.been.calledWith(mockQuery);
+  result.should.deep.equal(mockPost);
+});
+
 // getCreatePayloadFromReq
 test('getCreatePayloadFromReq should return object', () => {
   const req = {
@@ -116,6 +173,27 @@ test('getDefaultUpdatePayloadFromReq should return object', () => {
   });
   result.last_messaged_at.should.equal(inboundMessage.createdAt.toISOString());
   result.sms_paused.should.equal(isSupportTopic);
+});
+
+// getFetchVotingPlanQuery
+test('getFetchVotingPlanQuery should return object with user id and voting plan campaign/type', () => {
+  const result = userHelper.getFetchVotingPlanQuery(mockUser);
+  result.should.deep.equal({
+    'filter[northstar_id]': mockUser.id,
+    'filter[campaign_id]': config.posts.votingPlan.campaignId,
+    'filter[type]': config.posts.votingPlan.type,
+  });
+});
+
+// getVotingPlanValues
+test('getVotingPlanValues should return object with voting plan field values', () => {
+  const votingPlan = {
+    attending_with: mockUser[config.fields.votingPlanAttendingWith.name],
+    method_of_transport: mockUser[config.fields.votingPlanMethodOfTransport.name],
+    time_of_day: mockUser[config.fields.votingPlanTimeOfDay.name],
+  };
+  const result = userHelper.getVotingPlanValues(mockUser);
+  result.should.deep.equal(votingPlan);
 });
 
 // hasAddress
@@ -181,13 +259,10 @@ test('updateByMemberMessageReq should return northstar.updateUser', async (t) =>
   sandbox.stub(userHelper, 'hasAddress')
     .returns(false);
   t.context.req.macro = stubs.getMacro();
-  sandbox.stub(helpers.macro, 'isCompletedVotingPlan')
-    .returns(false);
 
   const result = await userHelper.updateByMemberMessageReq(t.context.req);
   northstar.updateUser.should.have.been.calledWith(mockUser.id, { abc: 1, def: 2 });
   userHelper.hasAddress.should.not.have.been.called;
-  helpers.user.createVotingPlan.should.not.have.been.called;
   result.should.deep.equal(mockUser);
 });
 
@@ -203,13 +278,10 @@ test('updateByMemberMessageReq should not send req.platformUserAddress if user h
   sandbox.stub(userHelper, 'hasAddress')
     .returns(true);
   t.context.req.macro = stubs.getMacro();
-  sandbox.stub(helpers.macro, 'isCompletedVotingPlan')
-    .returns(false);
 
   const result = await userHelper.updateByMemberMessageReq(t.context.req);
   northstar.updateUser.should.have.been.calledWith(mockUser.id, { abc: 1, def: 2 });
   userHelper.hasAddress.should.have.been.calledWith(t.context.req.user);
-  helpers.user.createVotingPlan.should.not.have.been.called;
   result.should.deep.equal(mockUser);
 });
 
@@ -225,13 +297,10 @@ test('updateByMemberMessageReq should not send req.platformUserAddress if user d
   sandbox.stub(userHelper, 'hasAddress')
     .returns(false);
   t.context.req.macro = stubs.getMacro();
-  sandbox.stub(helpers.macro, 'isCompletedVotingPlan')
-    .returns(false);
 
   const result = await userHelper.updateByMemberMessageReq(t.context.req);
   northstar.updateUser.should.have.been.calledWith(mockUser.id, { abc: 1, def: 2, ghi: 3 });
   userHelper.hasAddress.should.have.been.calledWith(t.context.req.user);
-  helpers.user.createVotingPlan.should.not.have.been.called;
   result.should.deep.equal(mockUser);
 });
 
@@ -249,10 +318,12 @@ test('updateByMemberMessageReq should call createVotingPlan if macro isCompleted
   t.context.req.macro = stubs.getMacro();
   sandbox.stub(helpers.macro, 'isCompletedVotingPlan')
     .returns(true);
+  sandbox.stub(helpers.user, 'createVotingPlanIfDoesntExist')
+    .returns(Promise.resolve(mockPost));
 
   const result = await userHelper.updateByMemberMessageReq(t.context.req);
   northstar.updateUser.should.have.been.calledWith(mockUser.id, { abc: 1, def: 2, ghi: 3 });
   userHelper.hasAddress.should.have.been.calledWith(t.context.req.user);
-  helpers.user.createVotingPlan.should.have.been.calledWith(t.context.req.user);
+  helpers.user.createVotingPlanIfDoesntExist.should.have.been.calledWith(t.context.req.user);
   result.should.deep.equal(mockUser);
 });
