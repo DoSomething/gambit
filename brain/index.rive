@@ -62,6 +62,7 @@
 ! sub wuts    = what is
 
 // Arrays
+! array afternoon = afternoon lunch lunchtime noon
 ! array bike      = bicycle|bike|bikin|biking|cycling
 ! array bot       = bot robot machine computer
 ! array botname   = freddie freddi alicia alysa alysha
@@ -69,6 +70,7 @@
   ^ commit suicide|committing suicide|commiting suicide
 ! array dosomething = dosomething|dosomethingorg|do something
 ! array drive     = car|driv|drive|drivin|driving|truck|whip
+! array evening   = even eveni evenin evening night nighttime nite
 ! array greetings = hola|howdy
   ^ hi|hii|hiii|hiiii|hiiiii|hiiiiii
   ^ hello|helloo|hellooo|hellloooo
@@ -86,6 +88,7 @@
   ^ suicidal|suicidial|suicide
 ! array messaging = text|texts|txt|texting|txting|talking|talkign
   ^ messaging|contacting|sending|list|this list
+! array morning   = am morn morni mornin morning
 ! array my        = my this
 ! array no        = n no nah nope nay
 ! array photo     = photo photos mms pic pics pix image image img
