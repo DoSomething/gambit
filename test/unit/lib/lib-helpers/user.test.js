@@ -136,6 +136,19 @@ test('fetchFromReq calls fetchByMobile if req.platformUserId', async (t) => {
   userHelper.fetchById.should.not.have.been.called;
 });
 
+// fetchVotingPlan
+test('fetchVotingPlan should call rogue.getPosts with query for user voting plan', async () => {
+  const mockQuery = { test: '123' };
+  sandbox.stub(userHelper, 'getFetchVotingPlanQuery')
+    .returns(mockQuery);
+  sandbox.stub(rogue, 'getPosts')
+    .returns(Promise.resolve({ data: [mockPost] }));
+
+  const result = await userHelper.fetchVotingPlan(mockUser);
+  rogue.getPosts.should.have.been.calledWith(mockQuery);
+  result.should.deep.equal(mockPost);
+});
+
 // getCreatePayloadFromReq
 test('getCreatePayloadFromReq should return object', () => {
   const req = {
@@ -163,6 +176,16 @@ test('getDefaultUpdatePayloadFromReq should return object', () => {
   });
   result.last_messaged_at.should.equal(inboundMessage.createdAt.toISOString());
   result.sms_paused.should.equal(isSupportTopic);
+});
+
+// getFetchVotingPlanQuery
+test('getFetchVotingPlanQuery should return object with user id and voting plan campaign/type', () => {
+  const result = userHelper.getFetchVotingPlanQuery(mockUser);
+  result.should.deep.equal({
+    'filter[northstar_id]': mockUser.id,
+    'filter[campaign_id]': config.posts.votingPlan.campaignId,
+    'filter[type]': config.posts.votingPlan.type,
+  });
 });
 
 // hasAddress
