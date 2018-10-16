@@ -3,16 +3,22 @@
 const Chance = require('chance');
 const ObjectID = require('mongoose').Types.ObjectId;
 const stubs = require('../stubs');
+const config = require('../../../config/lib/helpers/user');
 
+const userFields = config.fields;
 const chance = new Chance();
 
 module.exports.getValidUser = function getValidUser(phoneNumber) {
-  return {
+  const user = {
     id: new ObjectID().toString(),
     mobile: phoneNumber || stubs.getMobileNumber(),
     sms_status: 'active',
     sms_paused: false,
   };
+  user[userFields.votingPlanAttendingWith.name] = chance.syllable();
+  user[userFields.votingPlanMethodOfTransport.name] = chance.syllable();
+  user[userFields.votingPlanTimeOfDay.name] = chance.syllable();
+  return user;
 };
 
 module.exports.getValidUserWithAddress = function getValidUserWithAddress(phoneNumber) {
