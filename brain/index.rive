@@ -7,20 +7,11 @@
 ! var url  = DoSomething.org
 
 // Substitutions
-! sub bf      = someone
-! sub bff     = someone
-! sub brother = someone
-! sub boyfriend  = someone
 ! sub can't   = can not
 ! sub cant    = can not
-! sub dad     = someone
 ! sub dis     = this
 ! sub don't   = do not
 ! sub dont    = do not
-! sub father  = someone
-! sub friend  = someone
-! sub girlfriend = someone
-! sub gf      = someone
 ! sub gonna   = going to
 ! sub he      = someone
 ! sub he's    = someone is
@@ -81,15 +72,15 @@
 ! array drive     = car|driv|drive|drivin|driving|truck|whip
 ! array evening   = even eveni evenin evening night nighttime nite
 ! array family    = abeula|abeulas|aunt|aunts|auntie|bro|bros|brother|brothers
-^ cousin|cousins|cuz|cuzzies
-^ dad|daddy|father|fam|family|fams|famz
-^ grandfather|grandpa|grandma|grandmother|grandma|grandmama|hermana|hermanas|hermano|hermanos
-^ ma|madre|mama|mom|mommy|mother|pa|padre|papi|stepdad|stepfather|stepmom|stepmother|uncle|uncles
+  ^ cousin|cousins|cuz|cuzzies
+  ^ dad|daddy|father|fam|family|fams|famz
+  ^ grandfather|grandpa|grandma|grandmother|grandma|grandmama|hermana|hermanas|hermano|hermanos
+  ^ ma|madre|mama|mom|mommy|mother|pa|padre|papi|stepdad|stepfather|stepmom|stepmother|uncle|uncles
 ! array friends   = amigo|amgios|bf|bff|bffs|boi|bois|boiz|boo|boy|boyfriend|boyfriends|boys|boyz
-^ fiend|friend|friends
-^ gf|girl|girlfriend|girlfriends|girls|grl|grls|grrl|grrls|grlz
-^ homey|homeys|homie|homies
-^ man|mans|woman|women
+  ^ fiend|friend|friends
+  ^ gf|girl|girlfriend|girlfriends|girls|grl|grls|grrl|grrls|grlz
+  ^ homey|homeys|homie|homies
+  ^ man|mans|woman|women
 ! array greetings = hola|howdy
   ^ hi|hii|hiii|hiiii|hiiiii|hiiiiii
   ^ hello|helloo|hellooo|hellloooo
