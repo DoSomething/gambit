@@ -71,12 +71,16 @@
 ! array dosomething = dosomething|dosomethingorg|do something
 ! array drive     = car|driv|drive|drivin|driving|truck|whip
 ! array evening   = even eveni evenin evening night nighttime nite
-! array family    = abeula|abeulas|aunt|aunts|auntie|bro|bros|brother|brothers
+! array family    = abeula|abeulas|abuelo|abeulos|aunt|aunts|auntie|aunties
+  ^ bro|bros|brother|brothers
   ^ cousin|cousins|cuz|cuzzies
   ^ dad|daddy|father|fam|family|fams|famz
   ^ grandfather|grandpa|grandma|grandmother|grandma|grandmama|hermana|hermanas|hermano|hermanos
-  ^ ma|madre|mama|mom|mommy|mother|pa|padre|papi|stepdad|stepfather|stepmom|stepmother|uncle|uncles
-! array friends   = amigo|amgios|bf|bff|bffs|boi|bois|boiz|boo|boy|boyfriend|boyfriends|boys|boyz
+  ^ ma|madre|mama|mom|mommy|mother
+  ^ pa|padre|papi|pop|poppy
+  ^ sis|sista|sistas|sister|stepdad|stepfather|stepmom|stepmother|uncle|uncles
+! array friends   = amigo|amigos
+  ^ bf|bff|bffs|boi|bois|boiz|boo|boy|boyfriend|boyfriends|boys|boyz|bud|buddies|buddy|buds
   ^ fiend|friend|friends
   ^ gf|girl|girlfriend|girlfriends|girls|grl|grls|grrl|grrls|grlz
   ^ homey|homeys|homie|homies
