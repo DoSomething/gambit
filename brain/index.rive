@@ -74,11 +74,11 @@
 ! array family    = abeula|abeulas|abuelo|abeulos|aunt|aunts|auntie|aunties
   ^ bro|bros|brother|brothers
   ^ cousin|cousins|cuz|cuzzies
-  ^ dad|daddy|father|fam|family|fams|famz
+  ^ dad|daddy|father|fam|famil|famili|familia|family|fams|famz
   ^ grandfather|grandpa|grandma|grandmother|grandma|grandmama|hermana|hermanas|hermano|hermanos
   ^ ma|madre|mama|mom|mommy|mother
   ^ pa|padre|papi|pop|poppy
-  ^ sis|sista|sistas|sister|stepdad|stepfather|stepmom|stepmother|uncle|uncles
+  ^ sis|sista|sistas|sister|stepdad|stepfather|stepmom|stepmother|tia|tias|tio|tios|uncle|uncles
 ! array friends   = amigo|amigos
   ^ bf|bff|bffs|boi|bois|boiz|boo|boy|boyfriend|boyfriends|boys|boyz|bud|buddies|buddy|buds
   ^ fiend|friend|friends
