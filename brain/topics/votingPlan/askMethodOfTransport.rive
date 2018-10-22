@@ -6,29 +6,26 @@
 + a
 - votingPlanMethodOfTransportDrive
 
-+ [*] @drive [*]
-@ a
-
 + b
 - votingPlanMethodOfTransportWalk
-
-+ [*] @walk [*]
-@ b
 
 + c
 - votingPlanMethodOfTransportBike
 
-+ [*] @bike [*]
-@ c
-
 + d
 - votingPlanMethodOfTransportPublicTransport
 
-+ [*] @publictransport [*]
-@ d
++ [*] @bike [*]
+- votingPlanMethodOfTransportBike
 
-+ [*] (mass|public) [*]
-@ d
++ [*] @drive [*]
+- votingPlanMethodOfTransportDrive
+
++ [*] @publictransport [*]
+- votingPlanMethodOfTransportPublicTransport
+
++ [*] @walk [*]
+- votingPlanMethodOfTransportWalk
 
 + [*]
 - invalidVotingPlanMethodOfTransport
