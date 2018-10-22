@@ -52,7 +52,7 @@ module.exports = {
   posts: {
     votingPlan: {
       type: 'text',
-      campaignId: process.env.DS_GAMBIT_CONVERSATIONS_VOTING_PLAN_CAMPAIGN_ID || 7314,
+      campaignId: process.env.DS_GAMBIT_CONVERSATIONS_VOTING_PLAN_CAMPAIGN_ID || 7077,
     },
   },
 };
