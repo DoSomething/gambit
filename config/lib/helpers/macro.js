@@ -12,19 +12,20 @@ const askSubscriptionStatusText = 'Do you want texts: A)Weekly B)Monthly C)I nee
 const newsUrl = 'https://www.dosomething.org/us/spot-the-signs-guide?source=sms&utm_source=dosomething&utm_medium=sms&utm_campaign=permissioning_weekly&user_id={{user.id}}';
 
 // Voting plan.
-const askVotingPlanAttendingWithText = 'Who are you planning on voting with A) Alone B) Friends C) Family D) Co-workers';
-const askVotingPlanMethodOfTransportText = 'How are you getting there? A) Drive B) Walk C) Bike D) Public transportation';
-const askVotingPlanStatusText = 'Are you planning on voting? A) Yes B) No C) Already voted D) Can\'t vote';
-const askVotingPlanTimeOfDayText = 'What time are you planning on voting? A) Morning B) Afternoon C) Evening';
+const askVotingPlanAttendingWithText = process.env.DS_GAMBIT_CONVERSATIONS_ASK_VOTING_PLAN_ATTENDING_WITH_TEXT || 'Who are you planning on voting with A) Alone B) Friends C) Family D) Co-workers';
+const askVotingPlanMethodOfTransportText = process.env.DS_GAMBIT_CONVERSATIONS_ASK_VOTING_PLAN_METHOD_OF_TRANSPORT_TEXT || 'How are you planning on getting to the polls? A) Drive B) Walk C) Bike D) Public transportation';
+const askVotingPlanStatusText = process.env.DS_GAMBIT_CONVERSATIONS_ASK_VOTING_PLAN_STATUS_TEXT || 'Are you planning on voting? A) Yes B) No C) Already voted D) Can\'t vote';
+const askVotingPlanTimeOfDayText = process.env.DS_GAMBIT_CONVERSATIONS_ASK_VOTING_PLAN_TIME_OF_DAY_TEXT || 'What time are you planning on voting? A) Morning B) Afternoon C) Evening';
 // The votingPlanStatusVoting macro begins collecting voting plan data via topic changes:
 // 1 - askVotingPlanTimeOfDay
-// 2 - askVotingPlanAttendingWith
-// 3 - askVotingPlanMethodOfTransport
+// 2 - askVotingPlanMethodOfTransport
+// 3 - askVotingPlanAttendingWith
 // 4 - completed
-const beginVotingPlanText = `Let's make a plan! ${askVotingPlanTimeOfDayText}`;
+const votingStatusVotingText = process.DS_GAMBIT_CONVERSATIONS_VOTING_STATUS_VOTING_TEXT || 'Awesome! First thing you\'ll need to do is find your polling place, so you know where you\'ll be voting. It takes less than a minute, check here: [link]\n\nNow let\'s make a simple plan for how you\'ll vote (and we\'ll remind you on Election Day!).';
+const beginVotingPlanText = `${votingStatusVotingText}\n\n${askVotingPlanTimeOfDayText}`;
 const beginVotingPlanTopic = rivescriptTopics.askVotingPlanTimeOfDay;
-const completedVotingPlanMacro = 'votingPlanMethodOfTransport';
-const completedVotingPlanText = process.env.DS_GAMBIT_CONVERSATIONS_COMPLETED_VOTING_PLAN_TEXT || 'Thanks for making the plan, we’ll remind you to {{user.voting_plan_method_of_transport}} to the polls.';
+const completedVotingPlanMacro = 'votingPlanAttendingWith';
+const completedVotingPlanText = process.env.DS_GAMBIT_CONVERSATIONS_COMPLETED_VOTING_PLAN_TEXT || 'Thanks for making a plan! I\'ll remind you on Election Day to make sure you\'re ready to vote.\n\nCan\'t wait? Share this graphic to let people know you\'re voting: [link]';
 
 /**
  * @param {String} prefix
@@ -42,9 +43,9 @@ function macroName(prefix, valueKey) {
 function votingPlanTimeOfDay(valueKey) {
   return {
     name: macroName('votingPlanTimeOfDay', valueKey),
-    // After saving time of day, ask for attending with.
-    text: askVotingPlanAttendingWithText,
-    topic: rivescriptTopics.askVotingPlanAttendingWith,
+    // After saving time of day, ask for method of transport.
+    text: `Great! ${askVotingPlanMethodOfTransportText}`,
+    topic: rivescriptTopics.askVotingPlanMethodOfTransport,
     profileUpdate: {
       field: profile.votingPlanTimeOfDay.name,
       value: profile.votingPlanTimeOfDay.values[valueKey],
@@ -59,9 +60,9 @@ function votingPlanTimeOfDay(valueKey) {
 function votingPlanAttendingWith(valueKey) {
   return {
     name: macroName('votingPlanAttendingWith', valueKey),
-    // After saving attending with, ask for method of transport.
-    text: askVotingPlanMethodOfTransportText,
-    topic: rivescriptTopics.askVotingPlanMethodOfTransport,
+    // After saving attending with, the voting plan is complete.
+    text: completedVotingPlanText,
+    topic: defaultTopic,
     profileUpdate: {
       field: profile.votingPlanAttendingWith.name,
       value: profile.votingPlanAttendingWith.values[valueKey],
@@ -76,9 +77,9 @@ function votingPlanAttendingWith(valueKey) {
 function votingPlanMethodOfTransport(valueKey) {
   return {
     name: macroName('votingPlanMethodOfTransport', valueKey),
-    // After saving method of transport, the voting plan is complete.
-    text: completedVotingPlanText,
-    topic: defaultTopic,
+    // After saving method of transport, ask for attending with.
+    text: `And finally, ${askVotingPlanAttendingWithText}`,
+    topic: rivescriptTopics.askVotingPlanAttendingWith,
     profileUpdate: {
       field: profile.votingPlanMethodOfTransport.name,
       value: profile.votingPlanMethodOfTransport.values[valueKey],
