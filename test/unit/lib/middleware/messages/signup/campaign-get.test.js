@@ -41,6 +41,8 @@ test.beforeEach((t) => {
     .returns(underscore.noop);
   sandbox.stub(helpers.request, 'setTopic')
     .returns(underscore.noop);
+  sandbox.stub(helpers.response, 'sendNoContent')
+    .returns(underscore.noop);
   t.context.req = httpMocks.createRequest();
   t.context.req.campaignId = campaignId;
   t.context.res = httpMocks.createResponse();
@@ -92,38 +94,31 @@ test('getCampaign should call sendErroResponse if campaign is closed', async (t)
   next.should.not.have.been.called;
 });
 
-test('getCampaign should send 204 status if campaign config does not exist', async (t) => {
+test('getCampaign should call sendNoContent if campaign config does not exist', async (t) => {
   const next = sinon.stub();
   const middleware = getCampaign();
   const configlessCampaign = campaignFactory.getValidCampaign();
   configlessCampaign.config = {};
   sandbox.stub(helpers.campaign, 'fetchById')
     .returns(Promise.resolve(configlessCampaign));
-  // TODO: Move this hardcoded message into config to DRY.
-  const apiResponseMessage = 'Campaign does not have a config.';
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  helpers.sendResponseWithStatusCode
-    .should.have.been.calledWith(t.context.res, 204, apiResponseMessage);
-  helpers.addBlinkSuppressHeaders.should.have.been.called;
+  helpers.response.sendNoContent.should.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
   helpers.request.setTopic.should.not.have.been.called;
   next.should.not.have.been.called;
 });
 
-test('getCampaign should send 204 status if campaign config does not have webSignup template', async (t) => {
+test('getCampaign should call sendNoContent if campaign config does not have webSignup template', async (t) => {
   const next = sinon.stub();
   const middleware = getCampaign();
   sandbox.stub(helpers.campaign, 'fetchById')
     .returns(Promise.resolve(campaignFactory.getValidCampaignWithoutWebSignup()));
-  // TODO: Move this hardcoded message into config to DRY.
-  const apiResponseMessage = 'Campaign does not have a webSignup.';
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  helpers.sendResponseWithStatusCode
-    .should.have.been.calledWith(t.context.res, 204, apiResponseMessage);
+  helpers.response.sendNoContent.should.have.been.called;
   helpers.addBlinkSuppressHeaders.should.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
   helpers.request.setTopic.should.not.have.been.called;
