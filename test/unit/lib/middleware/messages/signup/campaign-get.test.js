@@ -74,7 +74,25 @@ test('getCampaign should call campaign.fetchById and setTopic if campaign is not
   next.should.have.been.called;
 });
 
-test('getCampaign should send 204 status if campaign config does not existe', async (t) => {
+test('getCampaign should call sendErroResponse if campaign is closed', async (t) => {
+  const next = sinon.stub();
+  const middleware = getCampaign();
+  sandbox.stub(helpers.campaign, 'isClosedCampaign')
+    .returns(true);
+  sandbox.stub(helpers.campaign, 'fetchById')
+    .returns(Promise.resolve(campaign));
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  helpers.campaign.fetchById.should.have.been.calledWith(campaignId);
+  helpers.request.setOutboundMessageText.should.not.have.been.called;
+  helpers.request.setOutboundMessageTemplate.should.not.have.been.called;
+  helpers.request.setTopic.should.not.have.been.called;
+  helpers.sendErrorResponse.should.have.been.called;
+  next.should.not.have.been.called;
+});
+
+test('getCampaign should send 204 status if campaign config does not exist', async (t) => {
   const next = sinon.stub();
   const middleware = getCampaign();
   const configlessCampaign = campaignFactory.getValidCampaign();
