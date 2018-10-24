@@ -15,36 +15,38 @@ const numericIdRange = {
  * @see https://github.com/DoSomething/gambit-campaigns/blob/master/documentation/endpoints/campaigns.md#retrieve-a-campaign
 */
 function getValidCampaign() {
-  const messageTemplate = stubs.getTemplate();
-  const messageText = stubs.getRandomMessageText();
-  const result = {
+  return {
     id: chance.integer(numericIdRange),
     title: chance.sentence({ words: 3 }),
     currentCampaignRun: {
       id: chance.integer(numericIdRange),
     },
-    keywords: [stubs.getKeyword()],
-    botConfig: {
-      postType: stubs.getPostType(),
-      templates: {},
+    config: {
+      id: stubs.getContentfulId(),
+      templates: {
+        webSignup: {
+          text: stubs.getRandomMessageText(),
+          attachments: [stubs.getAttachment()],
+          template: 'webSignup',
+          topic: topicFactory.getValidTopic(),
+        },
+      },
     },
+    // TODO: This will be deprecated. The only place we use this currently is if user is in a random
+    // topic, and we look for a topic per the last campaign saved to conversation. This will be
+    // removed once topics like ask_subscription_status place users into an autoReply, which should
+    // contain a conversion point (either a web link, or topic change trigger).
     topics: [topicFactory.getValidTopicWithoutCampaign()],
   };
-  result.botConfig.templates[messageTemplate] = {
-    raw: messageText,
-    rendered: messageText,
-    override: true,
-  };
-  return result;
 }
 
-function getValidCampaignWithoutTopics() {
+function getValidCampaignWithoutWebSignup() {
   const campaign = module.exports.getValidCampaign();
-  campaign.topics = [];
+  campaign.config.templates.webSignup = {};
   return campaign;
 }
 
 module.exports = {
   getValidCampaign,
-  getValidCampaignWithoutTopics,
+  getValidCampaignWithoutWebSignup,
 };
