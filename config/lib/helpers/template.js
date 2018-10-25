@@ -47,9 +47,7 @@ const templatesMap = {
     votingPlanStatusCantVote: 'votingPlanStatusCantVote',
     votingPlanStatusNotVoting: 'votingPlanStatusNotVoting',
     votingPlanStatusVoted: 'votingPlanStatusVoted',
-    webAskText: 'webAskText',
-    webStartExternalPost: 'webStartExternalPost',
-    webStartPhotoPost: 'webStartPhotoPost',
+    webSignup: 'webSignup',
   },
   // TODO: Move these into the replies helper config, or set on config via middleware that checks
   // for each condition.
