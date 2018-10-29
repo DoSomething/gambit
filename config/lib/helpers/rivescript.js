@@ -6,10 +6,11 @@
 module.exports = {
   cacheKey: 'contentApi',
   commands: {
-    trigger: '+',
     // @see https://www.rivescript.com/docs/tutorial#redirections
     redirect: '@',
     reply: '-',
+    newline: '^',
+    trigger: '+',
   },
   separators: {
     command: ' ',
