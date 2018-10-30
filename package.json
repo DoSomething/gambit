@@ -59,6 +59,7 @@
     "mongoose": "^4.10.6",
     "mustache": "^2.3.0",
     "newrelic": "^4.8.1",
+    "query-string": "^6.2.0",
     "redis": "^2.8.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.1",
