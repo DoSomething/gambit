@@ -1,5 +1,9 @@
 // macros.rive
 
++ testing
+- Find your polling location: {{{links.pollingLocator.find}}}\n
+^ Share {{{links.pollingLocator.share}}}
+
 + info
 - sendInfoMessage
 
