@@ -10,7 +10,6 @@ const httpMocks = require('node-mocks-http');
 
 const logger = require('../../../../lib/logger');
 const stubs = require('../../../helpers/stubs');
-const campaignFactory = require('../../../helpers/factories/campaign');
 const userFactory = require('../../../helpers/factories/user');
 
 // setup "x.should.y" assertion style
@@ -20,8 +19,6 @@ chai.use(sinonChai);
 // app modules
 const mustache = require('mustache');
 
-const config = require('../../../../config/lib/helpers/tags');
-
 // module to be tested
 const tagsHelper = require('../../../../lib/helpers/tags');
 
@@ -29,7 +26,6 @@ const tagsHelper = require('../../../../lib/helpers/tags');
 const sandbox = sinon.sandbox.create();
 
 // stubs
-const mockCampaign = campaignFactory.getValidCampaign();
 const mockText = stubs.getRandomMessageText();
 const mockUser = userFactory.getValidUser();
 const mockVars = { season: 'winter' };
@@ -45,6 +41,7 @@ test.afterEach(() => {
   sandbox.restore();
 });
 
+// render
 test('render should return a string', () => {
   sandbox.stub(mustache, 'render')
     .returns(mockText);
@@ -75,9 +72,22 @@ test('render should replace user vars', (t) => {
   result.should.equal(mockUser.id);
 });
 
+// getVarsForTags
 test('getVarsForTags should return an object', (t) => {
   const result = tagsHelper.getVarsForTags(t.context.req);
   result.should.be.a('object');
   result.should.have.property('links');
   result.should.have.property('user');
+});
+
+// getUserIdQueryParam
+test('getUserIdQueryParam should return object with user_id set if req.user.id exists', (t) => {
+  t.context.req.user = mockUser;
+  const result = tagsHelper.getUserIdQueryParam(t.context.req);
+  result.should.deep.equal({ user_id: mockUser.id });
+});
+
+test('getUserIdQueryParam returns object with user_id set to null if req.user undefined', (t) => {
+  const result = tagsHelper.getUserIdQueryParam(t.context.req);
+  result.should.deep.equal({ user_id: null });
 });
