@@ -7,11 +7,14 @@ const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
+const queryString = require('query-string');
 
 const logger = require('../../../../lib/logger');
 const stubs = require('../../../helpers/stubs');
-const campaignFactory = require('../../../helpers/factories/campaign');
+const broadcastFactory = require('../../../helpers/factories/broadcast');
 const userFactory = require('../../../helpers/factories/user');
+
+const config = require('../../../../config/lib/helpers/tags');
 
 // setup "x.should.y" assertion style
 chai.should();
@@ -20,8 +23,6 @@ chai.use(sinonChai);
 // app modules
 const mustache = require('mustache');
 
-const config = require('../../../../config/lib/helpers/tags');
-
 // module to be tested
 const tagsHelper = require('../../../../lib/helpers/tags');
 
@@ -29,7 +30,7 @@ const tagsHelper = require('../../../../lib/helpers/tags');
 const sandbox = sinon.sandbox.create();
 
 // stubs
-const mockCampaign = campaignFactory.getValidCampaign();
+const mockBroadcast = broadcastFactory.getValidAutoReplyBroadcast();
 const mockText = stubs.getRandomMessageText();
 const mockUser = userFactory.getValidUser();
 const mockVars = { season: 'winter' };
@@ -40,11 +41,27 @@ test.beforeEach((t) => {
 });
 
 // Cleanup
-test.afterEach(() => {
-  // reset stubs, spies, and mocks
+test.afterEach((t) => {
   sandbox.restore();
+  t.context.req = {};
 });
 
+// getLink
+test('getLink should return a string with linkConfig values', (t) => {
+  const findPollingLocatorConfig = config.links.pollingLocator.find;
+  const result = tagsHelper.getLink(findPollingLocatorConfig, t.context.req);
+  const query = queryString.stringify(findPollingLocatorConfig.query);
+  result.should.equal(`${findPollingLocatorConfig.url}?${query}`);
+});
+
+// getLinks
+test('getLinks should return an object', (t) => {
+  const result = tagsHelper.getLinks(t.context.req);
+  result.pollingLocator.should.have.property('find');
+  result.pollingLocator.should.have.property('share');
+});
+
+// render
 test('render should return a string', () => {
   sandbox.stub(mustache, 'render')
     .returns(mockText);
@@ -75,105 +92,34 @@ test('render should replace user vars', (t) => {
   result.should.equal(mockUser.id);
 });
 
+// getVarsForTags
 test('getVarsForTags should return an object', (t) => {
-  sandbox.stub(tagsHelper, 'getCustomUrl')
-    .returns(mockText);
   const result = tagsHelper.getVarsForTags(t.context.req);
   result.should.be.a('object');
-  result[config.tags.customUrl].should.equal(mockText);
+  result.should.have.property('links');
+  result.should.have.property('user');
 });
 
-test('getVarsForTags should throw if getCustomUrl fails', (t) => {
-  sandbox.stub(tagsHelper, 'getCustomUrl')
-    .returns(new Error());
-  tagsHelper.getVarsForTags(t.context.req).should.throw;
+// getBroadcastLinkQueryParams
+test('getBroadcastLinkQueryParams should return object with broadcast_id set if broadcast exists', (t) => {
+  t.context.req.broadcast = mockBroadcast;
+  const result = tagsHelper.getBroadcastLinkQueryParams(t.context.req);
+  result.broadcast_id.should.equal(mockBroadcast.id);
 });
 
-test('getCustomUrl should return a string', () => {
-  const mockString = 'cat=123&dog=456';
-  sandbox.stub(tagsHelper, 'getCustomUrlQueryParamValue')
-    .returns(mockString);
-  const expected = `${config.customUrl.url}?${config.customUrl.queryParamName}=${mockString}`;
-  const result = tagsHelper.getCustomUrl();
-  result.should.equal(expected);
-  tagsHelper.getCustomUrlQueryParamValue.should.have.been.called;
+test('getBroadcastLinkQueryParams returns empty object if broadcast undefined', (t) => {
+  const result = tagsHelper.getBroadcastLinkQueryParams(t.context.req);
+  result.should.deep.equal({});
 });
 
-test('getCustomUrl should throw if getCustomUrlQueryParamValue fails', () => {
-  sandbox.stub(tagsHelper, 'getCustomUrlQueryParamValue')
-    .returns(new Error());
-  tagsHelper.getCustomUrl().should.throw;
-});
-
-test('getCustomUrlQueryParamValue should call joinCustomUrlQueryValueFields', (t) => {
-  const mockResult = 'success';
-  sandbox.stub(tagsHelper, 'getUserIdCustomUrlQueryValueField')
-    .returns('success1');
-  sandbox.stub(tagsHelper, 'getCampaignCustomUrlQueryValueField')
-    .returns('success2');
-  sandbox.stub(tagsHelper, 'joinCustomUrlQueryValueFields')
-    .returns(mockResult);
-  const result = tagsHelper.getCustomUrlQueryParamValue(t.context.req);
-  tagsHelper.getUserIdCustomUrlQueryValueField.should.have.been.called;
-  tagsHelper.getCampaignCustomUrlQueryValueField.should.have.been.called;
-  tagsHelper.joinCustomUrlQueryValueFields.should.have.been.called;
-  result.should.equal(mockResult);
-});
-
-test('formatCustomUrlQueryValueField should return a string', () => {
-  const field = 'lastName';
-  const value = 'snow';
-  const suffix = config.customUrl.queryValue.fieldSuffix;
-  const expected = `${field}${suffix}${value}`;
-  const result = tagsHelper.formatCustomUrlQueryValueField(field, value);
-  result.should.equal(expected);
-});
-
-test('joinCustomUrlQueryValueFields should return a string if passed an array', () => {
-  const data = ['a', 'b', 'c'];
-  const suffix = config.customUrl.queryValue.separator;
-  const expected = data.join(suffix);
-  const result = tagsHelper.joinCustomUrlQueryValueFields(data);
-  result.should.equal(expected);
-});
-
-test('joinCustomUrlQueryValueFields should throws if no value is passed', (t) => {
-  t.throws(() => tagsHelper.joinCustomUrlQueryValueFields().should.equal(''));
-});
-
-test('getUserIdCustomUrlQueryValueField should return string for req.user', (t) => {
+// getUserLinkQueryParams
+test('getUserLinkQueryParams should return object with user_id set if user exists', (t) => {
   t.context.req.user = mockUser;
-  const fieldName = config.customUrl.queryValue.fields.userId;
-  const result = tagsHelper.getUserIdCustomUrlQueryValueField(t.context.req);
-  t.truthy(result.includes(fieldName));
-  t.truthy(result.includes(mockUser.id));
+  const result = tagsHelper.getUserLinkQueryParams(t.context.req);
+  result.user_id.should.equal(mockUser.id);
 });
 
-test('getUserIdCustomUrlQueryValueField returns empty string if req.user undefined', (t) => {
-  const result = tagsHelper.getUserIdCustomUrlQueryValueField(t.context.req);
-  result.should.equal('');
-});
-
-test('getCampaignCustomUrlQueryValueField should return string for req.user', (t) => {
-  t.context.req.campaign = mockCampaign;
-  const fields = config.customUrl.queryValue.fields;
-  const result = tagsHelper.getCampaignCustomUrlQueryValueField(t.context.req);
-  t.truthy(result.includes(fields.campaignId));
-  t.truthy(result.includes(mockCampaign.id));
-  t.truthy(result.includes(fields.campaignRunId));
-  t.truthy(result.includes(mockCampaign.currentCampaignRun.id));
-});
-
-test('getCampaignCustomUrlQueryValueField returns empty string if req.campaign undefined', (t) => {
-  const result = tagsHelper.getCampaignCustomUrlQueryValueField(t.context.req);
-  result.should.equal('');
-});
-
-test('getPlatformCustomUrlQueryValueField returns a string', (t) => {
-  const platform = stubs.getPlatform();
-  t.context.req.platform = platform;
-  const fieldName = config.customUrl.queryValue.fields.platform;
-  const result = tagsHelper.getPlatformCustomUrlQueryValueField(t.context.req);
-  t.truthy(result.includes(fieldName));
-  t.truthy(result.includes(platform));
+test('getUserLinkQueryParams returns empty object if req.user undefined', (t) => {
+  const result = tagsHelper.getUserLinkQueryParams(t.context.req);
+  result.should.deep.equal({});
 });
