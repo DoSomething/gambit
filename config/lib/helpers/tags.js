@@ -8,11 +8,6 @@ const pollingLocatorQuery = {
 };
 
 module.exports = {
-  // Tags used in message templates.
-  tags: {
-    links: 'links',
-    user: 'user',
-  },
   links: {
     pollingLocator: {
       find: {

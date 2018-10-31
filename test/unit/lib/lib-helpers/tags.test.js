@@ -33,7 +33,7 @@ const sandbox = sinon.sandbox.create();
 const mockBroadcast = broadcastFactory.getValidAutoReplyBroadcast();
 const mockText = stubs.getRandomMessageText();
 const mockUser = userFactory.getValidUser();
-const mockVars = { season: 'winter' };
+const mockTags = { season: 'winter' };
 
 test.beforeEach((t) => {
   stubs.stubLogger(sandbox, logger);
@@ -54,9 +54,9 @@ test('getLink should return a string with linkConfig values', (t) => {
   result.should.equal(`${findPollingLocatorConfig.url}?${query}`);
 });
 
-// getLinks
-test('getLinks should return an object', (t) => {
-  const result = tagsHelper.getLinks(t.context.req);
+// getLinksTag
+test('getLinksTag should return an object', (t) => {
+  const result = tagsHelper.getLinksTag(t.context.req);
   result.pollingLocator.should.have.property('find');
   result.pollingLocator.should.have.property('share');
 });
@@ -65,8 +65,8 @@ test('getLinks should return an object', (t) => {
 test('render should return a string', () => {
   sandbox.stub(mustache, 'render')
     .returns(mockText);
-  sandbox.stub(tagsHelper, 'getVarsForTags')
-    .returns(mockVars);
+  sandbox.stub(tagsHelper, 'getTags')
+    .returns(mockTags);
   const result = tagsHelper.render(mockText, {});
   mustache.render.should.have.been.called;
   result.should.equal(mockText);
@@ -75,15 +75,15 @@ test('render should return a string', () => {
 test('render should throw if mustache.render fails', () => {
   sandbox.stub(mustache, 'render')
     .returns(new Error());
-  sandbox.stub(tagsHelper, 'getVarsForTags')
-    .returns(mockVars);
-  tagsHelper.render(mockText, mockVars).should.throw;
+  sandbox.stub(tagsHelper, 'getTags')
+    .returns(mockTags);
+  tagsHelper.render(mockText, mockTags).should.throw;
 });
 
-test('render should throw if getVarsForTags fails', () => {
-  sandbox.stub(tagsHelper, 'getVarsForTags')
+test('render should throw if mockTags fails', () => {
+  sandbox.stub(tagsHelper, 'getTags')
     .returns(new Error());
-  tagsHelper.render(mockText, mockVars).should.throw;
+  tagsHelper.render(mockText, mockTags).should.throw;
 });
 
 test('render should replace user vars', (t) => {
@@ -92,9 +92,9 @@ test('render should replace user vars', (t) => {
   result.should.equal(mockUser.id);
 });
 
-// getVarsForTags
-test('getVarsForTags should return an object', (t) => {
-  const result = tagsHelper.getVarsForTags(t.context.req);
+// getTags
+test('getTags should return an object', (t) => {
+  const result = tagsHelper.getTags(t.context.req);
   result.should.be.a('object');
   result.should.have.property('links');
   result.should.have.property('user');
