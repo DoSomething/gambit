@@ -54,6 +54,13 @@ test('getLink should return a string with linkConfig values', (t) => {
   result.should.equal(`${findPollingLocatorConfig.url}?${query}`);
 });
 
+// getLinks
+test('getLinks should return an object', (t) => {
+  const result = tagsHelper.getLinks(t.context.req);
+  result.pollingLocator.should.have.property('find');
+  result.pollingLocator.should.have.property('share');
+});
+
 // render
 test('render should return a string', () => {
   sandbox.stub(mustache, 'render')
