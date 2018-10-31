@@ -15,6 +15,7 @@ const broadcastFactory = require('../../../helpers/factories/broadcast');
 const userFactory = require('../../../helpers/factories/user');
 
 const config = require('../../../../config/lib/helpers/tags');
+const userConfig = require('../../../../config/lib/helpers/user');
 
 // setup "x.should.y" assertion style
 chai.should();
@@ -80,7 +81,7 @@ test('render should throw if mustache.render fails', () => {
   tagsHelper.render(mockText, mockTags).should.throw;
 });
 
-test('render should throw if mockTags fails', () => {
+test('render should throw if getTags fails', () => {
   sandbox.stub(tagsHelper, 'getTags')
     .returns(new Error());
   tagsHelper.render(mockText, mockTags).should.throw;
@@ -122,4 +123,40 @@ test('getUserLinkQueryParams should return object with user_id set if user exist
 test('getUserLinkQueryParams returns empty object if req.user undefined', (t) => {
   const result = tagsHelper.getUserLinkQueryParams(t.context.req);
   result.should.deep.equal({});
+});
+
+// getVotingPlanAttendingWith
+test('getVotingPlanAttendingWith returns votingPlan.attendingWith config for user votingPlanAttendingWith value', () => {
+  const fieldConfig = userConfig.fields.votingPlanAttendingWith;
+  Object.keys(fieldConfig.values).forEach((value) => {
+    const user = userFactory.getValidUser();
+    const fieldValue = fieldConfig.values[value];
+    user[fieldConfig.name] = fieldValue;
+    const result = tagsHelper.getVotingPlanAttendingWith(user);
+    result.should.equal(config.user.votingPlan.vars.attendingWith[fieldValue]);
+  });
+});
+
+// getVotingPlanMethodOfTransport
+test('getVotingPlanMethodOfTransport returns votingPlan.methodOfTransport config for user votingPlanMethodOfTransport value', () => {
+  const fieldConfig = userConfig.fields.votingPlanMethodOfTransport;
+  Object.keys(fieldConfig.values).forEach((value) => {
+    const user = userFactory.getValidUser();
+    const fieldValue = fieldConfig.values[value];
+    user[fieldConfig.name] = fieldValue;
+    const result = tagsHelper.getVotingPlanMethodOfTransport(user);
+    result.should.equal(config.user.votingPlan.vars.methodOfTransport[fieldValue]);
+  });
+});
+
+// getVotingPlanTimeOfDay
+test('getVotingPlanTimeOfDay returns votingPlan.timeOfDay config for user votingPlanTimeOfDay value', () => {
+  const fieldConfig = userConfig.fields.votingPlanTimeOfDay;
+  Object.keys(fieldConfig.values).forEach((value) => {
+    const user = userFactory.getValidUser();
+    const fieldValue = fieldConfig.values[value];
+    user[fieldConfig.name] = fieldValue;
+    const result = tagsHelper.getVotingPlanTimeOfDay(user);
+    result.should.equal(config.user.votingPlan.vars.timeOfDay[fieldValue]);
+  });
 });
