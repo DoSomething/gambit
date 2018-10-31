@@ -80,14 +80,14 @@ test('getVarsForTags should return an object', (t) => {
   result.should.have.property('user');
 });
 
-// getUserIdQueryParam
-test('getUserIdQueryParam should return object with user_id set if req.user.id exists', (t) => {
+// getLinkQueryParams
+test('getLinkQueryParams should return object with user_id set if req.user.id exists', (t) => {
   t.context.req.user = mockUser;
-  const result = tagsHelper.getUserIdQueryParam(t.context.req);
-  result.should.deep.equal({ user_id: mockUser.id });
+  const result = tagsHelper.getLinkQueryParams(t.context.req);
+  result.user_id.should.equal(mockUser.id);
 });
 
-test('getUserIdQueryParam returns object with user_id set to null if req.user undefined', (t) => {
-  const result = tagsHelper.getUserIdQueryParam(t.context.req);
-  result.should.deep.equal({ user_id: null });
+test('getLinkQueryParams returns object with user_id set to null if req.user undefined', (t) => {
+  const result = tagsHelper.getLinkQueryParams(t.context.req);
+  t.is(result.user_id, null);
 });
