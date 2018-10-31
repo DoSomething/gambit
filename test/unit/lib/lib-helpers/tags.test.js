@@ -10,6 +10,7 @@ const httpMocks = require('node-mocks-http');
 
 const logger = require('../../../../lib/logger');
 const stubs = require('../../../helpers/stubs');
+const broadcastFactory = require('../../../helpers/factories/broadcast');
 const userFactory = require('../../../helpers/factories/user');
 
 // setup "x.should.y" assertion style
@@ -26,6 +27,7 @@ const tagsHelper = require('../../../../lib/helpers/tags');
 const sandbox = sinon.sandbox.create();
 
 // stubs
+const mockBroadcast = broadcastFactory.getValidAutoReplyBroadcast();
 const mockText = stubs.getRandomMessageText();
 const mockUser = userFactory.getValidUser();
 const mockVars = { season: 'winter' };
@@ -80,14 +82,26 @@ test('getVarsForTags should return an object', (t) => {
   result.should.have.property('user');
 });
 
-// getLinkQueryParams
-test('getLinkQueryParams should return object with user_id set if req.user.id exists', (t) => {
+// getBroadcastLinkQueryParams
+test('getBroadcastLinkQueryParams should return object with broadcast_id set if req.broadcast.id exists', (t) => {
+  t.context.req.broadcast = mockBroadcast;
+  const result = tagsHelper.getBroadcastLinkQueryParams(t.context.req);
+  result.broadcast_id.should.equal(mockBroadcast.id);
+});
+
+test('getBroadcastLinkQueryParams returns object with broadcast_id set to null if req.broadcast undefined', (t) => {
+  const result = tagsHelper.getBroadcastLinkQueryParams(t.context.req);
+  t.is(result.broadcast_id, null);
+});
+
+// getUserLinkQueryParams
+test('getUserLinkQueryParams should return object with user_id set if req.user.id exists', (t) => {
   t.context.req.user = mockUser;
-  const result = tagsHelper.getLinkQueryParams(t.context.req);
+  const result = tagsHelper.getUserLinkQueryParams(t.context.req);
   result.user_id.should.equal(mockUser.id);
 });
 
-test('getLinkQueryParams returns object with user_id set to null if req.user undefined', (t) => {
-  const result = tagsHelper.getLinkQueryParams(t.context.req);
+test('getUserLinkQueryParams returns object with user_id set to null if req.user undefined', (t) => {
+  const result = tagsHelper.getUserLinkQueryParams(t.context.req);
   t.is(result.user_id, null);
 });
