@@ -23,9 +23,9 @@ Object.keys(votingPlanAttendingWithValues).forEach((attendingWithName) => {
   if (fieldValue === votingPlanAttendingWithValues.alone) {
     votingPlanVarsByFieldValue.attendingWith[fieldValue] = 'by yourself';
   } else if (fieldValue === votingPlanAttendingWithValues.coWorkers) {
-    votingPlanVarsByFieldValue.attendingWith[fieldValue] = 'with co-workers';
+    votingPlanVarsByFieldValue.attendingWith[fieldValue] = 'with your co-workers';
   } else {
-    votingPlanVarsByFieldValue.attendingWith[fieldValue] = `with ${fieldValue}`;
+    votingPlanVarsByFieldValue.attendingWith[fieldValue] = `with your ${fieldValue}`;
   }
 });
 
