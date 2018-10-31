@@ -38,9 +38,9 @@ test.beforeEach((t) => {
 });
 
 // Cleanup
-test.afterEach(() => {
-  // reset stubs, spies, and mocks
+test.afterEach((t) => {
   sandbox.restore();
+  t.context.req = {};
 });
 
 // render
@@ -83,25 +83,25 @@ test('getVarsForTags should return an object', (t) => {
 });
 
 // getBroadcastLinkQueryParams
-test('getBroadcastLinkQueryParams should return object with broadcast_id set if req.broadcast.id exists', (t) => {
+test('getBroadcastLinkQueryParams should return object with broadcast_id set if broadcast exists', (t) => {
   t.context.req.broadcast = mockBroadcast;
   const result = tagsHelper.getBroadcastLinkQueryParams(t.context.req);
   result.broadcast_id.should.equal(mockBroadcast.id);
 });
 
-test('getBroadcastLinkQueryParams returns object with broadcast_id set to null if req.broadcast undefined', (t) => {
+test('getBroadcastLinkQueryParams returns empty object if broadcast undefined', (t) => {
   const result = tagsHelper.getBroadcastLinkQueryParams(t.context.req);
-  t.is(result.broadcast_id, null);
+  result.should.deep.equal({});
 });
 
 // getUserLinkQueryParams
-test('getUserLinkQueryParams should return object with user_id set if req.user.id exists', (t) => {
+test('getUserLinkQueryParams should return object with user_id set if user exists', (t) => {
   t.context.req.user = mockUser;
   const result = tagsHelper.getUserLinkQueryParams(t.context.req);
   result.user_id.should.equal(mockUser.id);
 });
 
-test('getUserLinkQueryParams returns object with user_id set to null if req.user undefined', (t) => {
+test('getUserLinkQueryParams returns empty object if req.user undefined', (t) => {
   const result = tagsHelper.getUserLinkQueryParams(t.context.req);
-  t.is(result.user_id, null);
+  result.should.deep.equal({});
 });
