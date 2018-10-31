@@ -16,11 +16,11 @@ module.exports = {
   links: {
     pollingLocator: {
       find: {
-        url: 'https://www.dosomething.org/us/polling-locator-2018',
+        url: process.env.DS_GAMBIT_CONVERSATIONS_POLLING_LOCATOR_FIND_URL || 'https://www.dosomething.org/us/polling-locator-2018',
         query: pollingLocatorQuery,
       },
       share: {
-        url: 'https://www.dosomething.org/us/campaigns/find-your-v-spot/blocks/5WuCqMMGre02mq8MqK4co6',
+        url: process.env.DS_GAMBIT_CONVERSATIONS_POLLING_LOCATOR_SHARE_URL || 'https://www.dosomething.org/us/campaigns/find-your-v-spot/blocks/5WuCqMMGre02mq8MqK4co6',
         query: pollingLocatorQuery,
       },
     },
