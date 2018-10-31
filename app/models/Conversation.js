@@ -30,6 +30,7 @@ const conversationSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Message',
   },
+  lastReceivedBroadcastId: String,
 }, { timestamps: true });
 
 conversationSchema.index({ createdAt: 1 });
@@ -111,6 +112,9 @@ conversationSchema.statics.findOneAndPopulateLastOutboundMessage = function (que
 conversationSchema.methods.setTopic = function (topic) {
   const topicId = topic.id;
   this.topic = topicId;
+  if (helpers.topic.isBroadcastable(topic)) {
+    this.lastReceivedBroadcastId = topicId;
+  }
   logger.debug('updating conversation.topic', { topicId });
   if (topic.campaign && topic.campaign.id) {
     const campaignId = topic.campaign.id;
