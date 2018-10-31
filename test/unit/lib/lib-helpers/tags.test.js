@@ -125,6 +125,25 @@ test('getUserLinkQueryParams returns empty object if req.user undefined', (t) =>
   result.should.deep.equal({});
 });
 
+// getVotingPlan
+test('getVotingPlan returns an object with description, attendingWith, methodOfTransport, and timeOfDay string properties', () => {
+  const attendingWith = stubs.getRandomWord();
+  const methodOfTransport = stubs.getRandomWord();
+  const timeOfDay = stubs.getRandomWord();
+  const description = stubs.getRandomMessageText();
+  sandbox.stub(tagsHelper, 'getVotingPlanAttendingWith')
+    .returns(attendingWith);
+  sandbox.stub(tagsHelper, 'getVotingPlanMethodOfTransport')
+    .returns(methodOfTransport);
+  sandbox.stub(tagsHelper, 'getVotingPlanTimeOfDay')
+    .returns(timeOfDay);
+  sandbox.stub(mustache, 'render')
+    .returns(description);
+
+  const result = tagsHelper.getVotingPlan(mockUser);
+  result.should.deep.equal({ attendingWith, methodOfTransport, timeOfDay, description });
+});
+
 // getVotingPlanAttendingWith
 test('getVotingPlanAttendingWith returns votingPlan.attendingWith config for user votingPlanAttendingWith value', () => {
   const fieldConfig = userConfig.fields.votingPlanAttendingWith;
