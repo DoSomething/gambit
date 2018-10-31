@@ -21,11 +21,11 @@ const askVotingPlanTimeOfDayText = process.env.DS_GAMBIT_CONVERSATIONS_ASK_VOTIN
 // 2 - askVotingPlanMethodOfTransport
 // 3 - askVotingPlanAttendingWith
 // 4 - completed
-const votingStatusVotingText = process.DS_GAMBIT_CONVERSATIONS_VOTING_STATUS_VOTING_TEXT || 'Awesome! First thing you\'ll need to do is find your polling place, so you know where you\'ll be voting. It takes less than a minute, check here: [link]\n\nNow let\'s make a simple plan for how you\'ll vote (and we\'ll remind you on Election Day!).';
+const votingStatusVotingText = process.DS_GAMBIT_CONVERSATIONS_VOTING_STATUS_VOTING_TEXT || 'Awesome! First thing you\'ll need to do is find your polling place, so you know where you\'ll be voting. It takes less than a minute, check here: {{{links.pollingLocator.find}}}\n\nNow let\'s make a simple plan for how you\'ll vote (and we\'ll remind you on Election Day!).';
 const beginVotingPlanText = `${votingStatusVotingText}\n\n${askVotingPlanTimeOfDayText}`;
 const beginVotingPlanTopic = rivescriptTopics.askVotingPlanTimeOfDay;
 const completedVotingPlanMacro = 'votingPlanAttendingWith';
-const completedVotingPlanText = process.env.DS_GAMBIT_CONVERSATIONS_COMPLETED_VOTING_PLAN_TEXT || 'Thanks for making a plan! I\'ll remind you on Election Day to make sure you\'re ready to vote.\n\nCan\'t wait? Share this graphic to let people know you\'re voting: [link]';
+const completedVotingPlanText = process.env.DS_GAMBIT_CONVERSATIONS_COMPLETED_VOTING_PLAN_TEXT || 'Thanks for making a plan! I\'ll remind you on Election Day to make sure you\'re ready to vote.\n\nCan\'t wait? Share this graphic to let people know you\'re voting: {{{links.pollingLocator.share}}}';
 
 /**
  * @param {String} prefix
