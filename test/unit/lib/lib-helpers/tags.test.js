@@ -7,11 +7,14 @@ const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
+const queryString = require('query-string');
 
 const logger = require('../../../../lib/logger');
 const stubs = require('../../../helpers/stubs');
 const broadcastFactory = require('../../../helpers/factories/broadcast');
 const userFactory = require('../../../helpers/factories/user');
+
+const config = require('../../../../config/lib/helpers/tags');
 
 // setup "x.should.y" assertion style
 chai.should();
@@ -41,6 +44,14 @@ test.beforeEach((t) => {
 test.afterEach((t) => {
   sandbox.restore();
   t.context.req = {};
+});
+
+// getLink
+test('getLink should return a string with linkConfig values', (t) => {
+  const findPollingLocatorConfig = config.links.pollingLocator.find;
+  const result = tagsHelper.getLink(findPollingLocatorConfig, t.context.req);
+  const query = queryString.stringify(findPollingLocatorConfig.query);
+  result.should.equal(`${findPollingLocatorConfig.url}?${query}`);
 });
 
 // render
