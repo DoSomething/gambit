@@ -15,6 +15,7 @@ const broadcastFactory = require('../../../helpers/factories/broadcast');
 const userFactory = require('../../../helpers/factories/user');
 
 const config = require('../../../../config/lib/helpers/tags');
+const userConfig = require('../../../../config/lib/helpers/user');
 
 // setup "x.should.y" assertion style
 chai.should();
@@ -33,7 +34,7 @@ const sandbox = sinon.sandbox.create();
 const mockBroadcast = broadcastFactory.getValidAutoReplyBroadcast();
 const mockText = stubs.getRandomMessageText();
 const mockUser = userFactory.getValidUser();
-const mockVars = { season: 'winter' };
+const mockTags = { season: 'winter' };
 
 test.beforeEach((t) => {
   stubs.stubLogger(sandbox, logger);
@@ -54,9 +55,9 @@ test('getLink should return a string with linkConfig values', (t) => {
   result.should.equal(`${findPollingLocatorConfig.url}?${query}`);
 });
 
-// getLinks
-test('getLinks should return an object', (t) => {
-  const result = tagsHelper.getLinks(t.context.req);
+// getLinksTag
+test('getLinksTag should return an object', (t) => {
+  const result = tagsHelper.getLinksTag(t.context.req);
   result.pollingLocator.should.have.property('find');
   result.pollingLocator.should.have.property('share');
 });
@@ -65,8 +66,8 @@ test('getLinks should return an object', (t) => {
 test('render should return a string', () => {
   sandbox.stub(mustache, 'render')
     .returns(mockText);
-  sandbox.stub(tagsHelper, 'getVarsForTags')
-    .returns(mockVars);
+  sandbox.stub(tagsHelper, 'getTags')
+    .returns(mockTags);
   const result = tagsHelper.render(mockText, {});
   mustache.render.should.have.been.called;
   result.should.equal(mockText);
@@ -75,15 +76,15 @@ test('render should return a string', () => {
 test('render should throw if mustache.render fails', () => {
   sandbox.stub(mustache, 'render')
     .returns(new Error());
-  sandbox.stub(tagsHelper, 'getVarsForTags')
-    .returns(mockVars);
-  tagsHelper.render(mockText, mockVars).should.throw;
+  sandbox.stub(tagsHelper, 'getTags')
+    .returns(mockTags);
+  tagsHelper.render(mockText, mockTags).should.throw;
 });
 
-test('render should throw if getVarsForTags fails', () => {
-  sandbox.stub(tagsHelper, 'getVarsForTags')
+test('render should throw if getTags fails', () => {
+  sandbox.stub(tagsHelper, 'getTags')
     .returns(new Error());
-  tagsHelper.render(mockText, mockVars).should.throw;
+  tagsHelper.render(mockText, mockTags).should.throw;
 });
 
 test('render should replace user vars', (t) => {
@@ -92,9 +93,9 @@ test('render should replace user vars', (t) => {
   result.should.equal(mockUser.id);
 });
 
-// getVarsForTags
-test('getVarsForTags should return an object', (t) => {
-  const result = tagsHelper.getVarsForTags(t.context.req);
+// getTags
+test('getTags should return an object', (t) => {
+  const result = tagsHelper.getTags(t.context.req);
   result.should.be.a('object');
   result.should.have.property('links');
   result.should.have.property('user');
@@ -122,4 +123,59 @@ test('getUserLinkQueryParams should return object with user_id set if user exist
 test('getUserLinkQueryParams returns empty object if req.user undefined', (t) => {
   const result = tagsHelper.getUserLinkQueryParams(t.context.req);
   result.should.deep.equal({});
+});
+
+// getVotingPlan
+test('getVotingPlan returns an object with description, attendingWith, methodOfTransport, and timeOfDay string properties', () => {
+  const attendingWith = stubs.getRandomWord();
+  const methodOfTransport = stubs.getRandomWord();
+  const timeOfDay = stubs.getRandomWord();
+  const description = stubs.getRandomMessageText();
+  sandbox.stub(tagsHelper, 'getVotingPlanAttendingWith')
+    .returns(attendingWith);
+  sandbox.stub(tagsHelper, 'getVotingPlanMethodOfTransport')
+    .returns(methodOfTransport);
+  sandbox.stub(tagsHelper, 'getVotingPlanTimeOfDay')
+    .returns(timeOfDay);
+  sandbox.stub(mustache, 'render')
+    .returns(description);
+
+  const result = tagsHelper.getVotingPlan(mockUser);
+  result.should.deep.equal({ attendingWith, methodOfTransport, timeOfDay, description });
+});
+
+// getVotingPlanAttendingWith
+test('getVotingPlanAttendingWith returns votingPlan.attendingWith config for user votingPlanAttendingWith value', () => {
+  const fieldConfig = userConfig.fields.votingPlanAttendingWith;
+  Object.keys(fieldConfig.values).forEach((value) => {
+    const user = userFactory.getValidUser();
+    const fieldValue = fieldConfig.values[value];
+    user[fieldConfig.name] = fieldValue;
+    const result = tagsHelper.getVotingPlanAttendingWith(user);
+    result.should.equal(config.user.votingPlan.vars.attendingWith[fieldValue]);
+  });
+});
+
+// getVotingPlanMethodOfTransport
+test('getVotingPlanMethodOfTransport returns votingPlan.methodOfTransport config for user votingPlanMethodOfTransport value', () => {
+  const fieldConfig = userConfig.fields.votingPlanMethodOfTransport;
+  Object.keys(fieldConfig.values).forEach((value) => {
+    const user = userFactory.getValidUser();
+    const fieldValue = fieldConfig.values[value];
+    user[fieldConfig.name] = fieldValue;
+    const result = tagsHelper.getVotingPlanMethodOfTransport(user);
+    result.should.equal(config.user.votingPlan.vars.methodOfTransport[fieldValue]);
+  });
+});
+
+// getVotingPlanTimeOfDay
+test('getVotingPlanTimeOfDay returns votingPlan.timeOfDay config for user votingPlanTimeOfDay value', () => {
+  const fieldConfig = userConfig.fields.votingPlanTimeOfDay;
+  Object.keys(fieldConfig.values).forEach((value) => {
+    const user = userFactory.getValidUser();
+    const fieldValue = fieldConfig.values[value];
+    user[fieldConfig.name] = fieldValue;
+    const result = tagsHelper.getVotingPlanTimeOfDay(user);
+    result.should.equal(config.user.votingPlan.vars.timeOfDay[fieldValue]);
+  });
 });
