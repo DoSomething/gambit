@@ -4,14 +4,12 @@
 + dss
 @ tmi
 
-> topic tmi_level1
-
+> topic tmi_level1 includes random
 + [*]
 - Perfect. You'll start receiving TNT on Tuesday. One last question: what company do you work for? We're sure it's awesome, so don't be shy. Give 'em a shout out!{topic=tmi_completed}
-
 < topic
 
-// Includes 'random' to catch all triggers defined in the default topic
+
 > topic tmi_completed includes random
 
 + [*]
