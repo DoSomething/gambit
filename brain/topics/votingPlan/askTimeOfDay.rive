@@ -12,7 +12,7 @@
 + c
 - votingPlanTimeOfDayEvening
 
-+ [*] @afternooon [*]
++ [*] (afternoon|lunch|lunchtime|noon) [*]
 - votingPlanTimeOfDayAfternoon
 
 + [*] @evening [*]
