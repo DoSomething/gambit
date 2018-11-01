@@ -12,7 +12,7 @@ const askSubscriptionStatusText = 'Do you want texts: A)Weekly B)Monthly C)I nee
 const newsUrl = 'https://www.dosomething.org/us/spot-the-signs-guide?source=sms&utm_source=dosomething&utm_medium=sms&utm_campaign=permissioning_weekly&user_id={{user.id}}';
 
 // Voting plan.
-const askVotingPlanAttendingWithText = process.env.DS_GAMBIT_CONVERSATIONS_ASK_VOTING_PLAN_ATTENDING_WITH_TEXT || 'Who are you planning on voting with A) Alone B) Friends C) Family D) Co-workers';
+const askVotingPlanAttendingWithText = process.env.DS_GAMBIT_CONVERSATIONS_ASK_VOTING_PLAN_ATTENDING_WITH_TEXT || 'Who are you planning on voting with? A) Alone B) Friends C) Family D) Co-workers';
 const askVotingPlanMethodOfTransportText = process.env.DS_GAMBIT_CONVERSATIONS_ASK_VOTING_PLAN_METHOD_OF_TRANSPORT_TEXT || 'How are you planning on getting to the polls? A) Drive B) Walk C) Bike D) Public transportation';
 const askVotingPlanStatusText = process.env.DS_GAMBIT_CONVERSATIONS_ASK_VOTING_PLAN_STATUS_TEXT || 'Are you planning on voting? A) Yes B) No C) Already voted D) Can\'t vote';
 const askVotingPlanTimeOfDayText = process.env.DS_GAMBIT_CONVERSATIONS_ASK_VOTING_PLAN_TIME_OF_DAY_TEXT || 'What time are you planning on voting? A) Morning B) Afternoon C) Evening';
@@ -21,11 +21,11 @@ const askVotingPlanTimeOfDayText = process.env.DS_GAMBIT_CONVERSATIONS_ASK_VOTIN
 // 2 - askVotingPlanMethodOfTransport
 // 3 - askVotingPlanAttendingWith
 // 4 - completed
-const votingStatusVotingText = process.DS_GAMBIT_CONVERSATIONS_VOTING_STATUS_VOTING_TEXT || 'Awesome! First thing you\'ll need to do is find your polling place, so you know where you\'ll be voting. It takes less than a minute, check here: {{{links.pollingLocator.find}}}\n\nNow let\'s make a simple plan for how you\'ll vote (and we\'ll remind you on Election Day!).';
+const votingStatusVotingText = process.DS_GAMBIT_CONVERSATIONS_VOTING_STATUS_VOTING_TEXT || 'Awesome! First thing you\'ll need to do is find your polling place, so you know where you\'ll be voting. It takes less than a minute, check here: {{links.pollingLocator.find}}\n\nNow let\'s make a simple plan for how you\'ll vote (and we\'ll remind you on Election Day!).';
 const beginVotingPlanText = `${votingStatusVotingText}\n\n${askVotingPlanTimeOfDayText}`;
 const beginVotingPlanTopic = rivescriptTopics.askVotingPlanTimeOfDay;
 const completedVotingPlanMacro = 'votingPlanAttendingWith';
-const completedVotingPlanText = process.env.DS_GAMBIT_CONVERSATIONS_COMPLETED_VOTING_PLAN_TEXT || 'Thanks for making a plan! I\'ll remind you on Election Day to make sure you\'re ready to vote.\n\nCan\'t wait? Share this graphic to let people know you\'re voting: {{{links.pollingLocator.share}}}';
+const completedVotingPlanText = process.env.DS_GAMBIT_CONVERSATIONS_COMPLETED_VOTING_PLAN_TEXT || 'Thanks for making a plan! I\'ll remind you on Election Day to make sure you\'re ready to vote.\n\nCan\'t wait? Share this graphic to let people know you\'re voting: {{links.pollingLocator.share}}';
 
 /**
  * @param {String} prefix
@@ -34,6 +34,14 @@ const completedVotingPlanText = process.env.DS_GAMBIT_CONVERSATIONS_COMPLETED_VO
  */
 function macroName(prefix, valueKey) {
   return `${prefix}${valueKey.charAt(0).toUpperCase() + valueKey.slice(1)}`;
+}
+
+/**
+ * @param {String} string
+ * @return {String}
+ */
+function lowercaseFirstLetter(string) {
+  return string.charAt(0).toLowerCase() + string.slice(1);
 }
 
 /**
@@ -78,7 +86,7 @@ function votingPlanMethodOfTransport(valueKey) {
   return {
     name: macroName('votingPlanMethodOfTransport', valueKey),
     // After saving method of transport, ask for attending with.
-    text: `And finally, ${askVotingPlanAttendingWithText}`,
+    text: `And finally, ${lowercaseFirstLetter(askVotingPlanAttendingWithText)}`,
     topic: rivescriptTopics.askVotingPlanAttendingWith,
     profileUpdate: {
       field: profile.votingPlanMethodOfTransport.name,

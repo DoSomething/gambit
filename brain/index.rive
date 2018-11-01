@@ -60,7 +60,6 @@
  * Rivescript does throw an error if an uppercase letter appears within a trigger.
  * @see https://github.com/aichaos/rivescript-js/issues/118#issuecomment-220413307
  */
-! array afternoon = afternoon lunch lunchtime noon
 ! array alone     = alone|me|myself|self|solo
 ! array bike      = bicycle|bike|bikin|biking|cycling
 ! array bot       = bot robot machine computer
@@ -74,11 +73,16 @@
 ! array family    = abeula|abeulas|abuelo|abeulos|aunt|aunts|auntie|aunties
   ^ bro|bros|brother|brothers
   ^ cousin|cousins|cuz|cuzzies
-  ^ dad|daddy|father|fam|famil|famili|familia|family|fams|famz
-  ^ grandfather|grandpa|grandma|grandmother|grandma|grandmama|hermana|hermanas|hermano|hermanos
-  ^ ma|madre|mama|mom|mommy|mother
+  ^ dad|daddy|esposa|esposo|
+  ^ father|fam|famil|famili|familia|family|fams|famz
+  ^ grandfather|grandpa|grandma|grandmother|grandma|grandmama
+  ^ hermana|hermanas|hermano|hermanos|hubby|husband
+  ^ ma|madre|mama|marido|mom|mommy|mother
   ^ pa|padre|papi|pop|poppy
-  ^ sis|sista|sistas|sister|stepdad|stepfather|stepmom|stepmother|tia|tias|tio|tios|uncle|uncles
+  ^ sis|sista|sistas|sister|stepdad|stepfather|stepmom|stepmother
+  ^ tia|tias|tio|tios
+  ^ uncle|uncles
+  ^ wife|wifey
 ! array friends   = amigo|amigos
   ^ bf|bff|bffs|boi|bois|boiz|boo|boy|boyfriend|boyfriends|boys|boyz|bud|buddies|buddy|buds
   ^ fiend|friend|friends
