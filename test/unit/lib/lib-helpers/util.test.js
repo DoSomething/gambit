@@ -73,6 +73,7 @@ test('containsAlphanumeric should return when alphanumeric, false if not', (t) =
   t.truthy(utilHelper.containsAlphanumeric('Hey'));
   t.falsy(utilHelper.containsAlphanumeric('😎 😎'));
   t.truthy(utilHelper.containsAlphanumeric('This is neat 😎 😎'));
+  t.truthy(utilHelper.containsAlphanumeric('1'));
   t.falsy(utilHelper.containsAlphanumeric('  '));
   t.falsy(utilHelper.containsAlphanumeric(null));
 });
