@@ -95,10 +95,28 @@ test('render should replace user vars', (t) => {
 
 // getTags
 test('getTags should return an object', (t) => {
+  const broadcastTag = { id: stubs.getContentfulId() };
+  const linksTag = { url: stubs.getRandomMessageText() };
+  const userTag = { id: stubs.getContentfulId() };
+  sandbox.stub(tagsHelper, 'getBroadcastTag')
+    .returns(broadcastTag);
+  sandbox.stub(tagsHelper, 'getLinksTag')
+    .returns(linksTag);
+  sandbox.stub(tagsHelper, 'getUserTag')
+    .returns(userTag);
+  t.context.req.user = mockUser;
+
   const result = tagsHelper.getTags(t.context.req);
-  result.should.be.a('object');
-  result.should.have.property('links');
-  result.should.have.property('user');
+  result.should.deep.equal({
+    broadcast: broadcastTag,
+    links: linksTag,
+    user: userTag,
+  });
+});
+
+test('getTags should return empty object for user if req.user undefined', (t) => {
+  const result = tagsHelper.getTags(t.context.req);
+  result.user.should.deep.equal({});
 });
 
 // getBroadcastLinkQueryParams
