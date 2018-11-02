@@ -299,6 +299,30 @@ test('loadBot calls getRivescripts and creates a new Rivescript bot with result'
     .calledWith(getRivescripts);
 });
 
+// parseAskVotingPlanStatusResponse
+test('parseAskVotingPlanStatusResponse should call rivescriptHelper.getBotReply', async () => {
+  const messageText = stubs.getRandomMessageText();
+  sandbox.stub(rivescriptHelper, 'getBotReply')
+    .returns(Promise.resolve(mockRivescriptReply));
+
+  const result = await rivescriptHelper.parseAskVotingPlanStatusResponse(messageText);
+  rivescriptHelper.getBotReply
+    .should.have.been.calledWith('global', 'ask_voting_plan_status', messageText);
+  result.should.deep.equal(mockRivescriptReply.text);
+});
+
+// parseAskYesNoResponse
+test('parseAskYesNoResponse should call rivescriptHelper.getBotReply', async () => {
+  const messageText = stubs.getRandomMessageText();
+  sandbox.stub(rivescriptHelper, 'getBotReply')
+    .returns(Promise.resolve(mockRivescriptReply));
+
+  const result = await rivescriptHelper.parseAskYesNoResponse(messageText);
+  rivescriptHelper.getBotReply
+    .should.have.been.calledWith('global', 'ask_yes_no', messageText);
+  result.should.deep.equal(mockRivescriptReply.text);
+});
+
 // parseRivescript
 test('parseRivescript should throw error if defaultTopicTrigger undefined', (t) => {
   t.throws(() => rivescriptHelper.parseRivescript());
