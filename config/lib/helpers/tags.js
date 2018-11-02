@@ -58,7 +58,7 @@ module.exports = {
   },
   user: {
     votingPlan: {
-      template: '{{methodOfTransport}} in the {{timeOfDay}} {{attendingWith}}',
+      template: process.env.DS_GAMBIT_CONVERSATIONS_VOTING_PLAN_DESCRIPTION_TEXT || '{{methodOfTransport}} to the polls in the {{timeOfDay}} {{attendingWith}}',
       vars: votingPlanVarsByFieldValue,
     },
   },
