@@ -68,12 +68,13 @@ test('formatMobileNumber should throw an UnprocessableEntityError if the mobile 
   expect(() => utilHelper.formatMobileNumber(mobile)).to.throw(UnprocessableEntityError);
 });
 
-// isAlphanumeric
-test('isAlphanumeric should return when alphanumeric, false if not', (t) => {
-  t.truthy(utilHelper.isAlphanumeric('Hey'));
-  t.falsy(utilHelper.isAlphanumeric('😎 😎'));
-  t.falsy(utilHelper.isAlphanumeric('  '));
-  t.falsy(utilHelper.isAlphanumeric(null));
+// containsAlphanumeric
+test('containsAlphanumeric should return when alphanumeric, false if not', (t) => {
+  t.truthy(utilHelper.containsAlphanumeric('Hey'));
+  t.falsy(utilHelper.containsAlphanumeric('😎 😎'));
+  t.truthy(utilHelper.containsAlphanumeric('This is neat 😎 😎'));
+  t.falsy(utilHelper.containsAlphanumeric('  '));
+  t.falsy(utilHelper.containsAlphanumeric(null));
 });
 
 // parseStatusAndMessageFromError
