@@ -36,7 +36,28 @@ function getValidAutoReply() {
 }
 
 function getValidTextPostConfig() {
-  return getValidTopic(config.types.textPostConfig);
+  const topic = getValidTopic(config.types.textPostConfig);
+  topic.templates = {
+    // Note: this field will be removed once we deprecate saving topics to the reference field
+    // on a defaultTopicTrigger.
+    askText: {
+      text: stubs.getRandomMessageText(),
+      topic: {},
+    },
+    invalidAskText: {
+      text: stubs.getRandomMessageText(),
+      topic: {},
+    },
+    completedTextPost: {
+      text: stubs.getRandomMessageText(),
+      topic: {},
+    },
+    completedTextPostAutoReply: {
+      text: stubs.getRandomMessageText(),
+      topic: {},
+    },
+  };
+  return topic;
 }
 
 module.exports = {

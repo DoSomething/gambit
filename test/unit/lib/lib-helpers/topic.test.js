@@ -157,3 +157,10 @@ test('getRenderedTextFromTopicAndTemplateName throws when template undefined', (
   const templateName = 'winterfell';
   t.throws(() => topicHelper.getRenderedTextFromTopicAndTemplateName(topic, templateName));
 });
+
+// getStartTemplateText
+test('getStartTemplateText returns startPhotoPost text for textPostConfig topics ', () => {
+  const topic = topicFactory.getValidTextPostConfig();
+  const result = topicHelper.getStartTemplateText(topic);
+  result.should.equal(topic.templates.askText.text);
+});
