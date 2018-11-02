@@ -88,7 +88,7 @@ test('render should return a string', () => {
   sandbox.stub(tagsHelper, 'getTags')
     .returns(mockTags);
   const result = tagsHelper.render(mockText, {});
-  mustache.render.should.have.been.called;
+  mustache.render.should.have.been.calledWith(mockText, mockTags);
   result.should.equal(mockText);
 });
 
@@ -179,6 +179,11 @@ test('getVotingPlan returns an object with description, attendingWith, methodOfT
 
   const result = tagsHelper.getVotingPlan(mockUser);
   result.should.deep.equal({ attendingWith, methodOfTransport, timeOfDay, description });
+  mustache.render.should.have.been.calledWith(config.user.votingPlan.template, {
+    attendingWith,
+    methodOfTransport,
+    timeOfDay,
+  });
 });
 
 // getVotingPlanAttendingWith
