@@ -1,0 +1,16 @@
++ dss
+- Thanks for your interest in DoSomething Strategic's newsletter, 'Til Next Tuesday! Trust us, it's way less boring than the other ones you get. Text back your email to sign up now.{topic=dss_ask_email}
+
++ tmi
+@ dss
+
+> topic dss_ask_email includes random
++ [*]
+- Perfect. You'll start receiving TNT on Tuesday. One last question: what company do you work for? We're sure it's awesome, so don't be shy. Give 'em a shout out!{topic=dss_ask_company}
+< topic
+
+
+> topic dss_ask_company includes random
++ [*]
+- Great. You've got yourself on the list. See you in your inbox on Tuesday!{topic=random}
+< topic
