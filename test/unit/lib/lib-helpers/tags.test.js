@@ -12,6 +12,7 @@ const queryString = require('query-string');
 const logger = require('../../../../lib/logger');
 const stubs = require('../../../helpers/stubs');
 const broadcastFactory = require('../../../helpers/factories/broadcast');
+const conversationFactory = require('../../../helpers/factories/conversation');
 const userFactory = require('../../../helpers/factories/user');
 
 const config = require('../../../../config/lib/helpers/tags');
@@ -45,6 +46,24 @@ test.beforeEach((t) => {
 test.afterEach((t) => {
   sandbox.restore();
   t.context.req = {};
+});
+
+// getBroadcastTag
+test('getBroadcastTag should return empty object when req.broadcast and req.conversation undefined', (t) => {
+  const result = tagsHelper.getBroadcastTag(t.context.req);
+  result.should.deep.equal({});
+});
+
+test('getBroadcastTag should return object with id if req.broadcast', (t) => {
+  t.context.req.broadcast = mockBroadcast;
+  const result = tagsHelper.getBroadcastTag(t.context.req);
+  result.should.deep.equal({ id: mockBroadcast.id });
+});
+
+test('getBroadcastTag should return object with id when req.broadcast undefined and req.converastion has broadcastId', (t) => {
+  t.context.req.conversation = conversationFactory.getValidConversation();
+  const result = tagsHelper.getBroadcastTag(t.context.req);
+  result.should.deep.equal({ id: t.context.req.conversation.lastReceivedBroadcastId });
 });
 
 // getLink
