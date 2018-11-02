@@ -12,6 +12,7 @@ const queryString = require('query-string');
 const logger = require('../../../../lib/logger');
 const stubs = require('../../../helpers/stubs');
 const broadcastFactory = require('../../../helpers/factories/broadcast');
+const conversationFactory = require('../../../helpers/factories/conversation');
 const userFactory = require('../../../helpers/factories/user');
 
 const config = require('../../../../config/lib/helpers/tags');
@@ -47,6 +48,24 @@ test.afterEach((t) => {
   t.context.req = {};
 });
 
+// getBroadcastTag
+test('getBroadcastTag should return empty object when req.broadcast and req.conversation undefined', (t) => {
+  const result = tagsHelper.getBroadcastTag(t.context.req);
+  result.should.deep.equal({});
+});
+
+test('getBroadcastTag should return object with id if req.broadcast', (t) => {
+  t.context.req.broadcast = mockBroadcast;
+  const result = tagsHelper.getBroadcastTag(t.context.req);
+  result.should.deep.equal({ id: mockBroadcast.id });
+});
+
+test('getBroadcastTag should return object with id when req.broadcast undefined and req.converastion has broadcastId', (t) => {
+  t.context.req.conversation = conversationFactory.getValidConversation();
+  const result = tagsHelper.getBroadcastTag(t.context.req);
+  result.should.deep.equal({ id: t.context.req.conversation.lastReceivedBroadcastId });
+});
+
 // getLink
 test('getLink should return a string with linkConfig values', (t) => {
   const findPollingLocatorConfig = config.links.pollingLocator.find;
@@ -69,7 +88,7 @@ test('render should return a string', () => {
   sandbox.stub(tagsHelper, 'getTags')
     .returns(mockTags);
   const result = tagsHelper.render(mockText, {});
-  mustache.render.should.have.been.called;
+  mustache.render.should.have.been.calledWith(mockText, mockTags);
   result.should.equal(mockText);
 });
 
@@ -95,10 +114,28 @@ test('render should replace user vars', (t) => {
 
 // getTags
 test('getTags should return an object', (t) => {
+  const broadcastTag = { id: stubs.getContentfulId() };
+  const linksTag = { url: stubs.getRandomMessageText() };
+  const userTag = { id: stubs.getContentfulId() };
+  sandbox.stub(tagsHelper, 'getBroadcastTag')
+    .returns(broadcastTag);
+  sandbox.stub(tagsHelper, 'getLinksTag')
+    .returns(linksTag);
+  sandbox.stub(tagsHelper, 'getUserTag')
+    .returns(userTag);
+  t.context.req.user = mockUser;
+
   const result = tagsHelper.getTags(t.context.req);
-  result.should.be.a('object');
-  result.should.have.property('links');
-  result.should.have.property('user');
+  result.should.deep.equal({
+    broadcast: broadcastTag,
+    links: linksTag,
+    user: userTag,
+  });
+});
+
+test('getTags should return empty object for user if req.user undefined', (t) => {
+  const result = tagsHelper.getTags(t.context.req);
+  result.user.should.deep.equal({});
 });
 
 // getBroadcastLinkQueryParams
@@ -142,6 +179,11 @@ test('getVotingPlan returns an object with description, attendingWith, methodOfT
 
   const result = tagsHelper.getVotingPlan(mockUser);
   result.should.deep.equal({ attendingWith, methodOfTransport, timeOfDay, description });
+  mustache.render.should.have.been.calledWith(config.user.votingPlan.template, {
+    attendingWith,
+    methodOfTransport,
+    timeOfDay,
+  });
 });
 
 // getVotingPlanAttendingWith

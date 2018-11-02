@@ -21,6 +21,7 @@ module.exports.getRawConversationData = function getRawConversationData(platform
     updatedAt: date,
     lastOutboundMessage: messageFactory.getValidMessage(),
     campaignId: stubs.getCampaignId(),
+    lastReceivedBroadcastId: stubs.getContentfulId(),
   };
 };
 
