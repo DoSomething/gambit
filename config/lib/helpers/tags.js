@@ -21,11 +21,11 @@ const votingPlanAttendingWithValues = userFields.votingPlanAttendingWith.values;
 Object.keys(votingPlanAttendingWithValues).forEach((attendingWithName) => {
   const fieldValue = votingPlanAttendingWithValues[attendingWithName];
   if (fieldValue === votingPlanAttendingWithValues.alone) {
-    votingPlanVarsByFieldValue.attendingWith[fieldValue] = 'by yourself';
+    votingPlanVarsByFieldValue.attendingWith[fieldValue] = '';
   } else if (fieldValue === votingPlanAttendingWithValues.coWorkers) {
-    votingPlanVarsByFieldValue.attendingWith[fieldValue] = 'with your co-workers';
+    votingPlanVarsByFieldValue.attendingWith[fieldValue] = ' with your co-workers';
   } else {
-    votingPlanVarsByFieldValue.attendingWith[fieldValue] = `with your ${fieldValue}`;
+    votingPlanVarsByFieldValue.attendingWith[fieldValue] = ` with your ${fieldValue}`;
   }
 });
 
@@ -58,7 +58,7 @@ module.exports = {
   },
   user: {
     votingPlan: {
-      template: process.env.DS_GAMBIT_CONVERSATIONS_VOTING_PLAN_DESCRIPTION_TEXT || '{{methodOfTransport}} to the polls in the {{timeOfDay}} {{attendingWith}}',
+      template: process.env.DS_GAMBIT_CONVERSATIONS_VOTING_PLAN_DESCRIPTION_TEXT || '{{methodOfTransport}} to the polls in the {{timeOfDay}}{{attendingWith}}',
       vars: votingPlanVarsByFieldValue,
     },
   },
