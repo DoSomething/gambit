@@ -68,6 +68,14 @@ test('formatMobileNumber should throw an UnprocessableEntityError if the mobile 
   expect(() => utilHelper.formatMobileNumber(mobile)).to.throw(UnprocessableEntityError);
 });
 
+// isAlphanumeric
+test('isAlphanumeric should return when alphanumeric, false if not', (t) => {
+  t.truthy(utilHelper.isAlphanumeric('Hey'));
+  t.falsy(utilHelper.isAlphanumeric('😎 😎'));
+  t.falsy(utilHelper.isAlphanumeric('  '));
+  t.falsy(utilHelper.isAlphanumeric(null));
+});
+
 // parseStatusAndMessageFromError
 test('parseStatusAndMessageFromError(anyString): should respond with error status 500 and anyString\'s value as message', () => {
   const errorString = 'omgError';
