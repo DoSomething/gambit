@@ -32,7 +32,6 @@ const campaignId = stubs.getCampaignId();
 const userId = stubs.getUserId();
 const platformUserId = stubs.getMobileNumber();
 const conversation = conversationFactory.getValidConversation();
-const macro = stubs.getMacro();
 const message = conversation.lastOutboundMessage;
 const topic = topicFactory.getValidTopic();
 
@@ -305,27 +304,6 @@ test('hasCampaign should return boolean of whether req.campaign defined', (t) =>
   t.falsy(requestHelper.hasCampaign(t.context.req));
 });
 
-// isChangeTopicMacro
-test('isChangeTopicMacro should return true if req.macro is changeTopic', (t) => {
-  sandbox.stub(helpers.macro, 'isChangeTopic')
-    .returns(true);
-  t.context.req.macro = macro;
-  t.truthy(requestHelper.isChangeTopicMacro(t.context.req));
-});
-
-test('isChangeTopicMacro should return false if req.macro is undefined', (t) => {
-  sandbox.stub(helpers.macro, 'isChangeTopic')
-    .returns(true);
-  t.falsy(requestHelper.isChangeTopicMacro(t.context.req));
-});
-
-test('isChangeTopicMacro should return false if req.macro is not changeTopic', (t) => {
-  sandbox.stub(helpers.macro, 'isChangeTopic')
-    .returns(false);
-  t.context.req.macro = macro;
-  t.falsy(requestHelper.isChangeTopicMacro(t.context.req));
-});
-
 // isLastOutboundAskContinue
 test('isLastOutboundAskContinue should return whether if req.lastOutboundTemplate is an askContinue template', (t) => {
   sandbox.stub(helpers.template, 'isAskContinueTemplate')
@@ -454,7 +432,7 @@ test('isSaidNoMacro returns whether req.askYesNoResponse equals no', (t) => {
   t.falsy(requestHelper.isSaidNoMacro(t.context.req));
   t.context.req.macro = helpers.macro.macros.saidNo();
   t.truthy(requestHelper.isSaidNoMacro(t.context.req));
-  t.context.req.macro = helpers.macro.macros.changeTopic();
+  t.context.req.macro = helpers.macro.macros.votingPlanStatusVoting();
   t.falsy(requestHelper.isSaidNoMacro(t.context.req));
 });
 
@@ -464,7 +442,7 @@ test('isSaidYesMacro returns whether req.askYesNoResponse equals yes', (t) => {
   t.truthy(requestHelper.isSaidYesMacro(t.context.req));
   t.context.req.macro = helpers.macro.macros.saidNo();
   t.falsy(requestHelper.isSaidYesMacro(t.context.req));
-  t.context.req.macro = helpers.macro.macros.changeTopic();
+  t.context.req.macro = helpers.macro.macros.votingPlanStatusVoting();
   t.falsy(requestHelper.isSaidYesMacro(t.context.req));
 });
 
