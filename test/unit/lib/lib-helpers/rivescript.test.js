@@ -25,7 +25,6 @@ const mockWord = stubs.getRandomWord();
 const mockDeparsedRivescript = { topics: { random: [], ask_yes_no: [] } };
 const mockRivescriptCommand = `${config.commands.trigger}${config.separators.command}${mockWord}`;
 const mockRivescriptLine = `${mockRivescriptCommand}${lineBreak}`;
-const mockRedirectLine = `${config.commands.redirect}${config.separators.command}${mockWord}${lineBreak}`;
 const mockReplyLine = `${config.commands.reply}${config.separators.command}${mockWord}${lineBreak}`;
 const mockRivescript = [mockRivescriptLine, mockReplyLine].join(lineBreak);
 const mockRivescriptReply = {
@@ -156,82 +155,63 @@ test('formatRivescriptLine should return a trimmed concat of operator and value 
   result.should.equal(mockRivescriptLine);
 });
 
-// getRivescriptFromTriggerTextAndRivescriptLine
-test('getRivescriptFromTriggerTextAndRivescriptLine should array with triggerText as rs line and given rs line ', () => {
+// formatTriggerRivescript
+test('formatTriggerRivescript should return trigger command with triggerText as rs line', () => {
   sandbox.stub(rivescriptHelper, 'formatRivescriptLine')
     .returns(mockRivescriptLine);
-  sandbox.stub(rivescriptHelper, 'joinRivescriptLines')
-    .returns(mockRivescript);
 
-  const result = rivescriptHelper
-    .getRivescriptFromTriggerTextAndRivescriptLine(mockWord, mockReplyLine);
+  const result = rivescriptHelper.formatTriggerRivescript(mockWord);
   rivescriptHelper.formatRivescriptLine
     .should.have.been.calledWith(config.commands.trigger, mockWord);
-  rivescriptHelper.joinRivescriptLines
-    .should.have.been.calledWith([mockRivescriptLine, mockReplyLine]);
-  result.should.equal(mockRivescript);
+  result.should.equal(mockRivescriptLine);
 });
 
-// getRedirectRivescript
-test('getRedirectRivescript should return Rivescript with trigger and redirect commands', () => {
-  const mockRedirectText = stubs.getRandomWord();
-  sandbox.stub(rivescriptHelper, 'formatRivescriptLine')
-    .returns(mockRedirectLine);
-  sandbox.stub(rivescriptHelper, 'getRivescriptFromTriggerTextAndRivescriptLine')
-    .returns(mockRivescript);
-
-  const result = rivescriptHelper.getRedirectRivescript(mockWord, mockRedirectText);
-  rivescriptHelper.formatRivescriptLine
-    .should.have.been.calledWith(config.commands.redirect, mockRedirectText);
-  rivescriptHelper.getRivescriptFromTriggerTextAndRivescriptLine
-    .should.have.been.calledWith(mockWord, mockRedirectLine);
-  result.should.equal(mockRivescript);
-});
-
-// getReplyRivescript
-test('getReplyRivescript should return Rivescript with trigger and reply commands', () => {
-  const mockReplyText = stubs.getRandomMessageText();
-  sandbox.stub(rivescriptHelper, 'formatRivescriptLine')
-    .returns(mockReplyLine);
-  sandbox.stub(rivescriptHelper, 'getRivescriptFromTriggerTextAndRivescriptLine')
-    .returns(mockRivescript);
-
-  const result = rivescriptHelper.getReplyRivescript(mockWord, mockReplyText);
-  rivescriptHelper.formatRivescriptLine
-    .should.have.been.calledWith(config.commands.reply, mockReplyText);
-  rivescriptHelper.getRivescriptFromTriggerTextAndRivescriptLine
-    .should.have.been.calledWith(mockWord, mockReplyLine);
-  result.should.equal(mockRivescript);
-});
-
-// getRivescriptFromDefaultTopicTrigger
-test('getRivescriptFromDefaultTopicTrigger returns redirectRivescript if defaultTopicTrigger.redirect is set', () => {
-  sandbox.stub(rivescriptHelper, 'getRedirectRivescript')
-    .returns(mockRivescript);
-  sandbox.stub(rivescriptHelper, 'getReplyRivescript')
+// parseRivescript
+test('parseRivescript returns redirectRivescript if defaultTopicTrigger.redirect is set', () => {
+  const trigger = stubs.getRandomWord();
+  const redirect = stubs.getRandomWord();
+  sandbox.stub(rivescriptHelper, 'formatTriggerRivescript')
+    .returns(trigger);
+  sandbox.stub(rivescriptHelper, 'formatRedirectRivescript')
+    .returns(redirect);
+  sandbox.stub(rivescriptHelper, 'formatReplyRivescript')
+    .returns(null);
+  sandbox.stub(rivescriptHelper, 'joinRivescriptLines')
     .returns(mockRivescript);
   const redirectDefaultTopicTrigger = defaultTopicTriggerFactory
     .getValidRedirectDefaultTopicTrigger();
 
-  const result = rivescriptHelper.getRivescriptFromDefaultTopicTrigger(redirectDefaultTopicTrigger);
-  rivescriptHelper.getReplyRivescript.should.not.have.been.called;
-  rivescriptHelper.getRedirectRivescript
-    .should.have.been
-    .calledWith(redirectDefaultTopicTrigger.trigger, redirectDefaultTopicTrigger.redirect);
+  const result = rivescriptHelper.parseRivescript(redirectDefaultTopicTrigger);
+  rivescriptHelper.formatReplyRivescript.should.not.have.been.called;
+  rivescriptHelper.formatTriggerRivescript.should.have.been
+    .calledWith(redirectDefaultTopicTrigger.trigger);
+  rivescriptHelper.formatRedirectRivescript.should.have.been
+    .calledWith(redirectDefaultTopicTrigger.redirect);
+  rivescriptHelper.joinRivescriptLines.should.have.been.calledWith([trigger, redirect]);
   result.should.equal(mockRivescript);
 });
 
-test('getRivescriptFromDefaultTopicTrigger returns replyRivescript if defaultTopicTrigger.redirect is not set', () => {
-  sandbox.stub(rivescriptHelper, 'getRedirectRivescript')
+test('parseRivescript returns replyRivescript if defaultTopicTrigger.reply is set', () => {
+  const trigger = stubs.getRandomWord();
+  const reply = stubs.getRandomWord();
+  sandbox.stub(rivescriptHelper, 'formatTriggerRivescript')
+    .returns(trigger);
+  sandbox.stub(rivescriptHelper, 'formatRedirectRivescript')
+    .returns(null);
+  sandbox.stub(rivescriptHelper, 'formatReplyRivescript')
+    .returns(reply);
+  sandbox.stub(rivescriptHelper, 'joinRivescriptLines')
     .returns(mockRivescript);
-  sandbox.stub(rivescriptHelper, 'getReplyRivescript')
-    .returns(mockRivescript);
-  const replyDefaultTopicTrigger = defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger();
+  const replyDefaultTopicTrigger = defaultTopicTriggerFactory
+    .getValidReplyDefaultTopicTrigger();
 
-  const result = rivescriptHelper.getRivescriptFromDefaultTopicTrigger(replyDefaultTopicTrigger);
-  rivescriptHelper.getRedirectRivescript.should.not.have.been.called;
-  rivescriptHelper.getReplyRivescript.should.have.been
-    .calledWith(replyDefaultTopicTrigger.trigger, replyDefaultTopicTrigger.reply);
+  const result = rivescriptHelper.parseRivescript(replyDefaultTopicTrigger);
+  rivescriptHelper.formatRedirectRivescript.should.not.have.been.called;
+  rivescriptHelper.formatTriggerRivescript.should.have.been
+    .calledWith(replyDefaultTopicTrigger.trigger);
+  rivescriptHelper.formatReplyRivescript.should.have.been
+    .calledWith(replyDefaultTopicTrigger);
+  rivescriptHelper.joinRivescriptLines.should.have.been.calledWith([trigger, reply]);
   result.should.equal(mockRivescript);
 });
 
@@ -326,14 +306,6 @@ test('parseAskYesNoResponse should call rivescriptHelper.getBotReply', async () 
 // parseRivescript
 test('parseRivescript should throw error if defaultTopicTrigger undefined', (t) => {
   t.throws(() => rivescriptHelper.parseRivescript());
-});
-
-test('parseRivescript should return defaultTopicTrigger if defaultTopicTrigger.topicId undefined', () => {
-  const defaultTopicTrigger = defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger();
-  sandbox.stub(rivescriptHelper, 'getRivescriptFromDefaultTopicTrigger')
-    .returns(mockRivescript);
-  const result = rivescriptHelper.parseRivescript(defaultTopicTrigger);
-  result.should.deep.equal(mockRivescript);
 });
 
 // TODO: Add test for changeTopicMacro
