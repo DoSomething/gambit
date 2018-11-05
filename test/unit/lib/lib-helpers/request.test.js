@@ -16,6 +16,7 @@ const broadcastFactory = require('../../../helpers/factories/broadcast');
 const campaignFactory = require('../../../helpers/factories/campaign');
 const conversationFactory = require('../../../helpers/factories/conversation');
 const topicFactory = require('../../../helpers/factories/topic');
+const userFactory = require('../../../helpers/factories/user');
 
 const config = require('../../../../config/lib/helpers/request');
 
@@ -150,23 +151,28 @@ test('changeTopicByCampaign should call setCampaign and return changeTopic if ca
 });
 
 // executeChangeTopicMacro
-test('executeChangeTopicMacro should call setKeyword, fetch topic and return changeTopic', async (t) => {
-  t.context.req.rivescriptMatch = stubs.getRandomWord();
-  t.context.req.rivescriptReplyTopic = { id: stubs.getContentfulId() };
+test('executeChangeTopicMacro get topic, create signup if topic has campaign, and return changeTopic', async (t) => {
+  t.context.req.rivescriptReplyTopicId = stubs.getContentfulId();
   t.context.req.macro = stubs.getRandomWord();
-  sandbox.stub(requestHelper, 'setKeyword')
-    .returns(underscore.noop);
+  t.context.req.platform = stubs.getPlatform();
   sandbox.stub(requestHelper, 'changeTopic')
     .returns(Promise.resolve(true));
-  sandbox.stub(helpers.topic, 'fetchById')
+  sandbox.stub(helpers.topic, 'getById')
     .returns(Promise.resolve(topic));
+  sandbox.stub(requestHelper, 'hasCampaign')
+    .returns(true);
+  sandbox.stub(helpers.user, 'createSignup')
+    .returns(Promise.resolve({ id: stubs.getCampaignId() }));
+  t.context.req.user = userFactory.getValidUser();
   t.context.req.conversation = conversation;
 
   await requestHelper.executeChangeTopicMacro(t.context.req);
-  requestHelper.setKeyword.should.have.been
-    .calledWith(t.context.req, t.context.req.rivescriptMatch);
-  helpers.topic.fetchById.should.have.been.calledWith(t.context.req.rivescriptReplyTopic.id);
-  requestHelper.changeTopic.should.have.been.calledWith(t.context.req, topic);
+
+  helpers.topic.getById.should.have.been.calledWith(t.context.req.rivescriptReplyTopicId);
+  helpers.user.createSignup
+    .should.have.been.calledWith(t.context.req.user, topic.campaign.id, t.context.req.platform);
+  requestHelper.changeTopic
+    .should.have.been.calledWith(t.context.req, topic);
 });
 
 // executeSaidNoMacro
@@ -274,6 +280,7 @@ test('getRivescriptReply should call helpers.rivescript.getBotReply with req var
   t.context.req.conversation = conversation;
   t.context.req.currentTopicId = stubs.getContentfulId();
   t.context.req.inboundMessageText = stubs.getRandomMessageText();
+  // TODO: This should be renamed as default topic the way we're using it -- stub getDefaultTopicId.
   const mockRivescriptTopicId = 'random';
   const mockRivescriptTopic = { id: mockRivescriptTopicId };
   const botReply = { text: stubs.getRandomMessageText(), match: '@hello' };
@@ -283,10 +290,11 @@ test('getRivescriptReply should call helpers.rivescript.getBotReply with req var
     .returns(mockRivescriptTopic);
   const result = await requestHelper.getRivescriptReply(t.context.req);
   helpers.rivescript.getBotReply.should.have.been
-    .calledWith(userId, t.context.req.currentTopicId, t.context.req.inboundMessageText);
+    .calledWith(userId, mockRivescriptTopicId, t.context.req.inboundMessageText);
   result.text.should.equal(botReply.text);
   result.match.should.equal(botReply.match);
-  result.topic.should.deep.equal(mockRivescriptTopic);
+  // TODO: Add tests for various topic changes.
+  // result.topicId.should.deep.equal(mockRivescriptTopic);
 });
 
 // hasCampaign
