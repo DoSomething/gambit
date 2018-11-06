@@ -210,7 +210,7 @@ test('parseRivescript returns replyRivescript if defaultTopicTrigger.reply is se
   rivescriptHelper.formatTriggerRivescript.should.have.been
     .calledWith(replyDefaultTopicTrigger.trigger);
   rivescriptHelper.formatReplyRivescript.should.have.been
-    .calledWith(replyDefaultTopicTrigger);
+    .calledWith(replyDefaultTopicTrigger.reply, null);
   rivescriptHelper.joinRivescriptLines.should.have.been.calledWith([trigger, reply]);
   result.should.equal(mockRivescript);
 });
