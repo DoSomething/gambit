@@ -149,8 +149,8 @@ test('changeTopicByCampaign should call setCampaign and return changeTopic if ca
   requestHelper.changeTopic.should.have.been.calledWith(t.context.req, campaign.topics[0]);
 });
 
-// executeChangeTopicMacro
-test('executeChangeTopicMacro get topic, create signup if topic has campaign, and return changeTopic', async (t) => {
+// executeRivescriptTopicChange
+test('executeRivescriptTopicChange get topic, create signup if topic has campaign, and return changeTopic', async (t) => {
   t.context.req.rivescriptReplyTopicId = stubs.getContentfulId();
   t.context.req.macro = stubs.getRandomWord();
   t.context.req.platform = stubs.getPlatform();
@@ -165,7 +165,7 @@ test('executeChangeTopicMacro get topic, create signup if topic has campaign, an
   t.context.req.user = userFactory.getValidUser();
   t.context.req.conversation = conversation;
 
-  await requestHelper.executeChangeTopicMacro(t.context.req);
+  await requestHelper.executeRivescriptTopicChange(t.context.req);
 
   helpers.topic.getById.should.have.been.calledWith(t.context.req.rivescriptReplyTopicId);
   helpers.user.createSignup
