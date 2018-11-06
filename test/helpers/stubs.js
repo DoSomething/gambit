@@ -249,8 +249,8 @@ module.exports = {
   getRequestId() {
     return '2512b2e5-76b1-4efb-916b-5d14bbb2555f';
   },
-  getSignupMessageTemplateName() {
-    return 'webAskText';
+  getSignup() {
+    return { id: chance.integer({ min: 200, max: 2000000 }) };
   },
   getTemplate() {
     return 'askSignup';
