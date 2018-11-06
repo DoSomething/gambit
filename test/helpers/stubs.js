@@ -28,6 +28,14 @@ function getContentfulId() {
   return '72mon4jUeQOaokEIkQMaoa';
 }
 
+
+/**
+ * @return {Object}
+ */
+function getError() {
+  return { message: 'Epic fail' };
+}
+
 /**
  * @return {String}
  */
@@ -118,6 +126,7 @@ module.exports = {
       },
     }),
   },
+  getError,
   stubLogger,
   getMockRequest(options) {
     const defaults = {
