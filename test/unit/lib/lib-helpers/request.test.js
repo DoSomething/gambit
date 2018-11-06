@@ -161,7 +161,7 @@ test('executeRivescriptTopicChange get topic, create signup if topic has campaig
   sandbox.stub(requestHelper, 'hasCampaign')
     .returns(true);
   sandbox.stub(helpers.user, 'createSignup')
-    .returns(Promise.resolve({ id: stubs.getCampaignId() }));
+    .returns(Promise.resolve(stubs.getSignup()));
   t.context.req.user = userFactory.getValidUser();
   t.context.req.conversation = conversation;
 
