@@ -228,6 +228,18 @@ test('parseReplyRivescriptLines should return an array with one reply command if
   ]);
 });
 
+test('parseReplyRivescriptLines should return an array with one reply command if replyText leads with a line break', () => {
+  const text = stubs.getRandomMessageText();
+  let result = rivescriptHelper.parseReplyRivescriptLines(`\n${text}`);
+  result.should.deep.equal([
+    { operator: config.commands.reply, value: text },
+  ]);
+  result = rivescriptHelper.parseReplyRivescriptLines(`\n\n${text}`);
+  result.should.deep.equal([
+    { operator: config.commands.reply, value: text },
+  ]);
+});
+
 test('parseReplyRivescriptLines should return an array with reply command and 2 continuation commands if replyText has 2 repeating linebreaks', () => {
   const firstParagraphText = stubs.getRandomMessageText();
   const secondParagraphText = stubs.getRandomMessageText();
