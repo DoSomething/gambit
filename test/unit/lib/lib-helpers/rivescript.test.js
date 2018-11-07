@@ -149,6 +149,34 @@ test('fetchRivescripts should throw on gambitCampaigns.fetchDefaultTopicTriggers
   result.should.deep.equal(mockError);
 });
 
+// formatReplyRivescript
+test('parseReplyRivescriptLines should throw if replyText undefined', (t) => {
+  t.throws(() => rivescriptHelper.parseReplyRivescriptLines());
+});
+
+test('parseReplyRivescriptLines should return an array with one reply command if replyText does not have linebreaks', () => {
+  const text = stubs.getRandomMessageText();
+  const result = rivescriptHelper.parseReplyRivescriptLines(text);
+  result.should.deep.equal([
+    { operator: config.commands.reply, value: text },
+  ]);
+});
+
+test('parseReplyRivescriptLines should return an array with reply command and 2 continuation commands if replyText has 2 repeating linebreaks', () => {
+  const firstParagraphText = stubs.getRandomMessageText();
+  const secondParagraphText = stubs.getRandomMessageText();
+  const lastParagraphText = stubs.getRandomMessageText();
+  const text = `${firstParagraphText}\n\n${secondParagraphText}\n\n${lastParagraphText}`;
+  const result = rivescriptHelper.parseReplyRivescriptLines(text);
+  result.should.deep.equal([
+    { operator: config.commands.reply, value: `${firstParagraphText}\\n` },
+    null,
+    { operator: config.commands.continuation, value: `${secondParagraphText}\\n` },
+    null,
+    { operator: config.commands.continuation, value: lastParagraphText },
+  ]);
+});
+
 // formatRivescriptLine
 test('formatRivescriptLine should return a trimmed concat of operator and value args', () => {
   const result = rivescriptHelper.formatRivescriptLine(config.commands.trigger, `${mockWord}   `);
