@@ -176,7 +176,7 @@ test('formatRedirectRivescript should return redirect command with text arg as r
 });
 
 // formatReplyRivescript
-test('formatReplyRivescript return array of Rivescript lines', () => {
+test('formatReplyRivescript return array of Rivescript lines without topic tag if null topicId', () => {
   const data = [
     { operator: '+', value: 'Beginning' },
     { operator: '+', value: 'Middle' },
@@ -233,12 +233,31 @@ test('parseReplyRivescriptLines should return an array with reply command and 2 
   const secondParagraphText = stubs.getRandomMessageText();
   const lastParagraphText = stubs.getRandomMessageText();
   const text = `${firstParagraphText}\n\n${secondParagraphText}\n\n${lastParagraphText}`;
-  const result = rivescriptHelper.parseReplyRivescriptLines(text);
+  const result = rivescriptHelper.parseReplyRivescriptLines(text, null);
   result.should.deep.equal([
     { operator: config.commands.reply, value: `${firstParagraphText}\\n` },
     { operator: config.commands.continuation, value: `${secondParagraphText}\\n` },
     { operator: config.commands.continuation, value: lastParagraphText },
   ]);
+});
+
+test('parseReplyRivescriptLines should return an array with 1 reply, 1 continuation without topic tag, and 1 continuation with appended topic tag if replyText has 2 repeating linebreaks and topicId arg exists', () => {
+  const firstParagraphText = stubs.getRandomMessageText();
+  const secondParagraphText = stubs.getRandomMessageText();
+  const lastParagraphText = stubs.getRandomMessageText();
+  const text = `${firstParagraphText}\n\n${secondParagraphText}\n\n${lastParagraphText}`;
+  const topicId = stubs.getContentfulId();
+  const appendTopicTagResult = `${lastParagraphText}{topic=${topicId}}`;
+  sandbox.stub(rivescriptHelper, 'appendTopicTag')
+    .returns(appendTopicTagResult);
+
+  const result = rivescriptHelper.parseReplyRivescriptLines(text, topicId);
+  result.should.deep.equal([
+    { operator: config.commands.reply, value: `${firstParagraphText}\\n` },
+    { operator: config.commands.continuation, value: `${secondParagraphText}\\n` },
+    { operator: config.commands.continuation, value: appendTopicTagResult },
+  ]);
+  rivescriptHelper.appendTopicTag.should.have.been.calledWith(lastParagraphText, topicId);
 });
 
 // parseRivescript
