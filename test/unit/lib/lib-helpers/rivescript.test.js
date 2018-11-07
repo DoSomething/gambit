@@ -150,6 +150,46 @@ test('fetchRivescripts should throw on gambitCampaigns.fetchDefaultTopicTriggers
 });
 
 // formatReplyRivescript
+test('formatReplyRivescript return array of Rivescript lines', () => {
+  const data = [
+    { operator: '+', value: 'Beginning' },
+    { operator: '+', value: 'Middle' },
+    { operator: '^', value: 'The end' },
+  ];
+  const line = stubs.getRandomWord();
+  sandbox.stub(rivescriptHelper, 'parseReplyRivescriptLines')
+    .returns(data);
+  sandbox.stub(rivescriptHelper, 'formatRivescriptLine')
+    .returns(line);
+  const replyText = stubs.getRandomMessageText();
+  const topicId = null;
+
+  const result = rivescriptHelper.formatReplyRivescript(replyText, topicId);
+  rivescriptHelper.parseReplyRivescriptLines.should.have.been.calledWith(replyText, topicId);
+  data.forEach((item) => {
+    rivescriptHelper.formatRivescriptLine.should.have.been.calledWith(item.operator, item.value);
+  });
+  result.should.deep.equal([line, line, line]);
+});
+
+// formatRivescriptLine
+test('formatRivescriptLine should return a trimmed concat of operator and value args', () => {
+  const result = rivescriptHelper.formatRivescriptLine(config.commands.trigger, `${mockWord}   `);
+  result.should.equal(mockRivescriptLine);
+});
+
+// formatTriggerRivescript
+test('formatTriggerRivescript should return trigger command with triggerText as rs line', () => {
+  sandbox.stub(rivescriptHelper, 'formatRivescriptLine')
+    .returns(mockRivescriptLine);
+
+  const result = rivescriptHelper.formatTriggerRivescript(mockWord);
+  rivescriptHelper.formatRivescriptLine
+    .should.have.been.calledWith(config.commands.trigger, mockWord);
+  result.should.equal(mockRivescriptLine);
+});
+
+// parseReplyRivescriptLines
 test('parseReplyRivescriptLines should throw if replyText undefined', (t) => {
   t.throws(() => rivescriptHelper.parseReplyRivescriptLines());
 });
@@ -170,28 +210,9 @@ test('parseReplyRivescriptLines should return an array with reply command and 2 
   const result = rivescriptHelper.parseReplyRivescriptLines(text);
   result.should.deep.equal([
     { operator: config.commands.reply, value: `${firstParagraphText}\\n` },
-    null,
     { operator: config.commands.continuation, value: `${secondParagraphText}\\n` },
-    null,
     { operator: config.commands.continuation, value: lastParagraphText },
   ]);
-});
-
-// formatRivescriptLine
-test('formatRivescriptLine should return a trimmed concat of operator and value args', () => {
-  const result = rivescriptHelper.formatRivescriptLine(config.commands.trigger, `${mockWord}   `);
-  result.should.equal(mockRivescriptLine);
-});
-
-// formatTriggerRivescript
-test('formatTriggerRivescript should return trigger command with triggerText as rs line', () => {
-  sandbox.stub(rivescriptHelper, 'formatRivescriptLine')
-    .returns(mockRivescriptLine);
-
-  const result = rivescriptHelper.formatTriggerRivescript(mockWord);
-  rivescriptHelper.formatRivescriptLine
-    .should.have.been.calledWith(config.commands.trigger, mockWord);
-  result.should.equal(mockRivescriptLine);
 });
 
 // parseRivescript
