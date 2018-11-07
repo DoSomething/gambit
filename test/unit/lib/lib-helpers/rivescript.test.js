@@ -40,6 +40,15 @@ test.afterEach(() => {
   sandbox.restore();
 });
 
+// appendTopicTag
+test('appendTopicTag should append Rivescript topic tag to string with given topicId', () => {
+  const text = stubs.getRandomMessageText();
+  const topicId = stubs.getContentfulId();
+
+  const result = rivescriptHelper.appendTopicTag(text, topicId);
+  result.should.equal(`${text}{topic=${topicId}}`);
+});
+
 // getBotReply
 test('getBotReply should call loadBot if Rivescript is not current', async () => {
   sandbox.stub(rivescriptHelper, 'isRivescriptCurrent')
