@@ -149,6 +149,17 @@ test('fetchRivescripts should throw on gambitCampaigns.fetchDefaultTopicTriggers
   result.should.deep.equal(mockError);
 });
 
+// formatRedirectRivescript
+test('formatRedirectRivescript should return redirect command with text arg as rs line', () => {
+  sandbox.stub(rivescriptHelper, 'formatRivescriptLine')
+    .returns(mockRivescriptLine);
+
+  const result = rivescriptHelper.formatRedirectRivescript(mockWord);
+  rivescriptHelper.formatRivescriptLine
+    .should.have.been.calledWith(config.commands.redirect, mockWord);
+  result.should.equal(mockRivescriptLine);
+});
+
 // formatReplyRivescript
 test('formatReplyRivescript return array of Rivescript lines', () => {
   const data = [
