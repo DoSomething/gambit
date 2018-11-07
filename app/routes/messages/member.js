@@ -21,7 +21,6 @@ const badWordsMiddleware = require('../../../lib/middleware/messages/member/bad-
 const getRivescriptReplyMiddleware = require('../../../lib/middleware/messages/member/rivescript-reply-get');
 const parseRivescriptReplyMiddleware = require('../../../lib/middleware/messages/member/rivescript-reply-parse');
 const forwardSupportMessageMiddleware = require('../../../lib/middleware/messages/member/support-message');
-const changeTopicMacroMiddleware = require('../../../lib/middleware/messages/member/macro-change-topic');
 const replyMacroMiddleware = require('../../../lib/middleware/messages/member/macro-reply');
 const getTopicMiddleware = require('../../../lib/middleware/messages/member/topic-get');
 const catchAllAskVotingPlanStatusMiddleware = require('../../../lib/middleware/messages/member/catchAll-askVotingPlanStatus');
@@ -53,9 +52,6 @@ router.use(loadOutboundMessageMiddleware(loadOutboundMessageConfig));
 
 // Sends the Rivescript reply if it's not a macro.
 router.use(parseRivescriptReplyMiddleware());
-
-// Changes conversation topic if user sent a keyword.
-router.use(changeTopicMacroMiddleware());
 
 // Executes macros that send a single hardcoded reply.
 router.use(replyMacroMiddleware());

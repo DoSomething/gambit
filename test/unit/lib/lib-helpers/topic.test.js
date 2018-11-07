@@ -67,6 +67,23 @@ test('getAskSubscriptionStatusTopic should return config.rivescriptTopics.askSub
   result.should.deep.equal(config.rivescriptTopics.askSubscriptionStatus);
 });
 
+// getById
+test('getById should return getRivescriptTopicById if isRivescriptTopicId', async () => {
+  const topicId = topicHelper.getDefaultTopicId();
+  const result = await topicHelper.getById(topicId);
+  result.should.deep.equal(topicHelper.getRivescriptTopicById(topicId));
+});
+
+test('getById should return fetchById if not isRivescriptTopicId', async () => {
+  const topic = topicFactory.getValidAutoReply();
+  const topicId = stubs.getContentfulId();
+  sandbox.stub(topicHelper, 'fetchById')
+    .returns(Promise.resolve(topic));
+
+  const result = await topicHelper.getById(topicId);
+  result.should.deep.equal(topic);
+});
+
 // getDefaultTopic
 test('getDefaultTopic should return config.rivescriptTopics.default', () => {
   const result = topicHelper.getDefaultTopic();

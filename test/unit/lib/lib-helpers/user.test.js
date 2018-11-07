@@ -47,6 +47,22 @@ test.afterEach((t) => {
   sandbox.restore();
 });
 
+// createSignup
+test('createSignup passes user.id, campaignId and source args to rogue.createSignup', async () => {
+  const campaignId = stubs.getCampaignId();
+  const signup = { id: campaignId, campaign_id: campaignId };
+  sandbox.stub(rogue, 'createSignup')
+    .returns(Promise.resolve(signup));
+
+  const result = await userHelper.createSignup(mockUser, campaignId, source);
+  rogue.createSignup.should.have.been.calledWith({
+    campaign_id: campaignId,
+    northstar_id: mockUser.id,
+    source,
+  });
+  result.should.deep.equal(signup);
+});
+
 // createVotingPlan
 test('createVotingPlan passes user voting plan info to rogue.createPost', async () => {
   const mockValues = { test: stubs.getRandomWord() };

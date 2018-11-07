@@ -113,9 +113,6 @@ module.exports = {
     catchAll: {
       name: 'catchAll',
     },
-    changeTopic: {
-      name: 'changeTopic',
-    },
     invalidSubscriptionStatus: {
       name: 'invalidSubscriptionStatus',
       text: `${invalidAnswerText} ${askSubscriptionStatusText}`,
