@@ -51,14 +51,16 @@ test.afterEach((t) => {
 test('createSignup passes user.id, campaignId and source args to rogue.createSignup', async () => {
   const campaignId = stubs.getCampaignId();
   const signup = { id: campaignId, campaign_id: campaignId };
+  const sourceDetail = 'test';
   sandbox.stub(rogue, 'createSignup')
     .returns(Promise.resolve(signup));
 
-  const result = await userHelper.createSignup(mockUser, campaignId, source);
+  const result = await userHelper.createSignup(mockUser, { campaignId, source, sourceDetail });
   rogue.createSignup.should.have.been.calledWith({
     campaign_id: campaignId,
     northstar_id: mockUser.id,
     source,
+    source_detail: sourceDetail,
   });
   result.should.deep.equal(signup);
 });
