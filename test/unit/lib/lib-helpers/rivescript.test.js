@@ -40,11 +40,17 @@ test.afterEach(() => {
   sandbox.restore();
 });
 
+// appendEscapedLinebreak
+test('appendEscapedLinebreak should append escaped linebreak character to text', () => {
+  const text = stubs.getRandomMessageText();
+  const result = rivescriptHelper.appendEscapedLinebreak(text);
+  result.should.equal(`${text}\\n`);
+});
+
 // appendTopicTag
 test('appendTopicTag should append Rivescript topic tag to string with given topicId', () => {
   const text = stubs.getRandomMessageText();
   const topicId = stubs.getContentfulId();
-
   const result = rivescriptHelper.appendTopicTag(text, topicId);
   result.should.equal(`${text}{topic=${topicId}}`);
 });
