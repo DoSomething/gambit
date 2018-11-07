@@ -34,6 +34,7 @@ const platformUserId = stubs.getMobileNumber();
 const conversation = conversationFactory.getValidConversation();
 const message = conversation.lastOutboundMessage;
 const topic = topicFactory.getValidTopic();
+const user = userFactory.getValidUser();
 
 test.beforeEach((t) => {
   stubs.stubLogger(sandbox, logger);
@@ -151,8 +152,10 @@ test('changeTopicByCampaign should call setCampaign and return changeTopic if ca
 
 // executeRivescriptTopicChange
 test('executeRivescriptTopicChange get topic, create signup if topic has campaign, and return changeTopic', async (t) => {
+  const keyword = 'dragon';
   t.context.req.rivescriptReplyTopicId = stubs.getContentfulId();
   t.context.req.macro = stubs.getRandomWord();
+  t.context.req.rivescriptMatch = keyword;
   t.context.req.platform = stubs.getPlatform();
   sandbox.stub(requestHelper, 'changeTopic')
     .returns(Promise.resolve(true));
@@ -160,7 +163,7 @@ test('executeRivescriptTopicChange get topic, create signup if topic has campaig
     .returns(Promise.resolve(topic));
   sandbox.stub(requestHelper, 'hasCampaign')
     .returns(true);
-  sandbox.stub(helpers.user, 'createSignup')
+  sandbox.stub(helpers.user, 'fetchOrCreateSignup')
     .returns(Promise.resolve(stubs.getSignup()));
   t.context.req.user = userFactory.getValidUser();
   t.context.req.conversation = conversation;
@@ -168,8 +171,12 @@ test('executeRivescriptTopicChange get topic, create signup if topic has campaig
   await requestHelper.executeRivescriptTopicChange(t.context.req);
 
   helpers.topic.getById.should.have.been.calledWith(t.context.req.rivescriptReplyTopicId);
-  helpers.user.createSignup
-    .should.have.been.calledWith(t.context.req.user, topic.campaign.id, t.context.req.platform);
+  helpers.user.fetchOrCreateSignup
+    .should.have.been.calledWith(t.context.req.user, {
+      campaignId: topic.campaign.id,
+      source: t.context.req.platform,
+      sourceDetail: `keyword/${keyword}`,
+    });
   requestHelper.changeTopic
     .should.have.been.calledWith(t.context.req, topic);
 });
@@ -195,18 +202,24 @@ test('executeSaidYesMacro should call post campaign activity if new topic has ca
   const askYesNo = broadcastFactory.getValidAskYesNo();
   const saidYesTemplate = askYesNo.templates.saidYes;
   t.context.req.topic = askYesNo;
+  t.context.req.user = user;
+  t.context.req.platform = stubs.getPlatform();
   sandbox.stub(requestHelper, 'changeTopic')
     .returns(Promise.resolve(true));
   sandbox.stub(requestHelper, 'hasCampaign')
     .returns(true);
-  sandbox.stub(requestHelper, 'postCampaignActivity')
+  sandbox.stub(helpers.user, 'fetchOrCreateSignup')
     .returns(Promise.resolve());
   sandbox.stub(helpers.replies, 'sendReply')
     .returns(underscore.noop);
 
   await requestHelper.executeSaidYesMacro(t.context.req);
   requestHelper.changeTopic.should.have.been.calledWith(t.context.req, saidYesTemplate.topic);
-  requestHelper.postCampaignActivity.should.have.been.calledWith(t.context.req, askYesNo.id);
+  helpers.user.fetchOrCreateSignup.should.have.been.calledWith(t.context.req.user, {
+    campaignId: saidYesTemplate.topic.campaign.id,
+    source: t.context.req.platform,
+    sourceDetail: `broadcast/${askYesNo.id}`,
+  });
   helpers.replies.sendReply
     .should.have.been.calledWith(t.context.req, t.context.res, saidYesTemplate.text, 'saidYes');
 });
@@ -215,18 +228,20 @@ test('executeSaidYesMacro should not post campaign activity if new topic does no
   const askYesNo = broadcastFactory.getValidAskYesNo();
   const saidYesTemplate = askYesNo.templates.saidYes;
   t.context.req.topic = askYesNo;
+  t.context.req.user = user;
   sandbox.stub(requestHelper, 'changeTopic')
     .returns(Promise.resolve(true));
-  sandbox.stub(requestHelper, 'hasCampaign')
+  sandbox.stub(helpers.topic, 'hasCampaign')
     .returns(false);
-  sandbox.stub(gambitCampaigns, 'postCampaignActivity')
+  sandbox.stub(helpers.user, 'fetchOrCreateSignup')
     .returns(Promise.resolve());
   sandbox.stub(helpers.replies, 'sendReply')
     .returns(underscore.noop);
 
   await requestHelper.executeSaidYesMacro(t.context.req);
   requestHelper.changeTopic.should.have.been.calledWith(t.context.req, saidYesTemplate.topic);
-  gambitCampaigns.postCampaignActivity.should.not.have.been.called;
+  helpers.topic.hasCampaign.should.have.been.calledWith(saidYesTemplate.topic);
+  helpers.user.fetchOrCreateSignup.should.not.have.been.called;
   helpers.replies.sendReply
     .should.have.been.calledWith(t.context.req, t.context.res, saidYesTemplate.text, 'saidYes');
 });
