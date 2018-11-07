@@ -13,6 +13,7 @@ const helpers = require('../../../../../../lib/helpers');
 const logger = require('../../../../../../lib/logger');
 const broadcastFactory = require('../../../../../helpers/factories/broadcast');
 const topicFactory = require('../../../../../helpers/factories/topic');
+const userFactory = require('../../../../../helpers/factories/user');
 
 chai.should();
 chai.use(sinonChai);
@@ -39,6 +40,7 @@ test.beforeEach((t) => {
     .returns(underscore.noop);
   t.context.req = httpMocks.createRequest();
   t.context.res = httpMocks.createResponse();
+  t.context.req.user = userFactory.getValidUser();
 });
 
 test.afterEach((t) => {
@@ -85,19 +87,15 @@ test('askYesNoCatchAll should changeTopic and send saidYes template if askYesNo 
     .returns(Promise.resolve());
   sandbox.stub(helpers.request, 'isSaidYesMacro')
     .returns(true);
-  sandbox.stub(helpers.request, 'changeTopic')
+  sandbox.stub(helpers.request, 'executeSaidYesMacro')
     .returns(Promise.resolve());
 
   // test
   await middleware(t.context.req, t.context.res, next);
 
   helpers.request.parseAskYesNoResponse.should.have.been.calledWith(t.context.req);
-  const saidYesTemplate = askYesNoBroadcast.templates.saidYes;
   next.should.not.have.been.called;
-  helpers.request.changeTopic
-    .should.have.been.calledWith(t.context.req, saidYesTemplate.topic);
-  helpers.replies.sendReply
-    .should.have.been.calledWith(t.context.req, t.context.res, saidYesTemplate.text, 'saidYes');
+  helpers.request.executeSaidYesMacro.should.have.been.calledWith(t.context.req);
   helpers.sendErrorResponse.should.not.been.called;
 });
 
