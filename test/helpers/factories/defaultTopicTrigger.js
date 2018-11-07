@@ -2,7 +2,7 @@
 
 const stubs = require('../stubs');
 
-function getValidChangeTopicDefaultTopicTrigger() {
+function getLegacyChangeTopicDefaultTopicTrigger() {
   return {
     trigger: stubs.getRandomWord(),
     topic: {
@@ -26,7 +26,7 @@ function getValidReplyDefaultTopicTrigger() {
 }
 
 module.exports = {
-  getValidChangeTopicDefaultTopicTrigger,
+  getLegacyChangeTopicDefaultTopicTrigger,
   getValidRedirectDefaultTopicTrigger,
   getValidReplyDefaultTopicTrigger,
 };

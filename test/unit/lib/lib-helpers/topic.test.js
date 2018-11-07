@@ -144,16 +144,41 @@ test('isDefaultTopicId should return whether topicId is config.defaultTopicId', 
   t.falsy(topicHelper.isDefaultTopicId(stubs.getContentfulId()));
 });
 
-// getRenderedTextFromTopicAndTemplateName
-test('getRenderedTextFromTopicAndTemplateName returns a string when template exists', () => {
-  const topic = topicFactory.getValidTopic();
-  const templateName = stubs.getTemplate();
-  const result = topicHelper.getRenderedTextFromTopicAndTemplateName(topic, templateName);
-  result.should.equal(topic.templates[templateName].rendered);
+// getTopicTemplateText
+test('getTopicTemplateText returns a string when template exists', () => {
+  const topic = topicFactory.getValidPhotoPostConfig();
+  const templateName = 'startPhotoPostAutoReply';
+  const result = topicHelper.getTopicTemplateText(topic, templateName);
+  result.should.equal(topic.templates[templateName].text);
 });
 
-test('getRenderedTextFromTopicAndTemplateName throws when template undefined', (t) => {
-  const topic = topicFactory.getValidTopic();
+test('getTopicTemplateText throws when template undefined', (t) => {
+  const topic = topicFactory.getValidPhotoPostConfig();
   const templateName = 'winterfell';
-  t.throws(() => topicHelper.getRenderedTextFromTopicAndTemplateName(topic, templateName));
+  t.throws(() => topicHelper.getTopicTemplateText(topic, templateName));
+});
+
+// getStartTemplateText
+test('getStartTemplateText returns askText text for textPostConfig topics ', () => {
+  const topic = topicFactory.getValidTextPostConfig();
+  const result = topicHelper.getStartTemplateText(topic);
+  result.should.equal(topic.templates.askText.text);
+});
+
+test('getStartTemplateText returns startExternalPost text for externalPostConfig topics ', () => {
+  const topic = topicFactory.getValidExternalPostConfig();
+  const result = topicHelper.getStartTemplateText(topic);
+  result.should.equal(topic.templates.startExternalPost.text);
+});
+
+test('getStartTemplateText returns startPhotoPost text for photoPostConfig topics ', () => {
+  const topic = topicFactory.getValidPhotoPostConfig();
+  const result = topicHelper.getStartTemplateText(topic);
+  result.should.equal(topic.templates.startPhotoPost.text);
+});
+
+test('getStartTemplateText returns null if topic type not externalPostConfig, photoPostConfig, or textPostConfig', (t) => {
+  const topic = topicFactory.getValidAutoReply();
+  const result = topicHelper.getStartTemplateText(topic);
+  t.is(result, null);
 });
