@@ -251,7 +251,7 @@ test('parseRivescript returns redirectRivescript if defaultTopicTrigger.redirect
   result.should.equal(mockRivescript);
 });
 
-test('parseRivescript returns replyRivescript if defaultTopicTrigger.reply is set', () => {
+test('parseRivescript calls replyRivescript with defaultTopicTrigger.reply if set', () => {
   const trigger = stubs.getRandomWord();
   const reply = stubs.getRandomWord();
   sandbox.stub(rivescriptHelper, 'formatTriggerRivescript')
@@ -271,6 +271,33 @@ test('parseRivescript returns replyRivescript if defaultTopicTrigger.reply is se
     .calledWith(replyDefaultTopicTrigger.trigger);
   rivescriptHelper.formatReplyRivescript.should.have.been
     .calledWith(replyDefaultTopicTrigger.reply, null);
+  rivescriptHelper.joinRivescriptLines.should.have.been.calledWith([trigger, reply]);
+  result.should.equal(mockRivescript);
+});
+
+test('parseRivescript calls replyRivescript with getStartTemplateText if reply is not set', () => {
+  const trigger = stubs.getRandomWord();
+  const startText = stubs.getRandomWord();
+  const reply = stubs.getRandomMessageText();
+  sandbox.stub(rivescriptHelper, 'formatRedirectRivescript')
+    .returns(null);
+  sandbox.stub(rivescriptHelper, 'formatTriggerRivescript')
+    .returns(trigger);
+  sandbox.stub(rivescriptHelper, 'formatReplyRivescript')
+    .returns(reply);
+  sandbox.stub(helpers.topic, 'getStartTemplateText')
+    .returns(startText);
+  sandbox.stub(rivescriptHelper, 'joinRivescriptLines')
+    .returns(mockRivescript);
+  const legacyDefaultTopicTrigger = defaultTopicTriggerFactory
+    .getLegacyChangeTopicDefaultTopicTrigger();
+
+  const result = rivescriptHelper.parseRivescript(legacyDefaultTopicTrigger);
+  rivescriptHelper.formatRedirectRivescript.should.not.have.been.called;
+  rivescriptHelper.formatTriggerRivescript.should.have.been
+    .calledWith(legacyDefaultTopicTrigger.trigger);
+  rivescriptHelper.formatReplyRivescript.should.have.been
+    .calledWith(startText);
   rivescriptHelper.joinRivescriptLines.should.have.been.calledWith([trigger, reply]);
   result.should.equal(mockRivescript);
 });
