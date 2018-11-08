@@ -13,6 +13,7 @@ const broadcastFactory = require('../../../helpers/factories/broadcast');
 const campaignFactory = require('../../../helpers/factories/campaign');
 const topicFactory = require('../../../helpers/factories/topic');
 const config = require('../../../../config/lib/helpers/topic');
+const templateConfig = require('../../../../config/lib/helpers/template');
 
 chai.should();
 chai.use(sinonChai);
@@ -175,8 +176,21 @@ test('getTopicTemplateText throws when template undefined', (t) => {
   t.throws(() => topicHelper.getTopicTemplateText(topic, templateName));
 });
 
+// getTransitionTemplateName
+test('getTransitionTemplateName returns transitionTemplate if defined in config.types ', () => {
+  const topic = topicFactory.getValidTextPostConfig();
+  const result = topicHelper.getTransitionTemplateName(topic);
+  result.should.equal(config.types.textPostConfig.transitionTemplate);
+});
+
+test('getTransitionTemplateName returns rivescript template if config.types undefined', () => {
+  const topic = { type: stubs.getRandomWord() };
+  const result = topicHelper.getTransitionTemplateName(topic);
+  result.should.equal(templateConfig.templatesMap.rivescriptReply);
+});
+
 // getTransitionTemplateText
-test('getTransitionTemplateText returns askText text for textPostConfig topics ', () => {
+test('getTransitionTemplateText returns askText text for textPostConfig topics', () => {
   const topic = topicFactory.getValidTextPostConfig();
   const result = topicHelper.getTransitionTemplateText(topic);
   result.should.equal(topic.templates.askText.text);
