@@ -175,7 +175,7 @@ test('executeRivescriptTopicChange get topic, create signup if topic has campaig
     .should.have.been.calledWith(t.context.req.user, {
       campaignId: topic.campaign.id,
       source: t.context.req.platform,
-      sourceDetail: `keyword/${keyword}`,
+      details: `keyword/${keyword}`,
     });
   requestHelper.changeTopic
     .should.have.been.calledWith(t.context.req, topic);
@@ -218,7 +218,7 @@ test('executeSaidYesMacro should call post campaign activity if new topic has ca
   helpers.user.fetchOrCreateSignup.should.have.been.calledWith(t.context.req.user, {
     campaignId: saidYesTemplate.topic.campaign.id,
     source: t.context.req.platform,
-    sourceDetail: `broadcast/${askYesNo.id}`,
+    details: `broadcast/${askYesNo.id}`,
   });
   helpers.replies.sendReply
     .should.have.been.calledWith(t.context.req, t.context.res, saidYesTemplate.text, 'saidYes');

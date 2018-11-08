@@ -52,16 +52,16 @@ test.afterEach((t) => {
 // createSignup
 test('createSignup passes user.id, campaignId and source args to rogue.createSignup', async () => {
   const signup = { id: campaignId, campaign_id: campaignId };
-  const sourceDetail = 'test';
+  const details = 'test';
   sandbox.stub(rogue, 'createSignup')
     .returns(Promise.resolve(signup));
 
-  const result = await userHelper.createSignup(mockUser, { campaignId, source, sourceDetail });
+  const result = await userHelper.createSignup(mockUser, { campaignId, source, details });
   rogue.createSignup.should.have.been.calledWith({
     campaign_id: campaignId,
     northstar_id: mockUser.id,
     source,
-    source_detail: sourceDetail,
+    details,
   });
   result.should.deep.equal(signup);
 });
@@ -76,7 +76,6 @@ test('createVotingPlan passes user voting plan info to rogue.createPost', async 
   const result = await userHelper.createVotingPlan(mockUser, source);
   rogue.createPost.should.have.been.calledWith({
     campaign_id: config.posts.votingPlan.campaignId,
-    details,
     northstar_id: mockUser.id,
     source,
     text: details,
