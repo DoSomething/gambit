@@ -321,7 +321,7 @@ test('parseRivescript calls replyRivescript with defaultTopicTrigger.reply if se
   result.should.equal(mockRivescript);
 });
 
-test('parseRivescript calls replyRivescript with getStartTemplateText if reply is not set', () => {
+test('parseRivescript calls replyRivescript with getTransitionTemplateText if reply is not set', () => {
   const trigger = stubs.getRandomWord();
   const startText = stubs.getRandomWord();
   const reply = stubs.getRandomMessageText();
@@ -331,7 +331,7 @@ test('parseRivescript calls replyRivescript with getStartTemplateText if reply i
     .returns(trigger);
   sandbox.stub(rivescriptHelper, 'formatReplyRivescript')
     .returns(reply);
-  sandbox.stub(helpers.topic, 'getStartTemplateText')
+  sandbox.stub(helpers.topic, 'getTransitionTemplateText')
     .returns(startText);
   sandbox.stub(rivescriptHelper, 'joinRivescriptLines')
     .returns(mockRivescript);
