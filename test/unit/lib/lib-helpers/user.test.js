@@ -28,6 +28,7 @@ const conversationFactory = require('../../../helpers/factories/conversation');
 const messageFactory = require('../../../helpers/factories/message');
 const userFactory = require('../../../helpers/factories/user');
 
+const campaignId = stubs.getCampaignId();
 const mockPost = { id: stubs.getCampaignRunId() };
 const mockSignup = { id: stubs.getCampaignRunId() };
 const mockUser = userFactory.getValidUser();
@@ -50,7 +51,6 @@ test.afterEach((t) => {
 
 // createSignup
 test('createSignup passes user.id, campaignId and source args to rogue.createSignup', async () => {
-  const campaignId = stubs.getCampaignId();
   const signup = { id: campaignId, campaign_id: campaignId };
   const sourceDetail = 'test';
   sandbox.stub(rogue, 'createSignup')
@@ -224,14 +224,24 @@ test('getDefaultUpdatePayloadFromReq should return object', () => {
   result.sms_paused.should.equal(isSupportTopic);
 });
 
-// getFetchVotingPlanQuery
-test('getFetchVotingPlanQuery should return object for querying by userId and voting plan campaign/type', () => {
-  const result = userHelper.getFetchVotingPlanQuery(mockUser.id);
+// getFetchSignupsQuery
+test('getFetchSignupsQuery should return object for querying by userId and campaignId', () => {
+  const result = userHelper.getFetchSignupsQuery(mockUser.id, campaignId);
   result.should.deep.equal({
     'filter[northstar_id]': mockUser.id,
-    'filter[campaign_id]': config.posts.votingPlan.campaignId,
-    'filter[type]': config.posts.votingPlan.type,
+    'filter[campaign_id]': campaignId,
   });
+});
+
+// getFetchVotingPlanQuery
+test('getFetchVotingPlanQuery should return getFetchSignupsQuery result with type filter property', () => {
+  const mockQuery = { test: stubs.getRandomWord() };
+  sandbox.stub(userHelper, 'getFetchSignupsQuery')
+    .returns(mockQuery);
+  const result = userHelper.getFetchVotingPlanQuery(mockUser.id);
+  result.should.deep.equal(Object.assign(mockQuery, {
+    'filter[type]': config.posts.votingPlan.type,
+  }));
 });
 
 // getVotingPlanValues
