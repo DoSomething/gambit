@@ -159,11 +159,11 @@ test('fetchVotingPlan should call rogue.getPosts with query for user voting plan
   const mockQuery = { test: '123' };
   sandbox.stub(userHelper, 'getFetchVotingPlanQuery')
     .returns(mockQuery);
-  sandbox.stub(rogue, 'getPosts')
+  sandbox.stub(rogue, 'fetchPosts')
     .returns(Promise.resolve({ data: [mockPost] }));
 
   const result = await userHelper.fetchVotingPlan(mockUser);
-  rogue.getPosts.should.have.been.calledWith(mockQuery);
+  rogue.fetchPosts.should.have.been.calledWith(mockQuery);
   result.should.deep.equal(mockPost);
 });
 
@@ -197,8 +197,8 @@ test('getDefaultUpdatePayloadFromReq should return object', () => {
 });
 
 // getFetchVotingPlanQuery
-test('getFetchVotingPlanQuery should return object with user id and voting plan campaign/type', () => {
-  const result = userHelper.getFetchVotingPlanQuery(mockUser);
+test('getFetchVotingPlanQuery should return object for querying by userId and voting plan campaign/type', () => {
+  const result = userHelper.getFetchVotingPlanQuery(mockUser.id);
   result.should.deep.equal({
     'filter[northstar_id]': mockUser.id,
     'filter[campaign_id]': config.posts.votingPlan.campaignId,

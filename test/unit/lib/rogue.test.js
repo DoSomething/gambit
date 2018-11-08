@@ -19,6 +19,7 @@ const userFactory = require('../../helpers/factories/user');
 
 const rogueApiStub = RogueClient.getNewInstance();
 const mockPost = { id: stubs.getCampaignRunId() };
+const mockSignup = { id: stubs.getCampaignRunId() };
 const mockUser = userFactory.getValidUser();
 
 // Module to test
@@ -58,8 +59,8 @@ test('createSignup should call rogue.getClient.Signup.create', async () => {
   result.should.deep.equal(mockRogueResponse);
 });
 
-// getPosts
-test('getPosts should call rogue.getClient.Posts.index', async () => {
+// fetchPosts
+test('fetchPosts should call rogue.getClient.Posts.index', async () => {
   const mockQuery = { 'filter[northstar_id]': mockUser.id };
   const mockRogueResponse = { data: [mockPost] };
   sandbox.stub(rogueApiStub.Posts, 'index')
@@ -67,8 +68,23 @@ test('getPosts should call rogue.getClient.Posts.index', async () => {
   sandbox.stub(rogue, 'getClient')
     .returns(rogueApiStub);
 
-  const result = await rogue.getPosts(mockQuery);
+  const result = await rogue.fetchPosts(mockQuery);
   rogue.getClient.should.have.been.called;
   rogueApiStub.Posts.index.should.have.been.calledWith(mockQuery);
+  result.should.deep.equal(mockRogueResponse);
+});
+
+// fetchSignups
+test('fetchSignups should call rogue.getClient.Signups.index', async () => {
+  const mockQuery = { 'filter[northstar_id]': mockUser.id };
+  const mockRogueResponse = { data: [mockSignup] };
+  sandbox.stub(rogueApiStub.Signups, 'index')
+    .returns(Promise.resolve(mockRogueResponse));
+  sandbox.stub(rogue, 'getClient')
+    .returns(rogueApiStub);
+
+  const result = await rogue.fetchSignups(mockQuery);
+  rogue.getClient.should.have.been.called;
+  rogueApiStub.Signups.index.should.have.been.calledWith(mockQuery);
   result.should.deep.equal(mockRogueResponse);
 });
