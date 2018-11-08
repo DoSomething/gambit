@@ -150,17 +150,14 @@ test('changeTopicByCampaign should call setCampaign and return changeTopic if ca
   requestHelper.changeTopic.should.have.been.calledWith(t.context.req, campaign.topics[0]);
 });
 
-// executeRivescriptTopicChange
-test('executeRivescriptTopicChange get topic, create signup if topic has campaign, and return changeTopic', async (t) => {
+// executeInboundTopicChange
+test('executeInboundTopicChange get topic, create signup if topic has campaign, and return changeTopic', async (t) => {
   const keyword = 'dragon';
   t.context.req.rivescriptReplyTopicId = stubs.getContentfulId();
   t.context.req.macro = stubs.getRandomWord();
-  t.context.req.rivescriptMatch = keyword;
   t.context.req.platform = stubs.getPlatform();
   sandbox.stub(requestHelper, 'changeTopic')
     .returns(Promise.resolve(true));
-  sandbox.stub(helpers.topic, 'getById')
-    .returns(Promise.resolve(topic));
   sandbox.stub(requestHelper, 'hasCampaign')
     .returns(true);
   sandbox.stub(helpers.user, 'fetchOrCreateSignup')
@@ -168,14 +165,13 @@ test('executeRivescriptTopicChange get topic, create signup if topic has campaig
   t.context.req.user = userFactory.getValidUser();
   t.context.req.conversation = conversation;
 
-  await requestHelper.executeRivescriptTopicChange(t.context.req);
+  await requestHelper.executeInboundTopicChange(t.context.req, topic, keyword);
 
-  helpers.topic.getById.should.have.been.calledWith(t.context.req.rivescriptReplyTopicId);
   helpers.user.fetchOrCreateSignup
     .should.have.been.calledWith(t.context.req.user, {
       campaignId: topic.campaign.id,
       source: t.context.req.platform,
-      details: `keyword/${keyword}`,
+      details: keyword,
     });
   requestHelper.changeTopic
     .should.have.been.calledWith(t.context.req, topic);
