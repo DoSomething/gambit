@@ -28,7 +28,9 @@ const conversationFactory = require('../../../helpers/factories/conversation');
 const messageFactory = require('../../../helpers/factories/message');
 const userFactory = require('../../../helpers/factories/user');
 
+const campaignId = stubs.getCampaignId();
 const mockPost = { id: stubs.getCampaignRunId() };
+const mockSignup = { id: stubs.getCampaignRunId() };
 const mockUser = userFactory.getValidUser();
 const userLookupStub = () => Promise.resolve(mockUser);
 const platformUserAddressStub = {
@@ -47,6 +49,23 @@ test.afterEach((t) => {
   sandbox.restore();
 });
 
+// createSignup
+test('createSignup passes user.id, campaignId and source args to rogue.createSignup', async () => {
+  const signup = { id: campaignId, campaign_id: campaignId };
+  const details = 'test';
+  sandbox.stub(rogue, 'createSignup')
+    .returns(Promise.resolve(signup));
+
+  const result = await userHelper.createSignup(mockUser, { campaignId, source, details });
+  rogue.createSignup.should.have.been.calledWith({
+    campaign_id: campaignId,
+    northstar_id: mockUser.id,
+    source,
+    details,
+  });
+  result.should.deep.equal(signup);
+});
+
 // createVotingPlan
 test('createVotingPlan passes user voting plan info to rogue.createPost', async () => {
   const mockValues = { test: stubs.getRandomWord() };
@@ -57,7 +76,6 @@ test('createVotingPlan passes user voting plan info to rogue.createPost', async 
   const result = await userHelper.createVotingPlan(mockUser, source);
   rogue.createPost.should.have.been.calledWith({
     campaign_id: config.posts.votingPlan.campaignId,
-    details,
     northstar_id: mockUser.id,
     source,
     text: details,
@@ -66,19 +84,34 @@ test('createVotingPlan passes user voting plan info to rogue.createPost', async 
   result.should.deep.equal(mockPost);
 });
 
-// fetchOrCreateVotingPlan
-test('fetchOrCreateVotingPlan returns fetchVotingPlan result if exists', async () => {
-  sandbox.stub(userHelper, 'fetchVotingPlan')
-    .returns(Promise.resolve(mockPost));
-  sandbox.stub(userHelper, 'createVotingPlan')
-    .returns(Promise.resolve({ id: stubs.getRandomWord() }));
+// fetchOrCreateSignup
+test('fetchOrCreateSignup returns createSignup result if fetchSignup result is null', async () => {
+  sandbox.stub(userHelper, 'fetchSignup')
+    .returns(Promise.resolve(null));
+  sandbox.stub(userHelper, 'createSignup')
+    .returns(Promise.resolve(mockSignup));
+  const args = { campaignId: stubs.getCampaignId() };
 
-  const result = await userHelper.fetchOrCreateVotingPlan(mockUser, source);
-  userHelper.fetchVotingPlan.should.have.been.calledWith(mockUser);
-  userHelper.createVotingPlan.should.not.have.been.called;
-  result.should.deep.equal(mockPost);
+  const result = await userHelper.fetchOrCreateSignup(mockUser, args);
+  userHelper.fetchSignup.should.have.calledWith(mockUser, args.campaignId);
+  userHelper.createSignup.should.have.calledWith(mockUser, args);
+  result.should.deep.equal(mockSignup);
 });
 
+test('fetchOrCreateSignup returns fetchSignup result if exists', async () => {
+  sandbox.stub(userHelper, 'fetchSignup')
+    .returns(Promise.resolve(mockSignup));
+  sandbox.stub(userHelper, 'createSignup')
+    .returns(Promise.resolve({ id: stubs.getRandomWord() }));
+  const args = { campaignId: stubs.getCampaignId() };
+
+  const result = await userHelper.fetchOrCreateSignup(mockUser, args);
+  userHelper.fetchSignup.should.have.been.calledWith(mockUser, args.campaignId);
+  userHelper.createSignup.should.not.have.been.called;
+  result.should.deep.equal(mockSignup);
+});
+
+// fetchOrCreateVotingPlan
 test('fetchOrCreateVotingPlan returns createVotingPlan result if fetchVotingPlan result is null', async () => {
   sandbox.stub(userHelper, 'fetchVotingPlan')
     .returns(Promise.resolve(null));
@@ -88,6 +121,18 @@ test('fetchOrCreateVotingPlan returns createVotingPlan result if fetchVotingPlan
   const result = await userHelper.fetchOrCreateVotingPlan(mockUser, source);
   userHelper.fetchVotingPlan.should.have.been.calledWith(mockUser);
   userHelper.createVotingPlan.should.have.been.calledWith(mockUser, source);
+  result.should.deep.equal(mockPost);
+});
+
+test('fetchOrCreateVotingPlan returns fetchVotingPlan result if exists', async () => {
+  sandbox.stub(userHelper, 'fetchVotingPlan')
+    .returns(Promise.resolve(mockPost));
+  sandbox.stub(userHelper, 'createVotingPlan')
+    .returns(Promise.resolve({ id: stubs.getRandomWord() }));
+
+  const result = await userHelper.fetchOrCreateVotingPlan(mockUser, source);
+  userHelper.fetchVotingPlan.should.have.been.calledWith(mockUser);
+  userHelper.createVotingPlan.should.not.have.been.called;
   result.should.deep.equal(mockPost);
 });
 
@@ -141,11 +186,11 @@ test('fetchVotingPlan should call rogue.getPosts with query for user voting plan
   const mockQuery = { test: '123' };
   sandbox.stub(userHelper, 'getFetchVotingPlanQuery')
     .returns(mockQuery);
-  sandbox.stub(rogue, 'getPosts')
+  sandbox.stub(rogue, 'fetchPosts')
     .returns(Promise.resolve({ data: [mockPost] }));
 
   const result = await userHelper.fetchVotingPlan(mockUser);
-  rogue.getPosts.should.have.been.calledWith(mockQuery);
+  rogue.fetchPosts.should.have.been.calledWith(mockQuery);
   result.should.deep.equal(mockPost);
 });
 
@@ -178,14 +223,24 @@ test('getDefaultUpdatePayloadFromReq should return object', () => {
   result.sms_paused.should.equal(isSupportTopic);
 });
 
-// getFetchVotingPlanQuery
-test('getFetchVotingPlanQuery should return object with user id and voting plan campaign/type', () => {
-  const result = userHelper.getFetchVotingPlanQuery(mockUser);
+// getFetchSignupsQuery
+test('getFetchSignupsQuery should return object for querying by userId and campaignId', () => {
+  const result = userHelper.getFetchSignupsQuery(mockUser.id, campaignId);
   result.should.deep.equal({
     'filter[northstar_id]': mockUser.id,
-    'filter[campaign_id]': config.posts.votingPlan.campaignId,
-    'filter[type]': config.posts.votingPlan.type,
+    'filter[campaign_id]': campaignId,
   });
+});
+
+// getFetchVotingPlanQuery
+test('getFetchVotingPlanQuery should return getFetchSignupsQuery result with type filter property', () => {
+  const mockQuery = { test: stubs.getRandomWord() };
+  sandbox.stub(userHelper, 'getFetchSignupsQuery')
+    .returns(mockQuery);
+  const result = userHelper.getFetchVotingPlanQuery(mockUser.id);
+  result.should.deep.equal(Object.assign(mockQuery, {
+    'filter[type]': config.posts.votingPlan.type,
+  }));
 });
 
 // getVotingPlanValues

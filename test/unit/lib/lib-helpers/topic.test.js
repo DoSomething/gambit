@@ -13,6 +13,7 @@ const broadcastFactory = require('../../../helpers/factories/broadcast');
 const campaignFactory = require('../../../helpers/factories/campaign');
 const topicFactory = require('../../../helpers/factories/topic');
 const config = require('../../../../config/lib/helpers/topic');
+const templateConfig = require('../../../../config/lib/helpers/template');
 
 chai.should();
 chai.use(sinonChai);
@@ -65,6 +66,23 @@ test('fetchByCampaignId should call helpers.campaign.fetchById and inject campai
 test('getAskSubscriptionStatusTopic should return config.rivescriptTopics.askSubscriptionStatus', () => {
   const result = topicHelper.getAskSubscriptionStatusTopic();
   result.should.deep.equal(config.rivescriptTopics.askSubscriptionStatus);
+});
+
+// getById
+test('getById should return getRivescriptTopicById if isRivescriptTopicId', async () => {
+  const topicId = topicHelper.getDefaultTopicId();
+  const result = await topicHelper.getById(topicId);
+  result.should.deep.equal(topicHelper.getRivescriptTopicById(topicId));
+});
+
+test('getById should return fetchById if not isRivescriptTopicId', async () => {
+  const topic = topicFactory.getValidAutoReply();
+  const topicId = stubs.getContentfulId();
+  sandbox.stub(topicHelper, 'fetchById')
+    .returns(Promise.resolve(topic));
+
+  const result = await topicHelper.getById(topicId);
+  result.should.deep.equal(topic);
 });
 
 // getDefaultTopic
@@ -144,16 +162,54 @@ test('isDefaultTopicId should return whether topicId is config.defaultTopicId', 
   t.falsy(topicHelper.isDefaultTopicId(stubs.getContentfulId()));
 });
 
-// getRenderedTextFromTopicAndTemplateName
-test('getRenderedTextFromTopicAndTemplateName returns a string when template exists', () => {
-  const topic = topicFactory.getValidTopic();
-  const templateName = stubs.getTemplate();
-  const result = topicHelper.getRenderedTextFromTopicAndTemplateName(topic, templateName);
-  result.should.equal(topic.templates[templateName].rendered);
+// getTopicTemplateText
+test('getTopicTemplateText returns a string when template exists', () => {
+  const topic = topicFactory.getValidPhotoPostConfig();
+  const templateName = 'startPhotoPostAutoReply';
+  const result = topicHelper.getTopicTemplateText(topic, templateName);
+  result.should.equal(topic.templates[templateName].text);
 });
 
-test('getRenderedTextFromTopicAndTemplateName throws when template undefined', (t) => {
-  const topic = topicFactory.getValidTopic();
+test('getTopicTemplateText throws when template undefined', (t) => {
+  const topic = topicFactory.getValidPhotoPostConfig();
   const templateName = 'winterfell';
-  t.throws(() => topicHelper.getRenderedTextFromTopicAndTemplateName(topic, templateName));
+  t.throws(() => topicHelper.getTopicTemplateText(topic, templateName));
+});
+
+// getTransitionTemplateName
+test('getTransitionTemplateName returns transitionTemplate if defined in config.types ', () => {
+  const topic = topicFactory.getValidTextPostConfig();
+  const result = topicHelper.getTransitionTemplateName(topic);
+  result.should.equal(config.types.textPostConfig.transitionTemplate);
+});
+
+test('getTransitionTemplateName returns rivescript template if config.types undefined', () => {
+  const topic = { type: stubs.getRandomWord() };
+  const result = topicHelper.getTransitionTemplateName(topic);
+  result.should.equal(templateConfig.templatesMap.rivescriptReply);
+});
+
+// getTransitionTemplateText
+test('getTransitionTemplateText returns askText text for textPostConfig topics', () => {
+  const topic = topicFactory.getValidTextPostConfig();
+  const result = topicHelper.getTransitionTemplateText(topic);
+  result.should.equal(topic.templates.askText.text);
+});
+
+test('getTransitionTemplateText returns startExternalPost text for externalPostConfig topics ', () => {
+  const topic = topicFactory.getValidExternalPostConfig();
+  const result = topicHelper.getTransitionTemplateText(topic);
+  result.should.equal(topic.templates.startExternalPost.text);
+});
+
+test('getTransitionTemplateText returns startPhotoPost text for photoPostConfig topics ', () => {
+  const topic = topicFactory.getValidPhotoPostConfig();
+  const result = topicHelper.getTransitionTemplateText(topic);
+  result.should.equal(topic.templates.startPhotoPost.text);
+});
+
+test('getTransitionTemplateText returns null if topic type not externalPostConfig, photoPostConfig, or textPostConfig', (t) => {
+  const topic = topicFactory.getValidAutoReply();
+  const result = topicHelper.getTransitionTemplateText(topic);
+  t.is(result, null);
 });

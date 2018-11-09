@@ -25,7 +25,6 @@ const mockWord = stubs.getRandomWord();
 const mockDeparsedRivescript = { topics: { random: [], ask_yes_no: [] } };
 const mockRivescriptCommand = `${config.commands.trigger}${config.separators.command}${mockWord}`;
 const mockRivescriptLine = `${mockRivescriptCommand}${lineBreak}`;
-const mockRedirectLine = `${config.commands.redirect}${config.separators.command}${mockWord}${lineBreak}`;
 const mockReplyLine = `${config.commands.reply}${config.separators.command}${mockWord}${lineBreak}`;
 const mockRivescript = [mockRivescriptLine, mockReplyLine].join(lineBreak);
 const mockRivescriptReply = {
@@ -39,6 +38,21 @@ const sandbox = sinon.sandbox.create();
 
 test.afterEach(() => {
   sandbox.restore();
+});
+
+// appendEscapedLinebreak
+test('appendEscapedLinebreak should append escaped linebreak character to text', () => {
+  const text = stubs.getRandomMessageText();
+  const result = rivescriptHelper.appendEscapedLinebreak(text);
+  result.should.equal(`${text}\\n`);
+});
+
+// appendTopicTag
+test('appendTopicTag should append Rivescript topic tag to string with given topicId', () => {
+  const text = stubs.getRandomMessageText();
+  const topicId = stubs.getContentfulId();
+  const result = rivescriptHelper.appendTopicTag(text, topicId);
+  result.should.equal(`${text}{topic=${topicId}}`);
 });
 
 // getBotReply
@@ -150,88 +164,187 @@ test('fetchRivescripts should throw on gambitCampaigns.fetchDefaultTopicTriggers
   result.should.deep.equal(mockError);
 });
 
+// formatRedirectRivescript
+test('formatRedirectRivescript should return redirect command with text arg as rs line', () => {
+  sandbox.stub(rivescriptHelper, 'formatRivescriptLine')
+    .returns(mockRivescriptLine);
+
+  const result = rivescriptHelper.formatRedirectRivescript(mockWord);
+  rivescriptHelper.formatRivescriptLine
+    .should.have.been.calledWith(config.commands.redirect, mockWord);
+  result.should.equal(mockRivescriptLine);
+});
+
+// formatReplyRivescript
+test('formatReplyRivescript return array of Rivescript lines without topic tag if null topicId', () => {
+  const data = [
+    { operator: '+', value: 'Beginning' },
+    { operator: '+', value: 'Middle' },
+    { operator: '^', value: 'The end' },
+  ];
+  const line = stubs.getRandomWord();
+  sandbox.stub(rivescriptHelper, 'parseReplyRivescriptLines')
+    .returns(data);
+  sandbox.stub(rivescriptHelper, 'formatRivescriptLine')
+    .returns(line);
+  const replyText = stubs.getRandomMessageText();
+  const topicId = null;
+
+  const result = rivescriptHelper.formatReplyRivescript(replyText, topicId);
+  rivescriptHelper.parseReplyRivescriptLines.should.have.been.calledWith(replyText, topicId);
+  data.forEach((item) => {
+    rivescriptHelper.formatRivescriptLine.should.have.been.calledWith(item.operator, item.value);
+  });
+  result.should.deep.equal([line, line, line]);
+});
+
 // formatRivescriptLine
 test('formatRivescriptLine should return a trimmed concat of operator and value args', () => {
   const result = rivescriptHelper.formatRivescriptLine(config.commands.trigger, `${mockWord}   `);
   result.should.equal(mockRivescriptLine);
 });
 
-// getRivescriptFromTriggerTextAndRivescriptLine
-test('getRivescriptFromTriggerTextAndRivescriptLine should array with triggerText as rs line and given rs line ', () => {
+// formatTriggerRivescript
+test('formatTriggerRivescript should return trigger command with triggerText as rs line', () => {
   sandbox.stub(rivescriptHelper, 'formatRivescriptLine')
     .returns(mockRivescriptLine);
-  sandbox.stub(rivescriptHelper, 'joinRivescriptLines')
-    .returns(mockRivescript);
 
-  const result = rivescriptHelper
-    .getRivescriptFromTriggerTextAndRivescriptLine(mockWord, mockReplyLine);
+  const result = rivescriptHelper.formatTriggerRivescript(mockWord);
   rivescriptHelper.formatRivescriptLine
     .should.have.been.calledWith(config.commands.trigger, mockWord);
-  rivescriptHelper.joinRivescriptLines
-    .should.have.been.calledWith([mockRivescriptLine, mockReplyLine]);
-  result.should.equal(mockRivescript);
+  result.should.equal(mockRivescriptLine);
 });
 
-// getRedirectRivescript
-test('getRedirectRivescript should return Rivescript with trigger and redirect commands', () => {
-  const mockRedirectText = stubs.getRandomWord();
-  sandbox.stub(rivescriptHelper, 'formatRivescriptLine')
-    .returns(mockRedirectLine);
-  sandbox.stub(rivescriptHelper, 'getRivescriptFromTriggerTextAndRivescriptLine')
-    .returns(mockRivescript);
-
-  const result = rivescriptHelper.getRedirectRivescript(mockWord, mockRedirectText);
-  rivescriptHelper.formatRivescriptLine
-    .should.have.been.calledWith(config.commands.redirect, mockRedirectText);
-  rivescriptHelper.getRivescriptFromTriggerTextAndRivescriptLine
-    .should.have.been.calledWith(mockWord, mockRedirectLine);
-  result.should.equal(mockRivescript);
+// parseReplyRivescriptLines
+test('parseReplyRivescriptLines should throw if replyText undefined', (t) => {
+  t.throws(() => rivescriptHelper.parseReplyRivescriptLines());
 });
 
-// getReplyRivescript
-test('getReplyRivescript should return Rivescript with trigger and reply commands', () => {
-  const mockReplyText = stubs.getRandomMessageText();
-  sandbox.stub(rivescriptHelper, 'formatRivescriptLine')
-    .returns(mockReplyLine);
-  sandbox.stub(rivescriptHelper, 'getRivescriptFromTriggerTextAndRivescriptLine')
-    .returns(mockRivescript);
-
-  const result = rivescriptHelper.getReplyRivescript(mockWord, mockReplyText);
-  rivescriptHelper.formatRivescriptLine
-    .should.have.been.calledWith(config.commands.reply, mockReplyText);
-  rivescriptHelper.getRivescriptFromTriggerTextAndRivescriptLine
-    .should.have.been.calledWith(mockWord, mockReplyLine);
-  result.should.equal(mockRivescript);
+test('parseReplyRivescriptLines should return an array with one reply command if replyText does not have linebreaks', () => {
+  const text = stubs.getRandomMessageText();
+  const result = rivescriptHelper.parseReplyRivescriptLines(text);
+  result.should.deep.equal([
+    { operator: config.commands.reply, value: text },
+  ]);
 });
 
-// getRivescriptFromDefaultTopicTrigger
-test('getRivescriptFromDefaultTopicTrigger returns redirectRivescript if defaultTopicTrigger.redirect is set', () => {
-  sandbox.stub(rivescriptHelper, 'getRedirectRivescript')
-    .returns(mockRivescript);
-  sandbox.stub(rivescriptHelper, 'getReplyRivescript')
+test('parseReplyRivescriptLines should return an array with one reply command if replyText leads with a line break', () => {
+  const text = stubs.getRandomMessageText();
+  let result = rivescriptHelper.parseReplyRivescriptLines(`\n${text}`);
+  result.should.deep.equal([
+    { operator: config.commands.reply, value: text },
+  ]);
+  result = rivescriptHelper.parseReplyRivescriptLines(`\n\n${text}`);
+  result.should.deep.equal([
+    { operator: config.commands.reply, value: text },
+  ]);
+});
+
+test('parseReplyRivescriptLines should return an array with reply command and 2 continuation commands if replyText has 2 repeating linebreaks', () => {
+  const firstParagraphText = stubs.getRandomMessageText();
+  const secondParagraphText = stubs.getRandomMessageText();
+  const lastParagraphText = stubs.getRandomMessageText();
+  const text = `${firstParagraphText}\n\n${secondParagraphText}\n\n${lastParagraphText}`;
+  const result = rivescriptHelper.parseReplyRivescriptLines(text, null);
+  result.should.deep.equal([
+    { operator: config.commands.reply, value: `${firstParagraphText}\\n` },
+    { operator: config.commands.continuation, value: `${secondParagraphText}\\n` },
+    { operator: config.commands.continuation, value: lastParagraphText },
+  ]);
+});
+
+test('parseReplyRivescriptLines should return an array with 1 reply, 1 continuation without topic tag, and 1 continuation with appended topic tag if replyText has 2 repeating linebreaks and topicId arg exists', () => {
+  const firstParagraphText = stubs.getRandomMessageText();
+  const secondParagraphText = stubs.getRandomMessageText();
+  const lastParagraphText = stubs.getRandomMessageText();
+  const text = `${firstParagraphText}\n\n${secondParagraphText}\n\n${lastParagraphText}`;
+  const topicId = stubs.getContentfulId();
+  const appendTopicTagResult = `${lastParagraphText}{topic=${topicId}}`;
+  sandbox.stub(rivescriptHelper, 'appendTopicTag')
+    .returns(appendTopicTagResult);
+
+  const result = rivescriptHelper.parseReplyRivescriptLines(text, topicId);
+  result.should.deep.equal([
+    { operator: config.commands.reply, value: `${firstParagraphText}\\n` },
+    { operator: config.commands.continuation, value: `${secondParagraphText}\\n` },
+    { operator: config.commands.continuation, value: appendTopicTagResult },
+  ]);
+  rivescriptHelper.appendTopicTag.should.have.been.calledWith(lastParagraphText, topicId);
+});
+
+// parseRivescript
+test('parseRivescript returns redirectRivescript if defaultTopicTrigger.redirect is set', () => {
+  const trigger = stubs.getRandomWord();
+  const redirect = stubs.getRandomWord();
+  sandbox.stub(rivescriptHelper, 'formatTriggerRivescript')
+    .returns(trigger);
+  sandbox.stub(rivescriptHelper, 'formatRedirectRivescript')
+    .returns(redirect);
+  sandbox.stub(rivescriptHelper, 'formatReplyRivescript')
+    .returns(null);
+  sandbox.stub(rivescriptHelper, 'joinRivescriptLines')
     .returns(mockRivescript);
   const redirectDefaultTopicTrigger = defaultTopicTriggerFactory
     .getValidRedirectDefaultTopicTrigger();
 
-  const result = rivescriptHelper.getRivescriptFromDefaultTopicTrigger(redirectDefaultTopicTrigger);
-  rivescriptHelper.getReplyRivescript.should.not.have.been.called;
-  rivescriptHelper.getRedirectRivescript
-    .should.have.been
-    .calledWith(redirectDefaultTopicTrigger.trigger, redirectDefaultTopicTrigger.redirect);
+  const result = rivescriptHelper.parseRivescript(redirectDefaultTopicTrigger);
+  rivescriptHelper.formatReplyRivescript.should.not.have.been.called;
+  rivescriptHelper.formatTriggerRivescript.should.have.been
+    .calledWith(redirectDefaultTopicTrigger.trigger);
+  rivescriptHelper.formatRedirectRivescript.should.have.been
+    .calledWith(redirectDefaultTopicTrigger.redirect);
+  rivescriptHelper.joinRivescriptLines.should.have.been.calledWith([trigger, redirect]);
   result.should.equal(mockRivescript);
 });
 
-test('getRivescriptFromDefaultTopicTrigger returns replyRivescript if defaultTopicTrigger.redirect is not set', () => {
-  sandbox.stub(rivescriptHelper, 'getRedirectRivescript')
+test('parseRivescript calls replyRivescript with defaultTopicTrigger.reply if set', () => {
+  const trigger = stubs.getRandomWord();
+  const reply = stubs.getRandomWord();
+  sandbox.stub(rivescriptHelper, 'formatTriggerRivescript')
+    .returns(trigger);
+  sandbox.stub(rivescriptHelper, 'formatRedirectRivescript')
+    .returns(null);
+  sandbox.stub(rivescriptHelper, 'formatReplyRivescript')
+    .returns(reply);
+  sandbox.stub(rivescriptHelper, 'joinRivescriptLines')
     .returns(mockRivescript);
-  sandbox.stub(rivescriptHelper, 'getReplyRivescript')
-    .returns(mockRivescript);
-  const replyDefaultTopicTrigger = defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger();
+  const replyDefaultTopicTrigger = defaultTopicTriggerFactory
+    .getValidReplyDefaultTopicTrigger();
 
-  const result = rivescriptHelper.getRivescriptFromDefaultTopicTrigger(replyDefaultTopicTrigger);
-  rivescriptHelper.getRedirectRivescript.should.not.have.been.called;
-  rivescriptHelper.getReplyRivescript.should.have.been
-    .calledWith(replyDefaultTopicTrigger.trigger, replyDefaultTopicTrigger.reply);
+  const result = rivescriptHelper.parseRivescript(replyDefaultTopicTrigger);
+  rivescriptHelper.formatRedirectRivescript.should.not.have.been.called;
+  rivescriptHelper.formatTriggerRivescript.should.have.been
+    .calledWith(replyDefaultTopicTrigger.trigger);
+  rivescriptHelper.formatReplyRivescript.should.have.been
+    .calledWith(replyDefaultTopicTrigger.reply, null);
+  rivescriptHelper.joinRivescriptLines.should.have.been.calledWith([trigger, reply]);
+  result.should.equal(mockRivescript);
+});
+
+test('parseRivescript calls replyRivescript with getTransitionTemplateText if reply is not set', () => {
+  const trigger = stubs.getRandomWord();
+  const startText = stubs.getRandomWord();
+  const reply = stubs.getRandomMessageText();
+  sandbox.stub(rivescriptHelper, 'formatRedirectRivescript')
+    .returns(null);
+  sandbox.stub(rivescriptHelper, 'formatTriggerRivescript')
+    .returns(trigger);
+  sandbox.stub(rivescriptHelper, 'formatReplyRivescript')
+    .returns(reply);
+  sandbox.stub(helpers.topic, 'getTransitionTemplateText')
+    .returns(startText);
+  sandbox.stub(rivescriptHelper, 'joinRivescriptLines')
+    .returns(mockRivescript);
+  const legacyDefaultTopicTrigger = defaultTopicTriggerFactory
+    .getLegacyChangeTopicDefaultTopicTrigger();
+
+  const result = rivescriptHelper.parseRivescript(legacyDefaultTopicTrigger);
+  rivescriptHelper.formatRedirectRivescript.should.not.have.been.called;
+  rivescriptHelper.formatTriggerRivescript.should.have.been
+    .calledWith(legacyDefaultTopicTrigger.trigger);
+  rivescriptHelper.formatReplyRivescript.should.have.been
+    .calledWith(startText);
+  rivescriptHelper.joinRivescriptLines.should.have.been.calledWith([trigger, reply]);
   result.should.equal(mockRivescript);
 });
 
@@ -326,14 +439,6 @@ test('parseAskYesNoResponse should call rivescriptHelper.getBotReply', async () 
 // parseRivescript
 test('parseRivescript should throw error if defaultTopicTrigger undefined', (t) => {
   t.throws(() => rivescriptHelper.parseRivescript());
-});
-
-test('parseRivescript should return defaultTopicTrigger if defaultTopicTrigger.topicId undefined', () => {
-  const defaultTopicTrigger = defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger();
-  sandbox.stub(rivescriptHelper, 'getRivescriptFromDefaultTopicTrigger')
-    .returns(mockRivescript);
-  const result = rivescriptHelper.parseRivescript(defaultTopicTrigger);
-  result.should.deep.equal(mockRivescript);
 });
 
 // TODO: Add test for changeTopicMacro

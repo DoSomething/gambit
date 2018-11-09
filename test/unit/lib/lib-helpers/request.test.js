@@ -16,6 +16,7 @@ const broadcastFactory = require('../../../helpers/factories/broadcast');
 const campaignFactory = require('../../../helpers/factories/campaign');
 const conversationFactory = require('../../../helpers/factories/conversation');
 const topicFactory = require('../../../helpers/factories/topic');
+const userFactory = require('../../../helpers/factories/user');
 
 const config = require('../../../../config/lib/helpers/request');
 
@@ -31,9 +32,9 @@ const campaignId = stubs.getCampaignId();
 const userId = stubs.getUserId();
 const platformUserId = stubs.getMobileNumber();
 const conversation = conversationFactory.getValidConversation();
-const macro = stubs.getMacro();
 const message = conversation.lastOutboundMessage;
 const topic = topicFactory.getValidTopic();
+const user = userFactory.getValidUser();
 
 test.beforeEach((t) => {
   stubs.stubLogger(sandbox, logger);
@@ -149,24 +150,31 @@ test('changeTopicByCampaign should call setCampaign and return changeTopic if ca
   requestHelper.changeTopic.should.have.been.calledWith(t.context.req, campaign.topics[0]);
 });
 
-// executeChangeTopicMacro
-test('executeChangeTopicMacro should call setKeyword, fetch topic and return changeTopic', async (t) => {
-  t.context.req.rivescriptMatch = stubs.getRandomWord();
-  t.context.req.rivescriptReplyTopic = { id: stubs.getContentfulId() };
+// executeInboundTopicChange
+test('executeInboundTopicChange get topic, create signup if topic has campaign, and return changeTopic', async (t) => {
+  const keyword = 'dragon';
+  t.context.req.rivescriptReplyTopicId = stubs.getContentfulId();
   t.context.req.macro = stubs.getRandomWord();
-  sandbox.stub(requestHelper, 'setKeyword')
-    .returns(underscore.noop);
+  t.context.req.platform = stubs.getPlatform();
   sandbox.stub(requestHelper, 'changeTopic')
     .returns(Promise.resolve(true));
-  sandbox.stub(helpers.topic, 'fetchById')
-    .returns(Promise.resolve(topic));
+  sandbox.stub(requestHelper, 'hasCampaign')
+    .returns(true);
+  sandbox.stub(helpers.user, 'fetchOrCreateSignup')
+    .returns(Promise.resolve(stubs.getSignup()));
+  t.context.req.user = userFactory.getValidUser();
   t.context.req.conversation = conversation;
 
-  await requestHelper.executeChangeTopicMacro(t.context.req);
-  requestHelper.setKeyword.should.have.been
-    .calledWith(t.context.req, t.context.req.rivescriptMatch);
-  helpers.topic.fetchById.should.have.been.calledWith(t.context.req.rivescriptReplyTopic.id);
-  requestHelper.changeTopic.should.have.been.calledWith(t.context.req, topic);
+  await requestHelper.executeInboundTopicChange(t.context.req, topic, keyword);
+
+  helpers.user.fetchOrCreateSignup
+    .should.have.been.calledWith(t.context.req.user, {
+      campaignId: topic.campaign.id,
+      source: t.context.req.platform,
+      details: keyword,
+    });
+  requestHelper.changeTopic
+    .should.have.been.calledWith(t.context.req, topic);
 });
 
 // executeSaidNoMacro
@@ -190,18 +198,24 @@ test('executeSaidYesMacro should call post campaign activity if new topic has ca
   const askYesNo = broadcastFactory.getValidAskYesNo();
   const saidYesTemplate = askYesNo.templates.saidYes;
   t.context.req.topic = askYesNo;
+  t.context.req.user = user;
+  t.context.req.platform = stubs.getPlatform();
   sandbox.stub(requestHelper, 'changeTopic')
     .returns(Promise.resolve(true));
   sandbox.stub(requestHelper, 'hasCampaign')
     .returns(true);
-  sandbox.stub(requestHelper, 'postCampaignActivity')
+  sandbox.stub(helpers.user, 'fetchOrCreateSignup')
     .returns(Promise.resolve());
   sandbox.stub(helpers.replies, 'sendReply')
     .returns(underscore.noop);
 
   await requestHelper.executeSaidYesMacro(t.context.req);
   requestHelper.changeTopic.should.have.been.calledWith(t.context.req, saidYesTemplate.topic);
-  requestHelper.postCampaignActivity.should.have.been.calledWith(t.context.req, askYesNo.id);
+  helpers.user.fetchOrCreateSignup.should.have.been.calledWith(t.context.req.user, {
+    campaignId: saidYesTemplate.topic.campaign.id,
+    source: t.context.req.platform,
+    details: `broadcast/${askYesNo.id}`,
+  });
   helpers.replies.sendReply
     .should.have.been.calledWith(t.context.req, t.context.res, saidYesTemplate.text, 'saidYes');
 });
@@ -210,18 +224,20 @@ test('executeSaidYesMacro should not post campaign activity if new topic does no
   const askYesNo = broadcastFactory.getValidAskYesNo();
   const saidYesTemplate = askYesNo.templates.saidYes;
   t.context.req.topic = askYesNo;
+  t.context.req.user = user;
   sandbox.stub(requestHelper, 'changeTopic')
     .returns(Promise.resolve(true));
-  sandbox.stub(requestHelper, 'hasCampaign')
+  sandbox.stub(helpers.topic, 'hasCampaign')
     .returns(false);
-  sandbox.stub(gambitCampaigns, 'postCampaignActivity')
+  sandbox.stub(helpers.user, 'fetchOrCreateSignup')
     .returns(Promise.resolve());
   sandbox.stub(helpers.replies, 'sendReply')
     .returns(underscore.noop);
 
   await requestHelper.executeSaidYesMacro(t.context.req);
   requestHelper.changeTopic.should.have.been.calledWith(t.context.req, saidYesTemplate.topic);
-  gambitCampaigns.postCampaignActivity.should.not.have.been.called;
+  helpers.topic.hasCampaign.should.have.been.calledWith(saidYesTemplate.topic);
+  helpers.user.fetchOrCreateSignup.should.not.have.been.called;
   helpers.replies.sendReply
     .should.have.been.calledWith(t.context.req, t.context.res, saidYesTemplate.text, 'saidYes');
 });
@@ -274,6 +290,7 @@ test('getRivescriptReply should call helpers.rivescript.getBotReply with req var
   t.context.req.conversation = conversation;
   t.context.req.currentTopicId = stubs.getContentfulId();
   t.context.req.inboundMessageText = stubs.getRandomMessageText();
+  // TODO: This should be renamed as default topic the way we're using it -- stub getDefaultTopicId.
   const mockRivescriptTopicId = 'random';
   const mockRivescriptTopic = { id: mockRivescriptTopicId };
   const botReply = { text: stubs.getRandomMessageText(), match: '@hello' };
@@ -283,10 +300,11 @@ test('getRivescriptReply should call helpers.rivescript.getBotReply with req var
     .returns(mockRivescriptTopic);
   const result = await requestHelper.getRivescriptReply(t.context.req);
   helpers.rivescript.getBotReply.should.have.been
-    .calledWith(userId, t.context.req.currentTopicId, t.context.req.inboundMessageText);
+    .calledWith(userId, mockRivescriptTopicId, t.context.req.inboundMessageText);
   result.text.should.equal(botReply.text);
   result.match.should.equal(botReply.match);
-  result.topic.should.deep.equal(mockRivescriptTopic);
+  // TODO: Add tests for various topic changes.
+  // result.topicId.should.deep.equal(mockRivescriptTopic);
 });
 
 // hasCampaign
@@ -295,27 +313,6 @@ test('hasCampaign should return boolean of whether req.campaign defined', (t) =>
   t.truthy(requestHelper.hasCampaign(t.context.req));
   t.context.req.campaign = null;
   t.falsy(requestHelper.hasCampaign(t.context.req));
-});
-
-// isChangeTopicMacro
-test('isChangeTopicMacro should return true if req.macro is changeTopic', (t) => {
-  sandbox.stub(helpers.macro, 'isChangeTopic')
-    .returns(true);
-  t.context.req.macro = macro;
-  t.truthy(requestHelper.isChangeTopicMacro(t.context.req));
-});
-
-test('isChangeTopicMacro should return false if req.macro is undefined', (t) => {
-  sandbox.stub(helpers.macro, 'isChangeTopic')
-    .returns(true);
-  t.falsy(requestHelper.isChangeTopicMacro(t.context.req));
-});
-
-test('isChangeTopicMacro should return false if req.macro is not changeTopic', (t) => {
-  sandbox.stub(helpers.macro, 'isChangeTopic')
-    .returns(false);
-  t.context.req.macro = macro;
-  t.falsy(requestHelper.isChangeTopicMacro(t.context.req));
 });
 
 // isLastOutboundAskContinue
@@ -446,7 +443,7 @@ test('isSaidNoMacro returns whether req.askYesNoResponse equals no', (t) => {
   t.falsy(requestHelper.isSaidNoMacro(t.context.req));
   t.context.req.macro = helpers.macro.macros.saidNo();
   t.truthy(requestHelper.isSaidNoMacro(t.context.req));
-  t.context.req.macro = helpers.macro.macros.changeTopic();
+  t.context.req.macro = helpers.macro.macros.votingPlanStatusVoting();
   t.falsy(requestHelper.isSaidNoMacro(t.context.req));
 });
 
@@ -456,7 +453,7 @@ test('isSaidYesMacro returns whether req.askYesNoResponse equals yes', (t) => {
   t.truthy(requestHelper.isSaidYesMacro(t.context.req));
   t.context.req.macro = helpers.macro.macros.saidNo();
   t.falsy(requestHelper.isSaidYesMacro(t.context.req));
-  t.context.req.macro = helpers.macro.macros.changeTopic();
+  t.context.req.macro = helpers.macro.macros.votingPlanStatusVoting();
   t.falsy(requestHelper.isSaidYesMacro(t.context.req));
 });
 

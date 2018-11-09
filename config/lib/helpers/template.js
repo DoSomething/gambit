@@ -27,6 +27,7 @@ const templatesMap = {
     askWhyParticipated: 'askWhyParticipated',
     askYesNo: 'askYesNo',
     autoReply: 'autoReply',
+    autoReplyTransition: 'autoReplyTransition',
     completedPhotoPost: 'completedPhotoPost',
     completedPhotoPostAutoReply: 'completedPhotoPostAutoReply',
     completedTextPost: 'completedTextPost',

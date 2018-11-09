@@ -21,7 +21,7 @@ const mockTopic = 'winterfell';
 const mockMatch = '*';
 const mockRivescriptReply = {
   text: mockText,
-  topic: mockTopic,
+  topicId: mockTopic,
   match: mockMatch,
 };
 const mockUser = userFactory.getValidUser();
@@ -64,7 +64,7 @@ test('getRivescriptReply should inject vars into req', async (t) => {
   await middleware(t.context.req, t.context.res, next);
   helpers.request.getRivescriptReply.should.have.been.calledWith(t.context.req);
   t.context.req.rivescriptReplyText.should.equal(mockText);
-  t.context.req.rivescriptReplyTopic.should.equal(mockTopic);
+  t.context.req.rivescriptReplyTopicId.should.equal(mockTopic);
   t.context.req.rivescriptMatch.should.equal(mockMatch);
   next.should.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;

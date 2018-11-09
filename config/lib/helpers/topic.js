@@ -1,14 +1,35 @@
 'use strict';
 
+// TODO: Merge template config here to DRY.
+const templateConfig = require('./template');
+
+const topicTemplates = templateConfig.templatesMap.topicTemplates;
+
 module.exports = {
   types: {
-    askVotingPlanStatus: 'askVotingPlanStatus',
-    askYesNo: 'askYesNo',
-    autoReply: 'autoReply',
-    photoPostConfig: 'photoPostConfig',
-    textPostConfig: 'textPostConfig',
+    askVotingPlanStatus: {
+      type: 'askVotingPlanStatus',
+    },
+    askYesNo: {
+      type: 'askYesNo',
+    },
+    autoReply: {
+      type: 'autoReply',
+      transitionTemplate: topicTemplates.autoReplyTransition,
+    },
+    photoPostConfig: {
+      type: 'photoPostConfig',
+      transitionTemplate: topicTemplates.startPhotoPost,
+    },
+    textPostConfig: {
+      type: 'textPostConfig',
+      transitionTemplate: topicTemplates.askText,
+    },
     // To be deprecated by autoReply:
-    externalPostConfig: 'externalPostConfig',
+    externalPostConfig: {
+      type: 'externalPostConfig',
+      transitionTemplate: topicTemplates.startExternalPost,
+    },
   },
   rivescriptTopics: {
     askSubscriptionStatus: {
