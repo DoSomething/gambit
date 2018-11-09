@@ -13,6 +13,7 @@ const broadcastFactory = require('../../../helpers/factories/broadcast');
 const campaignFactory = require('../../../helpers/factories/campaign');
 const topicFactory = require('../../../helpers/factories/topic');
 const config = require('../../../../config/lib/helpers/topic');
+const templateConfig = require('../../../../config/lib/helpers/template');
 
 chai.should();
 chai.use(sinonChai);
@@ -175,27 +176,40 @@ test('getTopicTemplateText throws when template undefined', (t) => {
   t.throws(() => topicHelper.getTopicTemplateText(topic, templateName));
 });
 
-// getStartTemplateText
-test('getStartTemplateText returns askText text for textPostConfig topics ', () => {
+// getTransitionTemplateName
+test('getTransitionTemplateName returns transitionTemplate if defined in config.types ', () => {
   const topic = topicFactory.getValidTextPostConfig();
-  const result = topicHelper.getStartTemplateText(topic);
+  const result = topicHelper.getTransitionTemplateName(topic);
+  result.should.equal(config.types.textPostConfig.transitionTemplate);
+});
+
+test('getTransitionTemplateName returns rivescript template if config.types undefined', () => {
+  const topic = { type: stubs.getRandomWord() };
+  const result = topicHelper.getTransitionTemplateName(topic);
+  result.should.equal(templateConfig.templatesMap.rivescriptReply);
+});
+
+// getTransitionTemplateText
+test('getTransitionTemplateText returns askText text for textPostConfig topics', () => {
+  const topic = topicFactory.getValidTextPostConfig();
+  const result = topicHelper.getTransitionTemplateText(topic);
   result.should.equal(topic.templates.askText.text);
 });
 
-test('getStartTemplateText returns startExternalPost text for externalPostConfig topics ', () => {
+test('getTransitionTemplateText returns startExternalPost text for externalPostConfig topics ', () => {
   const topic = topicFactory.getValidExternalPostConfig();
-  const result = topicHelper.getStartTemplateText(topic);
+  const result = topicHelper.getTransitionTemplateText(topic);
   result.should.equal(topic.templates.startExternalPost.text);
 });
 
-test('getStartTemplateText returns startPhotoPost text for photoPostConfig topics ', () => {
+test('getTransitionTemplateText returns startPhotoPost text for photoPostConfig topics ', () => {
   const topic = topicFactory.getValidPhotoPostConfig();
-  const result = topicHelper.getStartTemplateText(topic);
+  const result = topicHelper.getTransitionTemplateText(topic);
   result.should.equal(topic.templates.startPhotoPost.text);
 });
 
-test('getStartTemplateText returns null if topic type not externalPostConfig, photoPostConfig, or textPostConfig', (t) => {
+test('getTransitionTemplateText returns null if topic type not externalPostConfig, photoPostConfig, or textPostConfig', (t) => {
   const topic = topicFactory.getValidAutoReply();
-  const result = topicHelper.getStartTemplateText(topic);
+  const result = topicHelper.getTransitionTemplateText(topic);
   t.is(result, null);
 });

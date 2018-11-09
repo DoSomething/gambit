@@ -11,6 +11,7 @@ const underscore = require('underscore');
 
 const helpers = require('../../../../../../lib/helpers');
 const stubs = require('../../../../../helpers/stubs');
+const topicFactory = require('../../../../../helpers/factories/topic');
 
 const error = stubs.getError();
 const replyText = stubs.getRandomMessageText();
@@ -39,7 +40,7 @@ test.afterEach((t) => {
 test('parseRivescriptReply calls next if req.macro is set', async (t) => {
   const next = sinon.stub();
   const middleware = parseRivescriptReply();
-  sandbox.stub(helpers.request, 'executeRivescriptTopicChange')
+  sandbox.stub(helpers.request, 'executeInboundTopicChange')
     .returns(Promise.resolve(underscore.noop));
   sandbox.stub(helpers.replies, 'sendReply')
     .returns(Promise.resolve(underscore.noop));
@@ -47,35 +48,46 @@ test('parseRivescriptReply calls next if req.macro is set', async (t) => {
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  helpers.request.executeRivescriptTopicChange.should.not.have.been.called;
+  helpers.request.executeInboundTopicChange.should.not.have.been.called;
   next.should.have.been.called;
   helpers.replies.sendReply.should.not.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 
-test('parseRivescriptReply calls executeRivescriptTopicChange and sends changeTopic template if req.rivescriptReplyTopicId is set', async (t) => {
+test('parseRivescriptReply calls executeInboundTopicChange and sends changeTopic template if req.rivescriptReplyTopicId is set', async (t) => {
   const next = sinon.stub();
   const middleware = parseRivescriptReply();
-  sandbox.stub(helpers.request, 'executeRivescriptTopicChange')
+  const keyword = stubs.getRandomWord();
+  const topic = topicFactory.getValidTextPostConfig();
+  const template = stubs.getRandomWord();
+  sandbox.stub(helpers.topic, 'getById')
+    .returns(Promise.resolve(topic));
+  sandbox.stub(helpers.request, 'executeInboundTopicChange')
     .returns(Promise.resolve(underscore.noop));
+  sandbox.stub(helpers.topic, 'getTransitionTemplateName')
+    .returns(template);
   sandbox.stub(helpers.replies, 'sendReply')
     .returns(Promise.resolve(underscore.noop));
   t.context.req.rivescriptReplyTopicId = stubs.getContentfulId();
   t.context.req.rivescriptReplyText = replyText;
+  t.context.req.rivescriptMatch = keyword;
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  helpers.request.executeRivescriptTopicChange.should.have.been.calledWith(t.context.req);
+
+  helpers.topic.getById.should.have.been.calledWith(t.context.req.rivescriptReplyTopicId);
+  helpers.request.executeInboundTopicChange
+    .should.have.been.calledWith(t.context.req, topic, `keyword/${keyword}`);
   next.should.not.have.been.called;
   helpers.replies.sendReply
-    .should.have.been.calledWith(t.context.req, t.context.res, replyText, 'changeTopic');
+    .should.have.been.calledWith(t.context.req, t.context.res, replyText, template);
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 
-test('parseRivescriptReply does not call executeRivescriptTopicChange and sends quickReply template if req.rivescriptReplyTopicId undefined', async (t) => {
+test('parseRivescriptReply does not call executeInboundTopicChange and sends quickReply template if req.rivescriptReplyTopicId undefined', async (t) => {
   const next = sinon.stub();
   const middleware = parseRivescriptReply();
-  sandbox.stub(helpers.request, 'executeRivescriptTopicChange')
+  sandbox.stub(helpers.request, 'executeInboundTopicChange')
     .returns(Promise.resolve(underscore.noop));
   sandbox.stub(helpers.replies, 'sendReply')
     .returns(Promise.resolve(underscore.noop));
@@ -84,17 +96,19 @@ test('parseRivescriptReply does not call executeRivescriptTopicChange and sends 
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  helpers.request.executeRivescriptTopicChange.should.not.have.been.called;
+  helpers.request.executeInboundTopicChange.should.not.have.been.called;
   next.should.not.have.been.called;
   helpers.replies.sendReply
     .should.have.been.calledWith(t.context.req, t.context.res, replyText, 'quickReply');
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 
-test('parseRivescriptReply calls sendErrorResponse if req.rivescriptReplyTopicId is set and executeRivescriptTopicChange fails', async (t) => {
+test('parseRivescriptReply calls sendErrorResponse if req.rivescriptReplyTopicId is set and executeInboundTopicChange fails', async (t) => {
   const next = sinon.stub();
   const middleware = parseRivescriptReply();
-  sandbox.stub(helpers.request, 'executeRivescriptTopicChange')
+  sandbox.stub(helpers.topic, 'getById')
+    .returns(Promise.resolve(underscore.noop));
+  sandbox.stub(helpers.request, 'executeInboundTopicChange')
     .returns(Promise.reject(error));
   sandbox.stub(helpers.replies, 'sendReply')
     .returns(Promise.resolve(underscore.noop));
@@ -103,7 +117,8 @@ test('parseRivescriptReply calls sendErrorResponse if req.rivescriptReplyTopicId
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  helpers.request.executeRivescriptTopicChange.should.have.been.calledWith(t.context.req);
+  helpers.topic.getById.should.have.been.called;
+  helpers.request.executeInboundTopicChange.should.have.been.called;
   next.should.not.have.been.called;
   helpers.replies.sendReply.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.calledWith(t.context.res, error);

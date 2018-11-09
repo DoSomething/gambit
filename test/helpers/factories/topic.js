@@ -36,12 +36,12 @@ function getValidTopicWithoutCampaign() {
 }
 
 function getValidAutoReply() {
-  return getValidTopic(config.types.autoReply, { autoReply: getTemplate() });
+  return getValidTopic(config.types.autoReply.type, { autoReply: getTemplate() });
 }
 
 // TODO: Remove this function once we deprecate externalPostConfig type entirely.
 function getValidExternalPostConfig() {
-  return getValidTopic(config.types.externalPostConfig, { startExternalPost: getTemplate() });
+  return getValidTopic(config.types.externalPostConfig.type, { startExternalPost: getTemplate() });
 }
 
 function getValidPhotoPostConfig() {
@@ -54,7 +54,7 @@ function getValidPhotoPostConfig() {
     // TODO: Cleanup config/lib/helpers/template, possibly move into config/lib/helpers/topic
     // and use it to define the various templates per topic here.
   };
-  return getValidTopic(config.types.photoPostConfig, templates);
+  return getValidTopic(config.types.photoPostConfig.type, templates);
 }
 
 function getValidTextPostConfig() {
@@ -65,7 +65,7 @@ function getValidTextPostConfig() {
     completedTextPost: getTemplate(),
     completedTextPostAutoReply: getTemplate(),
   };
-  return getValidTopic(config.types.textPostConfig, templates);
+  return getValidTopic(config.types.textPostConfig.type, templates);
 }
 
 module.exports = {
