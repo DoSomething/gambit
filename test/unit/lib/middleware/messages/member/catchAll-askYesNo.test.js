@@ -87,7 +87,7 @@ test('askYesNoCatchAll should changeTopic and send saidYes template if askYesNo 
     .returns(Promise.resolve());
   sandbox.stub(helpers.request, 'isSaidYesMacro')
     .returns(true);
-  sandbox.stub(helpers.request, 'executeSaidYesMacro')
+  sandbox.stub(helpers.request, 'executeInboundTopicChange')
     .returns(Promise.resolve());
 
   // test
@@ -95,11 +95,13 @@ test('askYesNoCatchAll should changeTopic and send saidYes template if askYesNo 
 
   helpers.request.parseAskYesNoResponse.should.have.been.calledWith(t.context.req);
   next.should.not.have.been.called;
-  helpers.request.executeSaidYesMacro.should.have.been.calledWith(t.context.req);
+  const details = `broadcast/${askYesNoBroadcast.id}`;
+  helpers.request.executeInboundTopicChange
+    .should.have.been.calledWith(t.context.req, askYesNoBroadcast.templates.saidYes.topic, details);
   helpers.sendErrorResponse.should.not.been.called;
 });
 
-test('askYesNoCatchAll should call sendErrorResponse if request isSaidYesMacro but executeSaidYesMacro fails', async (t) => {
+test('askYesNoCatchAll should call sendErrorResponse if request isSaidYesMacro but executeInboundTopicChange fails', async (t) => {
   const next = sinon.stub();
   const middleware = askYesNoCatchAll();
   t.context.req.topic = askYesNoBroadcast;
@@ -107,10 +109,8 @@ test('askYesNoCatchAll should call sendErrorResponse if request isSaidYesMacro b
     .returns(Promise.resolve());
   sandbox.stub(helpers.request, 'isSaidYesMacro')
     .returns(true);
-  sandbox.stub(helpers.request, 'executeSaidYesMacro')
+  sandbox.stub(helpers.request, 'executeInboundTopicChange')
     .throws();
-  sandbox.stub(helpers.request, 'changeTopic')
-    .returns(Promise.resolve());
 
   // test
   await middleware(t.context.req, t.context.res, next);
@@ -131,15 +131,16 @@ test('askYesNoCatchAll should execute saidNo macro if askYesNo and request isSai
     .returns(false);
   sandbox.stub(helpers.request, 'isSaidNoMacro')
     .returns(true);
-  sandbox.stub(helpers.request, 'executeSaidNoMacro')
+  sandbox.stub(helpers.request, 'executeInboundTopicChange')
     .returns(Promise.resolve());
 
   // test
   await middleware(t.context.req, t.context.res, next);
 
   helpers.request.parseAskYesNoResponse.should.have.been.calledWith(t.context.req);
-  next.should.not.have.been.called;
-  helpers.request.executeSaidNoMacro.should.have.been.called;
+  const details = `broadcast/${askYesNoBroadcast.id}`;
+  helpers.request.executeInboundTopicChange
+    .should.have.been.calledWith(t.context.req, askYesNoBroadcast.templates.saidNo.topic, details);
   helpers.sendErrorResponse.should.not.been.called;
 });
 
@@ -153,10 +154,8 @@ test('askYesNoCatchAll should call sendErrorResponse if request isSaidNoMacro bu
     .returns(false);
   sandbox.stub(helpers.request, 'isSaidNoMacro')
     .returns(true);
-  sandbox.stub(helpers.request, 'executeSaidNoMacro')
+  sandbox.stub(helpers.request, 'executeInboundTopicChange')
     .throws();
-  sandbox.stub(helpers.request, 'changeTopic')
-    .returns(Promise.resolve());
 
   // test
   await middleware(t.context.req, t.context.res, next);
@@ -166,7 +165,6 @@ test('askYesNoCatchAll should call sendErrorResponse if request isSaidNoMacro bu
   helpers.replies.sendReply.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
 });
-
 
 test('askYesNoCatchAll should not changeTopic and send invalidAskYesNoResponse template if askYesNo and request is neither saidYes or saidNo macro', async (t) => {
   const next = sinon.stub();
@@ -178,7 +176,7 @@ test('askYesNoCatchAll should not changeTopic and send invalidAskYesNoResponse t
     .returns(false);
   sandbox.stub(helpers.request, 'isSaidNoMacro')
     .returns(false);
-  sandbox.stub(helpers.request, 'changeTopic')
+  sandbox.stub(helpers.request, 'executeInboundTopicChange')
     .returns(Promise.resolve());
 
   // test
@@ -186,7 +184,7 @@ test('askYesNoCatchAll should not changeTopic and send invalidAskYesNoResponse t
 
   helpers.request.parseAskYesNoResponse.should.have.been.calledWith(t.context.req);
   next.should.not.have.been.called;
-  helpers.request.changeTopic.should.not.have.been.called;
+  helpers.request.executeInboundTopicChange.should.not.have.been.called;
   helpers.replies.invalidAskYesNoResponse.should.have.been.called;
   helpers.sendErrorResponse.should.not.been.called;
 });
