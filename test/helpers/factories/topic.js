@@ -24,6 +24,9 @@ function getValidTopic(type = 'photoPostConfig', templates) {
     postType: stubs.getPostType(),
     campaign: {
       id: stubs.getCampaignId(),
+      currentCampaignRun: {
+        id: stubs.getCampaignRunId(),
+      },
     },
     templates,
   };
