@@ -12,7 +12,6 @@ const helpers = require('../../../../lib/helpers');
 const logger = require('../../../../lib/logger');
 const gambitCampaigns = require('../../../../lib/gambit-campaigns');
 const stubs = require('../../../helpers/stubs');
-const broadcastFactory = require('../../../helpers/factories/broadcast');
 const campaignFactory = require('../../../helpers/factories/campaign');
 const conversationFactory = require('../../../helpers/factories/conversation');
 const topicFactory = require('../../../helpers/factories/topic');
@@ -34,7 +33,6 @@ const platformUserId = stubs.getMobileNumber();
 const conversation = conversationFactory.getValidConversation();
 const message = conversation.lastOutboundMessage;
 const topic = topicFactory.getValidTopic();
-const user = userFactory.getValidUser();
 
 test.beforeEach((t) => {
   stubs.stubLogger(sandbox, logger);
@@ -175,71 +173,6 @@ test('executeInboundTopicChange get topic, create signup if topic has campaign, 
     });
   requestHelper.changeTopic
     .should.have.been.calledWith(t.context.req, topic);
-});
-
-// executeSaidNoMacro
-test('executeSaidNoMacro should change to saidNo topic and send saidNo reply', async (t) => {
-  const askYesNo = broadcastFactory.getValidAskYesNo();
-  const saidNoTemplate = askYesNo.templates.saidNo;
-  t.context.req.topic = askYesNo;
-  sandbox.stub(requestHelper, 'changeTopic')
-    .returns(Promise.resolve(true));
-  sandbox.stub(helpers.replies, 'saidNo')
-    .returns(underscore.noop);
-
-  await requestHelper.executeSaidNoMacro(t.context.req);
-  requestHelper.changeTopic.should.have.been.calledWith(t.context.req, saidNoTemplate.topic);
-  helpers.replies.saidNo
-    .should.have.been.calledWith(t.context.req, t.context.res, saidNoTemplate.text);
-});
-
-// executeSaidYesMacro
-test('executeSaidYesMacro should call post campaign activity if new topic has campaign, then send the saidYes reply', async (t) => {
-  const askYesNo = broadcastFactory.getValidAskYesNo();
-  const saidYesTemplate = askYesNo.templates.saidYes;
-  t.context.req.topic = askYesNo;
-  t.context.req.user = user;
-  t.context.req.platform = stubs.getPlatform();
-  sandbox.stub(requestHelper, 'changeTopic')
-    .returns(Promise.resolve(true));
-  sandbox.stub(requestHelper, 'hasCampaign')
-    .returns(true);
-  sandbox.stub(helpers.user, 'fetchOrCreateSignup')
-    .returns(Promise.resolve());
-  sandbox.stub(helpers.replies, 'sendReply')
-    .returns(underscore.noop);
-
-  await requestHelper.executeSaidYesMacro(t.context.req);
-  requestHelper.changeTopic.should.have.been.calledWith(t.context.req, saidYesTemplate.topic);
-  helpers.user.fetchOrCreateSignup.should.have.been.calledWith(t.context.req.user, {
-    campaignId: saidYesTemplate.topic.campaign.id,
-    source: t.context.req.platform,
-    details: `broadcast/${askYesNo.id}`,
-  });
-  helpers.replies.sendReply
-    .should.have.been.calledWith(t.context.req, t.context.res, saidYesTemplate.text, 'saidYes');
-});
-
-test('executeSaidYesMacro should not post campaign activity if new topic does not have campaign', async (t) => {
-  const askYesNo = broadcastFactory.getValidAskYesNo();
-  const saidYesTemplate = askYesNo.templates.saidYes;
-  t.context.req.topic = askYesNo;
-  t.context.req.user = user;
-  sandbox.stub(requestHelper, 'changeTopic')
-    .returns(Promise.resolve(true));
-  sandbox.stub(helpers.topic, 'hasCampaign')
-    .returns(false);
-  sandbox.stub(helpers.user, 'fetchOrCreateSignup')
-    .returns(Promise.resolve());
-  sandbox.stub(helpers.replies, 'sendReply')
-    .returns(underscore.noop);
-
-  await requestHelper.executeSaidYesMacro(t.context.req);
-  requestHelper.changeTopic.should.have.been.calledWith(t.context.req, saidYesTemplate.topic);
-  helpers.topic.hasCampaign.should.have.been.calledWith(saidYesTemplate.topic);
-  helpers.user.fetchOrCreateSignup.should.not.have.been.called;
-  helpers.replies.sendReply
-    .should.have.been.calledWith(t.context.req, t.context.res, saidYesTemplate.text, 'saidYes');
 });
 
 // getCampaignActivityPayload
