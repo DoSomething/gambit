@@ -78,6 +78,16 @@ test('containsAlphanumeric should return when alphanumeric, false if not', (t) =
   t.falsy(utilHelper.containsAlphanumeric(null));
 });
 
+test('isValidTextPost should return true if trimmed string arg has letters and length greater than 2', (t) => {
+  t.truthy(utilHelper.isValidTextPost('Hey'));
+  t.falsy(utilHelper.isValidTextPost('😎 😎'));
+  t.truthy(utilHelper.isValidTextPost('This is neat 😎 😎'));
+  t.falsy(utilHelper.isValidTextPost('12342342'));
+  t.truthy(utilHelper.isValidTextPost('Totally cool 12342342'));
+  t.falsy(utilHelper.containsAlphanumeric('  '));
+  t.falsy(utilHelper.containsAlphanumeric(null));
+});
+
 // parseStatusAndMessageFromError
 test('parseStatusAndMessageFromError(anyString): should respond with error status 500 and anyString\'s value as message', () => {
   const errorString = 'omgError';
