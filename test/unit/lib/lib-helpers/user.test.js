@@ -29,8 +29,9 @@ const messageFactory = require('../../../helpers/factories/message');
 const userFactory = require('../../../helpers/factories/user');
 
 const campaignId = stubs.getCampaignId();
-const mockPost = { id: stubs.getCampaignRunId() };
-const mockSignup = { id: stubs.getCampaignRunId() };
+const campaignRunId = stubs.getCampaignRunId();
+const mockPost = { id: 890332 };
+const mockSignup = { id: 251696 };
 const mockUser = userFactory.getValidUser();
 const userLookupStub = () => Promise.resolve(mockUser);
 const platformUserAddressStub = {
@@ -50,15 +51,17 @@ test.afterEach((t) => {
 });
 
 // createSignup
-test('createSignup passes user.id, campaignId and source args to rogue.createSignup', async () => {
+test('createSignup passes user.id, campaignId, campaignRunId source args to rogue.createSignup', async () => {
   const signup = { id: campaignId, campaign_id: campaignId };
   const details = 'test';
   sandbox.stub(rogue, 'createSignup')
     .returns(Promise.resolve(signup));
 
-  const result = await userHelper.createSignup(mockUser, { campaignId, source, details });
+  const result = await userHelper
+    .createSignup(mockUser, { campaignId, campaignRunId, source, details });
   rogue.createSignup.should.have.been.calledWith({
     campaign_id: campaignId,
+    campaign_run_id: campaignRunId,
     northstar_id: mockUser.id,
     source,
     details,

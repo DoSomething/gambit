@@ -168,6 +168,7 @@ test('executeInboundTopicChange get topic, create signup if topic has campaign, 
   helpers.user.fetchOrCreateSignup
     .should.have.been.calledWith(t.context.req.user, {
       campaignId: topic.campaign.id,
+      campaignRunId: topic.campaign.currentCampaignRun.id,
       source: t.context.req.platform,
       details: keyword,
     });
