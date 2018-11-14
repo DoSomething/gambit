@@ -78,14 +78,13 @@ test('containsAlphanumeric should return when alphanumeric, false if not', (t) =
   t.falsy(utilHelper.containsAlphanumeric(null));
 });
 
+// isValidTextPost
 test('isValidTextPost should return true if trimmed string arg has letters and length greater than 2', (t) => {
-  t.truthy(utilHelper.isValidTextPost('Hey'));
+  t.truthy(utilHelper.isValidTextPost('Music'));
   t.falsy(utilHelper.isValidTextPost('😎 😎'));
-  t.truthy(utilHelper.isValidTextPost('This is neat 😎 😎'));
+  t.truthy(utilHelper.isValidTextPost('I luv music 😎 😎'));
   t.falsy(utilHelper.isValidTextPost('12342342'));
   t.truthy(utilHelper.isValidTextPost('Totally cool 12342342'));
-  t.falsy(utilHelper.containsAlphanumeric('  '));
-  t.falsy(utilHelper.containsAlphanumeric(null));
 });
 
 // parseStatusAndMessageFromError

@@ -32,7 +32,7 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-test('autoReplyCatchAll should call replies.autoReply if topic.isAutoReply is false', async (t) => {
+test('autoReplyCatchAll should call next if topic.isAutoReply is false', async (t) => {
   const next = sinon.stub();
   const middleware = autoReplyCatchAll();
   t.context.req.topic = topicFactory.getValidTextPostConfig();
