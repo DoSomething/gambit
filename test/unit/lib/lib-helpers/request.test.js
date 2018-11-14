@@ -119,35 +119,6 @@ test('changeTopic does not call setTopic when topic change is askSubscriptionSta
   conversation.setTopic.should.not.have.been.called;
 });
 
-
-// changeTopicByCampaign
-test('changeTopicByCampaign should call setCampaign and return error if campaign does not have topics', async (t) => {
-  sandbox.stub(requestHelper, 'setCampaign')
-    .returns(underscore.noop);
-  sandbox.stub(conversation, 'setTopic')
-    .returns(Promise.resolve(true));
-  t.context.req.conversation = conversation;
-  const campaign = campaignFactory.getValidCampaign();
-  campaign.topics = [];
-
-  await t.throws(requestHelper.changeTopicByCampaign(t.context.req, campaign));
-  requestHelper.setCampaign.should.have.been.calledWith(t.context.req, campaign);
-  conversation.setTopic.should.not.been.called;
-});
-
-test('changeTopicByCampaign should call setCampaign and return changeTopic if campaign has topics', async (t) => {
-  sandbox.stub(requestHelper, 'setCampaign')
-    .returns(underscore.noop);
-  sandbox.stub(requestHelper, 'changeTopic')
-    .returns(Promise.resolve(true));
-  t.context.req.conversation = conversation;
-  const campaign = campaignFactory.getValidCampaign();
-
-  await requestHelper.changeTopicByCampaign(t.context.req, campaign);
-  requestHelper.setCampaign.should.have.been.calledWith(t.context.req, campaign);
-  requestHelper.changeTopic.should.have.been.calledWith(t.context.req, campaign.topics[0]);
-});
-
 // executeInboundTopicChange
 test('executeInboundTopicChange get topic, create signup if topic has campaign, and return changeTopic', async (t) => {
   const keyword = 'dragon';
