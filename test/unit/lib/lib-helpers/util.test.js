@@ -78,13 +78,21 @@ test('containsAlphanumeric should return when alphanumeric, false if not', (t) =
   t.falsy(utilHelper.containsAlphanumeric(null));
 });
 
+// containsAtLeastOneLetter
+test('containsAtLeastOneLetter should return true when string has at least one letter', (t) => {
+  t.truthy(utilHelper.containsAtLeastOneLetter('Hey'));
+  t.falsy(utilHelper.containsAtLeastOneLetter('😎 😎'));
+  t.truthy(utilHelper.containsAtLeastOneLetter('This is neat 😎 😎'));
+  t.falsy(utilHelper.containsAtLeastOneLetter('1'));
+  t.falsy(utilHelper.containsAtLeastOneLetter('  '));
+  t.falsy(utilHelper.containsAtLeastOneLetter(null));
+});
+
 // isValidTextPost
 test('isValidTextPost should return true if trimmed string arg has letters and length greater than 2', (t) => {
-  t.truthy(utilHelper.isValidTextPost('Music'));
-  t.falsy(utilHelper.isValidTextPost('😎 😎'));
-  t.truthy(utilHelper.isValidTextPost('I luv music 😎 😎'));
-  t.falsy(utilHelper.isValidTextPost('12342342'));
-  t.truthy(utilHelper.isValidTextPost('Totally cool 12342342'));
+  t.truthy(utilHelper.isValidTextPost('1 a'));
+  t.falsy(utilHelper.isValidTextPost('a'));
+  t.falsy(utilHelper.isValidTextPost('1231231'));
 });
 
 // parseStatusAndMessageFromError

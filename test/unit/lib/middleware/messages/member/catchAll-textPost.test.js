@@ -108,3 +108,24 @@ test('textPostCatchAll should send create text post and completedTextPost reply 
   helpers.replies.invalidText.should.not.have.been.called;
   helpers.replies.completedTextPost.should.have.been.calledWith(t.context.req, t.context.res);
 });
+
+test('textPostCatchAll should send error response post if completedTextPost reply fails', async (t) => {
+  const next = sinon.stub();
+  const middleware = textPostCatchAll();
+  const error = { message: 'Epic fail' };
+  sandbox.stub(helpers.topic, 'isTextPostConfig')
+    .returns(true);
+  sandbox.stub(helpers.util, 'isValidTextPost')
+    .returns(true);
+  sandbox.stub(helpers.replies, 'invalidText')
+    .returns(underscore.noop);
+  sandbox.stub(helpers.user, 'createTextPost')
+    .returns(Promise.resolve({ data: mockPost }));
+  sandbox.stub(helpers.replies, 'completedTextPost')
+    .returns(Promise.reject(error));
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+
+  helpers.sendErrorResponse.should.have.been.calledWith(t.context.res, error);
+});
