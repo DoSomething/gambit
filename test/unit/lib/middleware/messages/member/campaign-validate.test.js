@@ -10,6 +10,7 @@ const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 
 const helpers = require('../../../../../../lib/helpers');
+const stubs = require('../../../../../helpers/stubs');
 
 chai.should();
 chai.use(sinonChai);
@@ -83,4 +84,22 @@ test('validateCampaign should call next if request.hasCampaign and campaign is n
   helpers.request.isClosedCampaign.should.have.been.calledWith(t.context.req);
   next.should.have.been.called;
   helpers.replies.campaignClosed.should.not.have.been.called;
+});
+
+test('validateCampaign should call sendErrorResponse if request.hasCampaign throws', async (t) => {
+  const next = sinon.stub();
+  const middleware = validateCampaign();
+  const error = stubs.getError();
+  sandbox.stub(helpers.request, 'hasCampaign')
+    .throws(error);
+  sandbox.stub(helpers.request, 'isClosedCampaign')
+    .returns(false);
+  sandbox.stub(helpers.replies, 'campaignClosed')
+    .returns(underscore.noop);
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+
+  next.should.have.not.been.called;
+  helpers.sendErrorResponse.should.have.been.calledWith(t.context.res, error);
 });
