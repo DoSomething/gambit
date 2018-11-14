@@ -40,7 +40,7 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-test('textPostCatchAll should call next if topic.isAutoReply is false', async (t) => {
+test('textPostCatchAll should call next if topic.isTextPostConfig is false', async (t) => {
   const next = sinon.stub();
   const middleware = textPostCatchAll();
   sandbox.stub(helpers.topic, 'isTextPostConfig')
