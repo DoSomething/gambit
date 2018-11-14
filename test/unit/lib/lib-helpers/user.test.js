@@ -69,6 +69,23 @@ test('createSignup passes user.id, campaignId, campaignRunId source args to rogu
   result.should.deep.equal(signup);
 });
 
+// createTextPost
+test('createTextPost passes user.id, campaignId, campaignRunId, source, and text args to rogue.createSignup', async () => {
+  const text = 'test';
+
+  const result = await userHelper
+    .createTextPost(mockUser, { campaignId, campaignRunId, source, text });
+  rogue.createPost.should.have.been.calledWith({
+    campaign_id: campaignId,
+    campaign_run_id: campaignRunId,
+    northstar_id: mockUser.id,
+    source,
+    text,
+    type: config.posts.text.type,
+  });
+  result.should.deep.equal(mockPost);
+});
+
 // createVotingPlan
 test('createVotingPlan passes user voting plan info to rogue.createPost', async () => {
   const mockValues = { test: stubs.getRandomWord() };
