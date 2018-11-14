@@ -237,6 +237,11 @@ test('campaignClosed(): should call sendReplyWithTopicTemplate', async (t) => {
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
 });
 
+test('completedTextPost(): should call sendReplyWithTopicTemplate', async (t) => {
+  const template = templates.topicTemplates.completedTextPost;
+  await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
+});
+
 test('confirmedContinue(): should call continueTopic', async (t) => {
   sandbox.stub(repliesHelper, 'continueTopic')
     .returns(resolvedPromise);
@@ -259,6 +264,11 @@ test('invalidAskYesNoResponse(): should call sendReplyWithTopicTemplate', async 
 
 test('invalidAskContinueResponse(): should call sendReplyWithTopicTemplate', async (t) => {
   const template = templates.askContinueTemplates.invalidAskContinueResponse;
+  await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
+});
+
+test('invalidText(): should call sendReplyWithTopicTemplate', async (t) => {
+  const template = templates.topicTemplates.invalidText;
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
 });
 

@@ -78,6 +78,23 @@ test('containsAlphanumeric should return when alphanumeric, false if not', (t) =
   t.falsy(utilHelper.containsAlphanumeric(null));
 });
 
+// containsAtLeastOneLetter
+test('containsAtLeastOneLetter should return true when string has at least one letter', (t) => {
+  t.truthy(utilHelper.containsAtLeastOneLetter('Hey'));
+  t.falsy(utilHelper.containsAtLeastOneLetter('😎 😎'));
+  t.truthy(utilHelper.containsAtLeastOneLetter('This is neat 😎 😎'));
+  t.falsy(utilHelper.containsAtLeastOneLetter('1'));
+  t.falsy(utilHelper.containsAtLeastOneLetter('  '));
+  t.falsy(utilHelper.containsAtLeastOneLetter(null));
+});
+
+// isValidTextPost
+test('isValidTextPost should return true if trimmed string arg has letters and length greater than 2', (t) => {
+  t.truthy(utilHelper.isValidTextPost('1 a'));
+  t.falsy(utilHelper.isValidTextPost('a'));
+  t.falsy(utilHelper.isValidTextPost('1231231'));
+});
+
 // parseStatusAndMessageFromError
 test('parseStatusAndMessageFromError(anyString): should respond with error status 500 and anyString\'s value as message', () => {
   const errorString = 'omgError';

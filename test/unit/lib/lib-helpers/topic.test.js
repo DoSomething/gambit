@@ -162,6 +162,12 @@ test('isDefaultTopicId should return whether topicId is config.defaultTopicId', 
   t.falsy(topicHelper.isDefaultTopicId(stubs.getContentfulId()));
 });
 
+// isTextPostConfig
+test('isTextPostConfig returns whether topic type is textPostConfig', (t) => {
+  t.truthy(topicHelper.isTextPostConfig(topicFactory.getValidTextPostConfig()));
+  t.falsy(topicHelper.isTextPostConfig(topicFactory.getValidAutoReply()));
+});
+
 // getTopicTemplateText
 test('getTopicTemplateText returns a string when template exists', () => {
   const topic = topicFactory.getValidPhotoPostConfig();

@@ -27,6 +27,7 @@ const catchAllAskVotingPlanStatusMiddleware = require('../../../lib/middleware/m
 const catchAllAskYesNoMiddleware = require('../../../lib/middleware/messages/member/catchAll-askYesNo');
 const catchAllAutoReplyMiddleware = require('../../../lib/middleware/messages/member/catchAll-autoReply');
 const catchAllDefaultMiddleware = require('../../../lib/middleware/messages/member/catchAll');
+const catchAllTextPostMiddleware = require('../../../lib/middleware/messages/member/catchAll-textPost');
 
 router.use(paramsMiddleware());
 
@@ -72,8 +73,11 @@ router.use(catchAllAskVotingPlanStatusMiddleware());
 // Handles replies for askYesNo topics.
 router.use(catchAllAskYesNoMiddleware());
 
-// Checks whether to send an autoReply template.
+// Handles autoReply topics.
 router.use(catchAllAutoReplyMiddleware());
+
+// Handles textPostConfig topics.
+router.use(catchAllTextPostMiddleware());
 
 // Determines whether to start or continue conversation for the current topic.
 router.use(catchAllDefaultMiddleware());
