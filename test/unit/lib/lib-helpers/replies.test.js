@@ -30,7 +30,6 @@ const repliesHelper = require('../../../../lib/helpers/replies');
 const sandbox = sinon.sandbox.create();
 
 // misc helper vars
-const gCampResponse = stubs.gambitCampaigns.getReceiveMessageResponse();
 const templates = templatesConfig.templatesMap;
 const gambitConversationsTemplates = templates.gambitConversationsTemplates;
 const resolvedPromise = Promise.resolve({});
@@ -196,42 +195,6 @@ test('autoReply(): should call sendReplyWithTopicTemplate', async (t) => {
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
 });
 
-test('continueTopic(): sendReplyWithTopicTemplate should be called', async (t) => {
-  sandbox.stub(helpers.request, 'postCampaignActivity')
-    .returns(Promise.resolve(gCampResponse.data));
-  sandbox.stub(repliesHelper, 'sendReplyWithTopicTemplate')
-    .returns(resolvedPromise);
-
-  await repliesHelper.continueTopic(t.context.req, t.context.res);
-  repliesHelper.sendReplyWithTopicTemplate.should.have.been.called;
-});
-
-test('continueTopic(): helpers.sendErrorResponse should be called if postCampaignActivity fails', async (t) => {
-  sandbox.stub(helpers.request, 'postCampaignActivity')
-    .returns(Promise.reject(gCampResponse.data));
-  sandbox.stub(repliesHelper, 'sendReplyWithTopicTemplate')
-    .returns(resolvedPromise);
-
-  await repliesHelper.continueTopic(t.context.req, t.context.res);
-  repliesHelper.sendReplyWithTopicTemplate.should.not.have.been.called;
-  helpers.sendErrorResponse.should.have.been.called;
-});
-
-test('continueTopic(): should call noCampaign if req.campaign undefined', async (t) => {
-  t.context.req.campaign = null;
-  sandbox.stub(repliesHelper, 'noCampaign')
-    .returns(resolvedPromise);
-
-  await repliesHelper.continueTopic(t.context.req, t.context.res);
-  repliesHelper.noCampaign.should.have.been.called;
-  helpers.sendErrorResponse.should.not.have.been.called;
-});
-
-test('askContinue(): should call sendReplyWithTopicTemplate', async (t) => {
-  const template = templates.askContinueTemplates.askContinue;
-  await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
-});
-
 test('campaignClosed(): should call sendReplyWithTopicTemplate', async (t) => {
   const template = templates.campaignClosed;
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
@@ -242,28 +205,8 @@ test('completedTextPost(): should call sendReplyWithTopicTemplate', async (t) =>
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
 });
 
-test('confirmedContinue(): should call continueTopic', async (t) => {
-  sandbox.stub(repliesHelper, 'continueTopic')
-    .returns(resolvedPromise);
-
-  await repliesHelper.confirmedContinue(t.context.req, t.context.res);
-  repliesHelper.continueTopic.should.have.been.called;
-  // TODO: Should not be testing hardcoded strings
-  repliesHelper.continueTopic.getCall(0).args[0].keyword.should.equal('continue');
-});
-
-test('declinedContinue(): should call sendReplyWithTopicTemplate', async (t) => {
-  const template = templates.declinedContinue;
-  await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
-});
-
 test('invalidAskYesNoResponse(): should call sendReplyWithTopicTemplate', async (t) => {
   const template = templates.topicTemplates.invalidAskYesNoResponse;
-  await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
-});
-
-test('invalidAskContinueResponse(): should call sendReplyWithTopicTemplate', async (t) => {
-  const template = templates.askContinueTemplates.invalidAskContinueResponse;
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
 });
 
@@ -276,7 +219,6 @@ test('badWords(): should call sendGambitConversationsTemplate', async (t) => {
   const template = gambitConversationsTemplates.badWords.name;
   await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template);
 });
-
 
 test('noCampaign(): should call sendGambitConversationsTemplate', async (t) => {
   const template = gambitConversationsTemplates.noCampaign.name;

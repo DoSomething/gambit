@@ -32,11 +32,6 @@ function getValidCampaign() {
         },
       },
     },
-    // TODO: This will be deprecated. The only place we use this currently is if user is in a random
-    // topic, and we look for a topic per the last campaign saved to conversation. This will be
-    // removed once topics like ask_subscription_status place users into an autoReply, which should
-    // contain a conversion point (either a web link, or topic change trigger).
-    topics: [topicFactory.getValidTopicWithoutCampaign()],
   };
 }
 

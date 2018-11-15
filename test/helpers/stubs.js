@@ -253,7 +253,7 @@ module.exports = {
     return { id: chance.integer({ min: 200, max: 2000000 }) };
   },
   getTemplate() {
-    return 'askSignup';
+    return 'askQuantity';
   },
   getTopic() {
     return 'random';

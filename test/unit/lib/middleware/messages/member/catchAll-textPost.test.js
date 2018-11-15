@@ -112,7 +112,7 @@ test('textPostCatchAll should send create text post and completedTextPost reply 
 test('textPostCatchAll should send error response post if completedTextPost reply fails', async (t) => {
   const next = sinon.stub();
   const middleware = textPostCatchAll();
-  const error = { message: 'Epic fail' };
+  const error = stubs.getError();
   sandbox.stub(helpers.topic, 'isTextPostConfig')
     .returns(true);
   sandbox.stub(helpers.util, 'isValidTextPost')
