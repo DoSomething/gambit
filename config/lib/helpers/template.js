@@ -48,20 +48,10 @@ const templatesMap = {
     votingPlanStatusVoted: 'votingPlanStatusVoted',
     webSignup: 'webSignup',
   },
-  // TODO: Move these into the replies helper config, or set on config via middleware that checks
-  // for each condition.
-  gambitConversationsTemplates: {},
 };
 
 module.exports = {
   templatesMap,
-
-  /**
-   * Example structure of this property
-   * { badWords: 'Not cool... text STOP or LESS to get less.', }
-   */
-  conversationsTemplatesText: underscore.mapObject(
-    templatesMap.gambitConversationsTemplates, val => val.text),
   askContinueTemplates: underscore.values(templatesMap.askContinueTemplates),
   askSignupTemplates: underscore.values(templatesMap.askSignupTemplates),
   gambitConversationsTemplates: underscore.pluck(underscore.values(templatesMap.gambitConversationsTemplates), 'name'),
