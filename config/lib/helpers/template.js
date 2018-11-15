@@ -54,6 +54,5 @@ module.exports = {
   templatesMap,
   askContinueTemplates: underscore.values(templatesMap.askContinueTemplates),
   askSignupTemplates: underscore.values(templatesMap.askSignupTemplates),
-  gambitConversationsTemplates: underscore.pluck(underscore.values(templatesMap.gambitConversationsTemplates), 'name'),
   topicTemplates: underscore.values(templatesMap.topicTemplates),
 };

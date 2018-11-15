@@ -6,6 +6,8 @@ const commands = {
   stop: 'STOP',
 };
 
+const supportText = `Text ${commands.support} if you have a question.`;
+
 module.exports = {
   badWords: {
     name: 'badWords',
@@ -13,11 +15,11 @@ module.exports = {
   },
   campaignClosed: {
     name: 'campaignClosed',
-    text: process.env.GAMBIT_CONVERSATIONS_CAMPAIGN_CLOSED_TEXT || 'Sorry, {{topic.campaign.title}} is no longer available.',
+    text: process.env.GAMBIT_CONVERSATIONS_CAMPAIGN_CLOSED_TEXT || `Sorry, {{topic.campaign.title}} is no longer available. ${supportText}`,
   },
   noCampaign: {
     name: 'noCampaign',
-    text: `Sorry, I'm not sure how to respond to that.\n\nText ${commands.support} if you have a question.`,
+    text: `Sorry, I'm not sure how to respond to that.\n\n${supportText}`,
   },
   noReply: {
     name: 'noReply',
