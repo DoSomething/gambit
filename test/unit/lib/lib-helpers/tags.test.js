@@ -13,6 +13,7 @@ const logger = require('../../../../lib/logger');
 const stubs = require('../../../helpers/stubs');
 const broadcastFactory = require('../../../helpers/factories/broadcast');
 const conversationFactory = require('../../../helpers/factories/conversation');
+const topicFactory = require('../../../helpers/factories/topic');
 const userFactory = require('../../../helpers/factories/user');
 
 const config = require('../../../../config/lib/helpers/tags');
@@ -34,6 +35,7 @@ const sandbox = sinon.sandbox.create();
 // stubs
 const mockBroadcast = broadcastFactory.getValidAutoReplyBroadcast();
 const mockText = stubs.getRandomMessageText();
+const mockTopic = topicFactory.getValidTopic();
 const mockUser = userFactory.getValidUser();
 const mockTags = { season: 'winter' };
 
@@ -123,19 +125,22 @@ test('getTags should return an object', (t) => {
     .returns(linksTag);
   sandbox.stub(tagsHelper, 'getUserTag')
     .returns(userTag);
+  t.context.req.topic = mockTopic;
   t.context.req.user = mockUser;
 
   const result = tagsHelper.getTags(t.context.req);
   result.should.deep.equal({
     broadcast: broadcastTag,
     links: linksTag,
+    topic: mockTopic,
     user: userTag,
   });
 });
 
-test('getTags should return empty object for user if req.user undefined', (t) => {
+test('getTags should return empty object for user and topic if undefined in req', (t) => {
   const result = tagsHelper.getTags(t.context.req);
   result.user.should.deep.equal({});
+  result.topic.should.deep.equal({});
 });
 
 // getBroadcastLinkQueryParams

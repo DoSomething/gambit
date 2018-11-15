@@ -35,18 +35,6 @@ test('getSubscriptionStatusActive should return subscriptionStatusActive config 
   result.should.deep.equal(macroConfig.macros.subscriptionStatusActive);
 });
 
-// getTextForTemplate
-test('getTextForTemplate should return text for given template', () => {
-  const template = 'badWords';
-  const templateText = config.conversationsTemplatesText[template];
-  const result = templateHelper.getTextForTemplate(template);
-  templateText.should.equal(result);
-});
-
-test('getTextForTemplate should return falsy for undefined template', (t) => {
-  t.falsy(templateHelper.getTextForTemplate(undefinedTemplateName));
-});
-
 // isAskContinueTemplate
 test('isAskContinueTemplate should return boolean', (t) => {
   t.true(templateHelper.isAskContinueTemplate('askContinue'));

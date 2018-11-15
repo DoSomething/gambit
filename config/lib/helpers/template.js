@@ -2,8 +2,6 @@
 
 const underscore = require('underscore');
 
-const supportCommand = 'Q';
-
 const templatesMap = {
   campaignClosed: 'campaignClosed',
   declinedSignup: 'declinedSignup',
@@ -52,16 +50,7 @@ const templatesMap = {
   },
   // TODO: Move these into the replies helper config, or set on config via middleware that checks
   // for each condition.
-  gambitConversationsTemplates: {
-    badWords: {
-      name: 'badWords',
-      text: 'Not cool. I\'m a real person & that offends me. I send out these texts to help young ppl take action. If you don\'t want my texts, text STOP or LESS to get less.',
-    },
-    noCampaign: {
-      name: 'noCampaign',
-      text: `Sorry, I'm not sure how to respond to that.\n\nText ${supportCommand} if you have a question.`,
-    },
-  },
+  gambitConversationsTemplates: {},
 };
 
 module.exports = {
