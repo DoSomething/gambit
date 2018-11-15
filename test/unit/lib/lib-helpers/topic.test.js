@@ -10,7 +10,6 @@ const gambitCampaigns = require('../../../../lib/gambit-campaigns');
 const helpers = require('../../../../lib/helpers');
 const stubs = require('../../../helpers/stubs');
 const broadcastFactory = require('../../../helpers/factories/broadcast');
-const campaignFactory = require('../../../helpers/factories/campaign');
 const topicFactory = require('../../../helpers/factories/topic');
 const config = require('../../../../config/lib/helpers/topic');
 const templateConfig = require('../../../../config/lib/helpers/template');
@@ -45,21 +44,6 @@ test('fetchById should return gambitCampaigns.fetchTopicById', async () => {
   const result = await topicHelper.fetchById(topicId);
   gambitCampaigns.fetchTopicById.should.have.been.calledWith(topicId);
   result.should.deep.equal(topic);
-});
-
-// fetchByCampaignId
-test('fetchByCampaignId should call helpers.campaign.fetchById and inject campaign property into each result array item ', async () => {
-  const mockCampaign = campaignFactory.getValidCampaign();
-  sandbox.stub(helpers.campaign, 'fetchById')
-    .returns(Promise.resolve(mockCampaign));
-  const campaignId = stubs.getCampaignId();
-
-  const result = await topicHelper.fetchByCampaignId(campaignId);
-  helpers.campaign.fetchById.should.have.been.calledWith(campaignId);
-  result.forEach((topic, index) => {
-    result[index].campaign.should.deep.equal(mockCampaign);
-    result[index].id.should.equal(topic.id);
-  });
 });
 
 // getAskSubscriptionStatusTopic
@@ -160,6 +144,12 @@ test('isRivescriptTopicId should return whether topicId exists deparsed rivescri
 test('isDefaultTopicId should return whether topicId is config.defaultTopicId', (t) => {
   t.truthy(topicHelper.isDefaultTopicId(config.rivescriptTopics.default.id));
   t.falsy(topicHelper.isDefaultTopicId(stubs.getContentfulId()));
+});
+
+// isPhotoPostConfig
+test('isPhotoPostConfig returns whether topic type is photoPostConfig', (t) => {
+  t.truthy(topicHelper.isPhotoPostConfig(topicFactory.getValidPhotoPostConfig()));
+  t.falsy(topicHelper.isPhotoPostConfig(topicFactory.getValidAutoReply()));
 });
 
 // isTextPostConfig

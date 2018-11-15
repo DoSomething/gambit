@@ -26,8 +26,10 @@ const getTopicMiddleware = require('../../../lib/middleware/messages/member/topi
 const catchAllAskVotingPlanStatusMiddleware = require('../../../lib/middleware/messages/member/catchAll-askVotingPlanStatus');
 const catchAllAskYesNoMiddleware = require('../../../lib/middleware/messages/member/catchAll-askYesNo');
 const catchAllAutoReplyMiddleware = require('../../../lib/middleware/messages/member/catchAll-autoReply');
-const catchAllDefaultMiddleware = require('../../../lib/middleware/messages/member/catchAll');
+const validateCampaignMiddleware = require('../../../lib/middleware/messages/member/campaign-validate');
+const catchAllPhotoPostMiddleware = require('../../../lib/middleware/messages/member/catchAll-photoPost');
 const catchAllTextPostMiddleware = require('../../../lib/middleware/messages/member/catchAll-textPost');
+const catchAllDefaultMiddleware = require('../../../lib/middleware/messages/member/catchAll');
 
 router.use(paramsMiddleware());
 
@@ -76,10 +78,16 @@ router.use(catchAllAskYesNoMiddleware());
 // Handles autoReply topics.
 router.use(catchAllAutoReplyMiddleware());
 
+// If we've made it this far, this is a topic that collects posts for a campaign.
+router.use(validateCampaignMiddleware());
+
 // Handles textPostConfig topics.
 router.use(catchAllTextPostMiddleware());
 
-// Determines whether to start or continue conversation for the current topic.
+// Handles photoPostConfig topics.
+router.use(catchAllPhotoPostMiddleware());
+
+// Sanity check for nothing this far matched.
 router.use(catchAllDefaultMiddleware());
 
 module.exports = router;
