@@ -12,6 +12,7 @@ const stubs = require('../../../helpers/stubs');
 const broadcastFactory = require('../../../helpers/factories/broadcast');
 const topicFactory = require('../../../helpers/factories/topic');
 const config = require('../../../../config/lib/helpers/topic');
+const repliesConfig = require('../../../../config/lib/helpers/replies');
 const templateConfig = require('../../../../config/lib/helpers/template');
 
 chai.should();
@@ -239,13 +240,25 @@ test('getTopicTemplateText throws when template undefined', (t) => {
 });
 
 // getTransitionTemplateName
+test('getTransitionTemplateName returns closedCampaign name if topic hasClosedCampaign', () => {
+  sandbox.stub(topicHelper, 'hasClosedCampaign')
+    .returns(true);
+  const topic = { type: stubs.getRandomWord() };
+  const result = topicHelper.getTransitionTemplateName(topic);
+  result.should.equal(repliesConfig.campaignClosed.name);
+});
+
 test('getTransitionTemplateName returns transitionTemplate if defined in config.types ', () => {
+  sandbox.stub(topicHelper, 'hasClosedCampaign')
+    .returns(false);
   const topic = topicFactory.getValidTextPostConfig();
   const result = topicHelper.getTransitionTemplateName(topic);
   result.should.equal(config.types.textPostConfig.transitionTemplate);
 });
 
 test('getTransitionTemplateName returns rivescript template if config.types undefined', () => {
+  sandbox.stub(topicHelper, 'hasClosedCampaign')
+    .returns(false);
   const topic = { type: stubs.getRandomWord() };
   const result = topicHelper.getTransitionTemplateName(topic);
   result.should.equal(templateConfig.templatesMap.rivescriptReply);
