@@ -9,17 +9,17 @@ const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 
-const helpers = require('../../../../../../lib/helpers');
-const logger = require('../../../../../../lib/logger');
-const broadcastFactory = require('../../../../../helpers/factories/broadcast');
-const topicFactory = require('../../../../../helpers/factories/topic');
-const userFactory = require('../../../../../helpers/factories/user');
+const helpers = require('../../../../../../../lib/helpers');
+const logger = require('../../../../../../../lib/logger');
+const broadcastFactory = require('../../../../../../helpers/factories/broadcast');
+const topicFactory = require('../../../../../../helpers/factories/topic');
+const userFactory = require('../../../../../../helpers/factories/user');
 
 chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const askYesNoCatchAll = require('../../../../../../lib/middleware/messages/member/catchAll-askYesNo');
+const askYesNoCatchAll = require('../../../../../../../lib/middleware/messages/member/topics/askYesNo');
 
 // stubs
 const askYesNoBroadcast = broadcastFactory.getValidAskYesNo();

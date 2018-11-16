@@ -23,13 +23,13 @@ const parseRivescriptReplyMiddleware = require('../../../lib/middleware/messages
 const forwardSupportMessageMiddleware = require('../../../lib/middleware/messages/member/support-message');
 const replyMacroMiddleware = require('../../../lib/middleware/messages/member/macro-reply');
 const getTopicMiddleware = require('../../../lib/middleware/messages/member/topic-get');
-const catchAllAskVotingPlanStatusMiddleware = require('../../../lib/middleware/messages/member/catchAll-askVotingPlanStatus');
-const catchAllAskYesNoMiddleware = require('../../../lib/middleware/messages/member/catchAll-askYesNo');
-const catchAllAutoReplyMiddleware = require('../../../lib/middleware/messages/member/catchAll-autoReply');
+const askVotingPlanStatusMiddleware = require('../../../lib/middleware/messages/member/topics/askVotingPlanStatus');
+const askYesNoMiddleware = require('../../../lib/middleware/messages/member/topics/askYesNo');
+const autoReplyMiddleware = require('../../../lib/middleware/messages/member/topics/autoReply');
 const validateCampaignMiddleware = require('../../../lib/middleware/messages/member/campaign-validate');
-const catchAllPhotoPostMiddleware = require('../../../lib/middleware/messages/member/catchAll-photoPost');
-const catchAllTextPostMiddleware = require('../../../lib/middleware/messages/member/catchAll-textPost');
-const catchAllDefaultMiddleware = require('../../../lib/middleware/messages/member/catchAll');
+const photoPostMiddleware = require('../../../lib/middleware/messages/member/topics/photoPost');
+const textPostMiddleware = require('../../../lib/middleware/messages/member/topics/textPost');
+const catchAllMiddleware = require('../../../lib/middleware/messages/member/catchall');
 
 router.use(paramsMiddleware());
 
@@ -70,24 +70,24 @@ router.use(forwardSupportMessageMiddleware());
 router.use(getTopicMiddleware());
 
 // Handles replies for askVotingPlanStatus topics.
-router.use(catchAllAskVotingPlanStatusMiddleware());
+router.use(askVotingPlanStatusMiddleware());
 
 // Handles replies for askYesNo topics.
-router.use(catchAllAskYesNoMiddleware());
+router.use(askYesNoMiddleware());
 
 // Handles autoReply topics.
-router.use(catchAllAutoReplyMiddleware());
+router.use(autoReplyMiddleware());
 
 // If we've made it this far, this is a topic that collects posts for a campaign.
 router.use(validateCampaignMiddleware());
 
 // Handles textPostConfig topics.
-router.use(catchAllTextPostMiddleware());
+router.use(textPostMiddleware());
 
 // Handles photoPostConfig topics.
-router.use(catchAllPhotoPostMiddleware());
+router.use(photoPostMiddleware());
 
 // Sanity check for nothing this far matched.
-router.use(catchAllDefaultMiddleware());
+router.use(catchAllMiddleware());
 
 module.exports = router;

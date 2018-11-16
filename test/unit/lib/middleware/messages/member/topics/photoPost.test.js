@@ -9,16 +9,16 @@ const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 
-const helpers = require('../../../../../../lib/helpers');
-const stubs = require('../../../../../helpers/stubs');
-const topicFactory = require('../../../../../helpers/factories/topic');
-const userFactory = require('../../../../../helpers/factories/user');
+const helpers = require('../../../../../../../lib/helpers');
+const stubs = require('../../../../../../helpers/stubs');
+const topicFactory = require('../../../../../../helpers/factories/topic');
+const userFactory = require('../../../../../../helpers/factories/user');
 
 chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const photoPostCatchAll = require('../../../../../../lib/middleware/messages/member/catchAll-photoPost');
+const photoPostCatchAll = require('../../../../../../../lib/middleware/messages/member/topics/photoPost');
 
 const sandbox = sinon.sandbox.create();
 
