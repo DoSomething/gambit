@@ -12,6 +12,7 @@ const stubs = require('../../../helpers/stubs');
 const broadcastFactory = require('../../../helpers/factories/broadcast');
 const topicFactory = require('../../../helpers/factories/topic');
 const config = require('../../../../config/lib/helpers/topic');
+const repliesConfig = require('../../../../config/lib/helpers/replies');
 const templateConfig = require('../../../../config/lib/helpers/template');
 
 chai.should();
@@ -95,10 +96,76 @@ test('getSupportTopic should return config.rivescriptTopics.support', () => {
   result.should.deep.equal(config.rivescriptTopics.support);
 });
 
+// hasActiveCampaign
+test('hasActiveCampaign returns true if topic has campaign that is not closed', (t) => {
+  sandbox.stub(topicHelper, 'hasCampaign')
+    .returns(true);
+  sandbox.stub(helpers.campaign, 'isClosedCampaign')
+    .returns(false);
+  const topic = topicFactory.getValidTopic();
+
+  t.truthy(topicHelper.hasActiveCampaign(topic));
+  topicHelper.hasCampaign.should.have.been.calledWith(topic);
+  helpers.campaign.isClosedCampaign.should.have.been.calledWith(topic.campaign);
+});
+
+test('hasActiveCampaign returns false if topic has campaign that is closed', (t) => {
+  sandbox.stub(topicHelper, 'hasCampaign')
+    .returns(true);
+  sandbox.stub(helpers.campaign, 'isClosedCampaign')
+    .returns(true);
+  const topic = topicFactory.getValidTopic();
+
+  t.falsy(topicHelper.hasActiveCampaign(topic));
+});
+
+test('hasActiveCampaign returns false if topic does not have campaign', (t) => {
+  sandbox.stub(topicHelper, 'hasCampaign')
+    .returns(false);
+  sandbox.stub(helpers.campaign, 'isClosedCampaign')
+    .returns(false);
+  const topic = topicFactory.getValidTopic();
+
+  t.falsy(topicHelper.hasActiveCampaign(topic));
+});
+
 // hasCampaign
 test('hasCampaign should return boolean of whether topic.campaign.id exists', (t) => {
   t.truthy(topicHelper.hasCampaign(topicFactory.getValidTextPostConfig()));
   t.falsy(topicHelper.hasCampaign(topicFactory.getValidTopicWithoutCampaign()));
+});
+
+// hasClosedCampaign
+test('hasClosedCampaign returns true if topic has campaign that is closed', (t) => {
+  sandbox.stub(topicHelper, 'hasCampaign')
+    .returns(true);
+  sandbox.stub(helpers.campaign, 'isClosedCampaign')
+    .returns(true);
+  const topic = topicFactory.getValidTopic();
+
+  t.truthy(topicHelper.hasClosedCampaign(topic));
+  topicHelper.hasCampaign.should.have.been.calledWith(topic);
+  helpers.campaign.isClosedCampaign.should.have.been.calledWith(topic.campaign);
+});
+
+test('hasClosedCampaign returns false if topic has campaign that is not closed', (t) => {
+  sandbox.stub(topicHelper, 'hasCampaign')
+    .returns(true);
+  sandbox.stub(helpers.campaign, 'isClosedCampaign')
+    .returns(false);
+  const topic = topicFactory.getValidTopic();
+
+  t.falsy(topicHelper.hasClosedCampaign(topic));
+});
+
+test('hasClosedCampaign returns false if topic does not have campaign', (t) => {
+  sandbox.stub(topicHelper, 'hasCampaign')
+    .returns(false);
+  sandbox.stub(helpers.campaign, 'isClosedCampaign')
+    .returns(true);
+  const topic = topicFactory.getValidTopic();
+
+  t.falsy(topicHelper.hasClosedCampaign(topic));
 });
 
 // isAskSubscriptionStatus
@@ -173,13 +240,25 @@ test('getTopicTemplateText throws when template undefined', (t) => {
 });
 
 // getTransitionTemplateName
+test('getTransitionTemplateName returns closedCampaign name if topic hasClosedCampaign', () => {
+  sandbox.stub(topicHelper, 'hasClosedCampaign')
+    .returns(true);
+  const topic = { type: stubs.getRandomWord() };
+  const result = topicHelper.getTransitionTemplateName(topic);
+  result.should.equal(repliesConfig.campaignClosed.name);
+});
+
 test('getTransitionTemplateName returns transitionTemplate if defined in config.types ', () => {
+  sandbox.stub(topicHelper, 'hasClosedCampaign')
+    .returns(false);
   const topic = topicFactory.getValidTextPostConfig();
   const result = topicHelper.getTransitionTemplateName(topic);
   result.should.equal(config.types.textPostConfig.transitionTemplate);
 });
 
 test('getTransitionTemplateName returns rivescript template if config.types undefined', () => {
+  sandbox.stub(topicHelper, 'hasClosedCampaign')
+    .returns(false);
   const topic = { type: stubs.getRandomWord() };
   const result = topicHelper.getTransitionTemplateName(topic);
   result.should.equal(templateConfig.templatesMap.rivescriptReply);
