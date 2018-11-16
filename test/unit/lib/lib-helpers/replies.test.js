@@ -19,6 +19,8 @@ const conversationFactory = require('../../../helpers/factories/conversation');
 const messageFactory = require('../../../helpers/factories/message');
 const userFactory = require('../../../helpers/factories/user');
 
+const config = require('../../../../config/lib/helpers/replies');
+
 // setup "x.should.y" assertion style
 chai.should();
 chai.use(sinonChai);
@@ -31,7 +33,6 @@ const sandbox = sinon.sandbox.create();
 
 // misc helper vars
 const templates = templatesConfig.templatesMap;
-const gambitConversationsTemplates = templates.gambitConversationsTemplates;
 const resolvedPromise = Promise.resolve({});
 const rejectedPromise = Promise.reject({});
 
@@ -60,13 +61,12 @@ async function assertSendingReplyWithTopicTemplate(req, res, template, replyName
     .should.have.been.calledWith(req, res, template);
 }
 
-async function assertSendingGambitConversationsTemplate(req, res, template, replyName) {
-  sandbox.stub(repliesHelper, 'sendGambitConversationsTemplate')
+async function assertSendingStaticTemplate(req, res, template) {
+  sandbox.stub(repliesHelper, 'sendReplyWithStaticTemplate')
     .returns(resolvedPromise);
 
-  await repliesHelper[replyName || template](req, res);
-  repliesHelper.sendGambitConversationsTemplate
-    .should.have.been.calledWith(req, res, template);
+  await repliesHelper[template](req, res);
+  repliesHelper.sendReplyWithStaticTemplate.should.have.been.calledWith(req, res, template);
 }
 
 function getReqWithProps(opts = {}) {
@@ -195,9 +195,9 @@ test('autoReply(): should call sendReplyWithTopicTemplate', async (t) => {
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
 });
 
-test('campaignClosed(): should call sendReplyWithTopicTemplate', async (t) => {
-  const template = templates.campaignClosed;
-  await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
+test('campaignClosed(): should call sendWithStaticTemplate', async (t) => {
+  const templateName = config.campaignClosed.name;
+  await assertSendingStaticTemplate(t.context.req, t.context.res, templateName);
 });
 
 test('completedTextPost(): should call sendReplyWithTopicTemplate', async (t) => {
@@ -215,22 +215,19 @@ test('invalidText(): should call sendReplyWithTopicTemplate', async (t) => {
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
 });
 
-test('badWords(): should call sendGambitConversationsTemplate', async (t) => {
-  const template = gambitConversationsTemplates.badWords.name;
-  await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template);
+test('badWords(): should call sendReplyWithStaticTemplate', async (t) => {
+  const template = config.badWords.name;
+  await assertSendingStaticTemplate(t.context.req, t.context.res, template);
 });
 
-test('noCampaign(): should call sendGambitConversationsTemplate', async (t) => {
-  const template = gambitConversationsTemplates.noCampaign.name;
-  await assertSendingGambitConversationsTemplate(t.context.req, t.context.res, template);
+test('noCampaign(): should call sendReplyWithStaticTemplate', async (t) => {
+  const template = config.noCampaign.name;
+  await assertSendingStaticTemplate(t.context.req, t.context.res, template);
 });
 
-test('noReply(): should call sendGambitConversationsTemplate', async (t) => {
-  sandbox.stub(repliesHelper, 'sendReply')
-    .returns(resolvedPromise);
-  await repliesHelper.noReply(t.context.req, t.context.res);
-  repliesHelper.sendReply
-    .should.have.been.calledWith(t.context.req, t.context.res, '', 'noReply');
+test('noReply(): should call sendReplyWithStaticTemplate', async (t) => {
+  const template = config.noReply.name;
+  await assertSendingStaticTemplate(t.context.req, t.context.res, template);
 });
 
 test('rivescriptReply(): should call sendReply', async (t) => {

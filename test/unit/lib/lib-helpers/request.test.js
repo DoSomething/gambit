@@ -120,14 +120,14 @@ test('changeTopic does not call setTopic when topic change is askSubscriptionSta
 });
 
 // executeInboundTopicChange
-test('executeInboundTopicChange get topic, create signup if topic has campaign, and return changeTopic', async (t) => {
+test('executeInboundTopicChange get topic, create signup if topic has active campaign, and return changeTopic', async (t) => {
   const keyword = 'dragon';
   t.context.req.rivescriptReplyTopicId = stubs.getContentfulId();
   t.context.req.macro = stubs.getRandomWord();
   t.context.req.platform = stubs.getPlatform();
   sandbox.stub(requestHelper, 'changeTopic')
     .returns(Promise.resolve(true));
-  sandbox.stub(requestHelper, 'hasCampaign')
+  sandbox.stub(helpers.topic, 'hasActiveCampaign')
     .returns(true);
   sandbox.stub(helpers.user, 'fetchOrCreateSignup')
     .returns(Promise.resolve(stubs.getSignup()));
@@ -143,6 +143,27 @@ test('executeInboundTopicChange get topic, create signup if topic has campaign, 
       source: t.context.req.platform,
       details: keyword,
     });
+  requestHelper.changeTopic
+    .should.have.been.calledWith(t.context.req, topic);
+});
+
+test('executeInboundTopicChange does not create signup if topic does not have active campaign', async (t) => {
+  const keyword = 'dragon';
+  t.context.req.rivescriptReplyTopicId = stubs.getContentfulId();
+  t.context.req.macro = stubs.getRandomWord();
+  t.context.req.platform = stubs.getPlatform();
+  sandbox.stub(requestHelper, 'changeTopic')
+    .returns(Promise.resolve(true));
+  sandbox.stub(helpers.topic, 'hasActiveCampaign')
+    .returns(false);
+  sandbox.stub(helpers.user, 'fetchOrCreateSignup')
+    .returns(Promise.resolve(stubs.getSignup()));
+  t.context.req.user = userFactory.getValidUser();
+  t.context.req.conversation = conversation;
+
+  await requestHelper.executeInboundTopicChange(t.context.req, topic, keyword);
+
+  helpers.user.fetchOrCreateSignup.should.not.have.been.called;
   requestHelper.changeTopic
     .should.have.been.calledWith(t.context.req, topic);
 });
