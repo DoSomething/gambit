@@ -4,8 +4,10 @@ const mongoose = require('mongoose');
 const Promise = require('bluebird');
 const moment = require('moment');
 
-const logger = require('../../lib/logger');
+const DraftSubmission = require('./DraftSubmission');
 const Message = require('./Message');
+
+const logger = require('../../lib/logger');
 const helpers = require('../../lib/helpers');
 const front = require('../../lib/front');
 const twilio = require('../../lib/twilio');
@@ -141,6 +143,18 @@ conversationSchema.methods.setSupportTopic = function () {
 };
 
 /**
+ * Returns a DraftSubmission document for given topicId if exists.
+ *
+ * @param {String} topicId
+ * @param {Object} data
+ * @return {DraftSubmission}
+ */
+conversationSchema.methods.createDraftSubmission = function (topicId, data = {}) {
+  const conversationId = this._id;
+  return DraftSubmission.create({ conversationId, topicId, data });
+};
+
+/**
  * Gets data for a Conversation Message.
  * @param {string} text
  * @param {string} template
@@ -160,6 +174,17 @@ conversationSchema.methods.getDefaultMessagePayload = function (text, template) 
     data.template = template;
   }
   return data;
+};
+
+/**
+ * Returns a DraftSubmission document for given topicId if exists.
+ *
+ * @param {String} topicId
+ * @return {DraftSubmission}
+ */
+conversationSchema.methods.getDraftSubmission = function (topicId) {
+  const conversationId = this._id;
+  return DraftSubmission.findOne({ conversationId, topicId });
 };
 
 /**
