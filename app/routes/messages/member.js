@@ -28,8 +28,9 @@ const askYesNoMiddleware = require('../../../lib/middleware/messages/member/topi
 const autoReplyMiddleware = require('../../../lib/middleware/messages/member/topics/autoReply');
 const validateCampaignMiddleware = require('../../../lib/middleware/messages/member/campaign-validate');
 const legacyPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/legacy');
-const photoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/draftSubmission');
-const textPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/text/create');
+const draftPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/draftSubmission');
+const createPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/create');
+const createTextPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/text/create');
 const catchAllMiddleware = require('../../../lib/middleware/messages/member/catchall');
 
 router.use(paramsMiddleware());
@@ -82,12 +83,13 @@ router.use(autoReplyMiddleware());
 // If we've made it this far, this is a topic that collects posts for a campaign.
 router.use(validateCampaignMiddleware());
 
-// Handles textPostConfig topics.
-router.use(textPostMiddleware());
+// Handles text posts.
+router.use(createTextPostMiddleware());
 
-// Handles photoPostConfig topics.
+// Handles photo posts.
 router.use(legacyPhotoPostMiddleware());
-router.use(photoPostMiddleware());
+router.use(draftPhotoPostMiddleware());
+router.use(createPhotoPostMiddleware());
 
 // Sanity check for nothing this far matched.
 router.use(catchAllMiddleware());
