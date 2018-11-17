@@ -31,7 +31,7 @@ draftSubmissionSchema.index({
  * @param {Object} valuesObject
  * @return {Promise}
  */
-draftSubmissionSchema.methods.addValues = function (valuesObject) {
+draftSubmissionSchema.methods.saveValues = function (valuesObject) {
   this.values = Object.assign(this.values, valuesObject);
   this.markModified('values');
   return this.save();

@@ -27,9 +27,9 @@ const askVotingPlanStatusMiddleware = require('../../../lib/middleware/messages/
 const askYesNoMiddleware = require('../../../lib/middleware/messages/member/topics/askYesNo');
 const autoReplyMiddleware = require('../../../lib/middleware/messages/member/topics/autoReply');
 const validateCampaignMiddleware = require('../../../lib/middleware/messages/member/campaign-validate');
-const legacyPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/legacyPhotoPost');
-const photoPostMiddleware = require('../../../lib/middleware/messages/member/topics/photoPost');
-const textPostMiddleware = require('../../../lib/middleware/messages/member/topics/textPost');
+const legacyPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/legacy');
+const photoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/draftSubmission');
+const textPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/text/create');
 const catchAllMiddleware = require('../../../lib/middleware/messages/member/catchall');
 
 router.use(paramsMiddleware());
