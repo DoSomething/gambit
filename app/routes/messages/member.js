@@ -27,6 +27,7 @@ const askVotingPlanStatusMiddleware = require('../../../lib/middleware/messages/
 const askYesNoMiddleware = require('../../../lib/middleware/messages/member/topics/askYesNo');
 const autoReplyMiddleware = require('../../../lib/middleware/messages/member/topics/autoReply');
 const validateCampaignMiddleware = require('../../../lib/middleware/messages/member/campaign-validate');
+const legacyPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/legacyPhotoPost');
 const photoPostMiddleware = require('../../../lib/middleware/messages/member/topics/photoPost');
 const textPostMiddleware = require('../../../lib/middleware/messages/member/topics/textPost');
 const catchAllMiddleware = require('../../../lib/middleware/messages/member/catchall');
@@ -85,6 +86,7 @@ router.use(validateCampaignMiddleware());
 router.use(textPostMiddleware());
 
 // Handles photoPostConfig topics.
+router.use(legacyPhotoPostMiddleware());
 router.use(photoPostMiddleware());
 
 // Sanity check for nothing this far matched.

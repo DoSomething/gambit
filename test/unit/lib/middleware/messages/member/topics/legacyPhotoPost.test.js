@@ -18,7 +18,7 @@ chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const photoPostCatchAll = require('../../../../../../../lib/middleware/messages/member/topics/photoPost');
+const photoPostCatchAll = require('../../../../../../../lib/middleware/messages/member/topics/legacyPhotoPost');
 
 const sandbox = sinon.sandbox.create();
 

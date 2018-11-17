@@ -11,7 +11,10 @@ const draftSubmissionSchema = new mongoose.Schema({
     ref: 'Conversation',
   },
   topicId: String,
-  data: Object,
+  values: {
+    type: Object,
+    default: {},
+  },
 }, {
   collection: 'draftSubmissions',
   timestamps: true,
@@ -23,5 +26,15 @@ draftSubmissionSchema.index({
 }, {
   unique: true,
 });
+
+/**
+ * @param {Object} valuesObject
+ * @return {Promise}
+ */
+draftSubmissionSchema.methods.addValues = function (valuesObject) {
+  this.values = Object.assign(this.values, valuesObject);
+  this.markModified('values');
+  return this.save();
+};
 
 module.exports = mongoose.model('DraftSubmission', draftSubmissionSchema);
