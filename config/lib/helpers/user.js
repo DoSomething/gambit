@@ -50,6 +50,9 @@ const userFields = {
 module.exports = {
   fields: userFields,
   posts: {
+    photo: {
+      type: 'photo',
+    },
     text: {
       type: 'text',
     },
