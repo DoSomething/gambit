@@ -50,6 +50,31 @@ test.afterEach((t) => {
   sandbox.restore();
 });
 
+// createPhotoPost
+test('createPhotoPost passes user.id, campaignId, campaignRunId, file, quantity, source, text, and whyParticipated args to rogue.createSignup', async () => {
+  const file = stubs.getRandomMessageText();
+  const quantity = 240;
+  const text = stubs.getRandomMessageText();
+  const whyParticipated = stubs.getRandomMessageText();
+  sandbox.stub(rogue, 'getClient')
+    .returns({ photoPostCreation: { fileProperty: 'file' } });
+  const args = { campaignId, campaignRunId, file, quantity, source, text, whyParticipated };
+
+  const result = await userHelper.createPhotoPost(mockUser, args);
+  rogue.createPost.should.have.been.calledWith({
+    campaign_id: campaignId,
+    campaign_run_id: campaignRunId,
+    file,
+    quantity,
+    northstar_id: mockUser.id,
+    source,
+    text,
+    type: config.posts.photo.type,
+    why_participated: whyParticipated,
+  });
+  result.should.deep.equal(mockPost);
+});
+
 // createSignup
 test('createSignup passes user.id, campaignId, campaignRunId source args to rogue.createSignup', async () => {
   const signup = { id: campaignId, campaign_id: campaignId };
