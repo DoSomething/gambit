@@ -9,14 +9,14 @@ const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 
-const helpers = require('../../../../../../lib/helpers');
-const topicFactory = require('../../../../../helpers/factories/topic');
+const helpers = require('../../../../../../../lib/helpers');
+const topicFactory = require('../../../../../../helpers/factories/topic');
 
 chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const autoReplyCatchAll = require('../../../../../../lib/middleware/messages/member/catchAll-autoReply');
+const autoReplyCatchAll = require('../../../../../../../lib/middleware/messages/member/topics/autoReply');
 
 const sandbox = sinon.sandbox.create();
 

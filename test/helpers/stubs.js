@@ -234,6 +234,9 @@ module.exports = {
   getPlatformUserId(valid) {
     return module.exports.getMobileNumber(valid);
   },
+  getPostId() {
+    return { id: chance.integer({ min: 200, max: 2000000 }) };
+  },
   getPostType() {
     return 'text';
   },
