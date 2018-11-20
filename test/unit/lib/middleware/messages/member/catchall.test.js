@@ -16,7 +16,7 @@ chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const catchAll = require('../../../../../../lib/middleware/messages/member/catchAll');
+const catchAll = require('../../../../../../lib/middleware/messages/member/catchall');
 
 const sandbox = sinon.sandbox.create();
 

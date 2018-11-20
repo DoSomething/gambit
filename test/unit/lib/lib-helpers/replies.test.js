@@ -190,6 +190,21 @@ test('sendReply(): should call sendErrorResponse on failure', async (t) => {
   helpers.sendErrorResponse.should.have.been.called;
 });
 
+test('askPhoto(): should call sendReplyWithTopicTemplate', async (t) => {
+  const template = templates.topicTemplates.askPhoto;
+  await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
+});
+
+test('askQuantity(): should call sendReplyWithTopicTemplate', async (t) => {
+  const template = templates.topicTemplates.askQuantity;
+  await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
+});
+
+test('askWhyParticipated(): should call sendReplyWithTopicTemplate', async (t) => {
+  const template = templates.topicTemplates.askWhyParticipated;
+  await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
+});
+
 test('autoReply(): should call sendReplyWithTopicTemplate', async (t) => {
   const template = templates.topicTemplates.autoReply;
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
@@ -198,6 +213,11 @@ test('autoReply(): should call sendReplyWithTopicTemplate', async (t) => {
 test('campaignClosed(): should call sendWithStaticTemplate', async (t) => {
   const templateName = config.campaignClosed.name;
   await assertSendingStaticTemplate(t.context.req, t.context.res, templateName);
+});
+
+test('completedPhotoPost(): should call sendReplyWithTopicTemplate', async (t) => {
+  const template = templates.topicTemplates.completedPhotoPost;
+  await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
 });
 
 test('completedTextPost(): should call sendReplyWithTopicTemplate', async (t) => {
@@ -210,8 +230,28 @@ test('invalidAskYesNoResponse(): should call sendReplyWithTopicTemplate', async 
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
 });
 
+test('invalidPhoto(): should call sendReplyWithTopicTemplate', async (t) => {
+  const template = templates.topicTemplates.invalidPhoto;
+  await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
+});
+
+test('invalidQuantity(): should call sendReplyWithTopicTemplate', async (t) => {
+  const template = templates.topicTemplates.invalidQuantity;
+  await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
+});
+
 test('invalidText(): should call sendReplyWithTopicTemplate', async (t) => {
   const template = templates.topicTemplates.invalidText;
+  await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
+});
+
+test('invalidWhyParticipated(): should call sendReplyWithTopicTemplate', async (t) => {
+  const template = templates.topicTemplates.invalidWhyParticipated;
+  await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
+});
+
+test('startPhotoPostAutoReply(): should call sendReplyWithTopicTemplate', async (t) => {
+  const template = templates.topicTemplates.startPhotoPostAutoReply;
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
 });
 

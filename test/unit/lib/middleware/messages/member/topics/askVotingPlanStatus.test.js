@@ -9,17 +9,16 @@ const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 
-const helpers = require('../../../../../../lib/helpers');
-const stubs = require('../../../../../helpers/stubs');
-const broadcastFactory = require('../../../../../helpers/factories/broadcast');
-const topicFactory = require('../../../../../helpers/factories/topic');
+const helpers = require('../../../../../../../lib/helpers');
+const stubs = require('../../../../../../helpers/stubs');
+const broadcastFactory = require('../../../../../../helpers/factories/broadcast');
+const topicFactory = require('../../../../../../helpers/factories/topic');
 
 chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const askVotingPlanStatusCatchAll = require('../../../../../../lib/middleware/messages/member/catchAll-askVotingPlanStatus');
-
+const askVotingPlanStatusCatchAll = require('../../../../../../../lib/middleware/messages/member/topics/askVotingPlanStatus');
 // stubs
 const askVotingPlanStatus = broadcastFactory.getValidAskVotingPlanStatus();
 const messageText = stubs.getRandomMessageText();

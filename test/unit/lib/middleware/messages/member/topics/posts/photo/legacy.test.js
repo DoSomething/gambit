@@ -9,16 +9,16 @@ const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 
-const helpers = require('../../../../../../lib/helpers');
-const stubs = require('../../../../../helpers/stubs');
-const topicFactory = require('../../../../../helpers/factories/topic');
-const userFactory = require('../../../../../helpers/factories/user');
+const helpers = require('../../../../../../../../../lib/helpers');
+const stubs = require('../../../../../../../../helpers/stubs');
+const topicFactory = require('../../../../../../../../helpers/factories/topic');
+const userFactory = require('../../../../../../../../helpers/factories/user');
 
 chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const photoPostCatchAll = require('../../../../../../lib/middleware/messages/member/catchAll-photoPost');
+const photoPostCatchAll = require('../../../../../../../../../lib/middleware/messages/member/topics/posts/photo/legacy');
 
 const sandbox = sinon.sandbox.create();
 
@@ -54,12 +54,32 @@ test('photoPostCatchAll should call next if topic is not a photoPostConfig', asy
   helpers.replies.sendReplyWithTopicTemplate.should.not.have.been.called;
 });
 
-test('photoPostCatchAll should call postCampaignActivity and return result replyTemplate if topic is a photoPostConfig', async (t) => {
+test('photoPostCatchAll should call next if not areDraftSubmissionsEnabled', async (t) => {
+  const next = sinon.stub();
+  const middleware = photoPostCatchAll();
+  sandbox.stub(helpers.topic, 'isPhotoPostConfig')
+    .returns(true);
+  sandbox.stub(helpers.util, 'areDraftSubmissionsEnabled')
+    .returns(true);
+  sandbox.stub(helpers.replies, 'sendReplyWithTopicTemplate')
+    .returns(underscore.noop);
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+
+  helpers.topic.isPhotoPostConfig.should.have.been.calledWith(t.context.req.topic);
+  next.should.have.been.called;
+  helpers.replies.sendReplyWithTopicTemplate.should.not.have.been.called;
+});
+
+test('photoPostCatchAll should send postCampaignActivity response.replyTemplate if topic isPhotoPostConfig and not areDraftSubmissionsEnabled', async (t) => {
   const next = sinon.stub();
   const middleware = photoPostCatchAll();
   const mockResponse = stubs.gambitCampaigns.getReceiveMessageResponse();
   sandbox.stub(helpers.topic, 'isPhotoPostConfig')
     .returns(true);
+  sandbox.stub(helpers.util, 'areDraftSubmissionsEnabled')
+    .returns(false);
   sandbox.stub(helpers.request, 'postCampaignActivity')
     .returns(Promise.resolve(mockResponse));
   sandbox.stub(helpers.replies, 'sendReplyWithTopicTemplate')
@@ -81,6 +101,8 @@ test('photoPostCatchAll should call sendErrorResponse if postCampaignActivity fa
   const error = stubs.getError();
   sandbox.stub(helpers.topic, 'isPhotoPostConfig')
     .returns(true);
+  sandbox.stub(helpers.util, 'areDraftSubmissionsEnabled')
+    .returns(false);
   sandbox.stub(helpers.request, 'postCampaignActivity')
     .returns(Promise.reject(error));
   sandbox.stub(helpers.replies, 'sendReplyWithTopicTemplate')
