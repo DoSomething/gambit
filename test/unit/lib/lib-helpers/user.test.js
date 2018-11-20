@@ -55,7 +55,8 @@ test('createPhotoPost passes user.id, campaignId, campaignRunId, file, source, t
   const file = stubs.getRandomMessageText();
   const text = stubs.getRandomMessageText();
   const whyParticipated = stubs.getRandomMessageText();
-
+  sandbox.stub(rogue, 'getClient')
+    .returns({ photoPostCreation: { fileProperty: 'file' } });
 
   const result = await userHelper
     .createPhotoPost(mockUser, { campaignId, campaignRunId, file, source, text, whyParticipated });
