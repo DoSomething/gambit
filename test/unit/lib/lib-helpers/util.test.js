@@ -7,8 +7,10 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
 
+const superagent = require('superagent');
 const InternalServerError = require('../../../../app/exceptions/InternalServerError');
 const UnprocessableEntityError = require('../../../../app/exceptions/UnprocessableEntityError');
+
 const stubs = require('../../../helpers/stubs');
 
 chai.should();
@@ -93,6 +95,23 @@ test('isValidTextPost should return true if trimmed string arg has letters and l
   t.truthy(utilHelper.isValidTextPost('1 a'));
   t.falsy(utilHelper.isValidTextPost('a'));
   t.falsy(utilHelper.isValidTextPost('1231231'));
+});
+
+// fetchImageFileFromUrl
+test('fetchImageFileFromUrl should return parsed response of superagent.get', async () => {
+  const url = 'test';
+  const mockFile = 'abc123';
+  const mockResponse = { body: mockFile };
+  sandbox.stub(superagent, 'get')
+    .returns({
+      buffer: sinon.stub().returns({
+        parse: sinon.stub().returns(Promise.resolve(mockResponse)),
+      }),
+    });
+
+  const result = await utilHelper.fetchImageFileFromUrl(url);
+  superagent.get.should.have.been.calledWith(url);
+  result.should.equal(mockFile);
 });
 
 // parseStatusAndMessageFromError
