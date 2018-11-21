@@ -265,6 +265,16 @@ test('startPhotoPostAutoReply(): should call sendReplyWithTopicTemplate', async 
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
 });
 
+test('templates.campaignClosed(): should return campaignClosed config', () => {
+  const result = repliesHelper.templates.campaignClosed();
+  result.should.deep.equal(config.campaignClosed);
+});
+
+test('templates.subscriptionStatusActive(): should return subscriptionStatusActive macro', () => {
+  const result = repliesHelper.templates.subscriptionStatusActive();
+  result.should.deep.equal(helpers.macro.getMacro('subscriptionStatusActive'));
+});
+
 test('badWords(): should call sendReplyWithStaticTemplate', async (t) => {
   const template = config.badWords.name;
   await assertSendingStaticTemplate(t.context.req, t.context.res, template);
