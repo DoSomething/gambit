@@ -1,5 +1,6 @@
 'use strict';
 
+// TODO: Move these templates into the replies helper config -- they're only used by its tests.
 const underscore = require('underscore');
 
 const templatesMap = {
