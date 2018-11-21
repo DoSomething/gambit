@@ -321,33 +321,6 @@ test('parseRivescript calls replyRivescript with defaultTopicTrigger.reply if se
   result.should.equal(mockRivescript);
 });
 
-test('parseRivescript calls replyRivescript with getTransitionTemplateText if reply is not set', () => {
-  const trigger = stubs.getRandomWord();
-  const startText = stubs.getRandomWord();
-  const reply = stubs.getRandomMessageText();
-  sandbox.stub(rivescriptHelper, 'formatRedirectRivescript')
-    .returns(null);
-  sandbox.stub(rivescriptHelper, 'formatTriggerRivescript')
-    .returns(trigger);
-  sandbox.stub(rivescriptHelper, 'formatReplyRivescript')
-    .returns(reply);
-  sandbox.stub(helpers.topic, 'getTransitionTemplateText')
-    .returns(startText);
-  sandbox.stub(rivescriptHelper, 'joinRivescriptLines')
-    .returns(mockRivescript);
-  const legacyDefaultTopicTrigger = defaultTopicTriggerFactory
-    .getLegacyChangeTopicDefaultTopicTrigger();
-
-  const result = rivescriptHelper.parseRivescript(legacyDefaultTopicTrigger);
-  rivescriptHelper.formatRedirectRivescript.should.not.have.been.called;
-  rivescriptHelper.formatTriggerRivescript.should.have.been
-    .calledWith(legacyDefaultTopicTrigger.trigger);
-  rivescriptHelper.formatReplyRivescript.should.have.been
-    .calledWith(startText);
-  rivescriptHelper.joinRivescriptLines.should.have.been.calledWith([trigger, reply]);
-  result.should.equal(mockRivescript);
-});
-
 // isBotReady
 test('isBotReady returns false if not rivescript.isReady', async () => {
   sandbox.stub(rivescriptApi, 'isReady')
