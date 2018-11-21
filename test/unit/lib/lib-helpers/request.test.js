@@ -13,6 +13,7 @@ const logger = require('../../../../lib/logger');
 const gambitCampaigns = require('../../../../lib/gambit-campaigns');
 const stubs = require('../../../helpers/stubs');
 const campaignFactory = require('../../../helpers/factories/campaign');
+const draftSubmissionFactory = require('../../../helpers/factories/draftSubmission');
 const conversationFactory = require('../../../helpers/factories/conversation');
 const topicFactory = require('../../../helpers/factories/topic');
 const userFactory = require('../../../helpers/factories/user');
@@ -208,6 +209,19 @@ test('getCampaignActivityPayload returns object with keyword set if req.keyword'
 
 test('getCampaignActivityPayload should throw if req.campaign undefined', (t) => {
   t.throws(() => requestHelper.getCampaignActivityPayload(t.context.req));
+});
+
+// getDraftSubmission
+test('getDraftSubmission returns DraftSubmission for conversationId and topicId if exists', async (t) => {
+  t.context.req.conversation = conversationFactory.getValidConversation();
+  t.context.req.topic = topicFactory.getValidTopic();
+  const draft = draftSubmissionFactory.getValidCompletePhotoPostDraftSubmission();
+  sandbox.stub(t.context.req.conversation, 'getDraftSubmission')
+    .returns(Promise.resolve(draft));
+
+  const result = await requestHelper.getDraftSubmission(t.context.req);
+  t.context.req.conversation.getDraftSubmission.should.have.been.calledWith(t.context.req.topic.id);
+  result.should.deep.equal(draft);
 });
 
 // getRivescriptReply
