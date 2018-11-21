@@ -37,11 +37,11 @@ function getValidCompletePhotoPostDraftSubmission() {
 /**
  * @return {DraftSubmission}
  */
-function getValidEmptyDraftSubmission() {
+function getValidNewDraftSubmission() {
   return new DraftSubmission(getRawDraftSubmissionData());
 }
 
 module.exports = {
   getValidCompletePhotoPostDraftSubmission,
-  getValidEmptyDraftSubmission,
+  getValidNewDraftSubmission,
 };
