@@ -42,7 +42,8 @@ test.beforeEach((t) => {
   t.context.req = httpMocks.createRequest();
 });
 
-test.afterEach(() => {
+test.afterEach((t) => {
+  t.context.req = {};
   // reset stubs, spies, and mocks
   sandbox.restore();
 });
@@ -295,6 +296,15 @@ test('isLastOutboundTopicTemplate should return whether if req.lastOutboundTempl
   t.truthy(requestHelper.isLastOutboundTopicTemplate(t.context.req));
   helpers.template.isTopicTemplate
     .should.have.been.calledWith(t.context.req.lastOutboundTemplate);
+});
+
+// isStartCommand
+test('isStartCommand should return true if trimmed lowercase req.inboundMessageText is equal to start command', (t) => {
+  t.falsy(requestHelper.isStartCommand(t.context.req));
+  t.context.req.inboundMessageText = 'top chef';
+  t.falsy(requestHelper.isStartCommand(t.context.req));
+  t.context.req.inboundMessageText = ` ${config.commands.start} `;
+  t.truthy(requestHelper.isStartCommand(t.context.req));
 });
 
 // isTwilio
