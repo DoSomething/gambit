@@ -8,6 +8,7 @@ const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 
+const DraftSubmission = require('../../../../app/models/DraftSubmission');
 const helpers = require('../../../../lib/helpers');
 const logger = require('../../../../lib/logger');
 const gambitCampaigns = require('../../../../lib/gambit-campaigns');
@@ -133,6 +134,17 @@ test('createDraftSubmission returns DraftSubmission for conversationId and topic
   t.context.req.conversation.createDraftSubmission
     .should.have.been.calledWith(t.context.req.topic.id);
   result.should.deep.equal(draft);
+});
+
+// deleteDraftSubmission
+test('deleteDraftSubmission deletes the DB document for req.draftSubmission.id', async (t) => {
+  const draft = draftSubmissionFactory.getValidNewDraftSubmission();
+  sandbox.stub(DraftSubmission, 'deleteOne')
+    .returns(Promise.resolve());
+  t.context.req.draftSubmission = draft;
+
+  await requestHelper.deleteDraftSubmission(t.context.req);
+  DraftSubmission.deleteOne.should.have.been.calledWith({ _id: draft._id });
 });
 
 // executeInboundTopicChange
@@ -370,7 +382,6 @@ test('parseAskYesNoResponse updates macro if parseAskYesNoResponse returns isSai
   helpers.request.setMacro.should.have.been.calledWith(t.context.req, mockParseAskYesNoResponse);
   message.updateMacro.should.have.been.calledWith(mockParseAskYesNoResponse);
 });
-
 
 test('parseAskYesNoResponse does not update macro if parseAskYesNoResponse does not return saidYes or saidNo', async (t) => {
   const mockParseAskYesNoResponse = 'dragon';
