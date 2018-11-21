@@ -290,26 +290,6 @@ test('hasDraftSubmission should return boolean of whether req.draftSubmission de
   t.falsy(requestHelper.hasDraftSubmission(t.context.req));
 });
 
-// isLastOutboundAskContinue
-test('isLastOutboundAskContinue should return whether if req.lastOutboundTemplate is an askContinue template', (t) => {
-  sandbox.stub(helpers.template, 'isAskContinueTemplate')
-    .returns(true);
-  t.context.req.lastOutboundTemplate = stubs.getRandomWord();
-  t.truthy(requestHelper.isLastOutboundAskContinue(t.context.req));
-  helpers.template.isAskContinueTemplate
-    .should.have.been.calledWith(t.context.req.lastOutboundTemplate);
-});
-
-// isLastOutboundTopicTemplate
-test('isLastOutboundTopicTemplate should return whether if req.lastOutboundTemplate is a gambitCampaigns template', (t) => {
-  sandbox.stub(helpers.template, 'isTopicTemplate')
-    .returns(true);
-  t.context.req.lastOutboundTemplate = stubs.getRandomWord();
-  t.truthy(requestHelper.isLastOutboundTopicTemplate(t.context.req));
-  helpers.template.isTopicTemplate
-    .should.have.been.calledWith(t.context.req.lastOutboundTemplate);
-});
-
 // isStartCommand
 test('isStartCommand should return true if trimmed lowercase req.inboundMessageText is equal to start command', (t) => {
   t.falsy(requestHelper.isStartCommand(t.context.req));
