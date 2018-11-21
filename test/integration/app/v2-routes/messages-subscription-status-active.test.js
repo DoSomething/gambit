@@ -5,7 +5,7 @@ const chai = require('chai');
 const nock = require('nock');
 
 const tagsHelper = require('../../../../lib/helpers/tags');
-const templatesHelper = require('../../../../lib/helpers/template');
+const repliesHelper = require('../../../../lib/helpers/replies');
 const integrationHelper = require('../../../helpers/integration');
 const Message = require('../../../../app/models/Message');
 const Conversation = require('../../../../app/models/Conversation');
@@ -57,7 +57,7 @@ test.serial('POST /api/v2/messages?origin=subscriptionStatusActive should create
   const user = stubs.northstar.getUser({
     validUsNumber: true,
   });
-  const subscriptionStatusActiveData = templatesHelper.getSubscriptionStatusActive();
+  const subscriptionStatusActiveData = repliesHelper.templates.subscriptionStatusActive();
 
   nock(integrationHelper.routes.northstar.baseURI)
     .get(`/users/${northstarConfig.getUserFields.id}/${stubs.getUserId()}`)
@@ -87,7 +87,7 @@ test.serial('POST /api/v2/messages?origin=subscriptionStatusActive should not cr
   const user = stubs.northstar.getUser({
     validUsNumber: true,
   });
-  const subscriptionStatusActiveData = templatesHelper.getSubscriptionStatusActive();
+  const subscriptionStatusActiveData = repliesHelper.templates.subscriptionStatusActive();
 
   nock(integrationHelper.routes.northstar.baseURI)
     .get(`/users/${northstarConfig.getUserFields.id}/${stubs.getUserId()}`)

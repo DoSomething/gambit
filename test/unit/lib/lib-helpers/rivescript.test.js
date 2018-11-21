@@ -297,6 +297,7 @@ test('parseRivescript returns redirectRivescript if defaultTopicTrigger.redirect
   result.should.equal(mockRivescript);
 });
 
+// TODO: Add test for closed campaign.
 test('parseRivescript calls replyRivescript with defaultTopicTrigger.reply if set', () => {
   const trigger = stubs.getRandomWord();
   const reply = stubs.getRandomWord();
