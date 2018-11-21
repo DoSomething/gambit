@@ -20,7 +20,7 @@ chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const textPostCatchAll = require('../../../../../../../../../lib/middleware/messages/member/topics/posts/text/create');
+const textPostCatchAll = require('../../../../../../../../../lib/middleware/messages/member/topics/posts/text/post-create');
 
 const sandbox = sinon.sandbox.create();
 

@@ -19,7 +19,7 @@ chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const askYesNoCatchAll = require('../../../../../../../lib/middleware/messages/member/topics/askYesNo');
+const askYesNoCatchAll = require('../../../../../../../lib/middleware/messages/member/topics/ask-yes-no');
 
 // stubs
 const askYesNoBroadcast = broadcastFactory.getValidAskYesNo();
