@@ -16,7 +16,7 @@ chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const autoReplyCatchAll = require('../../../../../../../lib/middleware/messages/member/topics/autoReply');
+const autoReplyCatchAll = require('../../../../../../../lib/middleware/messages/member/topics/auto-reply');
 
 const sandbox = sinon.sandbox.create();
 

@@ -23,9 +23,9 @@ const parseRivescriptReplyMiddleware = require('../../../lib/middleware/messages
 const forwardSupportMessageMiddleware = require('../../../lib/middleware/messages/member/support-message');
 const replyMacroMiddleware = require('../../../lib/middleware/messages/member/macro-reply');
 const getTopicMiddleware = require('../../../lib/middleware/messages/member/topic-get');
-const askVotingPlanStatusMiddleware = require('../../../lib/middleware/messages/member/topics/askVotingPlanStatus');
-const askYesNoMiddleware = require('../../../lib/middleware/messages/member/topics/askYesNo');
-const autoReplyMiddleware = require('../../../lib/middleware/messages/member/topics/autoReply');
+const askVotingPlanStatusMiddleware = require('../../../lib/middleware/messages/member/topics/ask-voting-plan-status');
+const askYesNoMiddleware = require('../../../lib/middleware/messages/member/topics/ask-yes-no');
+const autoReplyMiddleware = require('../../../lib/middleware/messages/member/topics/auto-reply');
 const validateCampaignMiddleware = require('../../../lib/middleware/messages/member/campaign-validate');
 const legacyPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/legacy');
 const createDraftPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/draft-create');
@@ -34,7 +34,7 @@ const draftPhotoPhotoPostMiddleware = require('../../../lib/middleware/messages/
 const draftCaptionPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/draft-caption');
 const draftWhyParticipatedPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/draft-why-participated');
 const createPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/post-create');
-const createTextPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/text/create');
+const createTextPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/text/post-create');
 const catchAllMiddleware = require('../../../lib/middleware/messages/member/catchall');
 
 router.use(paramsMiddleware());
