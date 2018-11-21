@@ -120,6 +120,20 @@ test('changeTopic does not call setTopic when topic change is askSubscriptionSta
   conversation.setTopic.should.not.have.been.called;
 });
 
+// createDraftSubmission
+test('createDraftSubmission returns DraftSubmission for conversationId and topicId', async (t) => {
+  t.context.req.conversation = conversationFactory.getValidConversation();
+  t.context.req.topic = topicFactory.getValidTopic();
+  const draft = draftSubmissionFactory.getValidNewDraftSubmission();
+  sandbox.stub(t.context.req.conversation, 'createDraftSubmission')
+    .returns(Promise.resolve(draft));
+
+  const result = await requestHelper.createDraftSubmission(t.context.req);
+  t.context.req.conversation.createDraftSubmission
+    .should.have.been.calledWith(t.context.req.topic.id);
+  result.should.deep.equal(draft);
+});
+
 // executeInboundTopicChange
 test('executeInboundTopicChange get topic, create signup if topic has active campaign, and return changeTopic', async (t) => {
   const keyword = 'dragon';
