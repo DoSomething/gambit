@@ -28,8 +28,12 @@ const askYesNoMiddleware = require('../../../lib/middleware/messages/member/topi
 const autoReplyMiddleware = require('../../../lib/middleware/messages/member/topics/autoReply');
 const validateCampaignMiddleware = require('../../../lib/middleware/messages/member/campaign-validate');
 const legacyPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/legacy');
-const draftPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/draftSubmission');
-const createPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/create');
+const createDraftPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/draft-create');
+const draftQuantityPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/draft-quantity');
+const draftPhotoPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/draft-photo');
+const draftCaptionPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/draft-caption');
+const draftWhyParticipatedPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/draft-why-participated');
+const createPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/post-create');
 const createTextPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/text/create');
 const catchAllMiddleware = require('../../../lib/middleware/messages/member/catchall');
 
@@ -88,7 +92,12 @@ router.use(createTextPostMiddleware());
 
 // Handles photo posts.
 router.use(legacyPhotoPostMiddleware());
-router.use(draftPhotoPostMiddleware());
+router.use(createDraftPhotoPostMiddleware());
+router.use(draftQuantityPhotoPostMiddleware());
+router.use(draftPhotoPhotoPostMiddleware());
+router.use(draftQuantityPhotoPostMiddleware());
+router.use(draftCaptionPhotoPostMiddleware());
+router.use(draftWhyParticipatedPhotoPostMiddleware());
 router.use(createPhotoPostMiddleware());
 
 // Sanity check for nothing this far matched.

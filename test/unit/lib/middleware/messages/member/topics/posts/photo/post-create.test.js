@@ -24,7 +24,7 @@ const mockPost = { id: stubs.getPostId() };
 const mockTopic = topicFactory.getValidTopic();
 
 // module to be tested
-const createPhotoPost = require('../../../../../../../../../lib/middleware/messages/member/topics/posts/photo/create');
+const createPhotoPost = require('../../../../../../../../../lib/middleware/messages/member/topics/posts/photo/post-create');
 
 const sandbox = sinon.sandbox.create();
 
@@ -130,7 +130,7 @@ test('createPhotoPost should call completedPhotoPost on createPhotoPost success'
     file,
     quantity: completeDraft.values.quantity,
     source: t.context.req.platform,
-    text: completeDraft.values.whyParticipated,
+    text: completeDraft.values.caption,
     whyParticipated: completeDraft.values.whyParticipated,
   });
   helpers.replies.completedPhotoPost.should.have.been.called;

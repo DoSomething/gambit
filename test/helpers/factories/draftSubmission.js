@@ -4,6 +4,13 @@ const ObjectID = require('mongoose').Types.ObjectId;
 const DraftSubmission = require('../../../app/models/DraftSubmission');
 const stubs = require('../stubs');
 
+const photoPostValues = {
+  caption: stubs.getRandomMessageText(),
+  quantitiy: 4,
+  url: 'https://placekitten.com/g/300/300',
+  whyParticipated: stubs.getRandomMessageText(),
+};
+
 /**
  * @param {Object} values
  * @return {Object}
@@ -24,11 +31,7 @@ function getRawDraftSubmissionData(values = {}) {
  * @return {DraftSubmission}
  */
 function getValidCompletePhotoPostDraftSubmission() {
-  return DraftSubmission(getRawDraftSubmissionData({
-    quantity: 4,
-    url: 'http://placekitten.com/g/300/300',
-    whyParticipated: stubs.getRandomMessageText(),
-  }));
+  return DraftSubmission(getRawDraftSubmissionData(photoPostValues));
 }
 
 /**
