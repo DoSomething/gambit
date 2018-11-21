@@ -269,6 +269,14 @@ test('hasCampaign should return boolean of whether req.campaign defined', (t) =>
   t.falsy(requestHelper.hasCampaign(t.context.req));
 });
 
+// hasDraftSubmission
+test('hasDraftSubmission should return boolean of whether req.draftSubmission defined', (t) => {
+  t.context.req.draftSubmission = draftSubmissionFactory.getValidNewDraftSubmission();
+  t.truthy(requestHelper.hasDraftSubmission(t.context.req));
+  t.context.req.draftSubmission = null;
+  t.falsy(requestHelper.hasDraftSubmission(t.context.req));
+});
+
 // isLastOutboundAskContinue
 test('isLastOutboundAskContinue should return whether if req.lastOutboundTemplate is an askContinue template', (t) => {
   sandbox.stub(helpers.template, 'isAskContinueTemplate')
@@ -462,6 +470,16 @@ test('setConversation should not call setLastOutboundMessage does not exist', (t
 
   requestHelper.setConversation(t.context.req, newConversation);
   requestHelper.setLastOutboundMessage.should.not.have.been.called;
+});
+
+// setDraftSubmission
+test('setDraftSubmission should return boolean of whether req.draftSubmission defined', (t) => {
+  const draftSubmission = draftSubmissionFactory.getValidNewDraftSubmission();
+
+  requestHelper.setDraftSubmission(t.context.req, draftSubmission);
+  t.context.req.draftSubmission.should.deep.equal(draftSubmission);
+  helpers.analytics.addCustomAttributes
+    .should.have.been.calledWith({ draftSubmissionId: draftSubmission.id });
 });
 
 // setKeyword
