@@ -145,12 +145,12 @@ conversationSchema.methods.setSupportTopic = function () {
  * Returns a DraftSubmission document for given topicId if exists.
  *
  * @param {String} topicId
- * @param {Object} data
+ * @param {Object} values
  * @return {DraftSubmission}
  */
-conversationSchema.methods.createDraftSubmission = function (topicId, data = {}) {
+conversationSchema.methods.createDraftSubmission = function (topicId, values = {}) {
   const conversationId = this._id;
-  return DraftSubmission.create({ conversationId, topicId, data });
+  return DraftSubmission.create({ conversationId, topicId, values });
 };
 
 /**
