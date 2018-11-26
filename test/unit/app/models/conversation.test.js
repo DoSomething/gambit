@@ -30,7 +30,6 @@ const resolvedPromise = Promise.resolve({});
 
 chai.should();
 chai.use(sinonChai);
-const expect = chai.expect;
 
 const sandbox = sinon.sandbox.create();
 
