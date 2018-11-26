@@ -308,12 +308,12 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = async function (r
     return null;
   }
 
-  const mediaUrl = this.lastOutboundMessage.attachments
+  const mediaUrls = this.lastOutboundMessage.attachments
     .map(attachment => attachment.url);
 
   // Try sending SMS and store success or failure metadata
   try {
-    const twilioRes = await twilio.postMessage(req.platformUserId, messageText, mediaUrl);
+    const twilioRes = await twilio.postMessage(req.platformUserId, messageText, mediaUrls);
     // this.lastOutboundMessage is mutated by this function call
     return helpers.twilio.handleMessageCreationSuccess(twilioRes, this.lastOutboundMessage);
   } catch (twilioError) {
