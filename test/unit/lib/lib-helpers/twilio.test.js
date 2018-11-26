@@ -9,9 +9,13 @@ const httpMocks = require('node-mocks-http');
 
 const helpers = require('../../../../lib/helpers');
 const stubs = require('../../../helpers/stubs');
+const conversationFactory = require('../../../helpers/factories/conversation');
+
+const resolvedPromise = Promise.resolve({});
 
 chai.should();
 chai.use(sinonChai);
+const expect = chai.expect;
 
 // module to be tested
 const twilioHelper = require('../../../../lib/helpers/twilio');
@@ -57,4 +61,36 @@ test('isBadRequestError should return boolean', (t) => {
   t.truthy(twilioHelper.isBadRequestError(badRequestError));
   const unauthorizedError = { status: 401 };
   t.falsy(twilioHelper.isBadRequestError(unauthorizedError));
+});
+
+// handleMessageCreationSuccess
+test('handleMessageCreationSuccess saves Twilio delivery metadata to message', async () => {
+  const smsConversation = conversationFactory.getValidConversation();
+  const postMessageResponse = stubs.twilio.getPostMessageSuccess();
+  sandbox.stub(smsConversation.lastOutboundMessage, 'save')
+    .returns(resolvedPromise);
+
+  await helpers.twilio
+    .handleMessageCreationSuccess(postMessageResponse, smsConversation.lastOutboundMessage);
+
+  smsConversation.lastOutboundMessage.save.should.have.been.called;
+  expect(smsConversation.lastOutboundMessage.metadata.delivery.queuedAt).to.exist;
+  expect(smsConversation.lastOutboundMessage.metadata.delivery.totalSegments).to.exist;
+});
+
+// handleMessageCreationFailure
+test('handleMessageCreationFailure saves Twilio delivery failure metadata to message', async () => {
+  const smsConversation = conversationFactory.getValidConversation();
+  const postMessageResponse = stubs.twilio.getPostMessageError();
+  sandbox.stub(smsConversation.lastOutboundMessage, 'save')
+    .returns(resolvedPromise);
+
+  await helpers.twilio
+    .handleMessageCreationFailure(postMessageResponse, smsConversation.lastOutboundMessage);
+
+  smsConversation.lastOutboundMessage.save.should.have.been.called;
+  expect(smsConversation.lastOutboundMessage.metadata.delivery.failedAt).to.exist;
+  expect(smsConversation.lastOutboundMessage.metadata.delivery.failureData).to.exist;
+  expect(smsConversation.lastOutboundMessage.metadata.delivery.failureData.code).to.exist;
+  expect(smsConversation.lastOutboundMessage.metadata.delivery.failureData.message).to.exist;
 });

@@ -115,28 +115,24 @@ test('postLastOutboundMessageToPlatform calls twilio.postMessage if conversation
   twilio.postMessage.should.have.been.called;
 });
 
-test('postLastOutboundMessageToPlatform should save metadata conversation when POST to Twilio is successful', async (t) => {
+test('postLastOutboundMessageToPlatform should call handleMessageCreationSuccess when POST to Twilio is successful', async (t) => {
   const postMessageResponse = Promise.resolve(stubs.twilio.getPostMessageSuccess());
   sandbox.stub(twilio, 'postMessage')
     .returns(postMessageResponse);
-  sandbox.stub(smsConversation.lastOutboundMessage, 'save')
-    .returns(resolvedPromise);
-  t.context.req.conversation = smsConversation;
+  sandbox.stub(helpers.twilio, 'handleMessageCreationSuccess')
+    .returns(Promise.resolve());
 
   await smsConversation.postLastOutboundMessageToPlatform(t.context.req);
   twilio.postMessage.should.have.been.called;
-  smsConversation.lastOutboundMessage.save.should.have.been.called;
-  expect(smsConversation.lastOutboundMessage.metadata.delivery.queuedAt).to.exist;
-  expect(smsConversation.lastOutboundMessage.metadata.delivery.totalSegments).to.exist;
+  helpers.twilio.handleMessageCreationSuccess.should.have.been.called;
 });
 
-test('postLastOutboundMessageToPlatform should save metadata conversation when Twilio responds with an error', async (t) => {
+test('postLastOutboundMessageToPlatform should call handleMessageCreationFailure when Twilio responds with an error', async (t) => {
   const postMessageResponse = Promise.reject(stubs.twilio.getPostMessageError());
   sandbox.stub(twilio, 'postMessage')
     .returns(postMessageResponse);
-  sandbox.stub(smsConversation.lastOutboundMessage, 'save')
-    .returns(resolvedPromise);
-  t.context.req.conversation = smsConversation;
+  sandbox.stub(helpers.twilio, 'handleMessageCreationFailure')
+    .returns(Promise.resolve());
 
   try {
     await smsConversation.postLastOutboundMessageToPlatform(t.context.req);
@@ -148,11 +144,7 @@ test('postLastOutboundMessageToPlatform should save metadata conversation when T
      */
   }
   twilio.postMessage.should.have.been.called;
-  smsConversation.lastOutboundMessage.save.should.have.been.called;
-  expect(smsConversation.lastOutboundMessage.metadata.delivery.failedAt).to.exist;
-  expect(smsConversation.lastOutboundMessage.metadata.delivery.failureData).to.exist;
-  expect(smsConversation.lastOutboundMessage.metadata.delivery.failureData.code).to.exist;
-  expect(smsConversation.lastOutboundMessage.metadata.delivery.failureData.message).to.exist;
+  helpers.twilio.handleMessageCreationFailure.should.have.been.called;
 });
 
 // postMessageToSupport
