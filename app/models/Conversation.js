@@ -2,7 +2,6 @@
 
 const mongoose = require('mongoose');
 const Promise = require('bluebird');
-const moment = require('moment');
 
 const DraftSubmission = require('./DraftSubmission');
 const Message = require('./Message');
@@ -301,55 +300,30 @@ conversationSchema.methods.createAndSetLastOutboundMessage = function (direction
 /**
  * Posts the Last Outbound Message to Twilio for SMS conversations.
  */
-conversationSchema.methods.postLastOutboundMessageToPlatform = function (req) {
+conversationSchema.methods.postLastOutboundMessageToPlatform = async function (req) {
   const messageText = this.lastOutboundMessage.text;
 
+  // Don't send if text is empty or is not an SMS message
   if (!messageText || !this.isSms()) {
-    return Promise.resolve();
+    return null;
   }
 
-  const mediaUrl = this.lastOutboundMessage.attachments.map(attachment => attachment.url);
+  const mediaUrl = this.lastOutboundMessage.attachments
+    .map(attachment => attachment.url);
 
-  return new Promise((resolve, reject) => {
-    twilio.postMessage(req.platformUserId, messageText, mediaUrl)
-      .then((twilioRes) => {
-        const sid = twilioRes.sid;
-        const status = twilioRes.status;
-        logger.debug('twilio.postMessage', { sid, status }, req);
-
-        // @see https://www.twilio.com/docs/api/messaging/message#resource-properties
-        this.lastOutboundMessage.platformMessageId = sid;
-        this.lastOutboundMessage.metadata.delivery.queuedAt = twilioRes.dateCreated;
-        this.lastOutboundMessage.metadata.delivery.totalSegments = twilioRes.numSegments;
-        return resolve(this.lastOutboundMessage.save());
-      })
-      .catch((error) => {
-        /**
-         * Save failure metadata before bubbling the error up the Promise chain when the error is
-         * an unrecoverable error, since retries are suppressed when they are detected.
-         */
-        if (helpers.twilio.isBadRequestError(error)) {
-          this.lastOutboundMessage.metadata.delivery.failedAt = moment().format();
-          this.lastOutboundMessage.metadata.delivery.failureData = {
-            code: error.code,
-            message: error.message,
-          };
-          this.lastOutboundMessage.save()
-            .then(() => reject(error))
-            .catch((saveError) => {
-              logger.error(
-                'twilio.postMessage error: this.lastOutboundMessage.save() failed',
-                saveError, req);
-              reject(error);
-            });
-        } else {
-          /**
-           * Bubble up error so we can either suppress (unrecoverable error) or retry.
-           */
-          reject(error);
-        }
-      });
-  });
+  // Try sending SMS and store success or failure metadata
+  try {
+    const twilioRes = await twilio.postMessage(req.platformUserId, messageText, mediaUrl);
+    return helpers.twilio.handleMessageCreationSuccess(twilioRes, this.lastOutboundMessage);
+  } catch (twilioError) {
+    // If there was an error saving the failure metadata, that error would "throw" first instead
+    // of the twilioError and the message would be retried.
+    await helpers.twilio.handleMessageCreationFailure(twilioError, this.lastOutboundMessage);
+    // If saving the failure metadata is successful.
+    // We re-throw the twilio Error so that it's caught on a higher catch block
+    // and be suppressed if needed.
+    throw twilioError;
+  }
 };
 
 /**
