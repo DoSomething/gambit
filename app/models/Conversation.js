@@ -314,10 +314,12 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = async function (r
   // Try sending SMS and store success or failure metadata
   try {
     const twilioRes = await twilio.postMessage(req.platformUserId, messageText, mediaUrl);
+    // this.lastOutboundMessage is mutated by this function call
     return helpers.twilio.handleMessageCreationSuccess(twilioRes, this.lastOutboundMessage);
   } catch (twilioError) {
     // If there was an error saving the failure metadata, that error would "throw" first instead
     // of the twilioError and the message would be retried.
+    // this.lastOutboundMessage is mutated by this function call
     await helpers.twilio.handleMessageCreationFailure(twilioError, this.lastOutboundMessage);
     // If saving the failure metadata is successful.
     // We re-throw the twilio Error so that it's caught on a higher catch block
