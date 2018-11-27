@@ -3,6 +3,7 @@
 require('dotenv').config();
 const test = require('ava');
 const chai = require('chai');
+const moment = require('moment');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
@@ -73,24 +74,37 @@ test('handleMessageCreationSuccess saves Twilio delivery metadata to message', a
   await helpers.twilio
     .handleMessageCreationSuccess(postMessageResponse, smsConversation.lastOutboundMessage);
 
+  // Mongoose Date schema type properties returns Date instance.
+  const formattedQueuedAt = moment(
+    smsConversation.lastOutboundMessage.metadata.delivery.queuedAt).format();
+
   smsConversation.lastOutboundMessage.save.should.have.been.called;
-  expect(smsConversation.lastOutboundMessage.metadata.delivery.queuedAt).to.exist;
-  expect(smsConversation.lastOutboundMessage.metadata.delivery.totalSegments).to.exist;
+  expect(formattedQueuedAt).to.equal(postMessageResponse.dateCreated);
+  expect(smsConversation.lastOutboundMessage.metadata.delivery.totalSegments)
+    .to.equal(postMessageResponse.numSegments);
 });
 
 // handleMessageCreationFailure
 test('handleMessageCreationFailure saves Twilio delivery failure metadata to message', async () => {
+  const failedAt = moment().format();
   const smsConversation = conversationFactory.getValidConversation();
   const postMessageResponse = stubs.twilio.getPostMessageError();
   sandbox.stub(smsConversation.lastOutboundMessage, 'save')
     .returns(resolvedPromise);
 
   await helpers.twilio
-    .handleMessageCreationFailure(postMessageResponse, smsConversation.lastOutboundMessage);
+    .handleMessageCreationFailure(
+      postMessageResponse, smsConversation.lastOutboundMessage, failedAt);
+
+  // Mongoose Date schema type properties returns Date instance.
+  const formattedFailedAt = moment(
+    smsConversation.lastOutboundMessage.metadata.delivery.failedAt).format();
 
   smsConversation.lastOutboundMessage.save.should.have.been.called;
-  expect(smsConversation.lastOutboundMessage.metadata.delivery.failedAt).to.exist;
+  expect(formattedFailedAt).to.be.equal(failedAt);
   expect(smsConversation.lastOutboundMessage.metadata.delivery.failureData).to.exist;
-  expect(smsConversation.lastOutboundMessage.metadata.delivery.failureData.code).to.exist;
-  expect(smsConversation.lastOutboundMessage.metadata.delivery.failureData.message).to.exist;
+  expect(smsConversation.lastOutboundMessage.metadata.delivery.failureData.code)
+    .to.be.equal(postMessageResponse.code);
+  expect(smsConversation.lastOutboundMessage.metadata.delivery.failureData.message)
+    .to.be.equal(postMessageResponse.message);
 });
