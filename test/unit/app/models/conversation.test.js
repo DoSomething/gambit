@@ -115,21 +115,22 @@ test('postLastOutboundMessageToPlatform calls twilio.postMessage if conversation
 });
 
 test('postLastOutboundMessageToPlatform should call handleMessageCreationSuccess when POST to Twilio is successful', async (t) => {
-  const postMessageResponse = Promise.resolve(stubs.twilio.getPostMessageSuccess());
+  const postMessageResponse = stubs.twilio.getPostMessageSuccess();
   sandbox.stub(twilio, 'postMessage')
-    .returns(postMessageResponse);
+    .returns(Promise.resolve(postMessageResponse));
   sandbox.stub(helpers.twilio, 'handleMessageCreationSuccess')
     .returns(Promise.resolve());
 
   await smsConversation.postLastOutboundMessageToPlatform(t.context.req);
   twilio.postMessage.should.have.been.called;
-  helpers.twilio.handleMessageCreationSuccess.should.have.been.called;
+  helpers.twilio.handleMessageCreationSuccess
+    .should.have.been.calledWith(postMessageResponse, smsConversation.lastOutboundMessage);
 });
 
 test('postLastOutboundMessageToPlatform should call handleMessageCreationFailure when Twilio responds with an error', async (t) => {
-  const postMessageResponse = Promise.reject(stubs.twilio.getPostMessageError());
+  const postMessageResponse = stubs.twilio.getPostMessageError();
   sandbox.stub(twilio, 'postMessage')
-    .returns(postMessageResponse);
+    .returns(Promise.reject(postMessageResponse));
   sandbox.stub(helpers.twilio, 'handleMessageCreationFailure')
     .returns(Promise.resolve());
 
@@ -143,7 +144,8 @@ test('postLastOutboundMessageToPlatform should call handleMessageCreationFailure
      */
   }
   twilio.postMessage.should.have.been.called;
-  helpers.twilio.handleMessageCreationFailure.should.have.been.called;
+  helpers.twilio.handleMessageCreationFailure
+    .should.have.been.calledWith(postMessageResponse, smsConversation.lastOutboundMessage);
 });
 
 // postMessageToSupport
