@@ -8,11 +8,13 @@ const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 
+const DraftSubmission = require('../../../../app/models/DraftSubmission');
 const helpers = require('../../../../lib/helpers');
 const logger = require('../../../../lib/logger');
 const gambitCampaigns = require('../../../../lib/gambit-campaigns');
 const stubs = require('../../../helpers/stubs');
 const campaignFactory = require('../../../helpers/factories/campaign');
+const draftSubmissionFactory = require('../../../helpers/factories/draftSubmission');
 const conversationFactory = require('../../../helpers/factories/conversation');
 const topicFactory = require('../../../helpers/factories/topic');
 const userFactory = require('../../../helpers/factories/user');
@@ -41,7 +43,8 @@ test.beforeEach((t) => {
   t.context.req = httpMocks.createRequest();
 });
 
-test.afterEach(() => {
+test.afterEach((t) => {
+  t.context.req = {};
   // reset stubs, spies, and mocks
   sandbox.restore();
 });
@@ -117,6 +120,31 @@ test('changeTopic does not call setTopic when topic change is askSubscriptionSta
   requestHelper.setTopic.should.have.been.calledWith(t.context.req, topic);
   helpers.user.setPendingSubscriptionStatusForUserId.should.have.been.called;
   conversation.setTopic.should.not.have.been.called;
+});
+
+// createDraftSubmission
+test('createDraftSubmission returns DraftSubmission for conversationId and topicId', async (t) => {
+  t.context.req.conversation = conversationFactory.getValidConversation();
+  t.context.req.topic = topicFactory.getValidTopic();
+  const draft = draftSubmissionFactory.getValidNewDraftSubmission();
+  sandbox.stub(t.context.req.conversation, 'createDraftSubmission')
+    .returns(Promise.resolve(draft));
+
+  const result = await requestHelper.createDraftSubmission(t.context.req);
+  t.context.req.conversation.createDraftSubmission
+    .should.have.been.calledWith(t.context.req.topic.id);
+  result.should.deep.equal(draft);
+});
+
+// deleteDraftSubmission
+test('deleteDraftSubmission deletes the DB document for req.draftSubmission.id', async (t) => {
+  const draft = draftSubmissionFactory.getValidNewDraftSubmission();
+  sandbox.stub(DraftSubmission, 'deleteOne')
+    .returns(Promise.resolve());
+  t.context.req.draftSubmission = draft;
+
+  await requestHelper.deleteDraftSubmission(t.context.req);
+  DraftSubmission.deleteOne.should.have.been.calledWith({ _id: draft._id });
 });
 
 // executeInboundTopicChange
@@ -210,6 +238,19 @@ test('getCampaignActivityPayload should throw if req.campaign undefined', (t) =>
   t.throws(() => requestHelper.getCampaignActivityPayload(t.context.req));
 });
 
+// getDraftSubmission
+test('getDraftSubmission returns DraftSubmission for conversationId and topicId if exists', async (t) => {
+  t.context.req.conversation = conversationFactory.getValidConversation();
+  t.context.req.topic = topicFactory.getValidTopic();
+  const draft = draftSubmissionFactory.getValidCompletePhotoPostDraftSubmission();
+  sandbox.stub(t.context.req.conversation, 'getDraftSubmission')
+    .returns(Promise.resolve(draft));
+
+  const result = await requestHelper.getDraftSubmission(t.context.req);
+  t.context.req.conversation.getDraftSubmission.should.have.been.calledWith(t.context.req.topic.id);
+  result.should.deep.equal(draft);
+});
+
 // getRivescriptReply
 test('getRivescriptReply should call helpers.rivescript.getBotReply with req vars', async (t) => {
   t.context.req.userId = userId;
@@ -241,6 +282,14 @@ test('hasCampaign should return boolean of whether req.campaign defined', (t) =>
   t.falsy(requestHelper.hasCampaign(t.context.req));
 });
 
+// hasDraftSubmission
+test('hasDraftSubmission should return boolean of whether req.draftSubmission defined', (t) => {
+  t.context.req.draftSubmission = draftSubmissionFactory.getValidNewDraftSubmission();
+  t.truthy(requestHelper.hasDraftSubmission(t.context.req));
+  t.context.req.draftSubmission = null;
+  t.falsy(requestHelper.hasDraftSubmission(t.context.req));
+});
+
 // isLastOutboundAskContinue
 test('isLastOutboundAskContinue should return whether if req.lastOutboundTemplate is an askContinue template', (t) => {
   sandbox.stub(helpers.template, 'isAskContinueTemplate')
@@ -259,6 +308,15 @@ test('isLastOutboundTopicTemplate should return whether if req.lastOutboundTempl
   t.truthy(requestHelper.isLastOutboundTopicTemplate(t.context.req));
   helpers.template.isTopicTemplate
     .should.have.been.calledWith(t.context.req.lastOutboundTemplate);
+});
+
+// isStartCommand
+test('isStartCommand should return true if trimmed lowercase req.inboundMessageText is equal to start command', (t) => {
+  t.falsy(requestHelper.isStartCommand(t.context.req));
+  t.context.req.inboundMessageText = 'top chef';
+  t.falsy(requestHelper.isStartCommand(t.context.req));
+  t.context.req.inboundMessageText = ` ${config.commands.start} `;
+  t.truthy(requestHelper.isStartCommand(t.context.req));
 });
 
 // isTwilio
@@ -324,7 +382,6 @@ test('parseAskYesNoResponse updates macro if parseAskYesNoResponse returns isSai
   helpers.request.setMacro.should.have.been.calledWith(t.context.req, mockParseAskYesNoResponse);
   message.updateMacro.should.have.been.calledWith(mockParseAskYesNoResponse);
 });
-
 
 test('parseAskYesNoResponse does not update macro if parseAskYesNoResponse does not return saidYes or saidNo', async (t) => {
   const mockParseAskYesNoResponse = 'dragon';
@@ -434,6 +491,16 @@ test('setConversation should not call setLastOutboundMessage does not exist', (t
 
   requestHelper.setConversation(t.context.req, newConversation);
   requestHelper.setLastOutboundMessage.should.not.have.been.called;
+});
+
+// setDraftSubmission
+test('setDraftSubmission should return boolean of whether req.draftSubmission defined', (t) => {
+  const draftSubmission = draftSubmissionFactory.getValidNewDraftSubmission();
+
+  requestHelper.setDraftSubmission(t.context.req, draftSubmission);
+  t.context.req.draftSubmission.should.deep.equal(draftSubmission);
+  helpers.analytics.addCustomAttributes
+    .should.have.been.calledWith({ draftSubmissionId: draftSubmission.id });
 });
 
 // setKeyword

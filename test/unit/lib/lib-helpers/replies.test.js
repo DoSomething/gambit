@@ -190,6 +190,11 @@ test('sendReply(): should call sendErrorResponse on failure', async (t) => {
   helpers.sendErrorResponse.should.have.been.called;
 });
 
+test('askCaption(): should call sendReplyWithTopicTemplate', async (t) => {
+  const template = templates.topicTemplates.askCaption;
+  await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
+});
+
 test('askPhoto(): should call sendReplyWithTopicTemplate', async (t) => {
   const template = templates.topicTemplates.askPhoto;
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
@@ -227,6 +232,11 @@ test('completedTextPost(): should call sendReplyWithTopicTemplate', async (t) =>
 
 test('invalidAskYesNoResponse(): should call sendReplyWithTopicTemplate', async (t) => {
   const template = templates.topicTemplates.invalidAskYesNoResponse;
+  await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
+});
+
+test('invalidCaption(): should call sendReplyWithTopicTemplate', async (t) => {
+  const template = templates.topicTemplates.invalidCaption;
   await assertSendingReplyWithTopicTemplate(t.context.req, t.context.res, template);
 });
 

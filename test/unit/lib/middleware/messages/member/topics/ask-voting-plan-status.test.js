@@ -18,7 +18,7 @@ chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const askVotingPlanStatusCatchAll = require('../../../../../../../lib/middleware/messages/member/topics/askVotingPlanStatus');
+const askVotingPlanStatusCatchAll = require('../../../../../../../lib/middleware/messages/member/topics/ask-voting-plan-status');
 // stubs
 const askVotingPlanStatus = broadcastFactory.getValidAskVotingPlanStatus();
 const messageText = stubs.getRandomMessageText();
