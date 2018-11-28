@@ -263,28 +263,3 @@ test('getTransitionTemplateName returns rivescript template if config.types unde
   const result = topicHelper.getTransitionTemplateName(topic);
   result.should.equal(templateConfig.templatesMap.rivescriptReply);
 });
-
-// getTransitionTemplateText
-test('getTransitionTemplateText returns askText text for textPostConfig topics', () => {
-  const topic = topicFactory.getValidTextPostConfig();
-  const result = topicHelper.getTransitionTemplateText(topic);
-  result.should.equal(topic.templates.askText.text);
-});
-
-test('getTransitionTemplateText returns startExternalPost text for externalPostConfig topics ', () => {
-  const topic = topicFactory.getValidExternalPostConfig();
-  const result = topicHelper.getTransitionTemplateText(topic);
-  result.should.equal(topic.templates.startExternalPost.text);
-});
-
-test('getTransitionTemplateText returns startPhotoPost text for photoPostConfig topics ', () => {
-  const topic = topicFactory.getValidPhotoPostConfig();
-  const result = topicHelper.getTransitionTemplateText(topic);
-  result.should.equal(topic.templates.startPhotoPost.text);
-});
-
-test('getTransitionTemplateText returns null if topic type not externalPostConfig, photoPostConfig, or textPostConfig', (t) => {
-  const topic = topicFactory.getValidAutoReply();
-  const result = topicHelper.getTransitionTemplateText(topic);
-  t.is(result, null);
-});
