@@ -150,9 +150,10 @@ test('deleteDraftSubmission deletes the DB document for req.draftSubmission.id',
 // executeInboundTopicChange
 test('executeInboundTopicChange get topic, create signup if topic has active campaign, and return changeTopic', async (t) => {
   const keyword = 'dragon';
+  const platform = stubs.getPlatform();
   t.context.req.rivescriptReplyTopicId = stubs.getContentfulId();
   t.context.req.macro = stubs.getRandomWord();
-  t.context.req.platform = stubs.getPlatform();
+  t.context.req.platform = platform;
   sandbox.stub(requestHelper, 'changeTopic')
     .returns(Promise.resolve(true));
   sandbox.stub(helpers.topic, 'hasActiveCampaign')
@@ -165,12 +166,7 @@ test('executeInboundTopicChange get topic, create signup if topic has active cam
   await requestHelper.executeInboundTopicChange(t.context.req, topic, keyword);
 
   helpers.user.fetchOrCreateSignup
-    .should.have.been.calledWith(t.context.req.user, {
-      campaignId: topic.campaign.id,
-      campaignRunId: topic.campaign.currentCampaignRun.id,
-      source: t.context.req.platform,
-      details: keyword,
-    });
+    .should.have.been.calledWith(t.context.req.user, topic.campaign, platform, keyword);
   requestHelper.changeTopic
     .should.have.been.calledWith(t.context.req, topic);
 });
