@@ -24,8 +24,9 @@ const sandbox = sinon.sandbox.create();
 
 // stubs
 const stubs = require('../../../helpers/stubs');
-const conversationFactory = require('../../../helpers/factories/conversation');
 const campaignFactory = require('../../../helpers/factories/campaign');
+const conversationFactory = require('../../../helpers/factories/conversation');
+const draftSubmissionFactory = require('../../../helpers/factories/draftSubmission');
 const messageFactory = require('../../../helpers/factories/message');
 const userFactory = require('../../../helpers/factories/user');
 
@@ -55,24 +56,24 @@ test.afterEach((t) => {
 // createPhotoPost
 test('createPhotoPost passes user.id, campaignId, campaignRunId, file, quantity, source, text, and whyParticipated args to rogue.createSignup', async () => {
   const file = stubs.getRandomMessageText();
-  const quantity = 240;
-  const text = stubs.getRandomMessageText();
-  const whyParticipated = stubs.getRandomMessageText();
+  const draftSubmission = draftSubmissionFactory.getValidCompletePhotoPostDraftSubmission();
+  const values = draftSubmission.values;
   sandbox.stub(rogue, 'getClient')
     .returns({ photoPostCreation: { fileProperty: 'file' } });
-  const args = { campaignId, campaignRunId, file, quantity, source, text, whyParticipated };
+  sandbox.stub(helpers.util, 'fetchImageFileFromUrl')
+    .returns(Promise.resolve(file));
 
-  const result = await userHelper.createPhotoPost(mockUser, args);
+  const result = await userHelper.createPhotoPost(mockUser, campaign, source, values);
   rogue.createPost.should.have.been.calledWith({
-    campaign_id: campaignId,
-    campaign_run_id: campaignRunId,
+    campaign_id: campaign.id,
+    campaign_run_id: campaign.currentCampaignRun.id,
     file,
-    quantity,
+    quantity: values.quantity,
     northstar_id: mockUser.id,
     source,
-    text,
+    text: values.caption,
     type: config.posts.photo.type,
-    why_participated: whyParticipated,
+    why_participated: values.whyParticipated,
   });
   result.should.deep.equal(mockPost);
 });
