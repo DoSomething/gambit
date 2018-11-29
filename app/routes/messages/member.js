@@ -5,6 +5,10 @@ const express = require('express');
 const router = express.Router();
 
 // Middleware configs
+const draftCaptionConfig = require('../../../config/lib/middleware/messages/member/topics/posts/photo/draft-caption');
+const draftPhotoConfig = require('../../../config/lib/middleware/messages/member/topics/posts/photo/draft-photo');
+const draftQuantityConfig = require('../../../config/lib/middleware/messages/member/topics/posts/photo/draft-quantity');
+const draftWhyParticipatedConfig = require('../../../config/lib/middleware/messages/member/topics/posts/photo/draft-why-participated');
 const getUserConfig = require('../../../config/lib/middleware/messages/member/user-get');
 const loadOutboundMessageConfig = require('../../../config/lib/middleware/messages/member/message-outbound');
 
@@ -93,10 +97,10 @@ router.use(createTextPostMiddleware());
 // Handles photo posts.
 router.use(legacyPhotoPostMiddleware());
 router.use(createDraftPhotoPostMiddleware());
-router.use(draftQuantityPhotoPostMiddleware());
-router.use(draftPhotoPhotoPostMiddleware());
-router.use(draftCaptionPhotoPostMiddleware());
-router.use(draftWhyParticipatedPhotoPostMiddleware());
+router.use(draftQuantityPhotoPostMiddleware(draftQuantityConfig));
+router.use(draftPhotoPhotoPostMiddleware(draftPhotoConfig));
+router.use(draftCaptionPhotoPostMiddleware(draftCaptionConfig));
+router.use(draftWhyParticipatedPhotoPostMiddleware(draftWhyParticipatedConfig));
 router.use(createPhotoPostMiddleware());
 
 // Sanity check for nothing this far matched.
