@@ -14,6 +14,7 @@ const stubs = require('../../../../../../../../helpers/stubs');
 
 const mockDraftValueKey = stubs.getRandomWord();
 const mockConfig = { draftValueKey: mockDraftValueKey };
+const mockInboundMessageText = stubs.getRandomMessageText();
 
 chai.should();
 chai.use(sinonChai);
@@ -26,11 +27,10 @@ const sandbox = sinon.sandbox.create();
 test.beforeEach((t) => {
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(underscore.noop);
-  sandbox.stub(helpers.replies, 'askWhyParticipated')
-    .returns(underscore.noop);
   sandbox.stub(helpers.replies, 'invalidWhyParticipated')
     .returns(underscore.noop);
   t.context.req = httpMocks.createRequest();
+  t.context.req.inboundMessageText = mockInboundMessageText;
   t.context.res = httpMocks.createResponse();
 });
 
@@ -50,7 +50,6 @@ test('draftWhyParticipated should call next if topic is not photo post', async (
 
   helpers.topic.isPhotoPostConfig.should.have.been.calledWith(t.context.req.topic);
   next.should.have.been.called;
-  helpers.replies.askWhyParticipated.should.not.have.been.called;
   helpers.replies.invalidWhyParticipated.should.not.have.been.called;
 });
 
@@ -68,7 +67,6 @@ test('draftWhyParticipated should call next if request hasSignupWithWhyParticipa
   helpers.topic.isPhotoPostConfig.should.have.been.calledWith(t.context.req.topic);
   helpers.request.hasSignupWithWhyParticipated.should.have.been.calledWith(t.context.req);
   next.should.have.been.called;
-  helpers.replies.askWhyParticipated.should.not.have.been.called;
   helpers.replies.invalidWhyParticipated.should.not.have.been.called;
 });
 
@@ -80,7 +78,7 @@ test('draftWhyParticipated should call next if request not hasSignupWithWhyParti
   sandbox.stub(helpers.request, 'hasSignupWithWhyParticipated')
     .returns(Promise.resolve(false));
   sandbox.stub(helpers.request, 'hasDraftSubmissionValue')
-    .returns(Promise.resolve(true));
+    .returns(true);
 
   // test
   await middleware(t.context.req, t.context.res, next);
@@ -89,8 +87,60 @@ test('draftWhyParticipated should call next if request not hasSignupWithWhyParti
   helpers.request.hasSignupWithWhyParticipated.should.have.been.calledWith(t.context.req);
   helpers.request.hasDraftSubmissionValue.should.have.been.calledWith(t.context.req);
   next.should.have.been.called;
-  helpers.replies.askWhyParticipated.should.not.have.been.called;
   helpers.replies.invalidWhyParticipated.should.not.have.been.called;
+});
+
+test('draftWhyParticipated calls saveDraftSubmissionValue and next if request not hasSignupWithWhyParticipated, does not have draft value, and isValidTextFieldValue', async (t) => {
+  const next = sinon.stub();
+  const middleware = draftWhyParticipated(mockConfig);
+  sandbox.stub(helpers.topic, 'isPhotoPostConfig')
+    .returns(true);
+  sandbox.stub(helpers.request, 'hasSignupWithWhyParticipated')
+    .returns(Promise.resolve(false));
+  sandbox.stub(helpers.request, 'hasDraftSubmissionValue')
+    .returns(false);
+  sandbox.stub(helpers.request, 'saveDraftSubmissionValue')
+    .returns(Promise.resolve());
+  sandbox.stub(helpers.util, 'isValidTextFieldValue')
+    .returns(true);
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+
+  helpers.topic.isPhotoPostConfig.should.have.been.calledWith(t.context.req.topic);
+  helpers.request.hasSignupWithWhyParticipated.should.have.been.calledWith(t.context.req);
+  helpers.request.hasDraftSubmissionValue.should.have.been.calledWith(t.context.req);
+  helpers.util.isValidTextFieldValue.should.have.been.calledWith(t.context.req.inboundMessageText);
+  helpers.request.saveDraftSubmissionValue
+    .should.have.been.calledWith(t.context.req, mockConfig.draftValueKey, mockInboundMessageText);
+  next.should.have.been.called;
+  helpers.replies.invalidWhyParticipated.should.not.have.been.called;
+});
+
+test('draftWhyParticipated sends invalidWhyParticipated if request not hasSignupWithWhyParticipated, does not have draft value, and not isValidTextFieldValue', async (t) => {
+  const next = sinon.stub();
+  const middleware = draftWhyParticipated(mockConfig);
+  sandbox.stub(helpers.topic, 'isPhotoPostConfig')
+    .returns(true);
+  sandbox.stub(helpers.request, 'hasSignupWithWhyParticipated')
+    .returns(Promise.resolve(false));
+  sandbox.stub(helpers.request, 'hasDraftSubmissionValue')
+    .returns(false);
+  sandbox.stub(helpers.request, 'saveDraftSubmissionValue')
+    .returns(Promise.resolve());
+  sandbox.stub(helpers.util, 'isValidTextFieldValue')
+    .returns(false);
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+
+  helpers.topic.isPhotoPostConfig.should.have.been.calledWith(t.context.req.topic);
+  helpers.request.hasSignupWithWhyParticipated.should.have.been.calledWith(t.context.req);
+  helpers.request.hasDraftSubmissionValue.should.have.been.calledWith(t.context.req);
+  helpers.util.isValidTextFieldValue.should.have.been.calledWith(t.context.req.inboundMessageText);
+  helpers.request.saveDraftSubmissionValue.should.not.have.been.called;
+  next.should.not.have.been.called;
+  helpers.replies.invalidWhyParticipated.should.have.been.calledWith(t.context.req, t.context.res);
 });
 
 test('draftWhyParticipated should call sendErrorResponse if error is caught', async (t) => {
