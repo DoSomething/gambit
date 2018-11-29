@@ -12,6 +12,9 @@ const underscore = require('underscore');
 const helpers = require('../../../../../../../../../lib/helpers');
 const stubs = require('../../../../../../../../helpers/stubs');
 
+const mockDraftValueKey = stubs.getRandomWord();
+const mockConfig = { draftValueKey: mockDraftValueKey };
+
 chai.should();
 chai.use(sinonChai);
 
@@ -38,7 +41,7 @@ test.afterEach((t) => {
 
 test('draftWhyParticipated should call next if topic is not photo post', async (t) => {
   const next = sinon.stub();
-  const middleware = draftWhyParticipated();
+  const middleware = draftWhyParticipated(mockConfig);
   sandbox.stub(helpers.topic, 'isPhotoPostConfig')
     .returns(false);
 
@@ -53,7 +56,7 @@ test('draftWhyParticipated should call next if topic is not photo post', async (
 
 test('draftWhyParticipated should call next if request hasSignupWithWhyParticipated', async (t) => {
   const next = sinon.stub();
-  const middleware = draftWhyParticipated();
+  const middleware = draftWhyParticipated(mockConfig);
   sandbox.stub(helpers.topic, 'isPhotoPostConfig')
     .returns(true);
   sandbox.stub(helpers.request, 'hasSignupWithWhyParticipated')
@@ -71,7 +74,7 @@ test('draftWhyParticipated should call next if request hasSignupWithWhyParticipa
 
 test('draftWhyParticipated should call next if request not hasSignupWithWhyParticipated and request hasDraftSubmissionValue', async (t) => {
   const next = sinon.stub();
-  const middleware = draftWhyParticipated();
+  const middleware = draftWhyParticipated(mockConfig);
   sandbox.stub(helpers.topic, 'isPhotoPostConfig')
     .returns(true);
   sandbox.stub(helpers.request, 'hasSignupWithWhyParticipated')
@@ -92,7 +95,7 @@ test('draftWhyParticipated should call next if request not hasSignupWithWhyParti
 
 test('draftWhyParticipated should call sendErrorResponse if error is caught', async (t) => {
   const next = sinon.stub();
-  const middleware = draftWhyParticipated();
+  const middleware = draftWhyParticipated(mockConfig);
   const error = stubs.getError();
   sandbox.stub(helpers.topic, 'isPhotoPostConfig')
     .throws(error);
