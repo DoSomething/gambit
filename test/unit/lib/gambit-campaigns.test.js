@@ -18,7 +18,6 @@ const sandbox = sinon.sandbox.create();
 const gambitCampaigns = require('../../../lib/gambit-campaigns');
 
 // stubs
-const stubs = require('../../helpers/stubs');
 const broadcastFactory = require('../../helpers/factories/broadcast');
 const campaignFactory = require('../../helpers/factories/campaign');
 const defaultTopicTriggerFactory = require('../../helpers/factories/defaultTopicTrigger');
@@ -68,29 +67,6 @@ test('executeGet should call superagent.get with apiUrl and parse body', async (
   gambitCampaigns.apiUrl.should.have.been.calledWith(endpoint);
   superagent.get.should.have.been.calledWith(apiUrl);
 });
-
-// executePost
-test('executePost should call superagent.post with apiUrl and parse body', async () => {
-  const endpoint = 'dragons';
-  const apiUrl = `${config.clientOptions.apiUrl}/${endpoint}`;
-  sandbox.stub(gambitCampaigns, 'apiUrl')
-    .returns(apiUrl);
-  sandbox.stub(superagent, 'post')
-    .callsFake(() => ({
-      // TODO: These nested functions should be stubbed to verify args passed.
-      set: () => { // eslint-disable-line arrow-body-style
-        return {
-          send: () => Promise.resolve({ body: fetchSuccess }),
-        };
-      },
-    }));
-
-  const result = await gambitCampaigns.executePost(endpoint, queryParams);
-  result.should.equal(fetchSuccess);
-  gambitCampaigns.apiUrl.should.have.been.calledWith(endpoint);
-  superagent.post.should.have.been.calledWith(apiUrl);
-});
-
 
 // fetchBroadcastById
 test('fetchBroadcastById should return result of a successful GET /broadcasts/:id request', async () => {
@@ -178,17 +154,4 @@ test('fetchTopicById should return result of a successful GET /topics/:id reques
   result.should.deep.equal(topic);
   const endpoint = `${config.endpoints.topics}/${topic.id}`;
   gambitCampaigns.executeGet.should.have.been.calledWith(endpoint);
-});
-
-// postCampaignActivity
-test('postCampaignActivity should return result of a successful POST /campaignActivity request', async () => {
-  const requestData = { text: stubs.getRandomMessageText() };
-  const responseData = { abc: 123 };
-  sandbox.stub(gambitCampaigns, 'executePost')
-    .returns(Promise.resolve({ data: responseData }));
-
-  const result = await gambitCampaigns.postCampaignActivity(requestData);
-  result.should.deep.equal(responseData);
-  const endpoint = config.endpoints.campaignActivity;
-  gambitCampaigns.executePost.should.have.been.calledWith(endpoint, requestData);
 });

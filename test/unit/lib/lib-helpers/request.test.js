@@ -11,7 +11,6 @@ const underscore = require('underscore');
 const DraftSubmission = require('../../../../app/models/DraftSubmission');
 const helpers = require('../../../../lib/helpers');
 const logger = require('../../../../lib/logger');
-const gambitCampaigns = require('../../../../lib/gambit-campaigns');
 const stubs = require('../../../helpers/stubs');
 const campaignFactory = require('../../../helpers/factories/campaign');
 const draftSubmissionFactory = require('../../../helpers/factories/draftSubmission');
@@ -419,20 +418,6 @@ test('parseAskYesNoResponse does not update macro if parseAskYesNoResponse does 
   helpers.macro.isSaidNo.should.have.been.calledWith(mockParseAskYesNoResponse);
   helpers.request.setMacro.should.not.have.been.called;
   message.updateMacro.should.not.have.been.called;
-});
-
-// postCampaignActivity
-test('postCampaignActivity should post getCampaignActivityPayload as campaignActivity', async () => {
-  const postData = { text: stubs.getRandomMessageText() };
-  const postResult = { data: 123 };
-  sandbox.stub(requestHelper, 'getCampaignActivityPayload')
-    .returns(postData);
-  sandbox.stub(gambitCampaigns, 'postCampaignActivity')
-    .returns(Promise.resolve(postResult));
-
-  const result = await requestHelper.postCampaignActivity();
-  gambitCampaigns.postCampaignActivity.should.have.been.calledWith(postData);
-  result.should.deep.equal(postResult);
 });
 
 // isSaidNoMacro
