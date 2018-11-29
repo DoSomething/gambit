@@ -148,10 +148,9 @@ test('fetchOrCreateSignup returns fetchSignup result if exists', async () => {
     .returns(Promise.resolve(mockSignup));
   sandbox.stub(userHelper, 'createSignup')
     .returns(Promise.resolve({ id: stubs.getRandomWord() }));
-  const args = { campaignId: stubs.getCampaignId() };
 
-  const result = await userHelper.fetchOrCreateSignup(mockUser, args);
-  userHelper.fetchSignup.should.have.been.called; // With(mockUser, args.campaignId);
+  const result = await userHelper.fetchOrCreateSignup(mockUser, campaign);
+  userHelper.fetchSignup.should.have.been.calledWith(mockUser, campaign);
   userHelper.createSignup.should.not.have.been.called;
   result.should.deep.equal(mockSignup);
 });
