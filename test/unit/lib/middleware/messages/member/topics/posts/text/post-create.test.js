@@ -14,7 +14,11 @@ const stubs = require('../../../../../../../../helpers/stubs');
 const topicFactory = require('../../../../../../../../helpers/factories/topic');
 const userFactory = require('../../../../../../../../helpers/factories/user');
 
+const mockInboundMessageText = stubs.getRandomMessageText;
+const mockPlatform = stubs.getPlatform();
 const mockPost = { id: 23121 };
+const mockTopic = topicFactory.getValidTextPostConfig();
+const mockUser = userFactory.getValidUser();
 
 chai.should();
 chai.use(sinonChai);
@@ -29,10 +33,10 @@ test.beforeEach((t) => {
     .returns(underscore.noop);
   t.context.req = httpMocks.createRequest();
   t.context.res = httpMocks.createResponse();
-  t.context.req.topic = topicFactory.getValidTextPostConfig();
-  t.context.req.user = userFactory.getValidUser();
-  t.context.req.inboundMessageText = stubs.getRandomMessageText();
-  t.context.req.platform = stubs.getPlatform();
+  t.context.req.inboundMessageText = mockInboundMessageText;
+  t.context.req.platform = mockPlatform;
+  t.context.req.topic = mockTopic;
+  t.context.req.user = mockUser;
 });
 
 test.afterEach((t) => {
@@ -80,9 +84,10 @@ test('textPostCatchAll should send invalidText reply if inboundMessageText is no
   helpers.replies.completedTextPost.should.not.have.been.called;
 });
 
-test('textPostCatchAll should send create text post and completedTextPost reply if inboundMessageText is valid text post', async (t) => {
+test('textPostCatchAll should call createTextPost and send completedTextPost if inboundMessageText is valid text post', async (t) => {
   const next = sinon.stub();
   const middleware = textPostCatchAll();
+  const mockCampaign = mockTopic.campaign;
   sandbox.stub(helpers.topic, 'isTextPostConfig')
     .returns(true);
   sandbox.stub(helpers.util, 'isValidTextFieldValue')
@@ -99,12 +104,8 @@ test('textPostCatchAll should send create text post and completedTextPost reply 
 
   helpers.topic.isTextPostConfig.should.have.been.calledWith(t.context.req.topic);
   next.should.not.have.been.called;
-  helpers.user.createTextPost.should.have.been.calledWith(t.context.req.user, {
-    campaignId: t.context.req.topic.campaign.id,
-    campaignRunId: t.context.req.topic.campaign.currentCampaignRun.id,
-    source: t.context.req.platform,
-    text: t.context.req.inboundMessageText,
-  });
+  helpers.user.createTextPost
+    .should.have.been.calledWith(mockUser, mockCampaign, mockPlatform, mockInboundMessageText);
   helpers.replies.invalidText.should.not.have.been.called;
   helpers.replies.completedTextPost.should.have.been.calledWith(t.context.req, t.context.res);
 });

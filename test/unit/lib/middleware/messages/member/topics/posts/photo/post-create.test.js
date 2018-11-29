@@ -21,6 +21,7 @@ chai.use(sinonChai);
 const completeDraft = draftSubmissionFactory.getValidCompletePhotoPostDraftSubmission();
 const mockPost = { id: stubs.getPostId() };
 const mockTopic = topicFactory.getValidTopic();
+const mockUser = userFactory.getValidUser();
 
 // module to be tested
 const createPhotoPost = require('../../../../../../../../../lib/middleware/messages/member/topics/posts/photo/post-create');
@@ -33,7 +34,7 @@ test.beforeEach((t) => {
   t.context.req = httpMocks.createRequest();
   t.context.res = httpMocks.createResponse();
   t.context.req.topic = topicFactory.getValidPhotoPostConfig();
-  t.context.req.user = userFactory.getValidUser();
+  t.context.req.user = mockUser;
   t.context.req.inboundMessageText = stubs.getRandomMessageText();
   t.context.req.platform = stubs.getPlatform();
 });
@@ -104,11 +105,8 @@ test('createPhotoPost should call sendErrorResponse if createPhotoPost fails', a
 test('createPhotoPost should call completedPhotoPost on createPhotoPost success', async (t) => {
   const next = sinon.stub();
   const middleware = createPhotoPost();
-  const file = stubs.getRandomMessageText();
   sandbox.stub(helpers.topic, 'isPhotoPostConfig')
     .returns(true);
-  sandbox.stub(helpers.util, 'fetchImageFileFromUrl')
-    .returns(Promise.resolve(file));
   sandbox.stub(helpers.user, 'createPhotoPost')
     .returns({ data: Promise.resolve(mockPost) });
   sandbox.stub(helpers.request, 'deleteDraftSubmission')
@@ -116,22 +114,15 @@ test('createPhotoPost should call completedPhotoPost on createPhotoPost success'
   sandbox.stub(helpers.replies, 'completedPhotoPost')
     .returns(underscore.noop);
   t.context.req.draftSubmission = completeDraft;
+  const values = completeDraft.values;
 
   // test
   await middleware(t.context.req, t.context.res, next);
 
   helpers.topic.isPhotoPostConfig.should.have.been.calledWith(t.context.req.topic);
   next.should.not.have.been.called;
-  helpers.util.fetchImageFileFromUrl.should.have.been.calledWith(completeDraft.values.url);
-  helpers.user.createPhotoPost.should.have.been.calledWith(t.context.req.user, {
-    campaignId: mockTopic.campaign.id,
-    campaignRunId: mockTopic.campaign.currentCampaignRun.id,
-    file,
-    quantity: completeDraft.values.quantity,
-    source: t.context.req.platform,
-    text: completeDraft.values.caption,
-    whyParticipated: completeDraft.values.whyParticipated,
-  });
+  helpers.user.createPhotoPost
+    .should.have.been.calledWith(mockUser, mockTopic.campaign, t.context.req.platform, values);
   helpers.request.deleteDraftSubmission.should.have.been.calledWith(t.context.req);
   helpers.replies.completedPhotoPost.should.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
@@ -140,12 +131,9 @@ test('createPhotoPost should call completedPhotoPost on createPhotoPost success'
 test('createPhotoPost should call sendErrorResponse on createPhotoPost error', async (t) => {
   const next = sinon.stub();
   const middleware = createPhotoPost();
-  const file = stubs.getRandomMessageText();
   const error = stubs.getError();
   sandbox.stub(helpers.topic, 'isPhotoPostConfig')
     .returns(true);
-  sandbox.stub(helpers.util, 'fetchImageFileFromUrl')
-    .returns(Promise.resolve(file));
   sandbox.stub(helpers.user, 'createPhotoPost')
     .returns(Promise.reject(error));
   sandbox.stub(helpers.request, 'deleteDraftSubmission')
@@ -159,7 +147,6 @@ test('createPhotoPost should call sendErrorResponse on createPhotoPost error', a
 
   helpers.topic.isPhotoPostConfig.should.have.been.calledWith(t.context.req.topic);
   next.should.not.have.been.called;
-  helpers.util.fetchImageFileFromUrl.should.have.been.calledWith(completeDraft.values.url);
   helpers.user.createPhotoPost.should.have.been.called;
   helpers.request.deleteDraftSubmission.should.not.have.been.called;
   helpers.replies.completedPhotoPost.should.not.have.been.called;
