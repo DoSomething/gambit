@@ -27,14 +27,4 @@ draftSubmissionSchema.index({
   unique: true,
 });
 
-/**
- * @param {Object} valuesObject
- * @return {Promise}
- */
-draftSubmissionSchema.methods.saveValues = function (valuesObject) {
-  this.values = Object.assign(this.values, valuesObject);
-  this.markModified('values');
-  return this.save();
-};
-
 module.exports = mongoose.model('DraftSubmission', draftSubmissionSchema);

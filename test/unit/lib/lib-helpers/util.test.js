@@ -90,11 +90,13 @@ test('containsAtLeastOneLetter should return true when string has at least one l
   t.falsy(utilHelper.containsAtLeastOneLetter(null));
 });
 
-// isValidTextPost
-test('isValidTextPost should return true if trimmed string arg has letters and length greater than 2', (t) => {
-  t.truthy(utilHelper.isValidTextPost('1 a'));
-  t.falsy(utilHelper.isValidTextPost('a'));
-  t.falsy(utilHelper.isValidTextPost('1231231'));
+// isValidTextFieldValue
+test('isValidTextFieldValue should return true if trimmed string arg has letters and length greater than 2', (t) => {
+  t.truthy(utilHelper.isValidTextFieldValue('1 a'));
+  t.falsy(utilHelper.isValidTextFieldValue('a'));
+  t.falsy(utilHelper.isValidTextFieldValue('1231231'));
+  t.falsy(utilHelper.isValidTextFieldValue());
+  t.falsy(utilHelper.isValidTextFieldValue(null));
 });
 
 // fetchImageFileFromUrl
