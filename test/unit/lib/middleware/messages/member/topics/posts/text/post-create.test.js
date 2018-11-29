@@ -64,7 +64,7 @@ test('textPostCatchAll should send invalidText reply if inboundMessageText is no
   const middleware = textPostCatchAll();
   sandbox.stub(helpers.topic, 'isTextPostConfig')
     .returns(true);
-  sandbox.stub(helpers.util, 'isValidTextPost')
+  sandbox.stub(helpers.util, 'isValidTextFieldValue')
     .returns(false);
   sandbox.stub(helpers.replies, 'invalidText')
     .returns(underscore.noop);
@@ -85,7 +85,7 @@ test('textPostCatchAll should send create text post and completedTextPost reply 
   const middleware = textPostCatchAll();
   sandbox.stub(helpers.topic, 'isTextPostConfig')
     .returns(true);
-  sandbox.stub(helpers.util, 'isValidTextPost')
+  sandbox.stub(helpers.util, 'isValidTextFieldValue')
     .returns(true);
   sandbox.stub(helpers.replies, 'invalidText')
     .returns(underscore.noop);
@@ -115,7 +115,7 @@ test('textPostCatchAll should send error response post if completedTextPost repl
   const error = stubs.getError();
   sandbox.stub(helpers.topic, 'isTextPostConfig')
     .returns(true);
-  sandbox.stub(helpers.util, 'isValidTextPost')
+  sandbox.stub(helpers.util, 'isValidTextFieldValue')
     .returns(true);
   sandbox.stub(helpers.replies, 'invalidText')
     .returns(underscore.noop);
