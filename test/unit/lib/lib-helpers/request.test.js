@@ -479,14 +479,6 @@ test('setDraftSubmission should return boolean of whether req.draftSubmission de
     .should.have.been.calledWith({ draftSubmissionId: draftSubmission.id });
 });
 
-// setKeyword
-test('setKeyword should inject a keyword to req', (t) => {
-  const keyword = stubs.getRandomWord();
-  requestHelper.setKeyword(t.context.req, keyword);
-  t.context.req.keyword.should.equal(keyword);
-  helpers.analytics.addCustomAttributes.should.have.been.calledWith({ keyword });
-});
-
 test('setLastOutboundMessage should inject lastOutbound properties to req', (t) => {
   requestHelper.setLastOutboundMessage(t.context.req, message);
   t.context.req.lastOutboundTemplate.should.equal(message.template);
