@@ -32,6 +32,8 @@ const sandbox = sinon.sandbox.create();
 const campaignId = stubs.getCampaignId();
 const userId = stubs.getUserId();
 const platformUserId = stubs.getMobileNumber();
+// TODO: Add signup factory and refactor tests that reference this signupId const.
+const signupId = stubs.getCampaignId();
 const conversation = conversationFactory.getValidConversation();
 const message = conversation.lastOutboundMessage;
 const topic = topicFactory.getValidTopic();
@@ -150,9 +152,10 @@ test('deleteDraftSubmission deletes the DB document for req.draftSubmission.id',
 // executeInboundTopicChange
 test('executeInboundTopicChange get topic, create signup if topic has active campaign, and return changeTopic', async (t) => {
   const keyword = 'dragon';
+  const platform = stubs.getPlatform();
   t.context.req.rivescriptReplyTopicId = stubs.getContentfulId();
   t.context.req.macro = stubs.getRandomWord();
-  t.context.req.platform = stubs.getPlatform();
+  t.context.req.platform = platform;
   sandbox.stub(requestHelper, 'changeTopic')
     .returns(Promise.resolve(true));
   sandbox.stub(helpers.topic, 'hasActiveCampaign')
@@ -165,12 +168,7 @@ test('executeInboundTopicChange get topic, create signup if topic has active cam
   await requestHelper.executeInboundTopicChange(t.context.req, topic, keyword);
 
   helpers.user.fetchOrCreateSignup
-    .should.have.been.calledWith(t.context.req.user, {
-      campaignId: topic.campaign.id,
-      campaignRunId: topic.campaign.currentCampaignRun.id,
-      source: t.context.req.platform,
-      details: keyword,
-    });
+    .should.have.been.calledWith(t.context.req.user, topic.campaign, platform, keyword);
   requestHelper.changeTopic
     .should.have.been.calledWith(t.context.req, topic);
 });
@@ -288,6 +286,43 @@ test('hasDraftSubmission should return boolean of whether req.draftSubmission de
   t.truthy(requestHelper.hasDraftSubmission(t.context.req));
   t.context.req.draftSubmission = null;
   t.falsy(requestHelper.hasDraftSubmission(t.context.req));
+});
+
+// hasDraftSubmissionValue
+test('hasDraftSubmissionValue should return boolean of whether req.draftSubmission.values has property for key', (t) => {
+  const key = 'caption';
+  t.context.req.draftSubmission = draftSubmissionFactory.getValidNewDraftSubmission();
+  t.falsy(requestHelper.hasDraftSubmissionValue(t.context.req, key));
+  t.context.req.draftSubmission = draftSubmissionFactory.getValidCompletePhotoPostDraftSubmission();
+  t.truthy(requestHelper.hasDraftSubmission(t.context.req, key));
+});
+
+// hasSignupWithWhyParticipated
+test('hasSignupWithWhyParticipated should return true if fetchSignup result has why_participated', async (t) => {
+  t.context.req.user = userFactory.getValidUser();
+  t.context.req.topic = topicFactory.getValidPhotoPostConfig();
+  sandbox.stub(helpers.user, 'fetchSignup')
+    .returns(Promise.resolve({
+      id: signupId,
+      why_participated: stubs.getRandomMessageText(),
+    }));
+
+  const result = await requestHelper.hasSignupWithWhyParticipated(t.context.req);
+  t.truthy(result);
+  helpers.user.fetchSignup
+    .should.have.been.calledWith(t.context.req.user, t.context.req.topic.campaign);
+});
+
+test('hasSignupWithWhyParticipated should return false if fetchSignup result why_participated undefined', async (t) => {
+  t.context.req.user = userFactory.getValidUser();
+  t.context.req.topic = topicFactory.getValidPhotoPostConfig();
+  sandbox.stub(helpers.user, 'fetchSignup')
+    .returns(Promise.resolve({ id: signupId }));
+
+  const result = await requestHelper.hasSignupWithWhyParticipated(t.context.req);
+  t.falsy(result);
+  helpers.user.fetchSignup
+    .should.have.been.calledWith(t.context.req.user, t.context.req.topic.campaign);
 });
 
 // isStartCommand
@@ -418,6 +453,24 @@ test('isSaidYesMacro returns whether req.askYesNoResponse equals yes', (t) => {
   t.falsy(requestHelper.isSaidYesMacro(t.context.req));
   t.context.req.macro = helpers.macro.macros.votingPlanStatusVoting();
   t.falsy(requestHelper.isSaidYesMacro(t.context.req));
+});
+
+// saveDraftSubmissionValue
+test('saveDraftSubmissionValue should add a new key value pair to existing req.draftSubmission.values', (t) => {
+  const draft = draftSubmissionFactory.getValidCompletePhotoPostDraftSubmission();
+  sandbox.spy(draft, 'markModified');
+  sandbox.spy(draft, 'save');
+  t.context.req.draftSubmission = draft;
+  const mockKey = stubs.getRandomWord();
+  const mockValue = stubs.getRandomMessageText();
+
+  requestHelper.saveDraftSubmissionValue(t.context.req, mockKey, mockValue);
+  const keyValuePair = {};
+  keyValuePair[mockKey] = mockValue;
+  t.context.req.draftSubmission.values
+    .should.deep.equal(Object.assign(draft.values, keyValuePair));
+  draft.markModified.should.have.been.calledWith('values');
+  draft.save.should.have.been.called;
 });
 
 // setCampaign

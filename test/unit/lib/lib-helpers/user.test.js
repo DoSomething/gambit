@@ -24,12 +24,14 @@ const sandbox = sinon.sandbox.create();
 
 // stubs
 const stubs = require('../../../helpers/stubs');
+const campaignFactory = require('../../../helpers/factories/campaign');
 const conversationFactory = require('../../../helpers/factories/conversation');
+const draftSubmissionFactory = require('../../../helpers/factories/draftSubmission');
 const messageFactory = require('../../../helpers/factories/message');
 const userFactory = require('../../../helpers/factories/user');
 
+const campaign = campaignFactory.getValidCampaign();
 const campaignId = stubs.getCampaignId();
-const campaignRunId = stubs.getCampaignRunId();
 const mockPost = { id: 890332 };
 const mockSignup = { id: 251696 };
 const mockUser = userFactory.getValidUser();
@@ -53,26 +55,27 @@ test.afterEach((t) => {
 // createPhotoPost
 test('createPhotoPost passes user.id, campaignId, campaignRunId, file, quantity, source, text, and whyParticipated args to rogue.createSignup', async () => {
   const file = stubs.getRandomMessageText();
-  const quantity = 240;
-  const text = stubs.getRandomMessageText();
-  const whyParticipated = stubs.getRandomMessageText();
+  const draftSubmission = draftSubmissionFactory.getValidCompletePhotoPostDraftSubmission();
+  const values = draftSubmission.values;
   sandbox.stub(rogue, 'getClient')
     .returns({ photoPostCreation: { fileProperty: 'file' } });
-  const args = { campaignId, campaignRunId, file, quantity, source, text, whyParticipated };
+  sandbox.stub(helpers.util, 'fetchImageFileFromUrl')
+    .returns(Promise.resolve(file));
 
-  const result = await userHelper.createPhotoPost(mockUser, args);
+  const result = await userHelper.createPhotoPost(mockUser, campaign, source, values);
   rogue.createPost.should.have.been.calledWith({
-    campaign_id: campaignId,
-    campaign_run_id: campaignRunId,
+    campaign_id: campaign.id,
+    campaign_run_id: campaign.currentCampaignRun.id,
     file,
-    quantity,
+    quantity: values.quantity,
     northstar_id: mockUser.id,
     source,
-    text,
+    text: values.caption,
     type: config.posts.photo.type,
-    why_participated: whyParticipated,
+    why_participated: values.whyParticipated,
   });
   result.should.deep.equal(mockPost);
+  helpers.util.fetchImageFileFromUrl.should.have.been.calledWith(values.url);
 });
 
 // createSignup
@@ -82,11 +85,10 @@ test('createSignup passes user.id, campaignId, campaignRunId source args to rogu
   sandbox.stub(rogue, 'createSignup')
     .returns(Promise.resolve(signup));
 
-  const result = await userHelper
-    .createSignup(mockUser, { campaignId, campaignRunId, source, details });
+  const result = await userHelper.createSignup(mockUser, campaign, source, details);
   rogue.createSignup.should.have.been.calledWith({
-    campaign_id: campaignId,
-    campaign_run_id: campaignRunId,
+    campaign_id: campaign.id,
+    campaign_run_id: campaign.currentCampaignRun.id,
     northstar_id: mockUser.id,
     source,
     details,
@@ -95,14 +97,13 @@ test('createSignup passes user.id, campaignId, campaignRunId source args to rogu
 });
 
 // createTextPost
-test('createTextPost passes user.id, campaignId, campaignRunId, source, and text args to rogue.createSignup', async () => {
+test('createTextPost passes user.id, campaignId, campaignRunId, source, and text fields to rogue.createSignup', async () => {
   const text = 'test';
 
-  const result = await userHelper
-    .createTextPost(mockUser, { campaignId, campaignRunId, source, text });
+  const result = await userHelper.createTextPost(mockUser, campaign, source, text);
   rogue.createPost.should.have.been.calledWith({
-    campaign_id: campaignId,
-    campaign_run_id: campaignRunId,
+    campaign_id: campaign.id,
+    campaign_run_id: campaign.currentCampaignRun.id,
     northstar_id: mockUser.id,
     source,
     text,
@@ -135,11 +136,10 @@ test('fetchOrCreateSignup returns createSignup result if fetchSignup result is n
     .returns(Promise.resolve(null));
   sandbox.stub(userHelper, 'createSignup')
     .returns(Promise.resolve(mockSignup));
-  const args = { campaignId: stubs.getCampaignId() };
 
-  const result = await userHelper.fetchOrCreateSignup(mockUser, args);
-  userHelper.fetchSignup.should.have.calledWith(mockUser, args.campaignId);
-  userHelper.createSignup.should.have.calledWith(mockUser, args);
+  const result = await userHelper.fetchOrCreateSignup(mockUser, campaign);
+  userHelper.fetchSignup.should.have.calledWith(mockUser, campaign);
+  userHelper.createSignup.should.have.calledWith(mockUser, campaign);
   result.should.deep.equal(mockSignup);
 });
 
@@ -148,10 +148,9 @@ test('fetchOrCreateSignup returns fetchSignup result if exists', async () => {
     .returns(Promise.resolve(mockSignup));
   sandbox.stub(userHelper, 'createSignup')
     .returns(Promise.resolve({ id: stubs.getRandomWord() }));
-  const args = { campaignId: stubs.getCampaignId() };
 
-  const result = await userHelper.fetchOrCreateSignup(mockUser, args);
-  userHelper.fetchSignup.should.have.been.calledWith(mockUser, args.campaignId);
+  const result = await userHelper.fetchOrCreateSignup(mockUser, campaign);
+  userHelper.fetchSignup.should.have.been.calledWith(mockUser, campaign);
   userHelper.createSignup.should.not.have.been.called;
   result.should.deep.equal(mockSignup);
 });
@@ -273,7 +272,7 @@ test('getFetchSignupsQuery should return object for querying by userId and campa
   const result = userHelper.getFetchSignupsQuery(mockUser.id, campaignId);
   result.should.deep.equal({
     'filter[northstar_id]': mockUser.id,
-    'filter[campaign_id]': campaignId,
+    'filter[campaign_run_id]': campaignId,
   });
 });
 
