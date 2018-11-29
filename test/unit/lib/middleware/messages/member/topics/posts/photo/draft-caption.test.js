@@ -12,8 +12,7 @@ const underscore = require('underscore');
 const helpers = require('../../../../../../../../../lib/helpers');
 const stubs = require('../../../../../../../../helpers/stubs');
 
-const mockDraftValueKey = stubs.getRandomWord();
-const mockConfig = { draftValueKey: mockDraftValueKey };
+const captionKey = helpers.topic.getPhotoPostDraftSubmissionValuesMap().caption;
 const mockInboundMessageText = stubs.getRandomMessageText();
 
 chai.should();
@@ -43,7 +42,7 @@ test.afterEach((t) => {
 
 test('draftCaption should call next if topic is not photo post', async (t) => {
   const next = sinon.stub();
-  const middleware = draftCaption(mockConfig);
+  const middleware = draftCaption();
   sandbox.stub(helpers.topic, 'isPhotoPostConfig')
     .returns(false);
 
@@ -58,7 +57,7 @@ test('draftCaption should call next if topic is not photo post', async (t) => {
 
 test('draftCaption should call next if request hasDraftSubmissionValue', async (t) => {
   const next = sinon.stub();
-  const middleware = draftCaption(mockConfig);
+  const middleware = draftCaption();
   sandbox.stub(helpers.topic, 'isPhotoPostConfig')
     .returns(true);
   sandbox.stub(helpers.request, 'hasDraftSubmissionValue')
@@ -69,7 +68,7 @@ test('draftCaption should call next if request hasDraftSubmissionValue', async (
 
   helpers.topic.isPhotoPostConfig.should.have.been.calledWith(t.context.req.topic);
   helpers.request.hasDraftSubmissionValue
-    .should.have.been.calledWith(t.context.req, mockConfig.draftValueKey);
+    .should.have.been.calledWith(t.context.req, captionKey);
   next.should.have.been.called;
   helpers.replies.askWhyParticipated.should.not.have.been.called;
   helpers.replies.invalidCaption.should.not.have.been.called;
@@ -77,7 +76,7 @@ test('draftCaption should call next if request hasDraftSubmissionValue', async (
 
 test('draftCaption should call save draft value if request does not have draft value and has valid text field value, and call next if hasSignupWithWhyParticipated', async (t) => {
   const next = sinon.stub();
-  const middleware = draftCaption(mockConfig);
+  const middleware = draftCaption();
   sandbox.stub(helpers.topic, 'isPhotoPostConfig')
     .returns(true);
   sandbox.stub(helpers.request, 'hasDraftSubmissionValue')
@@ -94,10 +93,10 @@ test('draftCaption should call save draft value if request does not have draft v
 
   helpers.topic.isPhotoPostConfig.should.have.been.calledWith(t.context.req.topic);
   helpers.request.hasDraftSubmissionValue
-    .should.have.been.calledWith(t.context.req, mockConfig.draftValueKey);
+    .should.have.been.calledWith(t.context.req, captionKey);
   helpers.util.isValidTextFieldValue.should.have.been.calledWith(mockInboundMessageText);
   helpers.request.saveDraftSubmissionValue
-    .should.have.been.calledWith(t.context.req, mockConfig.draftValueKey, mockInboundMessageText);
+    .should.have.been.calledWith(t.context.req, captionKey, mockInboundMessageText);
   helpers.request.hasSignupWithWhyParticipated.should.have.been.calledWith(t.context.req);
   next.should.have.been.called;
   helpers.replies.askWhyParticipated.should.not.have.been.called;
@@ -106,7 +105,7 @@ test('draftCaption should call save draft value if request does not have draft v
 
 test('draftCaption should call save draft value if request does not have draft value and has valid text field value, and send askWhyParticipated if not hasSignupWithWhyParticipated', async (t) => {
   const next = sinon.stub();
-  const middleware = draftCaption(mockConfig);
+  const middleware = draftCaption();
   sandbox.stub(helpers.topic, 'isPhotoPostConfig')
     .returns(true);
   sandbox.stub(helpers.request, 'hasDraftSubmissionValue')
@@ -123,10 +122,10 @@ test('draftCaption should call save draft value if request does not have draft v
 
   helpers.topic.isPhotoPostConfig.should.have.been.calledWith(t.context.req.topic);
   helpers.request.hasDraftSubmissionValue
-    .should.have.been.calledWith(t.context.req, mockConfig.draftValueKey);
+    .should.have.been.calledWith(t.context.req, captionKey);
   helpers.util.isValidTextFieldValue.should.have.been.calledWith(mockInboundMessageText);
   helpers.request.saveDraftSubmissionValue
-    .should.have.been.calledWith(t.context.req, mockConfig.draftValueKey, mockInboundMessageText);
+    .should.have.been.calledWith(t.context.req, captionKey, mockInboundMessageText);
   helpers.request.hasSignupWithWhyParticipated.should.have.been.calledWith(t.context.req);
   next.should.not.have.been.called;
   helpers.replies.askWhyParticipated.should.have.been.calledWith(t.context.req, t.context.res);
@@ -135,7 +134,7 @@ test('draftCaption should call save draft value if request does not have draft v
 
 test('draftCaption should not call save draft value if request does not have draft value and does not valid text field value, and send invalidCaption', async (t) => {
   const next = sinon.stub();
-  const middleware = draftCaption(mockConfig);
+  const middleware = draftCaption();
   sandbox.stub(helpers.topic, 'isPhotoPostConfig')
     .returns(true);
   sandbox.stub(helpers.request, 'hasDraftSubmissionValue')
@@ -150,7 +149,7 @@ test('draftCaption should not call save draft value if request does not have dra
 
   helpers.topic.isPhotoPostConfig.should.have.been.calledWith(t.context.req.topic);
   helpers.request.hasDraftSubmissionValue
-    .should.have.been.calledWith(t.context.req, mockConfig.draftValueKey);
+    .should.have.been.calledWith(t.context.req, captionKey);
   helpers.util.isValidTextFieldValue.should.have.been.calledWith(mockInboundMessageText);
   helpers.request.saveDraftSubmissionValue.should.not.have.been.called;
   next.should.not.have.been.called;
@@ -160,7 +159,7 @@ test('draftCaption should not call save draft value if request does not have dra
 
 test('draftCaption should call sendErrorResponse if error is caught', async (t) => {
   const next = sinon.stub();
-  const middleware = draftCaption(mockConfig);
+  const middleware = draftCaption();
   const error = stubs.getError();
   sandbox.stub(helpers.topic, 'isPhotoPostConfig')
     .throws(error);

@@ -12,8 +12,7 @@ const underscore = require('underscore');
 const helpers = require('../../../../../../../../../lib/helpers');
 const stubs = require('../../../../../../../../helpers/stubs');
 
-const mockDraftValueKey = stubs.getRandomWord();
-const mockConfig = { draftValueKey: mockDraftValueKey };
+const whyParticipatedKey = helpers.topic.getPhotoPostDraftSubmissionValuesMap().whyParticipated;
 const mockInboundMessageText = stubs.getRandomMessageText();
 
 chai.should();
@@ -41,7 +40,7 @@ test.afterEach((t) => {
 
 test('draftWhyParticipated should call next if topic is not photo post', async (t) => {
   const next = sinon.stub();
-  const middleware = draftWhyParticipated(mockConfig);
+  const middleware = draftWhyParticipated();
   sandbox.stub(helpers.topic, 'isPhotoPostConfig')
     .returns(false);
 
@@ -55,7 +54,7 @@ test('draftWhyParticipated should call next if topic is not photo post', async (
 
 test('draftWhyParticipated should call next if request hasSignupWithWhyParticipated', async (t) => {
   const next = sinon.stub();
-  const middleware = draftWhyParticipated(mockConfig);
+  const middleware = draftWhyParticipated();
   sandbox.stub(helpers.topic, 'isPhotoPostConfig')
     .returns(true);
   sandbox.stub(helpers.request, 'hasSignupWithWhyParticipated')
@@ -72,7 +71,7 @@ test('draftWhyParticipated should call next if request hasSignupWithWhyParticipa
 
 test('draftWhyParticipated should call next if request not hasSignupWithWhyParticipated and request hasDraftSubmissionValue', async (t) => {
   const next = sinon.stub();
-  const middleware = draftWhyParticipated(mockConfig);
+  const middleware = draftWhyParticipated();
   sandbox.stub(helpers.topic, 'isPhotoPostConfig')
     .returns(true);
   sandbox.stub(helpers.request, 'hasSignupWithWhyParticipated')
@@ -92,7 +91,7 @@ test('draftWhyParticipated should call next if request not hasSignupWithWhyParti
 
 test('draftWhyParticipated calls saveDraftSubmissionValue and next if request not hasSignupWithWhyParticipated, does not have draft value, and isValidTextFieldValue', async (t) => {
   const next = sinon.stub();
-  const middleware = draftWhyParticipated(mockConfig);
+  const middleware = draftWhyParticipated();
   sandbox.stub(helpers.topic, 'isPhotoPostConfig')
     .returns(true);
   sandbox.stub(helpers.request, 'hasSignupWithWhyParticipated')
@@ -112,14 +111,14 @@ test('draftWhyParticipated calls saveDraftSubmissionValue and next if request no
   helpers.request.hasDraftSubmissionValue.should.have.been.calledWith(t.context.req);
   helpers.util.isValidTextFieldValue.should.have.been.calledWith(t.context.req.inboundMessageText);
   helpers.request.saveDraftSubmissionValue
-    .should.have.been.calledWith(t.context.req, mockConfig.draftValueKey, mockInboundMessageText);
+    .should.have.been.calledWith(t.context.req, whyParticipatedKey, mockInboundMessageText);
   next.should.have.been.called;
   helpers.replies.invalidWhyParticipated.should.not.have.been.called;
 });
 
 test('draftWhyParticipated sends invalidWhyParticipated if request not hasSignupWithWhyParticipated, does not have draft value, and not isValidTextFieldValue', async (t) => {
   const next = sinon.stub();
-  const middleware = draftWhyParticipated(mockConfig);
+  const middleware = draftWhyParticipated();
   sandbox.stub(helpers.topic, 'isPhotoPostConfig')
     .returns(true);
   sandbox.stub(helpers.request, 'hasSignupWithWhyParticipated')
@@ -145,7 +144,7 @@ test('draftWhyParticipated sends invalidWhyParticipated if request not hasSignup
 
 test('draftWhyParticipated should call sendErrorResponse if error is caught', async (t) => {
   const next = sinon.stub();
-  const middleware = draftWhyParticipated(mockConfig);
+  const middleware = draftWhyParticipated();
   const error = stubs.getError();
   sandbox.stub(helpers.topic, 'isPhotoPostConfig')
     .throws(error);
