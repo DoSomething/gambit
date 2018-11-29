@@ -20,6 +20,12 @@ module.exports = {
     photoPostConfig: {
       type: 'photoPostConfig',
       transitionTemplate: topicTemplates.startPhotoPost,
+      draftSubmissionValuesMap: {
+        caption: 'caption',
+        quantity: 'quantity',
+        url: 'url',
+        whyParticipated: 'whyParticipated',
+      },
     },
     textPostConfig: {
       type: 'textPostConfig',
