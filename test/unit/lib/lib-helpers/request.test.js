@@ -193,48 +193,6 @@ test('executeInboundTopicChange does not create signup if topic does not have ac
     .should.have.been.calledWith(t.context.req, topic);
 });
 
-// getCampaignActivityPayload
-test('getCampaignActivityPayload returns object with properties from req', (t) => {
-  t.context.req.userId = userId;
-  t.context.req.lastOutboundBroadcastId = stubs.getContentfulId();
-  t.context.req.campaign = campaignFactory.getValidCampaign();
-  t.context.req.topic = topicFactory.getValidTopic();
-  t.context.req.inboundMessageText = stubs.getRandomMessageText();
-  t.context.req.mediaUrl = stubs.getAttachment().url;
-  t.context.req.platform = stubs.getPlatform();
-
-  const result = requestHelper.getCampaignActivityPayload(t.context.req);
-  result.userId.should.equal(userId);
-  result.campaignId.should.equal(t.context.req.campaign.id);
-  result.campaignRunId.should.equal(t.context.req.campaign.currentCampaignRun.id);
-  result.text.should.equal(t.context.req.inboundMessageText);
-  result.mediaUrl.should.equal(t.context.req.mediaUrl);
-  result.postType.should.equal(t.context.req.topic.postType);
-  result.platform.should.equal(t.context.req.platform);
-  result.broadcastId.should.equal(t.context.req.lastOutboundBroadcastId);
-  result.should.not.have.property('keyword');
-});
-
-test('getCampaignActivityPayload returns object with broadcastId set to given broadcastId arg', (t) => {
-  const broadcastId = stubs.getContentfulId();
-  t.context.req.campaign = campaignFactory.getValidCampaign();
-  t.context.req.topic = topicFactory.getValidTopic();
-  const result = requestHelper.getCampaignActivityPayload(t.context.req, broadcastId);
-  result.broadcastId.should.equal(broadcastId);
-});
-
-test('getCampaignActivityPayload returns object with keyword set if req.keyword', (t) => {
-  t.context.req.campaign = campaignFactory.getValidCampaign();
-  t.context.req.topic = topicFactory.getValidTopic();
-  t.context.req.keyword = stubs.getRandomWord();
-  const result = requestHelper.getCampaignActivityPayload(t.context.req);
-  result.keyword.should.equal(t.context.req.keyword);
-});
-
-test('getCampaignActivityPayload should throw if req.campaign undefined', (t) => {
-  t.throws(() => requestHelper.getCampaignActivityPayload(t.context.req));
-});
-
 // getDraftSubmission
 test('getDraftSubmission returns DraftSubmission for conversationId and topicId if exists', async (t) => {
   t.context.req.conversation = conversationFactory.getValidConversation();
