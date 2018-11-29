@@ -455,6 +455,24 @@ test('isSaidYesMacro returns whether req.askYesNoResponse equals yes', (t) => {
   t.falsy(requestHelper.isSaidYesMacro(t.context.req));
 });
 
+// saveDraftSubmissionValue
+test('saveDraftSubmissionValue should add a new key value pair to existing req.draftSubmission.values', (t) => {
+  const draft = draftSubmissionFactory.getValidCompletePhotoPostDraftSubmission();
+  sandbox.spy(draft, 'markModified');
+  sandbox.spy(draft, 'save');
+  t.context.req.draftSubmission = draft;
+  const mockKey = stubs.getRandomWord();
+  const mockValue = stubs.getRandomMessageText();
+
+  requestHelper.saveDraftSubmissionValue(t.context.req, mockKey, mockValue);
+  const keyValuePair = {};
+  keyValuePair[mockKey] = mockValue;
+  t.context.req.draftSubmission.values
+    .should.deep.equal(Object.assign(draft.values, keyValuePair));
+  draft.markModified.should.have.been.calledWith('values');
+  draft.save.should.have.been.called;
+});
+
 // setCampaign
 test('setCampaign should inject a campaign property to req and call setCampaignId if !req.campaignId', (t) => {
   sandbox.spy(requestHelper, 'setCampaignId');
