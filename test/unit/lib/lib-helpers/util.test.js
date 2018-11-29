@@ -95,6 +95,8 @@ test('isValidTextFieldValue should return true if trimmed string arg has letters
   t.truthy(utilHelper.isValidTextFieldValue('1 a'));
   t.falsy(utilHelper.isValidTextFieldValue('a'));
   t.falsy(utilHelper.isValidTextFieldValue('1231231'));
+  t.falsy(utilHelper.isValidTextFieldValue());
+  t.falsy(utilHelper.isValidTextFieldValue(null));
 });
 
 // fetchImageFileFromUrl
