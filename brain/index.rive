@@ -118,7 +118,7 @@
 ! array social    = social media|facebook|twitter|instagram|social
 ! array unsubscribe = unsubscribe|cancel
   ^ leave|remove|quit|end|exit|opt out|optout|discontinue|take me off
-  ^ atop|dtop|sotp|srop|stip|stop|stop all|stopp|stopall|stp|fuck you
+  ^ atop|dtop|sotp|srop|stip|stop|stop all|stopp|stopall|stp
   ^ spam|do not text|please do not send me these texts
 ! array walk      = walk|walki|walkin|walking
    ^ feet|jog|joggin|jogging|run|runnin|running|step|steppin|steps
