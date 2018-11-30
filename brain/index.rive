@@ -55,7 +55,7 @@
 /**
  * Arrays
  *
- * Note: although Rivescript doesn't throw an error, using an array with underscore in its name in a 
+ * Note: although Rivescript doesn't throw an error, using an array with underscore in its name in a
  * trigger will fail to match... which is why some of these have names like 'publictransport'.
  * Rivescript does throw an error if an uppercase letter appears within a trigger.
  * @see https://github.com/aichaos/rivescript-js/issues/118#issuecomment-220413307
@@ -118,7 +118,8 @@
 ! array social    = social media|facebook|twitter|instagram|social
 ! array unsubscribe = unsubscribe|cancel
   ^ leave|remove|quit|end|exit|opt out|optout|discontinue|take me off
-  ^ atop|dtop|sotp|srop|stip|stop|stop all|stopp|stopall|stp
+  ^ atop|dtop|sotp|srop|stip|stop|stop all|stopp|stopall|stp|fuck you
+  ^ spam|do not text
 ! array walk      = walk|walki|walkin|walking
    ^ feet|jog|joggin|jogging|run|runnin|running|step|steppin|steps
 ! array want      = want|am going|am thinking about
