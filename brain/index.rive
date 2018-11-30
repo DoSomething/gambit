@@ -119,7 +119,7 @@
 ! array unsubscribe = unsubscribe|cancel
   ^ leave|remove|quit|end|exit|opt out|optout|discontinue|take me off
   ^ atop|dtop|sotp|srop|stip|stop|stop all|stopp|stopall|stp|fuck you
-  ^ spam|do not text
+  ^ spam|do not text|please do not send me these texts
 ! array walk      = walk|walki|walkin|walking
    ^ feet|jog|joggin|jogging|run|runnin|running|step|steppin|steps
 ! array want      = want|am going|am thinking about
