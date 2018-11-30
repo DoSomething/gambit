@@ -11,7 +11,6 @@ const underscore = require('underscore');
 const DraftSubmission = require('../../../../app/models/DraftSubmission');
 const helpers = require('../../../../lib/helpers');
 const logger = require('../../../../lib/logger');
-const gambitCampaigns = require('../../../../lib/gambit-campaigns');
 const stubs = require('../../../helpers/stubs');
 const campaignFactory = require('../../../helpers/factories/campaign');
 const draftSubmissionFactory = require('../../../helpers/factories/draftSubmission');
@@ -192,48 +191,6 @@ test('executeInboundTopicChange does not create signup if topic does not have ac
   helpers.user.fetchOrCreateSignup.should.not.have.been.called;
   requestHelper.changeTopic
     .should.have.been.calledWith(t.context.req, topic);
-});
-
-// getCampaignActivityPayload
-test('getCampaignActivityPayload returns object with properties from req', (t) => {
-  t.context.req.userId = userId;
-  t.context.req.lastOutboundBroadcastId = stubs.getContentfulId();
-  t.context.req.campaign = campaignFactory.getValidCampaign();
-  t.context.req.topic = topicFactory.getValidTopic();
-  t.context.req.inboundMessageText = stubs.getRandomMessageText();
-  t.context.req.mediaUrl = stubs.getAttachment().url;
-  t.context.req.platform = stubs.getPlatform();
-
-  const result = requestHelper.getCampaignActivityPayload(t.context.req);
-  result.userId.should.equal(userId);
-  result.campaignId.should.equal(t.context.req.campaign.id);
-  result.campaignRunId.should.equal(t.context.req.campaign.currentCampaignRun.id);
-  result.text.should.equal(t.context.req.inboundMessageText);
-  result.mediaUrl.should.equal(t.context.req.mediaUrl);
-  result.postType.should.equal(t.context.req.topic.postType);
-  result.platform.should.equal(t.context.req.platform);
-  result.broadcastId.should.equal(t.context.req.lastOutboundBroadcastId);
-  result.should.not.have.property('keyword');
-});
-
-test('getCampaignActivityPayload returns object with broadcastId set to given broadcastId arg', (t) => {
-  const broadcastId = stubs.getContentfulId();
-  t.context.req.campaign = campaignFactory.getValidCampaign();
-  t.context.req.topic = topicFactory.getValidTopic();
-  const result = requestHelper.getCampaignActivityPayload(t.context.req, broadcastId);
-  result.broadcastId.should.equal(broadcastId);
-});
-
-test('getCampaignActivityPayload returns object with keyword set if req.keyword', (t) => {
-  t.context.req.campaign = campaignFactory.getValidCampaign();
-  t.context.req.topic = topicFactory.getValidTopic();
-  t.context.req.keyword = stubs.getRandomWord();
-  const result = requestHelper.getCampaignActivityPayload(t.context.req);
-  result.keyword.should.equal(t.context.req.keyword);
-});
-
-test('getCampaignActivityPayload should throw if req.campaign undefined', (t) => {
-  t.throws(() => requestHelper.getCampaignActivityPayload(t.context.req));
 });
 
 // getDraftSubmission
@@ -421,20 +378,6 @@ test('parseAskYesNoResponse does not update macro if parseAskYesNoResponse does 
   message.updateMacro.should.not.have.been.called;
 });
 
-// postCampaignActivity
-test('postCampaignActivity should post getCampaignActivityPayload as campaignActivity', async () => {
-  const postData = { text: stubs.getRandomMessageText() };
-  const postResult = { data: 123 };
-  sandbox.stub(requestHelper, 'getCampaignActivityPayload')
-    .returns(postData);
-  sandbox.stub(gambitCampaigns, 'postCampaignActivity')
-    .returns(Promise.resolve(postResult));
-
-  const result = await requestHelper.postCampaignActivity();
-  gambitCampaigns.postCampaignActivity.should.have.been.calledWith(postData);
-  result.should.deep.equal(postResult);
-});
-
 // isSaidNoMacro
 test('isSaidNoMacro returns whether req.askYesNoResponse equals no', (t) => {
   t.context.req.macro = helpers.macro.macros.saidYes();
@@ -534,14 +477,6 @@ test('setDraftSubmission should return boolean of whether req.draftSubmission de
   t.context.req.draftSubmission.should.deep.equal(draftSubmission);
   helpers.analytics.addCustomAttributes
     .should.have.been.calledWith({ draftSubmissionId: draftSubmission.id });
-});
-
-// setKeyword
-test('setKeyword should inject a keyword to req', (t) => {
-  const keyword = stubs.getRandomWord();
-  requestHelper.setKeyword(t.context.req, keyword);
-  t.context.req.keyword.should.equal(keyword);
-  helpers.analytics.addCustomAttributes.should.have.been.calledWith({ keyword });
 });
 
 test('setLastOutboundMessage should inject lastOutbound properties to req', (t) => {
