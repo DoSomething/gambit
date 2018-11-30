@@ -105,7 +105,7 @@
   ^ is violent|gets violent
   ^ suicidal|suicidial|suicide
 ! array messaging = text|texts|txt|texting|txting|talking|talkign
-  ^ messaging|contacting|sending|list|this list
+  ^ messaging|contacting|sending|list|this list|send
 ! array morning   = am morn morni mornin morning
 ! array my        = my this
 ! array no        = n no nah nope nay
@@ -118,8 +118,7 @@
 ! array social    = social media|facebook|twitter|instagram|social
 ! array unsubscribe = unsubscribe|cancel
   ^ leave|remove|quit|end|exit|opt out|optout|discontinue|take me off
-  ^ atop|dtop|sotp|srop|stip|stop|stop all|stopp|stopall|stp
-  ^ spam|do not text|please do not send me these texts
+  ^ atop|dtop|sotp|srop|stip|stop|stop all|stopp|stopall|stp|spam
 ! array walk      = walk|walki|walkin|walking
    ^ feet|jog|joggin|jogging|run|runnin|running|step|steppin|steps
 ! array want      = want|am going|am thinking about
