@@ -75,7 +75,7 @@ module.exports = {
       };
     },
   },
-  gambitCampaigns: {
+  gambitContent: {
     getSignupId() {
       return 8496477;
     },

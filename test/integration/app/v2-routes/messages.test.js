@@ -95,9 +95,9 @@ test('POST /api/v2/messages?origin=broadcastLite should return 422 if mobile is 
       noMobile: true,
     }));
 
-  nock(integrationHelper.routes.gambitCampaigns.baseURI)
+  nock(integrationHelper.routes.gambitContent.baseURI)
     .get(`/broadcasts/${stubs.getBroadcastId()}`)
-    .reply(200, stubs.gambitCampaigns.getBroadcastSingleResponse());
+    .reply(200, stubs.gambitContent.getBroadcastSingleResponse());
 
   const res = await t.context.request
     .post(integrationHelper.routes.v2.messages(false, {
@@ -116,9 +116,9 @@ test('POST /api/v2/messages?origin=broadcastLite should return 404 if user is no
     .get(`/users/id/${cioWebhookPayload.userId}`)
     .reply(404, {});
 
-  nock(integrationHelper.routes.gambitCampaigns.baseURI)
+  nock(integrationHelper.routes.gambitContent.baseURI)
     .get(`/broadcasts/${stubs.getBroadcastId()}`)
-    .reply(200, stubs.gambitCampaigns.getBroadcastSingleResponse());
+    .reply(200, stubs.gambitContent.getBroadcastSingleResponse());
 
   const res = await t.context.request
     .post(integrationHelper.routes.v2.messages(false, {
@@ -141,9 +141,9 @@ test('POST /api/v2/messages?origin=broadcastLite should return 422 if user is un
       subscription: 'stop',
     }));
 
-  nock(integrationHelper.routes.gambitCampaigns.baseURI)
+  nock(integrationHelper.routes.gambitContent.baseURI)
     .get(`/broadcasts/${stubs.getBroadcastId()}`)
-    .reply(200, stubs.gambitCampaigns.getBroadcastSingleResponse());
+    .reply(200, stubs.gambitContent.getBroadcastSingleResponse());
 
   const res = await t.context.request
     .post(integrationHelper.routes.v2.messages(false, {
@@ -165,9 +165,9 @@ test('POST /api/v2/messages?origin=broadcastLite should return 200 if broadcast 
       noMobile: true,
     }));
 
-  nock(integrationHelper.routes.gambitCampaigns.baseURI)
+  nock(integrationHelper.routes.gambitContent.baseURI)
     .get(`/broadcasts/${stubs.getBroadcastId()}`)
-    .reply(200, stubs.gambitCampaigns.getBroadcastSingleResponse());
+    .reply(200, stubs.gambitContent.getBroadcastSingleResponse());
 
   /**
    * We are using Twilio Test credentials in Wercker.

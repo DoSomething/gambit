@@ -11,7 +11,7 @@ function getTemplate(newTopic) {
 }
 /**
  * These topic stubs correspond to data returned from Gambit Content GET /topics/:id requests.
- * @see https://github.com/DoSomething/gambit-campaigns/blob/master/documentation/endpoints/topics.md#retrieve-topic
+ * @see https://github.com/DoSomething/gambit-content/blob/master/documentation/endpoints/topics.md#retrieve-topic
  *
  * @param {String} type
  * @return {Object}

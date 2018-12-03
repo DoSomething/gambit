@@ -6,7 +6,7 @@ const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 
-const gambitCampaigns = require('../../../../lib/gambit-campaigns');
+const gambitContent = require('../../../../lib/gambit-content');
 const helpers = require('../../../../lib/helpers');
 const stubs = require('../../../helpers/stubs');
 const broadcastFactory = require('../../../helpers/factories/broadcast');
@@ -36,14 +36,14 @@ test.afterEach(() => {
 });
 
 // fetchById
-test('fetchById should return gambitCampaigns.fetchTopicById', async () => {
+test('fetchById should return gambitContent.fetchTopicById', async () => {
   const topic = topicFactory.getValidTopic();
   const topicId = topic.id;
-  sandbox.stub(gambitCampaigns, 'fetchTopicById')
+  sandbox.stub(gambitContent, 'fetchTopicById')
     .returns(Promise.resolve(topic));
 
   const result = await topicHelper.fetchById(topicId);
-  gambitCampaigns.fetchTopicById.should.have.been.calledWith(topicId);
+  gambitContent.fetchTopicById.should.have.been.calledWith(topicId);
   result.should.deep.equal(topic);
 });
 

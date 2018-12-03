@@ -6,7 +6,7 @@ const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 
-const gambitCampaigns = require('../../../../lib/gambit-campaigns');
+const gambitContent = require('../../../../lib/gambit-content');
 const campaignHelperConfig = require('../../../../config/lib/helpers/campaign');
 
 const campaignFactory = require('../../../helpers/factories/campaign');
@@ -28,13 +28,13 @@ test.afterEach(() => {
 });
 
 // fetchById
-test('fetchById calls gambitCampaigns.fetchCampaignById', async () => {
-  sandbox.stub(gambitCampaigns, 'fetchCampaignById')
+test('fetchById calls gambitContent.fetchCampaignById', async () => {
+  sandbox.stub(gambitContent, 'fetchCampaignById')
     .returns(campaignLookupStub);
   const campaignId = campaignStub.id;
 
   const result = await campaignHelper.fetchById(campaignId);
-  gambitCampaigns.fetchCampaignById.should.have.been.calledWith(campaignId);
+  gambitContent.fetchCampaignById.should.have.been.calledWith(campaignId);
   result.should.deep.equal(campaignLookupStub);
 });
 
