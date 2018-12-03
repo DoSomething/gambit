@@ -3,17 +3,25 @@
 
 # Gambit Conversations
 
-Gambit Conversations is the DoSomething.org API used to maintain chatbot conversations with our members, providing functionality to: 
+Gambit Conversations is our DoSomething.org [API](/documentation/README.md) for SMS conversations:
 
-* Receive inbound messages from a user, create/update corresponding data in the DS Users and Activity APIs, and send an outbound reply
+* Receives inbound messages, creates/updates [users](https://www.github.com/dosomething/northstar) and/or [campaign activity](https://www.github.com/dosomething/rogue), and sends an outbound reply
 
-* Send outbound broadcast messages to a user
+* Sends outbound broadcast messages
 
-* Send outbound confirmation messages to user when subscribing to alerts and/or joining a campaign via web
+* Sends outbound confirmation messages for web subscriptions and/or campaign signups
 
-* Update a user with undeliverable SMS status if outbound messages cannot be delivered
+* Updates user subscription status when outbound message delivery fails
 
-* Send a support message to a user
+* Sends outbound support messages from agents
+
+## Overview
+
+Gambit receives and sends SMS messages from/to users via [Twilio](https://www.twilio.com), forwarded from our internal [message broker](https://www.github.com/dosomething/blink). It queries its [ Content API](https://www.github.com/dosomething/gambit-content) to source outbound message content.
+
+Staff members can chat with Gambit in [Slack](https://www.github.com/dosomething/gambit-slack) to test conversations, and can view Gambit content and conversation data from an [internal web app](https://www.github.com/dosomething/gambit-admin).
+
+Gambit forwards support requests from users into a [Front](https://www.frontapp.com) inbox, where agents are able to send messages back to provide support. 
 
 ## Development
 
@@ -22,7 +30,7 @@ Gambit Conversations is built with:
 * [Express](https://expressjs.com/)
 * [Redis](https://redis.io/)
 * [MongoDB](https://www.mongodb.com/)
-* [Rivescript](https://www.rivescript.com/).
+* [Rivescript](https://www.rivescript.com/)
 
 ### Installation
 
