@@ -2,8 +2,8 @@
 
 module.exports = {
   clientOptions: {
-    baseUri: process.env.DS_GAMBIT_CAMPAIGNS_API_BASEURI,
-    apiKey: process.env.DS_GAMBIT_CAMPAIGNS_API_KEY,
+    baseUri: process.env.DS_GAMBIT_CONTENT_API_BASEURI,
+    apiKey: process.env.DS_GAMBIT_CONTENT_API_KEY,
   },
   authHeader: 'x-gambit-api-key',
   endpoints: {
