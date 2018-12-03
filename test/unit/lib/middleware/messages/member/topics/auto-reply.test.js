@@ -10,6 +10,7 @@ const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 
 const helpers = require('../../../../../../../lib/helpers');
+const stubs = require('../../../../../../helpers/stubs');
 const topicFactory = require('../../../../../../helpers/factories/topic');
 
 chai.should();
@@ -32,7 +33,7 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-test('autoReplyCatchAll should call next if topic.isAutoReply is false', async (t) => {
+test('autoReplyCatchAll should call next if not topic.isAutoReply', async (t) => {
   const next = sinon.stub();
   const middleware = autoReplyCatchAll();
   t.context.req.topic = topicFactory.getValidTextPostConfig();
@@ -49,84 +50,35 @@ test('autoReplyCatchAll should call next if topic.isAutoReply is false', async (
   helpers.replies.autoReply.should.not.have.been.called;
 });
 
-test('autoReplyCatchAll should call postCampaignActivity if shouldSendAutoReply and hasCampaign', async (t) => {
-  const next = sinon.stub();
-  const middleware = autoReplyCatchAll();
-  t.context.req.topic = topicFactory.getValidTextPostConfig();
-  sandbox.stub(helpers.topic, 'isAutoReply')
-    .returns(true);
-  sandbox.stub(helpers.request, 'hasCampaign')
-    .returns(true);
-  sandbox.stub(helpers.request, 'postCampaignActivity')
-    .returns(Promise.resolve());
-  sandbox.stub(helpers.replies, 'sendReplyWithTopicTemplate')
-    .returns(underscore.noop);
 
-  // test
-  await middleware(t.context.req, t.context.res, next);
-
-  helpers.request.postCampaignActivity.should.have.been.called;
-  helpers.replies.sendReplyWithTopicTemplate.should.have.been.called;
-  helpers.sendErrorResponse.should.not.have.been.called;
-});
-
-test('autoReplyCatchAll does not call postCampaignActivity if shouldSendAutoReply and topic does not have campaign', async (t) => {
+test('autoReplyCatchAll should send autoReply if topic.isAutoReply', async (t) => {
   const next = sinon.stub();
   const middleware = autoReplyCatchAll();
   t.context.req.topic = topicFactory.getValidTopicWithoutCampaign();
   sandbox.stub(helpers.topic, 'isAutoReply')
     .returns(true);
-  sandbox.stub(helpers.request, 'hasCampaign')
-    .returns(false);
-  sandbox.stub(helpers.request, 'postCampaignActivity')
-    .returns(Promise.resolve());
-  sandbox.stub(helpers.replies, 'sendReplyWithTopicTemplate')
+  sandbox.stub(helpers.replies, 'autoReply')
+    .returns(underscore.noop);
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  next.should.not.have.been.called;
+  helpers.replies.autoReply.should.have.been.calledWith(t.context.req, t.context.res);
+});
+
+test('autoReplyCatchAll calls sendErrorResponse if isAutoReply throws', async (t) => {
+  const next = sinon.stub();
+  const middleware = autoReplyCatchAll();
+  const error = stubs.getError();
+  t.context.req.topic = topicFactory.getValidTextPostConfig();
+  sandbox.stub(helpers.topic, 'isAutoReply')
+    .throws(error);
+  sandbox.stub(helpers.replies, 'autoReply')
     .returns(underscore.noop);
 
   // test
   await middleware(t.context.req, t.context.res, next);
 
-  helpers.request.postCampaignActivity.should.not.have.been.called;
-  helpers.replies.sendReplyWithTopicTemplate.should.have.been.called;
-});
-
-test('autoReplyCatchAll calls sendErrorResponse if postCampaignActivity fails', async (t) => {
-  const next = sinon.stub();
-  const middleware = autoReplyCatchAll();
-  t.context.req.topic = topicFactory.getValidTextPostConfig();
-  sandbox.stub(helpers.topic, 'isAutoReply')
-    .returns(true);
-  sandbox.stub(helpers.request, 'hasCampaign')
-    .returns(true);
-  const mockError = { message: 'oh no' };
-  sandbox.stub(helpers.request, 'postCampaignActivity')
-    .returns(Promise.reject(mockError));
-  sandbox.stub(helpers.replies, 'sendReplyWithTopicTemplate')
-    .returns(true);
-
-  // test
-  await middleware(t.context.req, t.context.res, next);
-
-  helpers.replies.sendReplyWithTopicTemplate.should.not.have.been.called;
-  helpers.sendErrorResponse.should.have.been.calledWith(t.context.res, mockError);
-});
-
-test('autoReplyCatchAll calls sendErrorResponse if sendReplyWithTopicTemplate fails', async (t) => {
-  const next = sinon.stub();
-  const middleware = autoReplyCatchAll();
-  t.context.req.topic = topicFactory.getValidTopicWithoutCampaign();
-  sandbox.stub(helpers.topic, 'isAutoReply')
-    .returns(true);
-  sandbox.stub(helpers.request, 'hasCampaign')
-    .returns(true);
-  const mockError = { message: 'oh no' };
-  sandbox.stub(helpers.request, 'postCampaignActivity')
-    .returns(Promise.resolve());
-  sandbox.stub(helpers.replies, 'sendReplyWithTopicTemplate')
-    .throws(mockError);
-
-  // test
-  await middleware(t.context.req, t.context.res, next);
-
-  helpers.sendErrorResponse.should.have.been.calledWith(t.context.res, mockError);
+  helpers.replies.autoReply.should.not.have.been.called;
+  helpers.sendErrorResponse.should.have.been.calledWith(t.context.res, error);
 });

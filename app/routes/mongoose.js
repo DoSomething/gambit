@@ -5,6 +5,7 @@ const restify = require('express-restify-mongoose');
 const config = require('../../config/app/routes/mongoose');
 
 const Conversation = require('../models/Conversation');
+const DraftSubmission = require('../models/DraftSubmission');
 const Message = require('../models/Message');
 
 const router = express.Router();
@@ -39,6 +40,7 @@ function getRestifyOptionsWithName(name) {
 }
 
 restify.serve(router, Conversation, getRestifyOptionsWithName('conversations'));
+restify.serve(router, DraftSubmission, getRestifyOptionsWithName('draftSubmissions'));
 restify.serve(router, Message, getRestifyOptionsWithName('messages'));
 
 module.exports = router;
