@@ -5,10 +5,11 @@ const fs = require('fs');
 const config = {
   corsEnabled: process.env.CORS_DISABLED || true,
   dbUri: process.env.MONGODB_URI || 'mongodb://localhost/gambit-conversations',
-  port: process.env.PORT || 5100,
   env: process.env.NODE_ENV || 'development',
   // overridden in production to true
   forceHttps: false,
+  port: process.env.PORT || 5100,
+  workers: process.env.DS_GAMBIT_CONVERSATIONS_WEB_CONCURRENCY || 1,
 };
 
 // Require env-dependent configs
