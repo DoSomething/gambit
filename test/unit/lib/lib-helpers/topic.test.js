@@ -6,7 +6,7 @@ const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 
-const gambitCampaigns = require('../../../../lib/gambit-campaigns');
+const gambitContent = require('../../../../lib/gambit-content');
 const helpers = require('../../../../lib/helpers');
 const stubs = require('../../../helpers/stubs');
 const broadcastFactory = require('../../../helpers/factories/broadcast');
@@ -36,14 +36,14 @@ test.afterEach(() => {
 });
 
 // fetchById
-test('fetchById should return gambitCampaigns.fetchTopicById', async () => {
+test('fetchById should return gambitContent.fetchTopicById', async () => {
   const topic = topicFactory.getValidTopic();
   const topicId = topic.id;
-  sandbox.stub(gambitCampaigns, 'fetchTopicById')
+  sandbox.stub(gambitContent, 'fetchTopicById')
     .returns(Promise.resolve(topic));
 
   const result = await topicHelper.fetchById(topicId);
-  gambitCampaigns.fetchTopicById.should.have.been.calledWith(topicId);
+  gambitContent.fetchTopicById.should.have.been.calledWith(topicId);
   result.should.deep.equal(topic);
 });
 
@@ -199,6 +199,12 @@ test('isBroadcastable returns whether topic is rivescriptTopics.askVotingPlanSta
   const mockTopic = topicFactory.getValidTopic();
   t.truthy(topicHelper.isBroadcastable(broadcastFactory.getValidAskVotingPlanStatus()));
   t.falsy(topicHelper.isBroadcastable(mockTopic));
+});
+
+// isDeprecated
+test('isDeprecated should return true when topic.deprecated property is set to true', (t) => {
+  t.falsy(topicHelper.isDeprecated(config.rivescriptTopics.unsubscribed));
+  t.truthy(topicHelper.isDeprecated(config.rivescriptTopics.campaign));
 });
 
 // isRivescriptTopicId

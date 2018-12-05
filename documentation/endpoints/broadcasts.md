@@ -3,7 +3,7 @@
 ```
 GET /api/v2/broadcasts/:broadcastId
 ```
-Fetches a broadcast from [Gambit Campaigns API](https://github.com/DoSomething/gambit-campaigns/tree/master/documentation), and returns additional data properties for send configuration and message stats. 
+Fetches a broadcast from [Gambit Content API](https://github.com/DoSomething/gambit-content/tree/master/documentation), and returns additional data properties for send configuration and message stats. 
 
 
 ## Examples

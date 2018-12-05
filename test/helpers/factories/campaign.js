@@ -12,7 +12,7 @@ const numericIdRange = {
 };
 
 /**
- * @see https://github.com/DoSomething/gambit-campaigns/blob/master/documentation/endpoints/campaigns.md#retrieve-a-campaign
+ * @see https://github.com/DoSomething/gambit-content/blob/master/documentation/endpoints/campaigns.md#retrieve-a-campaign
 */
 function getValidCampaign() {
   return {

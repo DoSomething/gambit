@@ -7,7 +7,7 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const underscore = require('underscore');
 
-const gambitCampaigns = require('../../../../lib/gambit-campaigns');
+const gambitContent = require('../../../../lib/gambit-content');
 const rivescriptApi = require('../../../../lib/rivescript');
 const helpers = require('../../../../lib/helpers');
 const config = require('../../../../config/lib/helpers/rivescript');
@@ -133,10 +133,10 @@ test('getRivescripts should call fetchRivescripts if resetCache arg is true', as
   result.should.deep.equal(data);
 });
 
-test('fetchRivescripts should call gambitCampaigns.fetchDefaultTopicTriggers and parseRivescript', async () => {
+test('fetchRivescripts should call gambitContent.fetchDefaultTopicTriggers and parseRivescript', async () => {
   const data = [replyTrigger, redirectTrigger];
   const mockParsedTrigger = defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger();
-  sandbox.stub(gambitCampaigns, 'fetchDefaultTopicTriggers')
+  sandbox.stub(gambitContent, 'fetchDefaultTopicTriggers')
     .returns(Promise.resolve({ data }));
   sandbox.stub(rivescriptHelper, 'parseRivescript')
     .returns(mockParsedTrigger);
@@ -147,19 +147,19 @@ test('fetchRivescripts should call gambitCampaigns.fetchDefaultTopicTriggers and
   data.forEach((item) => {
     rivescriptHelper.parseRivescript.should.have.been.calledWith(item);
   });
-  gambitCampaigns.fetchDefaultTopicTriggers.should.have.been.called;
+  gambitContent.fetchDefaultTopicTriggers.should.have.been.called;
   result.should.deep.equal([mockParsedTrigger, mockParsedTrigger]);
 });
 
-test('fetchRivescripts should throw on gambitCampaigns.fetchDefaultTopicTriggers fail', async (t) => {
+test('fetchRivescripts should throw on gambitContent.fetchDefaultTopicTriggers fail', async (t) => {
   const mockError = new Error('epic fail');
-  sandbox.stub(gambitCampaigns, 'fetchDefaultTopicTriggers')
+  sandbox.stub(gambitContent, 'fetchDefaultTopicTriggers')
     .returns(Promise.reject(mockError));
   sandbox.stub(rivescriptHelper, 'parseRivescript')
     .returns(replyTrigger);
 
   const result = await t.throws(rivescriptHelper.fetchRivescripts());
-  gambitCampaigns.fetchDefaultTopicTriggers.should.have.been.called;
+  gambitContent.fetchDefaultTopicTriggers.should.have.been.called;
   rivescriptHelper.parseRivescript.should.not.have.been.called;
   result.should.deep.equal(mockError);
 });
