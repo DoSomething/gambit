@@ -62,5 +62,24 @@ module.exports = {
     unsubscribed: {
       id: 'unsubscribed',
     },
+    /**
+     * Deprecated topics.
+     *
+     * The campaign topic was used before we began supporting multiple types of conversations for a
+     * a campaign. This topic no longer gets saved, and has been deprecated by saving Contentful IDs
+     * as the conversation topic.
+     */
+    campaign: {
+      id: 'campaign',
+      deprecated: true,
+    },
+    /**
+     * The survey_response topic has been deprecated by the autoReply and autoReplyBroadcast content
+     * types.
+     */
+    surveyResponse: {
+      id: 'survey_response',
+      deprecated: true,
+    },
   },
 };

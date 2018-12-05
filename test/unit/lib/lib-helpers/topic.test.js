@@ -201,6 +201,12 @@ test('isBroadcastable returns whether topic is rivescriptTopics.askVotingPlanSta
   t.falsy(topicHelper.isBroadcastable(mockTopic));
 });
 
+// isDeprecated
+test('isDeprecated should return true when topic.deprecated property is set to true', (t) => {
+  t.falsy(topicHelper.isDeprecated(config.rivescriptTopics.unsubscribed));
+  t.truthy(topicHelper.isDeprecated(config.rivescriptTopics.campaign));
+});
+
 // isRivescriptTopicId
 test('isRivescriptTopicId should return whether topicId exists deparsed rivescript topics', (t) => {
   t.truthy(topicHelper.isRivescriptTopicId(mockRivescriptTopicId));
