@@ -5,7 +5,7 @@ const topicFactory = require('./topic');
 const config = require('../../../config/lib/helpers/broadcast');
 
 /**
- * @see https://github.com/DoSomething/gambit-campaigns/tree/master/documentation
+ * @see https://github.com/DoSomething/gambit-content/tree/master/documentation
  */
 
 function getBroadcast(type, topic = {}) {

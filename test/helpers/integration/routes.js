@@ -3,7 +3,7 @@
 const querystring = require('querystring');
 
 const northstarConfig = require('../../../config/lib/northstar');
-const gambitCampaignsConfig = require('../../../config/lib/gambit-campaigns');
+const gambitContentConfig = require('../../../config/lib/gambit-content');
 
 /**
  * TODO: Use the Node.js url module to standardize the return of all the methods
@@ -35,8 +35,8 @@ module.exports = {
   northstar: {
     baseURI: northstarConfig.clientOptions.baseURI,
   },
-  gambitCampaigns: {
+  gambitContent: {
     // FIXME: should be clientOptions.baseURI like above?
-    baseURI: gambitCampaignsConfig.clientOptions.baseUri,
+    baseURI: gambitContentConfig.clientOptions.baseUri,
   },
 };

@@ -11,7 +11,7 @@ See [Authentication](authentication.md) for details on authorizing your requests
 
 Endpoint | Functionality                                           
 -------- | -------------
-`GET /api/v2/broadcasts` | Retrieves broadcasts (proxies the [Gambit Campaigns `GET /broadcasts` endpoint](https://github.com/DoSomething/gambit-campaigns/tree/master/documentation))
+`GET /api/v2/broadcasts` | Retrieves broadcasts (proxies the [Gambit Content `GET /broadcasts` endpoint](https://github.com/DoSomething/gambit-content/tree/master/documentation))
 `GET /api/v2/broadcasts/:id` | [Retrieve a broadcast](endpoints/broadcasts.md).
 `POST /api/v2/messages` | [Create a message](endpoints/messages.md).
 `PATCH /api/v2/messages/:messageId` | [Update a message](endpoints/messages.md).

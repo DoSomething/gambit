@@ -9,7 +9,7 @@ const sinonChai = require('sinon-chai');
 const logger = require('heroku-logger');
 
 const Message = require('../../../../app/models/Message');
-const gambitCampaigns = require('../../../../lib/gambit-campaigns');
+const gambitContent = require('../../../../lib/gambit-content');
 const stubs = require('../../../helpers/stubs');
 const broadcastFactory = require('../../../helpers/factories/broadcast');
 
@@ -62,26 +62,26 @@ test('aggregateMessagesForBroadcastId should throw if Messages.aggregate fails',
 });
 
 // fetch
-test('fetch should return gambitCampaigns.fetchBroadcasts', async () => {
+test('fetch should return gambitContent.fetchBroadcasts', async () => {
   const broadcasts = [broadcastFactory.getValidLegacyCampaignBroadcast()];
   const query = { skip: 11 };
-  sandbox.stub(gambitCampaigns, 'fetchBroadcasts')
+  sandbox.stub(gambitContent, 'fetchBroadcasts')
     .returns(Promise.resolve(broadcasts));
 
   const result = await broadcastHelper.fetch(query);
   result.should.deep.equal(broadcasts);
-  gambitCampaigns.fetchBroadcasts.should.have.been.calledWith(query);
+  gambitContent.fetchBroadcasts.should.have.been.calledWith(query);
 });
 
 // fetchById
-test('fetchById should return gambitCampaigns.fetchBroadcastById', async () => {
+test('fetchById should return gambitContent.fetchBroadcastById', async () => {
   const broadcast = broadcastFactory.getValidLegacyCampaignBroadcast();
-  sandbox.stub(gambitCampaigns, 'fetchBroadcastById')
+  sandbox.stub(gambitContent, 'fetchBroadcastById')
     .returns(Promise.resolve(broadcast));
 
   const result = await broadcastHelper.fetchById(broadcastId);
   result.should.deep.equal(broadcast);
-  gambitCampaigns.fetchBroadcastById.should.have.been.calledWith(broadcastId);
+  gambitContent.fetchBroadcastById.should.have.been.calledWith(broadcastId);
 });
 
 // formatStats
