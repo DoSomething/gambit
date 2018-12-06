@@ -32,7 +32,7 @@ module.exports = function getRedisClient() {
      */
     redisClient.on('ready', () => {
       // Save the worker pid as the client name to help id connections
-      redisClient.client('SETNAME', `clientWorkerPid:${process.pid}`);
+      redisClient.client('SETNAME', `gConvClientPid:${process.pid}`);
     });
   }
   return redisClient;
