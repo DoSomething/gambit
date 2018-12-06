@@ -18,7 +18,7 @@ const server = require('./server');
  * @param {String} signal
  */
 function exitHandler(worker, code, signal) {
-  logger.debug(`Worker ${worker.process.pid} died (${signal || code}). restarting...`);
+  logger.debug(`Worker ${worker.process.pid} died.\n\nReason: (${signal || code}).\n\nrestarting...`);
   // Respawn a worker when it dies
   cluster.fork();
 }
@@ -30,6 +30,7 @@ if (cluster.isMaster) {
   }
   // Register exit handler
   cluster.on('exit', exitHandler);
+  logger.debug('Master process');
 } else {
   server();
 }
