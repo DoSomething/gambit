@@ -2,6 +2,8 @@
 
 const fs = require('fs');
 
+const processes = require('./processes');
+
 const config = {
   corsEnabled: process.env.CORS_DISABLED || true,
   dbUri: process.env.MONGODB_URI || 'mongodb://localhost/gambit-conversations',
@@ -9,7 +11,8 @@ const config = {
   // overridden in production to true
   forceHttps: false,
   port: process.env.PORT || 5100,
-  workers: process.env.DS_GAMBIT_CONVERSATIONS_WEB_CONCURRENCY || 1,
+  // concurrent processes config
+  processes,
 };
 
 // Require env-dependent configs
