@@ -26,17 +26,10 @@ module.exports = () => {
    */
   const db = mongoose.connection;
 
-  // Register connection error listener
-  db.on('error', (error) => {
-    /**
-     * TODO: This is not good, we should kill the app! If we had clustering, or a process management
-     * setup, the child process would respawn and try to re-connect.
-     */
-    logger.error('DB connection error:', { error });
-  });
+  logger.info('worker process started.');
+
   // Register connection open listener
   db.once('open', () => {
-    logger.info(`process ${process.pid} started.`);
     app.listen(config.port, () => logger.info(`Conversations API is running on port=${config.port}.`));
   });
 };
