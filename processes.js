@@ -28,7 +28,7 @@ function exitHandler(worker, code, signal) {
 if (cluster.isMaster) {
   logger.debug('Master process');
   // Fork workers
-  for (let workers = 0; workers < config.workers; workers++) { // eslint-disable-line
+  for (let workers = 0; workers < config.processes.total; workers++) { // eslint-disable-line
     cluster.fork();
   }
   // Register exit handler
