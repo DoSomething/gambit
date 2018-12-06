@@ -1,5 +1,6 @@
 'use strict';
 
+/* eslint-disable global-require */
 // Load environment vars.
 require('dotenv').config();
 
@@ -7,7 +8,6 @@ const cluster = require('cluster');
 
 const config = require('./config');
 const logger = require('./lib/logger');
-const server = require('./server');
 
 /**
  * exitHandler - When any of the workers die the cluster module will emit the 'exit' event.
@@ -32,5 +32,6 @@ if (cluster.isMaster) {
   cluster.on('exit', exitHandler);
   logger.debug('Master process');
 } else {
+  const server = require('./server');
   server();
 }
