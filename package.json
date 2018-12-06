@@ -17,7 +17,7 @@
     "html-coverage-report": "nyc report --reporter=html",
     "publish-coverage-report": "nyc report --reporter=lcov && codecov",
     "lint": "eslint --ext=.js .",
-    "start": "node workers"
+    "start": "node processes"
   },
   "ava": {
     "powerAssert": false,
