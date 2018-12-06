@@ -10,7 +10,7 @@ Returns the deparsed rivescript used for outbound replies.
 
 Name | Type | Description
 -----|------|------------
-`cache` | string | If set to `false`, fetches additional Rivescript from Contentful and sorts bot replies.
+`cache` | string | If set to `false`, fetches additional Rivescript from Gambit Content API and sorts bot replies.
 
 ## Examples
 

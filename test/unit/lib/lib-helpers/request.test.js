@@ -282,6 +282,18 @@ test('hasSignupWithWhyParticipated should return false if fetchSignup result why
     .should.have.been.calledWith(t.context.req.user, t.context.req.topic.campaign);
 });
 
+test('hasSignupWithWhyParticipated should return false if fetchSignup result is null', async (t) => {
+  t.context.req.user = userFactory.getValidUser();
+  t.context.req.topic = topicFactory.getValidPhotoPostConfig();
+  sandbox.stub(helpers.user, 'fetchSignup')
+    .returns(Promise.resolve(null));
+
+  const result = await requestHelper.hasSignupWithWhyParticipated(t.context.req);
+  t.falsy(result);
+  helpers.user.fetchSignup
+    .should.have.been.calledWith(t.context.req.user, t.context.req.topic.campaign);
+});
+
 // isStartCommand
 test('isStartCommand should return true if trimmed lowercase req.inboundMessageText is equal to start command', (t) => {
   t.falsy(requestHelper.isStartCommand(t.context.req));
