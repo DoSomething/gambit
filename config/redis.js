@@ -15,16 +15,21 @@ let redisClient;
 module.exports = function getRedisClient() {
   if (!redisClient) {
     redisClient = redis.createClient(redisUrl);
-    // Save the worker pid as the client name to help id connections
-    redisClient.client('SETNAME', `clientWorkerPid:${process.pid}`);
     redisClient.on('error', (error) => {
       logger.error(`redisClient connection error: ${error}`);
       redisClient.quit();
       throw error;
     });
-
     redisClient.on('reconnecting', () => {
       logger.debug('redisClient is reconnecting');
+    });
+    /**
+     * Set the connection name every time it reconnects
+     * otherwise  the name is lost on reconnection
+     */
+    redisClient.on('ready', () => {
+      // Save the worker pid as the client name to help id connections
+      redisClient.client('SETNAME', `clientWorkerPid:${process.pid}`);
     });
   }
   return redisClient;
