@@ -15,6 +15,8 @@ let redisClient;
 module.exports = function getRedisClient() {
   if (!redisClient) {
     redisClient = redis.createClient(redisUrl);
+    // Save the worker pid as the client name to help id connections
+    redisClient.client('SETNAME', `clientWorkerPid:${process.pid}`);
     redisClient.on('error', (error) => {
       logger.error(`redisClient connection error: ${error}`);
       redisClient.quit();
