@@ -222,6 +222,27 @@ test('fetchFromReq calls fetchByMobile if req.platformUserId', async (t) => {
   userHelper.fetchById.should.not.have.been.called;
 });
 
+// fetchSignup
+test('fetchSignup should call rogue.fetchSignups with getFetchSignupsQuery result and return first result', async () => {
+  sandbox.spy(userHelper, 'getFetchSignupsQuery');
+  sandbox.stub(rogue, 'fetchSignups')
+    .returns(Promise.resolve({ data: [mockSignup, mockPost] }));
+
+  const result = await userHelper.fetchSignup(mockUser, campaign);
+  userHelper.getFetchSignupsQuery.should.have.been.calledWith(mockUser.id, campaign.id);
+  rogue.fetchSignups
+    .should.have.been.calledWith(userHelper.getFetchSignupsQuery(mockUser.id, campaign.id));
+  result.should.deep.equal(mockSignup);
+});
+
+test('fetchSignup should return null if fetchSignup result is empty array', async (t) => {
+  sandbox.stub(rogue, 'fetchSignups')
+    .returns(Promise.resolve({ data: [] }));
+
+  const result = await userHelper.fetchSignup(mockUser, campaign);
+  t.is(result, null);
+});
+
 // fetchVotingPlan
 test('fetchVotingPlan should call rogue.getPosts with query for user voting plan', async () => {
   const mockQuery = { test: '123' };
