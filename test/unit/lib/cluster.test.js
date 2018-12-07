@@ -37,3 +37,23 @@ test('initWorkerProcess() should call the worker.start() function', () => {
   cluster.initWorkerProcess();
   worker.start.should.have.been.called;
 });
+
+// exitHandler
+test('exitHandler() should fork a new process when a worker dies', () => {
+  sandbox.spy(cluster, 'exitHandler');
+  cluster.initMasterProcess();
+  const clusterWorker = cluster.clusterRef.workers['1'];
+  // Spying after calling initMasterProcess so we only spy after we kill the worker process
+  sandbox.spy(cluster, 'forkNewProcess');
+
+  // exit worker
+  clusterWorker.kill();
+
+  /**
+   * TODO: I feel like there should be a prettier way to wait for the event before asserting?
+   */
+  setTimeout(() => {
+    cluster.exitHandler.should.have.been.called;
+    cluster.forkNewProcess.should.have.been.called;
+  }, 1000);
+});
