@@ -53,7 +53,7 @@ test.afterEach((t) => {
 });
 
 // createPhotoPost
-test('createPhotoPost passes user.id, campaignId, campaignRunId, file, quantity, source, text, and whyParticipated args to rogue.createSignup', async () => {
+test('createPhotoPost passes user.id, campaignId, file, quantity, source, text, and whyParticipated args to rogue.createSignup', async () => {
   const file = stubs.getRandomMessageText();
   const draftSubmission = draftSubmissionFactory.getValidCompletePhotoPostDraftSubmission();
   const values = draftSubmission.values;
@@ -65,7 +65,6 @@ test('createPhotoPost passes user.id, campaignId, campaignRunId, file, quantity,
   const result = await userHelper.createPhotoPost(mockUser, campaign, source, values);
   rogue.createPost.should.have.been.calledWith({
     campaign_id: campaign.id,
-    campaign_run_id: campaign.currentCampaignRun.id,
     file,
     quantity: values.quantity,
     northstar_id: mockUser.id,
@@ -79,7 +78,7 @@ test('createPhotoPost passes user.id, campaignId, campaignRunId, file, quantity,
 });
 
 // createSignup
-test('createSignup passes user.id, campaignId, campaignRunId source args to rogue.createSignup', async () => {
+test('createSignup passes user.id, campaignId, source args to rogue.createSignup', async () => {
   const signup = { id: campaignId, campaign_id: campaignId };
   const details = 'test';
   sandbox.stub(rogue, 'createSignup')
@@ -88,7 +87,6 @@ test('createSignup passes user.id, campaignId, campaignRunId source args to rogu
   const result = await userHelper.createSignup(mockUser, campaign, source, details);
   rogue.createSignup.should.have.been.calledWith({
     campaign_id: campaign.id,
-    campaign_run_id: campaign.currentCampaignRun.id,
     northstar_id: mockUser.id,
     source,
     details,
@@ -97,13 +95,12 @@ test('createSignup passes user.id, campaignId, campaignRunId source args to rogu
 });
 
 // createTextPost
-test('createTextPost passes user.id, campaignId, campaignRunId, source, and text fields to rogue.createSignup', async () => {
+test('createTextPost passes user.id, campaignId, source, and text fields to rogue.createSignup', async () => {
   const text = 'test';
 
   const result = await userHelper.createTextPost(mockUser, campaign, source, text);
   rogue.createPost.should.have.been.calledWith({
     campaign_id: campaign.id,
-    campaign_run_id: campaign.currentCampaignRun.id,
     northstar_id: mockUser.id,
     source,
     text,
@@ -272,7 +269,7 @@ test('getFetchSignupsQuery should return object for querying by userId and campa
   const result = userHelper.getFetchSignupsQuery(mockUser.id, campaignId);
   result.should.deep.equal({
     'filter[northstar_id]': mockUser.id,
-    'filter[campaign_run_id]': campaignId,
+    'filter[campaign_id]': campaignId,
   });
 });
 
