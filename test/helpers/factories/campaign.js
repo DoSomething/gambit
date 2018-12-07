@@ -18,9 +18,6 @@ function getValidCampaign() {
   return {
     id: chance.integer(numericIdRange),
     title: chance.sentence({ words: 3 }),
-    currentCampaignRun: {
-      id: chance.integer(numericIdRange),
-    },
     config: {
       id: stubs.getContentfulId(),
       templates: {
