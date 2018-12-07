@@ -18,8 +18,8 @@ const stubs = require('../../helpers/stubs');
 const userFactory = require('../../helpers/factories/user');
 
 const rogueApiStub = RogueClient.getNewInstance();
-const mockPost = { id: stubs.getCampaignRunId() };
-const mockSignup = { id: stubs.getCampaignRunId() };
+const mockPost = { id: stubs.getPostId() };
+const mockSignup = stubs.getSignup();
 const mockUser = userFactory.getValidUser();
 
 // Module to test

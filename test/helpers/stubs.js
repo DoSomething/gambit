@@ -209,9 +209,6 @@ module.exports = {
   getCampaignId() {
     return 2299;
   },
-  getCampaignRunId() {
-    return 6441;
-  },
   getContentfulId,
   getKeyword() {
     return chance.word();
@@ -235,13 +232,16 @@ module.exports = {
     return module.exports.getMobileNumber(valid);
   },
   getPostId() {
-    return { id: chance.integer({ min: 200, max: 2000000 }) };
+    return { id: module.exports.getRandomNumericId() };
   },
   getPostType() {
     return 'text';
   },
   getRandomMessageText() {
     return chance.paragraph({ sentences: 2 });
+  },
+  getRandomNumericId() {
+    return chance.integer({ min: 200, max: 2000000 });
   },
   getRandomName() {
     return `${chance.animal()} ${chance.animal()} - ${chance.month()} ${chance.year()}`;
@@ -253,7 +253,7 @@ module.exports = {
     return '2512b2e5-76b1-4efb-916b-5d14bbb2555f';
   },
   getSignup() {
-    return { id: chance.integer({ min: 200, max: 2000000 }) };
+    return { id: module.exports.getRandomNumericId() };
   },
   getTemplate() {
     return 'askQuantity';
@@ -425,7 +425,7 @@ module.exports = {
           voting_plan_attending_with: null,
           language: null,
           country: 'US',
-          drupal_id: module.exports.getCampaignRunId(),
+          drupal_id: module.exports.getRandomNumericId(),
           role: 'user',
           // TODO: These are private properties, should we differentiate the returned user?
           ...mobileData,
