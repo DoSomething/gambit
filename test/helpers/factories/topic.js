@@ -21,12 +21,10 @@ function getValidTopic(type = 'photoPostConfig', templates) {
     id: stubs.getContentfulId(),
     name: stubs.getRandomName(),
     type,
+    // TODO: postType has been deprecated.
     postType: stubs.getPostType(),
     campaign: {
       id: stubs.getCampaignId(),
-      currentCampaignRun: {
-        id: stubs.getCampaignRunId(),
-      },
     },
     templates,
   };
