@@ -7,14 +7,14 @@ require('dotenv').config();
 // @see https://docs.newrelic.com/docs/agents/nodejs-agent/installation-configuration
 require('newrelic');
 
-const config = require('./config');
-const logger = require('./lib/logger');
-const app = require('./app');
+function workerProcessMain() {
+  const config = require('./config');
+  const logger = require('./lib/logger');
+  const app = require('./app');
 
-// Setup rogue client.
-require('./lib/rogue').getClient();
+  // Setup rogue client.
+  require('./lib/rogue').getClient();
 
-module.exports = () => {
   // Start mongoose connection
   require('./config/mongoose')(config.dbUri);
 
@@ -32,4 +32,8 @@ module.exports = () => {
   db.once('open', () => {
     app.listen(config.port, () => logger.info(`Conversations API is running on port=${config.port}.`));
   });
+}
+
+module.exports = {
+  workerProcessMain,
 };
