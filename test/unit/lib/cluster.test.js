@@ -12,7 +12,7 @@ chai.use(sinonChai);
 
 const sandbox = sinon.sandbox.create();
 
-const worker = require('../../../server');
+const worker = require('../../../lib/server');
 const config = require('../../../config');
 
 // Module to test
@@ -25,15 +25,15 @@ test.afterEach(() => {
 
 // Tests
 
-// masterProcessInit
-test('masterProcessInit() should fork at least 1 new process', () => {
-  cluster.masterProcessInit();
+// initMasterProcess
+test('initMasterProcess() should fork at least 1 new process', () => {
+  cluster.initMasterProcess();
   Object.values(cluster.clusterRef.workers).length.should.be.equal(config.processes.total);
 });
 
-// workerProcessInit
-test('workerProcessInit() should call the server module', () => {
-  sandbox.spy(worker, 'workerProcessMain');
-  cluster.workerProcessInit();
-  worker.workerProcessMain.should.have.been.called;
+// initWorkerProcess
+test('initWorkerProcess() should call the worker.start() function', () => {
+  sandbox.spy(worker, 'start');
+  cluster.initWorkerProcess();
+  worker.start.should.have.been.called;
 });

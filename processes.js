@@ -6,7 +6,7 @@ require('dotenv').config();
 const cluster = require('./lib/cluster');
 
 if (cluster.clusterRef.isMaster) {
-  cluster.masterProcessInit();
+  cluster.initMasterProcess();
 } else {
-  cluster.workerProcessInit();
+  cluster.initWorkerProcess();
 }
