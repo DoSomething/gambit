@@ -13,7 +13,7 @@ config.memoryAvailable = parseInt(process.env.MEMORY_AVAILABLE, 10);
  *       The value in the Procfile is 90% of the estimated processMemory here.
  *       Based on a Heroku recommendation. @see https://blog.heroku.com/node-habits-2016#7-avoid-garbage
  */
-config.processMemory = 200;
+config.processMemory = 256;
 /**
  * Calculate total amount of concurrent processes to fork
  * based on available memory and estimated process memory footprint
