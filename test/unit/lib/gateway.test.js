@@ -33,14 +33,14 @@ test.afterEach(() => {
 test('createPost should call gateway.getClient.Posts.create', async () => {
   const mockPayload = { northstar_id: mockUser.id };
   const mockGatewayResponse = { data: mockPost };
-  sandbox.stub(gatewayApiStub.Posts, 'create')
+  sandbox.stub(gatewayApiStub.Rogue.Posts, 'create')
     .returns(Promise.resolve(mockGatewayResponse));
   sandbox.stub(gateway, 'getClient')
     .returns(gatewayApiStub);
 
   const result = await gateway.createPost(mockPayload);
   gateway.getClient.should.have.been.called;
-  gatewayApiStub.Posts.create.should.have.been.calledWith(mockPayload);
+  gatewayApiStub.Rogue.Posts.create.should.have.been.calledWith(mockPayload);
   result.should.deep.equal(mockGatewayResponse);
 });
 
@@ -48,14 +48,14 @@ test('createPost should call gateway.getClient.Posts.create', async () => {
 test('createSignup should call gateway.getClient.Signup.create', async () => {
   const mockPayload = { northstar_id: mockUser.id, campaignId: stubs.getCampaignId() };
   const mockGatewayResponse = { data: stubs.getSignup() };
-  sandbox.stub(gatewayApiStub.Signups, 'create')
+  sandbox.stub(gatewayApiStub.Rogue.Signups, 'create')
     .returns(Promise.resolve(mockGatewayResponse));
   sandbox.stub(gateway, 'getClient')
     .returns(gatewayApiStub);
 
   const result = await gateway.createSignup(mockPayload);
   gateway.getClient.should.have.been.called;
-  gatewayApiStub.Signups.create.should.have.been.calledWith(mockPayload);
+  gatewayApiStub.Rogue.Signups.create.should.have.been.calledWith(mockPayload);
   result.should.deep.equal(mockGatewayResponse);
 });
 
@@ -63,14 +63,14 @@ test('createSignup should call gateway.getClient.Signup.create', async () => {
 test('fetchPosts should call gateway.getClient.Posts.index', async () => {
   const mockQuery = { 'filter[northstar_id]': mockUser.id };
   const mockGatewayResponse = { data: [mockPost] };
-  sandbox.stub(gatewayApiStub.Posts, 'index')
+  sandbox.stub(gatewayApiStub.Rogue.Posts, 'index')
     .returns(Promise.resolve(mockGatewayResponse));
   sandbox.stub(gateway, 'getClient')
     .returns(gatewayApiStub);
 
   const result = await gateway.fetchPosts(mockQuery);
   gateway.getClient.should.have.been.called;
-  gatewayApiStub.Posts.index.should.have.been.calledWith(mockQuery);
+  gatewayApiStub.Rogue.Posts.index.should.have.been.calledWith(mockQuery);
   result.should.deep.equal(mockGatewayResponse);
 });
 
@@ -85,6 +85,6 @@ test('fetchSignups should call gateway.getClient.Signups.index', async () => {
 
   const result = await gateway.fetchSignups(mockQuery);
   gateway.getClient.should.have.been.called;
-  gatewayApiStub.Signups.index.should.have.been.calledWith(mockQuery);
+  gatewayApiStub.Rogue.Signups.index.should.have.been.calledWith(mockQuery);
   result.should.deep.equal(mockGatewayResponse);
 });
