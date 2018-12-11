@@ -8,7 +8,7 @@ const sinonChai = require('sinon-chai');
 const underscore = require('underscore');
 const httpMocks = require('node-mocks-http');
 const northstar = require('../../../../lib/northstar');
-const rogue = require('../../../../lib/rogue');
+const gateway = require('../../../../lib/gateway');
 const helpers = require('../../../../lib/helpers');
 const subscriptionHelper = require('../../../../lib/helpers/subscription');
 const config = require('../../../../config/lib/helpers/user');
@@ -43,7 +43,7 @@ const source = stubs.getPlatform();
 
 test.beforeEach((t) => {
   t.context.req = httpMocks.createRequest();
-  sandbox.stub(rogue, 'createPost')
+  sandbox.stub(gateway, 'createPost')
     .returns(Promise.resolve(mockPost));
 });
 
@@ -53,17 +53,17 @@ test.afterEach((t) => {
 });
 
 // createPhotoPost
-test('createPhotoPost passes user.id, campaignId, file, quantity, source, text, and whyParticipated args to rogue.createSignup', async () => {
+test('createPhotoPost passes user.id, campaignId, file, quantity, source, text, and whyParticipated args to gateway.createSignup', async () => {
   const file = stubs.getRandomMessageText();
   const draftSubmission = draftSubmissionFactory.getValidCompletePhotoPostDraftSubmission();
   const values = draftSubmission.values;
-  sandbox.stub(rogue, 'getClient')
+  sandbox.stub(gateway, 'getClient')
     .returns({ photoPostCreation: { fileProperty: 'file' } });
   sandbox.stub(helpers.util, 'fetchImageFileFromUrl')
     .returns(Promise.resolve(file));
 
   const result = await userHelper.createPhotoPost(mockUser, campaign, source, values);
-  rogue.createPost.should.have.been.calledWith({
+  gateway.createPost.should.have.been.calledWith({
     campaign_id: campaign.id,
     file,
     quantity: values.quantity,
@@ -78,14 +78,14 @@ test('createPhotoPost passes user.id, campaignId, file, quantity, source, text, 
 });
 
 // createSignup
-test('createSignup passes user.id, campaignId, source args to rogue.createSignup', async () => {
+test('createSignup passes user.id, campaignId, source args to gateway.createSignup', async () => {
   const signup = { id: campaignId, campaign_id: campaignId };
   const details = 'test';
-  sandbox.stub(rogue, 'createSignup')
+  sandbox.stub(gateway, 'createSignup')
     .returns(Promise.resolve(signup));
 
   const result = await userHelper.createSignup(mockUser, campaign, source, details);
-  rogue.createSignup.should.have.been.calledWith({
+  gateway.createSignup.should.have.been.calledWith({
     campaign_id: campaign.id,
     northstar_id: mockUser.id,
     source,
@@ -95,11 +95,11 @@ test('createSignup passes user.id, campaignId, source args to rogue.createSignup
 });
 
 // createTextPost
-test('createTextPost passes user.id, campaignId, source, and text fields to rogue.createSignup', async () => {
+test('createTextPost passes user.id, campaignId, source, and text fields to gateway.createSignup', async () => {
   const text = 'test';
 
   const result = await userHelper.createTextPost(mockUser, campaign, source, text);
-  rogue.createPost.should.have.been.calledWith({
+  gateway.createPost.should.have.been.calledWith({
     campaign_id: campaign.id,
     northstar_id: mockUser.id,
     source,
@@ -110,14 +110,14 @@ test('createTextPost passes user.id, campaignId, source, and text fields to rogu
 });
 
 // createVotingPlan
-test('createVotingPlan passes user voting plan info to rogue.createPost', async () => {
+test('createVotingPlan passes user voting plan info to gateway.createPost', async () => {
   const mockValues = { test: stubs.getRandomWord() };
   sandbox.stub(userHelper, 'getVotingPlanValues')
     .returns(mockValues);
   const details = JSON.stringify(mockValues);
 
   const result = await userHelper.createVotingPlan(mockUser, source);
-  rogue.createPost.should.have.been.calledWith({
+  gateway.createPost.should.have.been.calledWith({
     campaign_id: config.posts.votingPlan.campaignId,
     northstar_id: mockUser.id,
     source,
@@ -223,20 +223,20 @@ test('fetchFromReq calls fetchByMobile if req.platformUserId', async (t) => {
 });
 
 // fetchSignup
-test('fetchSignup should call rogue.fetchSignups with getFetchSignupsQuery result and return first result', async () => {
+test('fetchSignup should call gateway.fetchSignups with getFetchSignupsQuery result and return first result', async () => {
   sandbox.spy(userHelper, 'getFetchSignupsQuery');
-  sandbox.stub(rogue, 'fetchSignups')
+  sandbox.stub(gateway, 'fetchSignups')
     .returns(Promise.resolve({ data: [mockSignup, mockPost] }));
 
   const result = await userHelper.fetchSignup(mockUser, campaign);
   userHelper.getFetchSignupsQuery.should.have.been.calledWith(mockUser.id, campaign.id);
-  rogue.fetchSignups
+  gateway.fetchSignups
     .should.have.been.calledWith(userHelper.getFetchSignupsQuery(mockUser.id, campaign.id));
   result.should.deep.equal(mockSignup);
 });
 
 test('fetchSignup should return null if fetchSignup result is empty array', async (t) => {
-  sandbox.stub(rogue, 'fetchSignups')
+  sandbox.stub(gateway, 'fetchSignups')
     .returns(Promise.resolve({ data: [] }));
 
   const result = await userHelper.fetchSignup(mockUser, campaign);
@@ -244,15 +244,15 @@ test('fetchSignup should return null if fetchSignup result is empty array', asyn
 });
 
 // fetchVotingPlan
-test('fetchVotingPlan should call rogue.getPosts with query for user voting plan', async () => {
+test('fetchVotingPlan should call gateway.getPosts with query for user voting plan', async () => {
   const mockQuery = { test: '123' };
   sandbox.stub(userHelper, 'getFetchVotingPlanQuery')
     .returns(mockQuery);
-  sandbox.stub(rogue, 'fetchPosts')
+  sandbox.stub(gateway, 'fetchPosts')
     .returns(Promise.resolve({ data: [mockPost] }));
 
   const result = await userHelper.fetchVotingPlan(mockUser);
-  rogue.fetchPosts.should.have.been.calledWith(mockQuery);
+  gateway.fetchPosts.should.have.been.calledWith(mockQuery);
   result.should.deep.equal(mockPost);
 });
 
