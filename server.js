@@ -10,8 +10,8 @@ const config = require('./config');
 const logger = require('./lib/logger');
 const app = require('./app');
 
-// Setup rogue client.
-require('./lib/rogue').getClient();
+// Setup Gateway client.
+require('./lib/gateway').getClient();
 
 // Start mongoose connection
 require('./config/mongoose')(config.dbUri);
