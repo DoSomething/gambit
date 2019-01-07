@@ -1,5 +1,11 @@
 'use strict';
 
+/**
+ * FIXME: Investigate why this line is required for test file to pass locally.
+ * Without it Rogue client complaints of missing env variables.
+ */
+require('dotenv').config();
+
 const test = require('ava');
 const chai = require('chai');
 const nock = require('nock');
