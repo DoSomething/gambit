@@ -2,18 +2,15 @@
 
 module.exports = {
   // @see https://www.twilio.com/docs/api/messaging/message#delivery-related-errors
-  // 30006: Landline or unreachable carrier
-  //        Example: https://www.twilio.com/console/sms/logs/SM933e25ea371f4f10a213aef5180245e1
-  // 30004: Message blocked
-  // 30008: Unknown error
-  //        Example: https://www.twilio.com/console/sms/logs/SMdc6b3e74246c437ab3328f346ce86ef4
-  // 30003: Unreachable destination handset
-  //        Example: https://www.twilio.com/console/sms/logs/SM4367f21c9cfb40e2b87216227a20a109
   undeliverableErrorCodes: {
+    21203: 'International calling not enabled',
+    21211: 'Invalid \'To\' Phone Number',
+    21606: 'The \'From\' phone number provided is not a valid, message-capable Twilio phone number.',
+    21610: 'Message cannot be sent to the \'To\' number because the customer has replied with STOP',
+    21612: 'The \'To\' phone number is not currently reachable via SMS or MMS',
+    21614: '\'To\' number is not a valid mobile number',
+    30003: 'Unreachable destination handset',
+    30005: 'Unknown destination handset',
     30006: 'Landline or unreachable carrier',
-    // 30008: 'Unknown error',
-    // TODO: Not sure about these ones yet
-    // 30004: 'Message blocked',
-    // 30003: 'Unreachable destination handset',
   },
 };
