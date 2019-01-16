@@ -6,7 +6,7 @@ const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 
-const gambitContent = require('../../../../lib/gambit-content');
+const graphql = require('../../../../lib/graphql');
 const helpers = require('../../../../lib/helpers');
 const stubs = require('../../../helpers/stubs');
 const broadcastFactory = require('../../../helpers/factories/broadcast');
@@ -36,14 +36,14 @@ test.afterEach(() => {
 });
 
 // fetchById
-test('fetchById should return gambitContent.fetchTopicById', async () => {
+test('fetchById should return graphql.fetchTopicById', async () => {
   const topic = topicFactory.getValidTopic();
   const topicId = topic.id;
-  sandbox.stub(gambitContent, 'fetchTopicById')
+  sandbox.stub(graphql, 'fetchTopicById')
     .returns(Promise.resolve(topic));
 
   const result = await topicHelper.fetchById(topicId);
-  gambitContent.fetchTopicById.should.have.been.calledWith(topicId);
+  graphql.fetchTopicById.should.have.been.calledWith(topicId);
   result.should.deep.equal(topic);
 });
 
@@ -236,7 +236,7 @@ test('getTopicTemplateText returns a string when template exists', () => {
   const topic = topicFactory.getValidPhotoPostConfig();
   const templateName = 'startPhotoPostAutoReply';
   const result = topicHelper.getTopicTemplateText(topic, templateName);
-  result.should.equal(topic.templates[templateName].text);
+  result.should.equal(topic[templateName]);
 });
 
 test('getTopicTemplateText throws when template undefined', (t) => {

@@ -3,12 +3,10 @@
 const stubs = require('../stubs');
 const config = require('../../../config/lib/helpers/topic');
 
-function getTemplate(newTopic) {
-  return {
-    text: stubs.getRandomMessageText(),
-    topic: newTopic || {},
-  };
+function getTemplate() {
+  return stubs.getRandomMessageText();
 }
+
 /**
  * These topic stubs correspond to data returned from Gambit Content GET /topics/:id requests.
  * @see https://github.com/DoSomething/gambit-content/blob/master/documentation/endpoints/topics.md#retrieve-topic
@@ -17,17 +15,15 @@ function getTemplate(newTopic) {
  * @return {Object}
  */
 function getValidTopic(type = 'photoPostConfig', templates) {
-  return {
+  const sharedFields = {
     id: stubs.getContentfulId(),
     name: stubs.getRandomName(),
     type,
-    // TODO: postType has been deprecated.
-    postType: stubs.getPostType(),
     campaign: {
       id: stubs.getCampaignId(),
     },
-    templates,
   };
+  return Object.assign(sharedFields, templates);
 }
 
 function getValidTopicWithoutCampaign() {
@@ -47,8 +43,6 @@ function getValidExternalPostConfig() {
 
 function getValidPhotoPostConfig() {
   const templates = {
-    // TODO: Remove startPhotoPost once deprecated by defaultTopicTrigger transitions.
-    startPhotoPost: getTemplate(),
     startPhotoPostAutoReply: getTemplate(),
     askQuantity: getTemplate(),
     invalidQuantity: getTemplate(),
@@ -60,8 +54,6 @@ function getValidPhotoPostConfig() {
 
 function getValidTextPostConfig() {
   const templates = {
-    // TODO: Remove askText once deprecated by defaultTopicTrigger transitions.
-    askText: getTemplate(),
     invalidAskText: getTemplate(),
     completedTextPost: getTemplate(),
     completedTextPostAutoReply: getTemplate(),
