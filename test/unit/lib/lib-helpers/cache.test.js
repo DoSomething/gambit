@@ -18,6 +18,8 @@ chai.use(sinonChai);
 const cacheHelper = rewire('../../../../lib/helpers/cache');
 
 // stubs
+const contentfulEntryId = stubs.getContentfulId();
+const contentfulEntry = { id: contentfulEntryId };
 const rivescriptCacheId = 'contentApi';
 const rivescript = '+ hello\n- hi';
 
@@ -29,7 +31,42 @@ test.beforeEach(() => {
 
 test.afterEach(() => {
   sandbox.restore();
+  cacheHelper.__set__('contentfulEntriesCache', undefined);
   cacheHelper.__set__('rivescriptCache', undefined);
+});
+
+/**
+ * Contentful entries cache
+ */
+test('contentfulEntries.get should return object when cache exists', async () => {
+  cacheHelper.__set__('contentfulEntriesCache', {
+    get: () => Promise.resolve(contentfulEntry),
+  });
+  const result = await cacheHelper.contentfulEntries.get(contentfulEntryId);
+  result.should.deep.equal(contentfulEntry);
+});
+
+test('contentfulEntries.get should return falsy when cache undefined', async (t) => {
+  cacheHelper.__set__('contentfulEntriesCache', {
+    get: () => Promise.resolve(null),
+  });
+  const result = await cacheHelper.contentfulEntries.get(contentfulEntryId);
+  t.falsy(result);
+});
+
+test('contentfulEntries.get should throw when cache set fails', async (t) => {
+  cacheHelper.__set__('contentfulEntriesCache', {
+    get: () => Promise.reject(new Error()),
+  });
+  await t.throws(cacheHelper.contentfulEntries.get(contentfulEntryId));
+});
+
+test('contentfulEntries.set should return an object', async () => {
+  cacheHelper.__set__('contentfulEntriesCache', {
+    set: () => Promise.resolve(JSON.stringify(contentfulEntry)),
+  });
+  const result = await cacheHelper.contentfulEntries.set(contentfulEntryId);
+  result.should.deep.equal(contentfulEntry);
 });
 
 /**

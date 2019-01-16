@@ -19,6 +19,7 @@ function getValidTopic(type = 'photoPostConfig', templates = {}) {
     id: stubs.getContentfulId(),
     name: stubs.getRandomName(),
     type,
+    contentType: type,
     campaign: {
       id: stubs.getCampaignId(),
     },
