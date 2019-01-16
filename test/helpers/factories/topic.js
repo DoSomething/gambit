@@ -14,7 +14,7 @@ function getTemplate() {
  * @param {String} type
  * @return {Object}
  */
-function getValidTopic(type = 'photoPostConfig', templates) {
+function getValidTopic(type = 'photoPostConfig', templates = {}) {
   const sharedFields = {
     id: stubs.getContentfulId(),
     name: stubs.getRandomName(),
@@ -26,8 +26,8 @@ function getValidTopic(type = 'photoPostConfig', templates) {
   return Object.assign(sharedFields, templates);
 }
 
-function getValidTopicWithoutCampaign() {
-  const topic = getValidTopic();
+function getValidTopicWithoutCampaign(type = 'photoPostConfig', templates) {
+  const topic = getValidTopic(type, templates);
   topic.campaign = null;
   return topic;
 }
@@ -61,7 +61,18 @@ function getValidTextPostConfig() {
   return getValidTopic(config.types.textPostConfig.type, templates);
 }
 
+function getValidAskYesNoBroadcastTopic() {
+  return getValidTopicWithoutCampaign(config.types.askYesNo.type, {
+    invalidAskYesNoResponse: getTemplate(),
+    saidNo: getTemplate(),
+    saidNoTopic: getValidTopicWithoutCampaign(),
+    saidYes: getTemplate(),
+    saidYesTopic: getValidPhotoPostConfig(),
+  });
+}
+
 module.exports = {
+  getValidAskYesNoBroadcastTopic,
   getValidAutoReply,
   getValidExternalPostConfig,
   getValidPhotoPostConfig,
