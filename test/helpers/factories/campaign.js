@@ -18,6 +18,8 @@ function getValidCampaign() {
   return {
     id: chance.integer(numericIdRange),
     title: chance.sentence({ words: 3 }),
+    internalTitle: chance.sentence({ words: 3 }),
+    endDate: null,
     config: {
       id: stubs.getContentfulId(),
       templates: {
@@ -38,7 +40,14 @@ function getValidCampaignWithoutWebSignup() {
   return campaign;
 }
 
+function getValidClosedCampaign() {
+  const campaign = module.exports.getValidCampaign();
+  campaign.endDate = '2018-07-19T00:00:00Z';
+  return campaign;
+}
+
 module.exports = {
   getValidCampaign,
   getValidCampaignWithoutWebSignup,
+  getValidClosedCampaign,
 };

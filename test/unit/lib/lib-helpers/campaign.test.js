@@ -7,7 +7,6 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 
 const gambitContent = require('../../../../lib/gambit-content');
-const campaignHelperConfig = require('../../../../config/lib/helpers/campaign');
 
 const campaignFactory = require('../../../helpers/factories/campaign');
 
@@ -39,14 +38,10 @@ test('fetchById calls gambitContent.fetchCampaignById', async () => {
 });
 
 // isClosedCampaign
-test('isClosedCampaign should return true when campaign is active', (t) => {
-  const result = campaignHelper.isClosedCampaign(campaignFactory.getValidCampaign());
-  t.falsy(result);
+test('isClosedCampaign should return false when campaign.endDate undefined', (t) => {
+  t.falsy(campaignHelper.isClosedCampaign(campaignFactory.getValidCampaign()));
 });
 
-test('isClosedCampaign should return false when campaign is closed', (t) => {
-  const closedCampaign = campaignFactory.getValidCampaign();
-  closedCampaign.status = campaignHelperConfig.statuses.closed;
-  const result = campaignHelper.isClosedCampaign(closedCampaign);
-  t.truthy(result);
+test('isClosedCampaign should return true when campaign.endDate has past', (t) => {
+  t.truthy(campaignHelper.isClosedCampaign(campaignFactory.getValidClosedCampaign()));
 });

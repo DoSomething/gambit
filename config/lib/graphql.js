@@ -4,6 +4,7 @@ const campaignFields = `
   campaign {
     id
     endDate
+    internalTitle
   }
 `;
 
