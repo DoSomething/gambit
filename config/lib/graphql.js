@@ -28,7 +28,7 @@ const fetchTopicById = `
         }
       }
       ... on AutoReplySignupTopic {
-        ...autoReplySignupTopicFields
+        ...autoReplySignupCampaign
         autoReply
       }
       ... on AutoReplyTopic {
