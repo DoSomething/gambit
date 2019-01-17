@@ -37,7 +37,7 @@ test('fetchTopicById should call request with query config and id variable and r
   result.should.deep.equal(topic);
 });
 
-// fetchTopicById
+// request
 test('request should call graphqlRequest.request with given query and variables', async () => {
   const variables = { id: '123' };
   const response = { name: stubs.getRandomWord() };

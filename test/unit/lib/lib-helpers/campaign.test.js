@@ -45,3 +45,9 @@ test('isClosedCampaign should return false when campaign.endDate undefined', (t)
 test('isClosedCampaign should return true when campaign.endDate has past', (t) => {
   t.truthy(campaignHelper.isClosedCampaign(campaignFactory.getValidClosedCampaign()));
 });
+
+test('isClosedCampaign should return false when campaign.endDate is in the future', (t) => {
+  const campaign = campaignFactory.getValidClosedCampaign();
+  campaign.endDate = '2088-07-19T00:00:00Z';
+  t.falsy(campaignHelper.isClosedCampaign(campaign));
+});
