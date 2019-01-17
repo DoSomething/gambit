@@ -8,14 +8,15 @@ function getTemplate() {
 }
 
 /**
- * These topic stubs correspond to data returned from Gambit Content GET /topics/:id requests.
+ * These topic stubs correspond to data returned from Query.topic GraphQL requests.
  * @see https://github.com/DoSomething/gambit-content/blob/master/documentation/endpoints/topics.md#retrieve-topic
  *
  * @param {String} type
+ * @param {Object} templates
  * @return {Object}
  */
 function getValidTopic(type = 'photoPostConfig', templates = {}) {
-  const sharedFields = {
+  return {
     id: stubs.getContentfulId(),
     name: stubs.getRandomName(),
     type,
@@ -23,45 +24,55 @@ function getValidTopic(type = 'photoPostConfig', templates = {}) {
     campaign: {
       id: stubs.getCampaignId(),
     },
+    ...templates,
   };
-  return Object.assign(sharedFields, templates);
 }
 
+/**
+ * @param {String} type
+ * @param {Object} templates
+ * @return {Object}
+ */
 function getValidTopicWithoutCampaign(type = 'photoPostConfig', templates) {
-  const topic = getValidTopic(type, templates);
-  topic.campaign = null;
-  return topic;
+  const result = getValidTopic(type, templates);
+  delete result.campaign;
+  return result;
 }
 
+/**
+ * @return {Object}
+ */
 function getValidAutoReply() {
   return getValidTopic(config.types.autoReply.type, { autoReply: getTemplate() });
 }
 
-// TODO: Remove this function once we deprecate externalPostConfig type entirely.
-function getValidExternalPostConfig() {
-  return getValidTopic(config.types.externalPostConfig.type, { startExternalPost: getTemplate() });
-}
-
+/**
+ * @return {Object}
+ */
 function getValidPhotoPostConfig() {
-  const templates = {
+  return getValidTopic(config.types.photoPostConfig.type, {
     startPhotoPostAutoReply: getTemplate(),
     askQuantity: getTemplate(),
     invalidQuantity: getTemplate(),
     // TODO: Cleanup config/lib/helpers/template, possibly move into config/lib/helpers/topic
     // and use it to define the various templates per topic here.
-  };
-  return getValidTopic(config.types.photoPostConfig.type, templates);
+  });
 }
 
+/**
+ * @return {Object}
+ */
 function getValidTextPostConfig() {
-  const templates = {
+  return getValidTopic(config.types.textPostConfig.type, {
     invalidAskText: getTemplate(),
     completedTextPost: getTemplate(),
     completedTextPostAutoReply: getTemplate(),
-  };
-  return getValidTopic(config.types.textPostConfig.type, templates);
+  });
 }
 
+/**
+ * @return {Object}
+ */
 function getValidAskYesNoBroadcastTopic() {
   return getValidTopicWithoutCampaign(config.types.askYesNo.type, {
     invalidAskYesNoResponse: getTemplate(),
@@ -75,7 +86,6 @@ function getValidAskYesNoBroadcastTopic() {
 module.exports = {
   getValidAskYesNoBroadcastTopic,
   getValidAutoReply,
-  getValidExternalPostConfig,
   getValidPhotoPostConfig,
   getValidTextPostConfig,
   getValidTopic,

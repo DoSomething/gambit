@@ -12,7 +12,10 @@ const numericIdRange = {
 };
 
 /**
+ * Returns a mock result from a Gambit Content GET /campaigns/:id request.
  * @see https://github.com/DoSomething/gambit-content/blob/master/documentation/endpoints/campaigns.md#retrieve-a-campaign
+ *
+ * @return {Object}
 */
 function getValidCampaign() {
   return {
@@ -34,16 +37,20 @@ function getValidCampaign() {
   };
 }
 
+/**
+ * @return {Object}
+ */
 function getValidCampaignWithoutWebSignup() {
   const campaign = module.exports.getValidCampaign();
   campaign.config.templates.webSignup = {};
   return campaign;
 }
 
+/**
+ * @return {Object}
+ */
 function getValidClosedCampaign() {
-  const campaign = module.exports.getValidCampaign();
-  campaign.endDate = '2018-07-19T00:00:00Z';
-  return campaign;
+  return { ...module.exports.getValidCampaign(), endDate: '2018-07-19T00:00:00Z' };
 }
 
 module.exports = {

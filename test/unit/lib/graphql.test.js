@@ -38,7 +38,7 @@ test('fetchTopicById should call request with query config and id variable and r
 });
 
 // fetchTopicById
-test('request should call graphql-request.request with given query and variables', async () => {
+test('request should call graphqlRequest.request with given query and variables', async () => {
   const variables = { id: '123' };
   const response = { name: stubs.getRandomWord() };
   sandbox.stub(graphqlRequest, 'request')
