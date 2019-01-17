@@ -22,13 +22,16 @@ const fetchTopicById = `
         saidYes
         saidYesTopic {
           id
-          ...autoReplyCampaign
+          ...autoReplySignupCampaign
           ...photoPostCampaign
           ...textPostCampaign
         }
       }
+      ... on AutoReplySignupTopic {
+        ...autoReplySignupTopicFields
+        autoReply
+      }
       ... on AutoReplyTopic {
-        ...autoReplyCampaign
         autoReply
       }
       ... on PhotoPostTopic {
@@ -52,7 +55,7 @@ const fetchTopicById = `
       }
     }
   }
-  fragment autoReplyCampaign on AutoReplyTopic {
+  fragment autoReplySignupCampaign on AutoReplySignupTopic {
     ${campaignFields}
   }
   fragment photoPostCampaign on PhotoPostTopic {
