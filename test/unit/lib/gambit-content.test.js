@@ -21,7 +21,6 @@ const gambitContent = require('../../../lib/gambit-content');
 const broadcastFactory = require('../../helpers/factories/broadcast');
 const campaignFactory = require('../../helpers/factories/campaign');
 const defaultTopicTriggerFactory = require('../../helpers/factories/defaultTopicTrigger');
-const topicFactory = require('../../helpers/factories/topic');
 
 const campaign = campaignFactory.getValidCampaign();
 const campaignBroadcast = broadcastFactory.getValidLegacyCampaignBroadcast();
@@ -32,7 +31,6 @@ const defaultTopicTriggers = [
 const fetchError = new Error({ message: 'Epic fail' });
 const fetchSuccess = { data: defaultTopicTriggers };
 const queryParams = { skip: 11 };
-const topic = topicFactory.getValidTopic();
 
 test.afterEach(() => {
   // reset stubs, spies, and mocks
@@ -143,15 +141,4 @@ test('fetchDefaultTopicTriggers should return result of a successful GET /fetchD
   result.should.deep.equal(fetchResponse);
   gambitContent.executeGet
     .should.have.been.calledWith(config.endpoints.defaultTopicTriggers, queryParams);
-});
-
-// fetchTopicById
-test('fetchTopicById should return result of a successful GET /topics/:id request', async () => {
-  sandbox.stub(gambitContent, 'executeGet')
-    .returns(Promise.resolve({ data: topic }));
-
-  const result = await gambitContent.fetchTopicById(topic.id);
-  result.should.deep.equal(topic);
-  const endpoint = `${config.endpoints.topics}/${topic.id}`;
-  gambitContent.executeGet.should.have.been.calledWith(endpoint);
 });

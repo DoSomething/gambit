@@ -12,12 +12,17 @@ const numericIdRange = {
 };
 
 /**
+ * Returns a mock result from a Gambit Content GET /campaigns/:id request.
  * @see https://github.com/DoSomething/gambit-content/blob/master/documentation/endpoints/campaigns.md#retrieve-a-campaign
+ *
+ * @return {Object}
 */
 function getValidCampaign() {
   return {
     id: chance.integer(numericIdRange),
     title: chance.sentence({ words: 3 }),
+    internalTitle: chance.sentence({ words: 3 }),
+    endDate: null,
     config: {
       id: stubs.getContentfulId(),
       templates: {
@@ -32,13 +37,24 @@ function getValidCampaign() {
   };
 }
 
+/**
+ * @return {Object}
+ */
 function getValidCampaignWithoutWebSignup() {
   const campaign = module.exports.getValidCampaign();
   campaign.config.templates.webSignup = {};
   return campaign;
 }
 
+/**
+ * @return {Object}
+ */
+function getValidClosedCampaign() {
+  return { ...module.exports.getValidCampaign(), endDate: '2018-07-19T00:00:00Z' };
+}
+
 module.exports = {
   getValidCampaign,
   getValidCampaignWithoutWebSignup,
+  getValidClosedCampaign,
 };
