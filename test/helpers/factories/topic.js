@@ -3,75 +3,89 @@
 const stubs = require('../stubs');
 const config = require('../../../config/lib/helpers/topic');
 
-function getTemplate(newTopic) {
-  return {
-    text: stubs.getRandomMessageText(),
-    topic: newTopic || {},
-  };
+function getTemplate() {
+  return stubs.getRandomMessageText();
 }
+
 /**
- * These topic stubs correspond to data returned from Gambit Content GET /topics/:id requests.
+ * These topic stubs correspond to data returned from Query.topic GraphQL requests.
  * @see https://github.com/DoSomething/gambit-content/blob/master/documentation/endpoints/topics.md#retrieve-topic
  *
  * @param {String} type
+ * @param {Object} templates
  * @return {Object}
  */
-function getValidTopic(type = 'photoPostConfig', templates) {
+function getValidTopic(type = 'photoPostConfig', templates = {}) {
   return {
     id: stubs.getContentfulId(),
     name: stubs.getRandomName(),
     type,
-    // TODO: postType has been deprecated.
-    postType: stubs.getPostType(),
+    contentType: type,
     campaign: {
       id: stubs.getCampaignId(),
     },
-    templates,
+    ...templates,
   };
 }
 
-function getValidTopicWithoutCampaign() {
-  const topic = getValidTopic();
-  topic.campaign = null;
-  return topic;
+/**
+ * @param {String} type
+ * @param {Object} templates
+ * @return {Object}
+ */
+function getValidTopicWithoutCampaign(type = 'photoPostConfig', templates) {
+  const result = getValidTopic(type, templates);
+  delete result.campaign;
+  return result;
 }
 
+/**
+ * @return {Object}
+ */
 function getValidAutoReply() {
   return getValidTopic(config.types.autoReply.type, { autoReply: getTemplate() });
 }
 
-// TODO: Remove this function once we deprecate externalPostConfig type entirely.
-function getValidExternalPostConfig() {
-  return getValidTopic(config.types.externalPostConfig.type, { startExternalPost: getTemplate() });
-}
-
+/**
+ * @return {Object}
+ */
 function getValidPhotoPostConfig() {
-  const templates = {
-    // TODO: Remove startPhotoPost once deprecated by defaultTopicTrigger transitions.
-    startPhotoPost: getTemplate(),
+  return getValidTopic(config.types.photoPostConfig.type, {
     startPhotoPostAutoReply: getTemplate(),
     askQuantity: getTemplate(),
     invalidQuantity: getTemplate(),
     // TODO: Cleanup config/lib/helpers/template, possibly move into config/lib/helpers/topic
     // and use it to define the various templates per topic here.
-  };
-  return getValidTopic(config.types.photoPostConfig.type, templates);
+  });
 }
 
+/**
+ * @return {Object}
+ */
 function getValidTextPostConfig() {
-  const templates = {
-    // TODO: Remove askText once deprecated by defaultTopicTrigger transitions.
-    askText: getTemplate(),
+  return getValidTopic(config.types.textPostConfig.type, {
     invalidAskText: getTemplate(),
     completedTextPost: getTemplate(),
     completedTextPostAutoReply: getTemplate(),
-  };
-  return getValidTopic(config.types.textPostConfig.type, templates);
+  });
+}
+
+/**
+ * @return {Object}
+ */
+function getValidAskYesNoBroadcastTopic() {
+  return getValidTopicWithoutCampaign(config.types.askYesNo.type, {
+    invalidAskYesNoResponse: getTemplate(),
+    saidNo: getTemplate(),
+    saidNoTopic: getValidTopicWithoutCampaign(),
+    saidYes: getTemplate(),
+    saidYesTopic: getValidPhotoPostConfig(),
+  });
 }
 
 module.exports = {
+  getValidAskYesNoBroadcastTopic,
   getValidAutoReply,
-  getValidExternalPostConfig,
   getValidPhotoPostConfig,
   getValidTextPostConfig,
   getValidTopic,

@@ -17,7 +17,7 @@ Gambit Conversations is our DoSomething.org [API](/documentation/README.md) for 
 
 ## Overview
 
-Gambit receives and sends SMS messages from/to users via [Twilio](https://www.twilio.com), forwarded from our internal [message broker](https://www.github.com/dosomething/blink). It queries its [Content API](https://www.github.com/dosomething/gambit-content) to source outbound message content.
+Gambit receives and sends SMS messages from/to users via [Twilio](https://www.twilio.com), forwarded from our internal [message broker](https://www.github.com/dosomething/blink). It queries [GraphQL](https://www.github.com/dosomething/graphql) and its own [Content API](https://www.github.com/dosomething/gambit-content) (soon to be deprecated by GraphQL) to source outbound message content.
 
 Staff members can chat with Gambit in [Slack](https://www.github.com/dosomething/gambit-slack) to test conversations, and can view Gambit content and conversation data from an [internal web app](https://www.github.com/dosomething/gambit-admin).
 

@@ -11,7 +11,6 @@ const underscore = require('underscore');
 
 const helpers = require('../../../../../../../lib/helpers');
 const logger = require('../../../../../../../lib/logger');
-const broadcastFactory = require('../../../../../../helpers/factories/broadcast');
 const topicFactory = require('../../../../../../helpers/factories/topic');
 const userFactory = require('../../../../../../helpers/factories/user');
 
@@ -22,7 +21,7 @@ chai.use(sinonChai);
 const askYesNoCatchAll = require('../../../../../../../lib/middleware/messages/member/topics/ask-yes-no');
 
 // stubs
-const askYesNoBroadcast = broadcastFactory.getValidAskYesNo();
+const askYesNoBroadcast = topicFactory.getValidAskYesNoBroadcastTopic();
 const error = { message: 'Epic fail' };
 
 const sandbox = sinon.sandbox.create();
@@ -87,7 +86,6 @@ test('askYesNoCatchAll should executeInboundTopicChange and send saidYes reply i
   const next = sinon.stub();
   const middleware = askYesNoCatchAll();
   t.context.req.topic = askYesNoBroadcast;
-  const saidYesTemplate = askYesNoBroadcast.templates.saidYes;
   sandbox.stub(helpers.request, 'parseAskYesNoResponse')
     .returns(Promise.resolve());
   sandbox.stub(helpers.request, 'isSaidYesMacro')
@@ -102,9 +100,9 @@ test('askYesNoCatchAll should executeInboundTopicChange and send saidYes reply i
   next.should.not.have.been.called;
   const details = `broadcast/${askYesNoBroadcast.id}`;
   helpers.request.executeInboundTopicChange
-    .should.have.been.calledWith(t.context.req, saidYesTemplate.topic, details);
+    .should.have.been.calledWith(t.context.req, t.context.req.topic.saidYesTopic, details);
   helpers.replies.saidYes
-    .should.have.been.calledWith(t.context.req, t.context.res, saidYesTemplate.text);
+    .should.have.been.calledWith(t.context.req, t.context.res, t.context.req.topic.saidYes);
   helpers.sendErrorResponse.should.not.been.called;
 });
 
@@ -132,7 +130,7 @@ test('askYesNoCatchAll should call sendErrorResponse if request isSaidYesMacro b
   const next = sinon.stub();
   const middleware = askYesNoCatchAll();
   t.context.req.topic = askYesNoBroadcast;
-  t.context.req.topic.templates.saidYes.topic = null;
+  t.context.req.topic.saidYesTopic = null;
   sandbox.stub(helpers.request, 'parseAskYesNoResponse')
     .returns(Promise.resolve());
   sandbox.stub(helpers.request, 'isSaidYesMacro')
@@ -168,8 +166,10 @@ test('askYesNoCatchAll should execute executeInboundTopicChange and send saidNo 
   helpers.request.parseAskYesNoResponse.should.have.been.calledWith(t.context.req);
   const details = `broadcast/${askYesNoBroadcast.id}`;
   helpers.request.executeInboundTopicChange
-    .should.have.been.calledWith(t.context.req, askYesNoBroadcast.templates.saidNo.topic, details);
+    .should.have.been.calledWith(t.context.req, askYesNoBroadcast.saidNoTopic, details);
   helpers.sendErrorResponse.should.not.been.called;
+  helpers.replies.saidNo
+    .should.have.been.calledWith(t.context.req, t.context.res, t.context.req.topic.saidNo);
 });
 
 test('askYesNoCatchAll should call sendErrorResponse if request isSaidNoMacro but executeSaidNoMacro fails', async (t) => {
@@ -198,7 +198,7 @@ test('askYesNoCatchAll should call sendErrorResponse if request isSaidNoMacro bu
   const next = sinon.stub();
   const middleware = askYesNoCatchAll();
   t.context.req.topic = askYesNoBroadcast;
-  t.context.req.topic.templates.saidNo.topic = null;
+  t.context.req.topic.saidNoTopic = null;
   sandbox.stub(helpers.request, 'parseAskYesNoResponse')
     .returns(Promise.resolve());
   sandbox.stub(helpers.request, 'isSaidYesMacro')
