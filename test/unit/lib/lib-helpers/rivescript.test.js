@@ -7,7 +7,7 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const underscore = require('underscore');
 
-const gambitContent = require('../../../../lib/gambit-content');
+const graphql = require('../../../../lib/graphql');
 const rivescriptApi = require('../../../../lib/rivescript');
 const helpers = require('../../../../lib/helpers');
 const config = require('../../../../config/lib/helpers/rivescript');
@@ -133,11 +133,11 @@ test('getRivescripts should call fetchRivescripts if resetCache arg is true', as
   result.should.deep.equal(data);
 });
 
-test('fetchRivescripts should call gambitContent.fetchDefaultTopicTriggers and parseRivescript', async () => {
+test('fetchRivescripts should call graphql.fetchConversationTriggers and parseRivescript', async () => {
   const data = [replyTrigger, redirectTrigger];
   const mockParsedTrigger = defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger();
-  sandbox.stub(gambitContent, 'fetchDefaultTopicTriggers')
-    .returns(Promise.resolve({ data }));
+  sandbox.stub(graphql, 'fetchConversationTriggers')
+    .returns(Promise.resolve(data));
   sandbox.stub(rivescriptHelper, 'parseRivescript')
     .returns(mockParsedTrigger);
   sandbox.stub(helpers.cache.rivescript, 'set')
@@ -147,19 +147,19 @@ test('fetchRivescripts should call gambitContent.fetchDefaultTopicTriggers and p
   data.forEach((item) => {
     rivescriptHelper.parseRivescript.should.have.been.calledWith(item);
   });
-  gambitContent.fetchDefaultTopicTriggers.should.have.been.called;
+  graphql.fetchConversationTriggers.should.have.been.called;
   result.should.deep.equal([mockParsedTrigger, mockParsedTrigger]);
 });
 
-test('fetchRivescripts should throw on gambitContent.fetchDefaultTopicTriggers fail', async (t) => {
+test('fetchRivescripts should throw on graphql.fetchConversationTriggers fail', async (t) => {
   const mockError = new Error('epic fail');
-  sandbox.stub(gambitContent, 'fetchDefaultTopicTriggers')
+  sandbox.stub(graphql, 'fetchConversationTriggers')
     .returns(Promise.reject(mockError));
   sandbox.stub(rivescriptHelper, 'parseRivescript')
     .returns(replyTrigger);
 
   const result = await t.throws(rivescriptHelper.fetchRivescripts());
-  gambitContent.fetchDefaultTopicTriggers.should.have.been.called;
+  graphql.fetchConversationTriggers.should.have.been.called;
   rivescriptHelper.parseRivescript.should.not.have.been.called;
   result.should.deep.equal(mockError);
 });
@@ -272,39 +272,12 @@ test('parseReplyRivescriptLines should return an array with 1 reply, 1 continuat
   rivescriptHelper.appendTopicTag.should.have.been.calledWith(lastParagraphText, topicId);
 });
 
-// parseRivescript
-test('parseRivescript returns redirectRivescript if defaultTopicTrigger.redirect is set', () => {
-  const trigger = stubs.getRandomWord();
-  const redirect = stubs.getRandomWord();
-  sandbox.stub(rivescriptHelper, 'formatTriggerRivescript')
-    .returns(trigger);
-  sandbox.stub(rivescriptHelper, 'formatRedirectRivescript')
-    .returns(redirect);
-  sandbox.stub(rivescriptHelper, 'formatReplyRivescript')
-    .returns(null);
-  sandbox.stub(rivescriptHelper, 'joinRivescriptLines')
-    .returns(mockRivescript);
-  const redirectDefaultTopicTrigger = defaultTopicTriggerFactory
-    .getValidRedirectDefaultTopicTrigger();
-
-  const result = rivescriptHelper.parseRivescript(redirectDefaultTopicTrigger);
-  rivescriptHelper.formatReplyRivescript.should.not.have.been.called;
-  rivescriptHelper.formatTriggerRivescript.should.have.been
-    .calledWith(redirectDefaultTopicTrigger.trigger);
-  rivescriptHelper.formatRedirectRivescript.should.have.been
-    .calledWith(redirectDefaultTopicTrigger.redirect);
-  rivescriptHelper.joinRivescriptLines.should.have.been.calledWith([trigger, redirect]);
-  result.should.equal(mockRivescript);
-});
-
 // TODO: Add test for closed campaign.
 test('parseRivescript calls replyRivescript with defaultTopicTrigger.reply if set', () => {
   const trigger = stubs.getRandomWord();
   const reply = stubs.getRandomWord();
   sandbox.stub(rivescriptHelper, 'formatTriggerRivescript')
     .returns(trigger);
-  sandbox.stub(rivescriptHelper, 'formatRedirectRivescript')
-    .returns(null);
   sandbox.stub(rivescriptHelper, 'formatReplyRivescript')
     .returns(reply);
   sandbox.stub(rivescriptHelper, 'joinRivescriptLines')
@@ -313,7 +286,6 @@ test('parseRivescript calls replyRivescript with defaultTopicTrigger.reply if se
     .getValidReplyDefaultTopicTrigger();
 
   const result = rivescriptHelper.parseRivescript(replyDefaultTopicTrigger);
-  rivescriptHelper.formatRedirectRivescript.should.not.have.been.called;
   rivescriptHelper.formatTriggerRivescript.should.have.been
     .calledWith(replyDefaultTopicTrigger.trigger);
   rivescriptHelper.formatReplyRivescript.should.have.been
