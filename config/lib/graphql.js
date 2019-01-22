@@ -16,22 +16,13 @@ const fetchConversationTriggers = `
       topic {
         id
         ... on AutoReplySignupTopic {
-          campaign {
-            id
-            endDate
-          }
+          ${campaignFields}
         }
         ... on PhotoPostTopic {
-          campaign {
-            id
-            endDate
-          }
+          ${campaignFields}
         }
         ... on TextPostTopic {
-          campaign {
-            id
-            endDate
-          }
+          ${campaignFields}
         }
       }
     }
