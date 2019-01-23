@@ -51,13 +51,13 @@ test.afterEach((t) => {
 test('getBroadcast should return error if broadcast is legacy type', async (t) => {
   const next = sinon.stub();
   const middleware = getBroadcast();
-  sandbox.stub(helpers.broadcast, 'fetchById')
+  sandbox.stub(helpers.broadcast, 'getById')
     .returns(Promise.resolve(legacyBroadcast));
 
   // test
   await middleware(t.context.req, t.context.res, next);
   t.context.req.broadcast.should.deep.equal(legacyBroadcast);
-  helpers.broadcast.fetchById.should.have.been.calledWith(broadcastId);
+  helpers.broadcast.getById.should.have.been.calledWith(broadcastId);
   next.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
 });
@@ -65,7 +65,7 @@ test('getBroadcast should return error if broadcast is legacy type', async (t) =
 test('getBroadcast should return error if askYesNo topic campaign is closed', async (t) => {
   const next = sinon.stub();
   const middleware = getBroadcast();
-  sandbox.stub(helpers.broadcast, 'fetchById')
+  sandbox.stub(helpers.broadcast, 'getById')
     .returns(Promise.resolve(askYesNoBroadcast));
   sandbox.stub(helpers.topic, 'hasClosedCampaign')
     .returns(true);
@@ -73,7 +73,7 @@ test('getBroadcast should return error if askYesNo topic campaign is closed', as
   // test
   await middleware(t.context.req, t.context.res, next);
   t.context.req.broadcast.should.deep.equal(askYesNoBroadcast);
-  helpers.broadcast.fetchById.should.have.been.calledWith(broadcastId);
+  helpers.broadcast.getById.should.have.been.calledWith(broadcastId);
   helpers.topic.hasClosedCampaign.should.have.been.calledWith(askYesNoBroadcast.saidYesTopic);
   next.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
@@ -82,7 +82,7 @@ test('getBroadcast should return error if askYesNo topic campaign is closed', as
 test('getBroadcast should call next if askYesNo topic campaign is not closed', async (t) => {
   const next = sinon.stub();
   const middleware = getBroadcast();
-  sandbox.stub(helpers.broadcast, 'fetchById')
+  sandbox.stub(helpers.broadcast, 'getById')
     .returns(Promise.resolve(askYesNoBroadcast));
   sandbox.stub(helpers.topic, 'hasClosedCampaign')
     .returns(false);
@@ -97,13 +97,13 @@ test('getBroadcast should call next if askYesNo topic campaign is not closed', a
 test('getBroadcast should call next if broadcast type is askVotingPlanStatus', async (t) => {
   const next = sinon.stub();
   const middleware = getBroadcast();
-  sandbox.stub(helpers.broadcast, 'fetchById')
+  sandbox.stub(helpers.broadcast, 'getById')
     .returns(Promise.resolve(askVotingPlanStatusBroadcast));
 
   // test
   await middleware(t.context.req, t.context.res, next);
   t.context.req.broadcast.should.deep.equal(askVotingPlanStatusBroadcast);
-  helpers.broadcast.fetchById.should.have.been.calledWith(broadcastId);
+  helpers.broadcast.getById.should.have.been.calledWith(broadcastId);
   next.should.have.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
 });
@@ -111,7 +111,7 @@ test('getBroadcast should call next if broadcast type is askVotingPlanStatus', a
 test('getBroadcast should return error if not askYesNo or askVotingPlanStatus and broadcast topic campaign is closed', async (t) => {
   const next = sinon.stub();
   const middleware = getBroadcast();
-  sandbox.stub(helpers.broadcast, 'fetchById')
+  sandbox.stub(helpers.broadcast, 'getById')
     .returns(Promise.resolve(autoReplyBroadcast));
   sandbox.stub(helpers.topic, 'hasClosedCampaign')
     .returns(true);
@@ -119,7 +119,7 @@ test('getBroadcast should return error if not askYesNo or askVotingPlanStatus an
   // test
   await middleware(t.context.req, t.context.res, next);
   t.context.req.broadcast.should.deep.equal(autoReplyBroadcast);
-  helpers.broadcast.fetchById.should.have.been.calledWith(broadcastId);
+  helpers.broadcast.getById.should.have.been.calledWith(broadcastId);
   helpers.topic.hasClosedCampaign
     .should.have.been.calledWith(autoReplyBroadcast.topic);
   next.should.not.have.been.called;
@@ -129,7 +129,7 @@ test('getBroadcast should return error if not askYesNo or askVotingPlanStatus an
 test('getBroadcast should return next if not askYesNo and broadcast topic campaign is not closed', async (t) => {
   const next = sinon.stub();
   const middleware = getBroadcast();
-  sandbox.stub(helpers.broadcast, 'fetchById')
+  sandbox.stub(helpers.broadcast, 'getById')
     .returns(Promise.resolve(autoReplyBroadcast));
   sandbox.stub(helpers.topic, 'hasClosedCampaign')
     .returns(false);
@@ -141,11 +141,11 @@ test('getBroadcast should return next if not askYesNo and broadcast topic campai
 });
 
 
-test('getBroadcast should call sendErrorResponse if fetchById fails', async (t) => {
+test('getBroadcast should call sendErrorResponse if getById fails', async (t) => {
   const next = sinon.stub();
   const middleware = getBroadcast();
   const stubError = { message: 'Epic fail' };
-  sandbox.stub(helpers.broadcast, 'fetchById')
+  sandbox.stub(helpers.broadcast, 'getById')
     .returns(Promise.reject(stubError));
 
   // test

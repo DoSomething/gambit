@@ -41,11 +41,11 @@ test('fetchById should return graphql.fetchTopicById', async () => {
   const topicId = topic.id;
   sandbox.stub(graphql, 'fetchTopicById')
     .returns(Promise.resolve(topic));
-  sandbox.stub(helpers.cache.contentfulEntries, 'set')
+  sandbox.stub(helpers.cache.topics, 'set')
     .returns(Promise.resolve(topic));
   const result = await topicHelper.fetchById(topicId);
   graphql.fetchTopicById.should.have.been.calledWith(topicId);
-  helpers.cache.contentfulEntries.set.should.have.been.calledWith(topicId);
+  helpers.cache.topics.set.should.have.been.calledWith(topicId);
   result.should.deep.equal(topic);
 });
 
@@ -65,7 +65,7 @@ test('getById should return getRivescriptTopicById if isRivescriptTopicId', asyn
 test('getById should return cached topic if not isRivescriptTopicId and is cached', async () => {
   const topic = topicFactory.getValidAutoReply();
   const topicId = stubs.getContentfulId();
-  sandbox.stub(helpers.cache.contentfulEntries, 'get')
+  sandbox.stub(helpers.cache.topics, 'get')
     .returns(Promise.resolve(topic));
   sandbox.stub(topicHelper, 'fetchById')
     .returns(Promise.resolve(topic));
@@ -78,7 +78,7 @@ test('getById should return cached topic if not isRivescriptTopicId and is cache
 test('getById should return fetchById if not isRivescriptTopicId and is not cached', async () => {
   const topic = topicFactory.getValidAutoReply();
   const topicId = stubs.getContentfulId();
-  sandbox.stub(helpers.cache.contentfulEntries, 'get')
+  sandbox.stub(helpers.cache.topics, 'get')
     .returns(Promise.resolve(null));
   sandbox.stub(topicHelper, 'fetchById')
     .returns(Promise.resolve(topic));
