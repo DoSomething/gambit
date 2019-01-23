@@ -15,20 +15,12 @@ const campaignTopicFields = `
   }
 `;
 
-const askYesNoBroadcastTopicFields = `
-  ... on AskYesNoBroadcastTopic {
-    invalidAskYesNoResponse
-    saidNo
-    saidNoTopic {
-      id
-    }
-    saidYes
-    saidYesTopic {
-      id
-      ...autoReplySignupCampaign
-      ...photoPostCampaign
-      ...textPostCampaign
-    }
+const saidYesTopicFields = `
+  saidYesTopic {
+    id
+    ...autoReplySignupCampaign
+    ...photoPostCampaign
+    ...textPostCampaign
   }
 `;
 
@@ -54,7 +46,9 @@ const fetchBroadcastById = `
         url
       }
       contentType
-      ${askYesNoBroadcastTopicFields}
+      ... on AskYesNoBroadcastTopic {
+        ${saidYesTopicFields}
+      }
       ... on AutoReplyBroadcast {
         topic {
           id
@@ -97,7 +91,15 @@ const fetchTopicById = `
     topic(id: $id) {
       id
       contentType
-      ${askYesNoBroadcastTopicFields}
+      ... on AskYesNoBroadcastTopic {
+        invalidAskYesNoResponse
+        saidNo
+        saidNoTopic {
+          id
+        }
+        saidYes
+        ${saidYesTopicFields}
+      }
       ... on AutoReplySignupTopic {
         ...autoReplySignupCampaign
         autoReply
@@ -135,5 +137,7 @@ module.exports = {
     fetchConversationTriggers,
     fetchTopicById,
   },
-  url: process.env.DS_GRAPHQL_API_BASEURI,
+  clientOptions: {
+    baseURI: process.env.DS_GRAPHQL_API_BASEURI,
+  },
 };
