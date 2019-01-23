@@ -8,6 +8,27 @@ const campaignFields = `
   }
 `;
 
+const fetchConversationTriggers = `
+  query getConversationTriggers {
+    conversationTriggers {
+      trigger
+      reply
+      topic {
+        id
+        ... on AutoReplySignupTopic {
+          ${campaignFields}
+        }
+        ... on PhotoPostTopic {
+          ${campaignFields}
+        }
+        ... on TextPostTopic {
+          ${campaignFields}
+        }
+      }
+    }
+  }
+`;
+
 const fetchTopicById = `
   query getTopicById($id: String!) {
     topic(id: $id) {
@@ -68,6 +89,7 @@ const fetchTopicById = `
 
 module.exports = {
   queries: {
+    fetchConversationTriggers,
     fetchTopicById,
   },
   url: process.env.DS_GRAPHQL_API_BASEURI,
