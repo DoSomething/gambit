@@ -12,7 +12,7 @@ const rivescriptApi = require('../../../../lib/rivescript');
 const helpers = require('../../../../lib/helpers');
 const config = require('../../../../config/lib/helpers/rivescript');
 const stubs = require('../../../helpers/stubs');
-const defaultTopicTriggerFactory = require('../../../helpers/factories/defaultTopicTrigger');
+const conversationTriggerFactory = require('../../../helpers/factories/conversationTrigger');
 
 chai.should();
 chai.use(sinonChai);
@@ -31,8 +31,7 @@ const mockRivescriptReply = {
   text: stubs.getRandomMessageText(),
   topic: stubs.getContentfulId(),
 };
-const replyTrigger = defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger();
-const redirectTrigger = defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger();
+const conversationTrigger = conversationTriggerFactory.getValidConversationTrigger();
 
 const sandbox = sinon.sandbox.create();
 
@@ -97,7 +96,7 @@ test('getDeparsedRivescript should call Rivescript getBot.deparse', () => {
 
 // getRivescripts
 test('getRivescripts should return cache data if cache set', async () => {
-  const data = [replyTrigger, redirectTrigger];
+  const data = [conversationTrigger, conversationTrigger];
   sandbox.stub(helpers.cache.rivescript, 'get')
     .returns(Promise.resolve(data));
   sandbox.stub(rivescriptHelper, 'fetchRivescripts')
@@ -109,7 +108,7 @@ test('getRivescripts should return cache data if cache set', async () => {
 });
 
 test('getRivescripts should call fetchRivescripts if not cache set', async () => {
-  const data = [replyTrigger, redirectTrigger];
+  const data = [conversationTrigger, conversationTrigger];
   sandbox.stub(helpers.cache.rivescript, 'get')
     .returns(Promise.resolve(false));
   sandbox.stub(rivescriptHelper, 'fetchRivescripts')
@@ -121,7 +120,7 @@ test('getRivescripts should call fetchRivescripts if not cache set', async () =>
 });
 
 test('getRivescripts should call fetchRivescripts if resetCache arg is true', async () => {
-  const data = [replyTrigger, redirectTrigger];
+  const data = [conversationTrigger, conversationTrigger];
   sandbox.stub(helpers.cache.rivescript, 'get')
     .returns(Promise.resolve({ test: 123 }));
   sandbox.stub(rivescriptHelper, 'fetchRivescripts')
@@ -134,8 +133,8 @@ test('getRivescripts should call fetchRivescripts if resetCache arg is true', as
 });
 
 test('fetchRivescripts should call graphql.fetchConversationTriggers and parseRivescript', async () => {
-  const data = [replyTrigger, redirectTrigger];
-  const mockParsedTrigger = defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger();
+  const data = [conversationTrigger, conversationTrigger];
+  const mockParsedTrigger = conversationTriggerFactory.getValidConversationTrigger();
   sandbox.stub(graphql, 'fetchConversationTriggers')
     .returns(Promise.resolve(data));
   sandbox.stub(rivescriptHelper, 'parseRivescript')
@@ -156,7 +155,7 @@ test('fetchRivescripts should throw on graphql.fetchConversationTriggers fail', 
   sandbox.stub(graphql, 'fetchConversationTriggers')
     .returns(Promise.reject(mockError));
   sandbox.stub(rivescriptHelper, 'parseRivescript')
-    .returns(replyTrigger);
+    .returns(conversationTrigger);
 
   const result = await t.throws(rivescriptHelper.fetchRivescripts());
   graphql.fetchConversationTriggers.should.have.been.called;
@@ -271,14 +270,12 @@ test('parseRivescript calls replyRivescript with defaultTopicTrigger.reply if se
     .returns(reply);
   sandbox.stub(rivescriptHelper, 'joinRivescriptLines')
     .returns(mockRivescript);
-  const replyDefaultTopicTrigger = defaultTopicTriggerFactory
-    .getValidReplyDefaultTopicTrigger();
 
-  const result = rivescriptHelper.parseRivescript(replyDefaultTopicTrigger);
+  const result = rivescriptHelper.parseRivescript(conversationTrigger);
   rivescriptHelper.formatTriggerRivescript.should.have.been
-    .calledWith(replyDefaultTopicTrigger.trigger);
+    .calledWith(conversationTrigger.trigger);
   rivescriptHelper.formatReplyRivescript.should.have.been
-    .calledWith(replyDefaultTopicTrigger.reply, null);
+    .calledWith(conversationTrigger.reply, null);
   rivescriptHelper.joinRivescriptLines.should.have.been.calledWith([trigger, reply]);
   result.should.equal(mockRivescript);
 });
@@ -335,7 +332,7 @@ test('joinRivescriptLines returns input array joined by the config line separato
 
 // loadBot
 test('loadBot calls getRivescripts and creates a new Rivescript bot with result', async () => {
-  const getRivescripts = [replyTrigger, redirectTrigger, replyTrigger];
+  const getRivescripts = [conversationTrigger, conversationTrigger, conversationTrigger];
   sandbox.stub(rivescriptHelper, 'getRivescripts')
     .returns(Promise.resolve(getRivescripts));
   sandbox.stub(rivescriptApi, 'loadBotWithRivescripts')

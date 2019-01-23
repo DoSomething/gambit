@@ -9,7 +9,7 @@ const campaignFields = `
 `;
 
 const fetchConversationTriggers = `
-  {
+  query getConversationTriggers {
     conversationTriggers {
       trigger
       reply
