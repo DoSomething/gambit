@@ -8,6 +8,38 @@ const campaignFields = `
   }
 `;
 
+const campaignTopicFields = `
+  topic {
+    id
+    ${campaignFields}
+  }
+`;
+
+const fetchBroadcastById = `
+  query getBroadcastById($id: String!) {
+    broadcast(id: $id) {
+      id
+      name
+      text
+      attachments {
+        url
+      }
+      contentType
+      ... on AutoReplyBroadcast {
+        topic {
+          id
+        }
+      }
+      ... on PhotoPostBroadcast {
+        ${campaignTopicFields}
+      }
+      ... on TextPostBroadcast {
+        ${campaignTopicFields}
+      }
+    }
+  }
+`;
+
 const fetchConversationTriggers = `
   query getConversationTriggers {
     conversationTriggers {
@@ -89,6 +121,7 @@ const fetchTopicById = `
 
 module.exports = {
   queries: {
+    fetchBroadcastById,
     fetchConversationTriggers,
     fetchTopicById,
   },
