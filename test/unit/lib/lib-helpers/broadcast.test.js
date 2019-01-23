@@ -9,6 +9,7 @@ const sinonChai = require('sinon-chai');
 const logger = require('heroku-logger');
 
 const Message = require('../../../../app/models/Message');
+const graphql = require('../../../../lib/graphql');
 const gambitContent = require('../../../../lib/gambit-content');
 const stubs = require('../../../helpers/stubs');
 const broadcastFactory = require('../../../helpers/factories/broadcast');
@@ -74,14 +75,14 @@ test('fetch should return gambitContent.fetchBroadcasts', async () => {
 });
 
 // fetchById
-test('fetchById should return gambitContent.fetchBroadcastById', async () => {
+test('fetchById should return graphql.fetchBroadcastById', async () => {
   const broadcast = broadcastFactory.getValidLegacyCampaignBroadcast();
-  sandbox.stub(gambitContent, 'fetchBroadcastById')
+  sandbox.stub(graphql, 'fetchBroadcastById')
     .returns(Promise.resolve(broadcast));
 
   const result = await broadcastHelper.fetchById(broadcastId);
   result.should.deep.equal(broadcast);
-  gambitContent.fetchBroadcastById.should.have.been.calledWith(broadcastId);
+  graphql.fetchBroadcastById.should.have.been.calledWith(broadcastId);
 });
 
 // formatStats

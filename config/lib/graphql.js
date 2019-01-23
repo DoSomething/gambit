@@ -15,6 +15,35 @@ const campaignTopicFields = `
   }
 `;
 
+const askYesNoBroadcastTopicFields = `
+  ... on AskYesNoBroadcastTopic {
+    invalidAskYesNoResponse
+    saidNo
+    saidNoTopic {
+      id
+    }
+    saidYes
+    saidYesTopic {
+      id
+      ...autoReplySignupCampaign
+      ...photoPostCampaign
+      ...textPostCampaign
+    }
+  }
+`;
+
+const campaignTopicFragments = `
+  fragment autoReplySignupCampaign on AutoReplySignupTopic {
+    ${campaignFields}
+  }
+  fragment photoPostCampaign on PhotoPostTopic {
+    ${campaignFields}
+  }
+  fragment textPostCampaign on TextPostTopic {
+    ${campaignFields}
+  }
+`;
+
 const fetchBroadcastById = `
   query getBroadcastById($id: String!) {
     broadcast(id: $id) {
@@ -25,6 +54,7 @@ const fetchBroadcastById = `
         url
       }
       contentType
+      ${askYesNoBroadcastTopicFields}
       ... on AutoReplyBroadcast {
         topic {
           id
@@ -38,6 +68,7 @@ const fetchBroadcastById = `
       }
     }
   }
+  ${campaignTopicFragments}
 `;
 
 const fetchConversationTriggers = `
@@ -66,20 +97,7 @@ const fetchTopicById = `
     topic(id: $id) {
       id
       contentType
-      ... on AskYesNoBroadcastTopic {
-        invalidAskYesNoResponse
-        saidNo
-        saidNoTopic {
-          id
-        }
-        saidYes
-        saidYesTopic {
-          id
-          ...autoReplySignupCampaign
-          ...photoPostCampaign
-          ...textPostCampaign
-        }
-      }
+      ${askYesNoBroadcastTopicFields}
       ... on AutoReplySignupTopic {
         ...autoReplySignupCampaign
         autoReply
@@ -108,15 +126,7 @@ const fetchTopicById = `
       }
     }
   }
-  fragment autoReplySignupCampaign on AutoReplySignupTopic {
-    ${campaignFields}
-  }
-  fragment photoPostCampaign on PhotoPostTopic {
-    ${campaignFields}
-  }
-  fragment textPostCampaign on TextPostTopic {
-    ${campaignFields}
-  }
+  ${campaignTopicFragments}
 `;
 
 module.exports = {
