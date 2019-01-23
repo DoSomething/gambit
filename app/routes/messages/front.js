@@ -26,7 +26,10 @@ router.use(validateOutboundMessageMiddleware(outboundMessageConfig));
 
 router.use(getConversationMiddleware());
 router.use(updateConversationMiddleware());
-
+/**
+ * We don't attempt to "load" an outbound message because Front doesn't retry messages.
+ * Unlike Blink which retries failed messages.
+ */
 router.use(createOutboundMessageMiddleware(outboundMessageConfig));
 router.use(sendOutboundMessageMiddleware());
 
