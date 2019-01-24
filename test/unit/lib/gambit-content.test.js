@@ -68,16 +68,3 @@ test('fetchCampaignById should return result of a successful GET /campaigns/:id 
   const endpoint = `${config.endpoints.campaigns}/${campaign.id}`;
   gambitContent.executeGet.should.have.been.calledWith(endpoint);
 });
-
-// fetchCampaigns
-test('fetchCampaigns should return result of a successful GET /campaigns request', async () => {
-  const campaigns = [campaign, campaign];
-  const fetchResponse = { data: campaigns };
-  sandbox.stub(gambitContent, 'executeGet')
-    .returns(Promise.resolve(fetchResponse));
-
-  const result = await gambitContent.fetchCampaigns();
-  result.should.deep.equal(fetchResponse);
-  gambitContent.executeGet
-    .should.have.been.calledWith(config.endpoints.campaigns);
-});
