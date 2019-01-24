@@ -9,6 +9,8 @@ const app = require('../../../app');
 const appConfig = require('../../../config');
 const mongooseConfig = require('../../../config/mongoose');
 
+const helpers = require('../../../lib/helpers');
+
 // Models
 const Message = require('../../../app/models/Message');
 const Conversation = require('../../../app/models/Conversation');
@@ -17,6 +19,7 @@ module.exports = {
   app: (testContext) => {
     testContext.request = supertest(app);
   },
+  cache: helpers.cache,
   db: {
     connect: url => mongooseConfig(url || appConfig.dbUri),
     disconnect: () => mongoose.disconnect(),

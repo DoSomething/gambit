@@ -42,7 +42,7 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-test('parseBroadcast should inject the broadcast.message.topic into req.topic if exists', async (t) => {
+test('parseBroadcast should inject the broadcast.topic into req.topic if exists', async (t) => {
   const next = sinon.stub();
   const middleware = parseBroadcast();
   const broadcast = broadcastFactory.getValidAutoReplyBroadcast();
@@ -53,17 +53,17 @@ test('parseBroadcast should inject the broadcast.message.topic into req.topic if
   // test
   await middleware(t.context.req, t.context.res, next);
   helpers.request.setCampaignId.should.not.have.been.called;
-  helpers.request.setTopic.should.have.been.calledWith(t.context.req, broadcast.message.topic);
+  helpers.request.setTopic.should.have.been.calledWith(t.context.req, broadcast.topic);
   helpers.request.setOutboundMessageText
-    .should.have.been.calledWith(t.context.req, broadcast.message.text);
+    .should.have.been.calledWith(t.context.req, broadcast.text);
   helpers.request.setOutboundMessageTemplate
-    .should.have.been.calledWith(t.context.req, broadcast.message.template);
+    .should.have.been.calledWith(t.context.req, broadcast.type);
   helpers.attachments.add
-    .should.have.been.calledWith(t.context.req, broadcast.message.attachments[0]);
+    .should.have.been.calledWith(t.context.req, broadcast.attachments[0]);
   next.should.have.been.called;
 });
 
-test('parseBroadcast should inject the broadcast into req.topic if broadcast.message.topic is empty', async (t) => {
+test('parseBroadcast should inject the broadcast into req.topic if broadcast.topic is empty', async (t) => {
   const next = sinon.stub();
   const middleware = parseBroadcast();
   const broadcast = broadcastFactory.getValidAskYesNo();

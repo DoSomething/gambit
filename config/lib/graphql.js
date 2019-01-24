@@ -8,6 +8,63 @@ const campaignFields = `
   }
 `;
 
+const campaignTopicFields = `
+  topic {
+    id
+    ${campaignFields}
+  }
+`;
+
+const saidYesTopicFields = `
+  saidYesTopic {
+    id
+    ...autoReplySignupCampaign
+    ...photoPostCampaign
+    ...textPostCampaign
+  }
+`;
+
+const campaignTopicFragments = `
+  fragment autoReplySignupCampaign on AutoReplySignupTopic {
+    ${campaignFields}
+  }
+  fragment photoPostCampaign on PhotoPostTopic {
+    ${campaignFields}
+  }
+  fragment textPostCampaign on TextPostTopic {
+    ${campaignFields}
+  }
+`;
+
+const fetchBroadcastById = `
+  query getBroadcastById($id: String!) {
+    broadcast(id: $id) {
+      id
+      name
+      text
+      attachments {
+        url
+      }
+      contentType
+      ... on AskYesNoBroadcastTopic {
+        ${saidYesTopicFields}
+      }
+      ... on AutoReplyBroadcast {
+        topic {
+          id
+        }
+      }
+      ... on PhotoPostBroadcast {
+        ${campaignTopicFields}
+      }
+      ... on TextPostBroadcast {
+        ${campaignTopicFields}
+      }
+    }
+  }
+  ${campaignTopicFragments}
+`;
+
 const fetchConversationTriggers = `
   query getConversationTriggers {
     conversationTriggers {
@@ -41,12 +98,7 @@ const fetchTopicById = `
           id
         }
         saidYes
-        saidYesTopic {
-          id
-          ...autoReplySignupCampaign
-          ...photoPostCampaign
-          ...textPostCampaign
-        }
+        ${saidYesTopicFields}
       }
       ... on AutoReplySignupTopic {
         ...autoReplySignupCampaign
@@ -76,21 +128,16 @@ const fetchTopicById = `
       }
     }
   }
-  fragment autoReplySignupCampaign on AutoReplySignupTopic {
-    ${campaignFields}
-  }
-  fragment photoPostCampaign on PhotoPostTopic {
-    ${campaignFields}
-  }
-  fragment textPostCampaign on TextPostTopic {
-    ${campaignFields}
-  }
+  ${campaignTopicFragments}
 `;
 
 module.exports = {
   queries: {
+    fetchBroadcastById,
     fetchConversationTriggers,
     fetchTopicById,
   },
-  url: process.env.DS_GRAPHQL_API_BASEURI,
+  clientOptions: {
+    baseURI: process.env.DS_GRAPHQL_API_BASEURI,
+  },
 };
