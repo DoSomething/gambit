@@ -60,7 +60,7 @@
     "moment": "^2.21.0",
     "mongoose": "^4.10.6",
     "mustache": "^2.3.0",
-    "newrelic": "^4.8.1",
+    "newrelic": "^5.2.0",
     "query-string": "^6.2.0",
     "redis": "^2.8.0",
     "request": "^2.88.0",
