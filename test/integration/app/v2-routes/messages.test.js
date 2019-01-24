@@ -185,3 +185,39 @@ test('POST /api/v2/messages?origin=broadcastLite should return 200 if broadcast 
   res.status.should.be.equal(200);
   res.body.data.messages.length.should.be.equal(1);
 });
+
+test.serial('POST /api/v2/messages?origin=twilio should return 200 if processed successfully', async (t) => {
+  const member = stubs.northstar.getUser({ validUsNumber: true });
+  const inboundRequestPayload = stubs.twilio.getInboundRequestBody(member);
+
+  // mock user fetch
+  nock(integrationHelper.routes.northstar.baseURI)
+    .get(`/users/mobile/${inboundRequestPayload.From}`)
+    .reply(200, member)
+    // mock user update
+    .put(`/users/_id/${member.data.id}`)
+    .reply(200, member);
+
+  /**
+   * FIXME: This test will fail in wercker since we are not yet intercepting the external
+   * calls to G-Content API. Leaving it here so I can merge the GraphQL changes in the remote
+   * master branch!
+   */
+
+  /**
+   * We are using Twilio Test credentials in Wercker.
+   * When this runs on wercker we are indeed making a call to the Twilio API.
+   * But we do it with the Test credentials so its free and we are not actually
+   * sending the text.
+   */
+  const res = await t.context.request
+    .post(integrationHelper.routes.v2.messages(false, {
+      origin: 'twilio',
+    }))
+    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
+    .send(inboundRequestPayload);
+
+  res.status.should.be.equal(200);
+  res.body.data.messages.inbound.length.should.be.equal(1);
+  res.body.data.messages.outbound.length.should.be.equal(1);
+});
