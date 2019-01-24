@@ -18,12 +18,9 @@ const sandbox = sinon.sandbox.create();
 const gambitContent = require('../../../lib/gambit-content');
 
 // stubs
-const broadcastFactory = require('../../helpers/factories/broadcast');
 const campaignFactory = require('../../helpers/factories/campaign');
 
 const campaign = campaignFactory.getValidCampaign();
-const campaignBroadcast = broadcastFactory.getValidLegacyCampaignBroadcast();
-const fetchError = new Error({ message: 'Epic fail' });
 const fetchSuccess = { data: ['abc', 'def'] };
 const queryParams = { skip: 11 };
 
@@ -61,46 +58,6 @@ test('executeGet should call superagent.get with apiUrl and parse body', async (
   superagent.get.should.have.been.calledWith(apiUrl);
 });
 
-// fetchBroadcastById
-test('fetchBroadcastById should return result of a successful GET /broadcasts/:id request', async () => {
-  sandbox.stub(gambitContent, 'executeGet')
-    .returns(Promise.resolve({ data: campaignBroadcast }));
-  const result = await gambitContent.fetchBroadcastById(campaignBroadcast.id);
-  result.should.deep.equal(campaignBroadcast);
-  const endpoint = `${config.endpoints.broadcasts}/${campaignBroadcast.id}`;
-  gambitContent.executeGet.should.have.been.calledWith(endpoint);
-});
-
-test('fetchBroadcastById should return error of failed GET /broadcasts/:id request', async (t) => {
-  sandbox.stub(gambitContent, 'executeGet')
-    .returns(Promise.reject(fetchError));
-  const result = await t.throws(gambitContent.fetchBroadcastById());
-  t.is(result.message, fetchError.message);
-});
-
-// fetchBroadcasts
-test('fetchBroadcasts should return result of a successful GET /broadcasts request', async () => {
-  const fetchResponse = {
-    data: [
-      campaignBroadcast,
-      broadcastFactory.getValidLegacyRivescriptTopicBroadcast(),
-    ],
-  };
-  sandbox.stub(gambitContent, 'executeGet')
-    .returns(Promise.resolve(fetchResponse));
-  const result = await gambitContent.fetchBroadcasts(queryParams);
-  result.should.deep.equal(fetchResponse);
-  gambitContent.executeGet.should.have.been.calledWith(config.endpoints.broadcasts, queryParams);
-});
-
-test('fetchBroadcasts should return error of failed GET /broadcasts request', async (t) => {
-  sandbox.stub(gambitContent, 'executeGet')
-    .returns(Promise.reject(fetchError));
-  const result = await t.throws(gambitContent.fetchBroadcasts());
-  t.is(result.message, fetchError.message);
-  gambitContent.executeGet.should.have.been.calledWith(config.endpoints.broadcasts);
-});
-
 // fetchCampaignById
 test('fetchCampaignById should return result of a successful GET /campaigns/:id request', async () => {
   sandbox.stub(gambitContent, 'executeGet')
@@ -110,17 +67,4 @@ test('fetchCampaignById should return result of a successful GET /campaigns/:id 
   result.should.deep.equal(campaign);
   const endpoint = `${config.endpoints.campaigns}/${campaign.id}`;
   gambitContent.executeGet.should.have.been.calledWith(endpoint);
-});
-
-// fetchCampaigns
-test('fetchCampaigns should return result of a successful GET /campaigns request', async () => {
-  const campaigns = [campaign, campaign];
-  const fetchResponse = { data: campaigns };
-  sandbox.stub(gambitContent, 'executeGet')
-    .returns(Promise.resolve(fetchResponse));
-
-  const result = await gambitContent.fetchCampaigns();
-  result.should.deep.equal(fetchResponse);
-  gambitContent.executeGet
-    .should.have.been.calledWith(config.endpoints.campaigns);
 });

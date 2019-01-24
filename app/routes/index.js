@@ -1,6 +1,5 @@
 'use strict';
 
-const broadcastsIndexRoute = require('./broadcasts/index');
 const broadcastsSingleRoute = require('./broadcasts/single');
 const mongooseRoutes = require('./mongoose');
 const rivescriptRoute = require('./rivescript');
@@ -27,8 +26,6 @@ module.exports = function init(app) {
   // v2
   app.use('/api/v2/broadcasts/:broadcastId',
     broadcastsSingleRoute);
-  app.use('/api/v2/broadcasts',
-    broadcastsIndexRoute);
   app.use('/api/v2/messages',
     /**
      * parses Metadata like requestId and retryCount

@@ -10,7 +10,6 @@ const logger = require('heroku-logger');
 
 const Message = require('../../../../app/models/Message');
 const graphql = require('../../../../lib/graphql');
-const gambitContent = require('../../../../lib/gambit-content');
 const helpers = require('../../../../lib/helpers');
 const stubs = require('../../../helpers/stubs');
 const broadcastFactory = require('../../../helpers/factories/broadcast');
@@ -61,18 +60,6 @@ test('aggregateMessagesForBroadcastId should throw if Messages.aggregate fails',
   sandbox.stub(Message, 'aggregate')
     .returns(Promise.reject(new Error()));
   await t.throws(broadcastHelper.aggregateMessagesForBroadcastId(broadcastId));
-});
-
-// fetch
-test('fetch should return gambitContent.fetchBroadcasts', async () => {
-  const broadcasts = [broadcastFactory.getValidLegacyCampaignBroadcast()];
-  const query = { skip: 11 };
-  sandbox.stub(gambitContent, 'fetchBroadcasts')
-    .returns(Promise.resolve(broadcasts));
-
-  const result = await broadcastHelper.fetch(query);
-  result.should.deep.equal(broadcasts);
-  gambitContent.fetchBroadcasts.should.have.been.calledWith(query);
 });
 
 // fetchById
