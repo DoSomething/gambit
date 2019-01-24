@@ -20,16 +20,11 @@ const gambitContent = require('../../../lib/gambit-content');
 // stubs
 const broadcastFactory = require('../../helpers/factories/broadcast');
 const campaignFactory = require('../../helpers/factories/campaign');
-const defaultTopicTriggerFactory = require('../../helpers/factories/defaultTopicTrigger');
 
 const campaign = campaignFactory.getValidCampaign();
 const campaignBroadcast = broadcastFactory.getValidLegacyCampaignBroadcast();
-const defaultTopicTriggers = [
-  defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger(),
-  defaultTopicTriggerFactory.getValidReplyDefaultTopicTrigger(),
-];
 const fetchError = new Error({ message: 'Epic fail' });
-const fetchSuccess = { data: defaultTopicTriggers };
+const fetchSuccess = { data: ['abc', 'def'] };
 const queryParams = { skip: 11 };
 
 test.afterEach(() => {
@@ -128,17 +123,4 @@ test('fetchCampaigns should return result of a successful GET /campaigns request
   result.should.deep.equal(fetchResponse);
   gambitContent.executeGet
     .should.have.been.calledWith(config.endpoints.campaigns);
-});
-
-// fetchDefaultTopicTriggers
-test('fetchDefaultTopicTriggers should return result of a successful GET /fetchDefaultTopicTriggers request', async () => {
-  const fetchResponse = { data: defaultTopicTriggers };
-  sandbox.stub(gambitContent, 'executeGet')
-    .returns(Promise.resolve(fetchResponse));
-  // Why is a line break fixing this broken test? It's failing on this line below saying
-  // gambitContent.getRivescripts is not a function.
-  const result = await gambitContent.fetchDefaultTopicTriggers(queryParams);
-  result.should.deep.equal(fetchResponse);
-  gambitContent.executeGet
-    .should.have.been.calledWith(config.endpoints.defaultTopicTriggers, queryParams);
 });
