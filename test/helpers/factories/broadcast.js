@@ -8,26 +8,23 @@ const config = require('../../../config/lib/helpers/broadcast');
  * @see https://github.com/DoSomething/gambit-content/tree/master/documentation
  */
 
-function getBroadcast(type, topic = {}) {
+function getBroadcast(type, fields = {}) {
   const date = Date.now();
   return {
     id: stubs.getBroadcastId(),
     name: stubs.getBroadcastName(),
     type,
+    contentType: type,
     createdAt: date,
     updatedAt: date,
-    message: {
-      text: stubs.getBroadcastMessageText(),
-      attachments: [stubs.getAttachment()],
-      template: type,
-      topic,
-    },
-    templates: [],
+    text: stubs.getBroadcastMessageText(),
+    attachments: [stubs.getAttachment()],
+    ...fields,
   };
 }
 
 function getValidAutoReplyBroadcast() {
-  return getBroadcast(config.types.autoReplyBroadcast, topicFactory.getValidAutoReply());
+  return getBroadcast(config.types.autoReplyBroadcast, { topic: topicFactory.getValidAutoReply() });
 }
 
 function getValidAskSubscriptionStatus() {
@@ -35,18 +32,13 @@ function getValidAskSubscriptionStatus() {
 }
 
 function getValidAskYesNo() {
-  const broadcast = getBroadcast(config.types.askYesNo);
-  broadcast.templates = {
-    saidYes: {
-      text: stubs.getRandomMessageText(),
-      topic: topicFactory.getValidAutoReply(),
-    },
-    saidNo: {
-      text: stubs.getRandomMessageText(),
-      topic: topicFactory.getValidTopicWithoutCampaign(),
-    },
-  };
-  return broadcast;
+  return getBroadcast(config.types.askYesNo, {
+    invalidAskYesNoResponse: stubs.getRandomMessageText(),
+    saidNo: stubs.getRandomMessageText(),
+    saidNoTopic: topicFactory.getValidTopicWithoutCampaign(),
+    saidYes: stubs.getRandomMessageText(),
+    saidYesTopic: topicFactory.getValidPhotoPostConfig(),
+  });
 }
 
 function getValidAskVotingPlanStatus() {
@@ -70,7 +62,6 @@ function getValidAskVotingPlanStatus() {
 
 function getValidLegacyCampaignBroadcast() {
   const broadcast = getBroadcast(config.types.legacy);
-  broadcast.message.template = 'askSignup';
   broadcast.topic = null;
   broadcast.campaignId = stubs.getCampaignId();
   return broadcast;
@@ -81,7 +72,6 @@ function getValidLegacyCampaignBroadcast() {
  */
 function getValidLegacyRivescriptTopicBroadcast() {
   const broadcast = getBroadcast(config.types.legacy);
-  broadcast.message.template = 'rivescript';
   broadcast.topic = stubs.getTopic();
   broadcast.campaignId = null;
   return broadcast;

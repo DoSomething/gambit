@@ -4,6 +4,7 @@ const querystring = require('querystring');
 
 const northstarConfig = require('../../../config/lib/northstar');
 const gambitContentConfig = require('../../../config/lib/gambit-content');
+const graphqlConfig = require('../../../config/lib/graphql');
 
 /**
  * TODO: Use the Node.js url module to standardize the return of all the methods
@@ -38,5 +39,8 @@ module.exports = {
   gambitContent: {
     // FIXME: should be clientOptions.baseURI like above?
     baseURI: gambitContentConfig.clientOptions.baseUri,
+  },
+  graphql: {
+    baseURI: graphqlConfig.clientOptions.baseURI,
   },
 };

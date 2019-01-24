@@ -8,6 +8,7 @@ const sinonChai = require('sinon-chai');
 
 const graphqlRequest = require('graphql-request');
 const stubs = require('../../helpers/stubs');
+const broadcastFactory = require('../../helpers/factories/broadcast');
 const conversationTriggerFactory = require('../../helpers/factories/conversationTrigger');
 const topicFactory = require('../../helpers/factories/topic');
 const config = require('../../../config/lib/graphql');
@@ -22,6 +23,18 @@ const sandbox = sinon.sandbox.create();
 
 test.afterEach(() => {
   sandbox.restore();
+});
+
+// fetchBroadcastById
+test('fetchBroadcastById should call request with query config and id variable and return response.broadcast', async () => {
+  const broadcast = broadcastFactory.getValidAskYesNo();
+  const id = broadcast.id;
+  sandbox.stub(graphql, 'request')
+    .returns(Promise.resolve({ broadcast }));
+
+  const result = await graphql.fetchBroadcastById(id);
+  graphql.request.should.have.been.calledWith(config.queries.fetchBroadcastById, { id });
+  result.should.deep.equal(broadcast);
 });
 
 // fetchConversationTriggers
@@ -56,7 +69,10 @@ test('request should call graphqlRequest.request with given query and variables'
     .returns(Promise.resolve(response));
 
   const result = await graphql.request(config.queries.fetchTopicById, variables);
-  graphqlRequest.request
-    .should.have.been.calledWith(`${config.url}/graphql`, config.queries.fetchTopicById, variables);
+  graphqlRequest.request.should.have.been.calledWith(
+    `${config.clientOptions.baseURI}/graphql`,
+    config.queries.fetchTopicById,
+    variables,
+  );
   result.should.deep.equal(response);
 });
