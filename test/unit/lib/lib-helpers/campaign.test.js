@@ -6,12 +6,10 @@ const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 
-const gambitContent = require('../../../../lib/gambit-content');
+const graphql = require('../../../../lib/graphql');
 
 const campaignFactory = require('../../../helpers/factories/campaign');
-
-const campaignStub = campaignFactory.getValidCampaign();
-const campaignLookupStub = () => Promise.resolve(campaignStub);
+const webSignupConfirmationFactory = require('../../../helpers/factories/webSignupConfirmation');
 
 chai.should();
 chai.use(sinonChai);
@@ -26,15 +24,16 @@ test.afterEach(() => {
   sandbox.restore();
 });
 
-// fetchById
-test('fetchById calls gambitContent.fetchCampaignById', async () => {
-  sandbox.stub(gambitContent, 'fetchCampaignById')
-    .returns(campaignLookupStub);
-  const campaignId = campaignStub.id;
+// fetchWebSignupConfirmationByCampaignId
+test('fetchWebSignupConfirmationByCampaignId calls graphql.fetchWebSignupConfirmations', async (t) => {
+  const campaignId = 8225;
+  const confirmationStub = webSignupConfirmationFactory.getValidWebSignupConfirmation(campaignId);
+  sandbox.stub(graphql, 'fetchWebSignupConfirmations')
+    .returns([confirmationStub, webSignupConfirmationFactory.getValidWebSignupConfirmation(7330)]);
 
-  const result = await campaignHelper.fetchById(campaignId);
-  gambitContent.fetchCampaignById.should.have.been.calledWith(campaignId);
-  result.should.deep.equal(campaignLookupStub);
+  const result = await campaignHelper.fetchWebSignupConfirmationByCampaignId(campaignId);
+  result.should.deep.equal(confirmationStub);
+  t.is(null, await campaignHelper.fetchWebSignupConfirmationByCampaignId(311));
 });
 
 // isClosedCampaign

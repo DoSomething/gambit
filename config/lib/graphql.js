@@ -131,11 +131,24 @@ const fetchTopicById = `
   ${campaignTopicFragments}
 `;
 
+const fetchWebSignupConfirmations = `
+  query getWebSignupConfirmations {
+    webSignupConfirmations {
+      campaignId
+      text
+      topic {
+        id
+      }
+    }
+  }
+`;
+
 module.exports = {
   queries: {
     fetchBroadcastById,
     fetchConversationTriggers,
     fetchTopicById,
+    fetchWebSignupConfirmations,
   },
   clientOptions: {
     baseURI: process.env.DS_GRAPHQL_API_BASEURI,
