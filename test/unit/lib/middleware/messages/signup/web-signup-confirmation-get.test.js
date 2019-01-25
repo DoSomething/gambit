@@ -88,7 +88,7 @@ test('getWebSignupConfirmation should call sendNoContent if webSignupConfirmatio
   next.should.not.have.been.called;
 });
 
-test('getCampaign should call sendErrorResponse if fetchById fails', async (t) => {
+test('getWebSignupConfirmation should call sendErrorResponse if webSignupConfirmation fails', async (t) => {
   const next = sinon.stub();
   const middleware = getWebSignupConfirmation();
   const error = { message: 'Epic fail' };
