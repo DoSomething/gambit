@@ -336,11 +336,11 @@ module.exports = {
     getSmsMessageSid() {
       return 'SMe62bd767ea4438d7f7f307ff9d3212e0';
     },
-    getInboundRequestBody() {
+    getInboundRequestBody(user) {
       const sid = this.getSmsMessageSid();
       return {
         Body: module.exports.getRandomMessageText(),
-        From: module.exports.getMobileNumber(),
+        From: user ? user.data.mobile : module.exports.getMobileNumber(),
         FromCity: chance.city(),
         FromCountry: country,
         FromState: chance.state(),
