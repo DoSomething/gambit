@@ -87,6 +87,6 @@
     "rewire": "^4.0.1",
     "sinon": "^4.5.0",
     "sinon-chai": "^3.0.0",
-    "supertest": "^3.3.0"
+    "supertest": "^3.4.2"
   }
 }
