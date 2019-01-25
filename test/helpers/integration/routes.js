@@ -37,7 +37,7 @@ module.exports = {
     baseURI: northstarConfig.clientOptions.baseURI,
   },
   gambitContent: {
-    // FIXME: should be clientOptions.baseURI like above?
+    // TODO: Remove when G-Content is deprecated
     baseURI: gambitContentConfig.clientOptions.baseUri,
   },
   graphql: {
