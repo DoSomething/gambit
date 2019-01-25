@@ -6,6 +6,7 @@ const nock = require('nock');
 
 const integrationHelper = require('../../../helpers/integration');
 const stubs = require('../../../helpers/stubs');
+const metadataParserConfig = require('../../../../config/lib/middleware/metadata-parse');
 
 chai.should();
 
@@ -175,38 +176,65 @@ test('POST /api/v2/messages?origin=broadcastLite should return 200 if broadcast 
   res.body.data.messages.length.should.be.equal(1);
 });
 
-test.serial('POST /api/v2/messages?origin=twilio should return 200 if processed successfully', async (t) => {
+test.serial('POST /api/v2/messages?origin=twilio should not re-send message to Twilio on retry', async (t) => {
   const member = stubs.northstar.getUser({ validUsNumber: true });
   const inboundRequestPayload = stubs.twilio.getInboundRequestBody(member);
+  const requestId = stubs.getRequestId();
 
-  // mock user fetch
+  // mock user fetch twice
   nock(integrationHelper.routes.northstar.baseURI)
     .get(`/users/mobile/${inboundRequestPayload.From}`)
+    .times(2)
     .reply(200, member)
-    // mock user update
+    // mock user update twice
     .put(`/users/_id/${member.data.id}`)
+    .times(2)
     .reply(200, member);
 
   /**
-   * FIXME: This test will fail in wercker since we are not yet intercepting the external
-   * calls to G-Content API. Leaving it here so I can merge the GraphQL changes in the remote
-   * master branch!
+   * TODO: This test will pass in wercker because we query graphql-qa directly.
+   * We should mock the response.
    */
 
   /**
-   * We are using Twilio Test credentials in Wercker.
-   * When this runs on wercker we are indeed making a call to the Twilio API.
-   * But we do it with the Test credentials so its free and we are not actually
-   * sending the text.
+   * 1st attempt
    */
-  const res = await t.context.request
+  const res1 = await t.context.request
     .post(integrationHelper.routes.v2.messages(false, {
       origin: 'twilio',
     }))
-    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
+    .set({
+      Authorization: `Basic ${integrationHelper.getAuthKey()}`,
+      [metadataParserConfig.metadata.headers.requestId]: requestId,
+    })
     .send(inboundRequestPayload);
 
-  res.status.should.be.equal(200);
-  res.body.data.messages.inbound.length.should.be.equal(1);
-  res.body.data.messages.outbound.length.should.be.equal(1);
+  res1.status.should.be.equal(200);
+  res1.body.data.messages.inbound.length.should.be.equal(1);
+  res1.body.data.messages.outbound.length.should.be.equal(1);
+
+  const outboundMessage1 = res1.body.data.messages.outbound[0];
+
+  /**
+   * 2nd attempt (retry)
+   */
+  const res2 = await t.context.request
+    .post(integrationHelper.routes.v2.messages(false, {
+      origin: 'twilio',
+    }))
+    .set({
+      Authorization: `Basic ${integrationHelper.getAuthKey()}`,
+      [metadataParserConfig.metadata.headers.requestId]: requestId,
+      [metadataParserConfig.metadata.headers.retryCount]: '1',
+    })
+    .send(inboundRequestPayload);
+
+  res2.status.should.be.equal(200);
+  res2.body.data.messages.inbound.length.should.be.equal(1);
+  res2.body.data.messages.outbound.length.should.be.equal(1);
+
+  const outboundMessage2 = res2.body.data.messages.outbound[0];
+
+  // The retry should not have replaced the platformUserId of the message
+  outboundMessage1.platformMessageId.should.be.equal(outboundMessage2.platformMessageId);
 });
