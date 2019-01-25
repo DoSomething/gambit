@@ -33,7 +33,7 @@ test('fetchWebSignupConfirmationByCampaignId calls graphql.fetchWebSignupConfirm
 
   const result = await campaignHelper.fetchWebSignupConfirmationByCampaignId(campaignId);
   result.should.deep.equal(confirmationStub);
-  t.is(null, await campaignHelper.fetchWebSignupConfirmationByCampaignId(311));
+  t.falsy(await campaignHelper.fetchWebSignupConfirmationByCampaignId(311));
 });
 
 // isClosedCampaign

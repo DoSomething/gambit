@@ -63,7 +63,7 @@ test('fetchTopicById should call request with query config and id variable and r
 });
 
 // fetchWebSignupConfirmations
-test('fetchWebSignupConfirmations should call request with query config and id variable and return response.webSignupConfirmations', async () => {
+test('fetchWebSignupConfirmations should call request with query config variable and return response.webSignupConfirmations', async () => {
   const webSignupConfirmations = [
     webSignupConfirmationFactory.getValidWebSignupConfirmation(),
     webSignupConfirmationFactory.getValidWebSignupConfirmation(),
