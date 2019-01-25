@@ -3,7 +3,6 @@
 const querystring = require('querystring');
 
 const northstarConfig = require('../../../config/lib/northstar');
-const gambitContentConfig = require('../../../config/lib/gambit-content');
 const graphqlConfig = require('../../../config/lib/graphql');
 
 /**
@@ -35,10 +34,6 @@ module.exports = {
   },
   northstar: {
     baseURI: northstarConfig.clientOptions.baseURI,
-  },
-  gambitContent: {
-    // TODO: Remove when G-Content is deprecated
-    baseURI: gambitContentConfig.clientOptions.baseUri,
   },
   graphql: {
     baseURI: graphqlConfig.clientOptions.baseURI,
