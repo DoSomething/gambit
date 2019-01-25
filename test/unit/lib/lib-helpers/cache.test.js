@@ -31,41 +31,42 @@ test.beforeEach(() => {
 
 test.afterEach(() => {
   sandbox.restore();
-  cacheHelper.__set__('contentfulEntriesCache', undefined);
+  cacheHelper.__set__('broadcastsCache', undefined);
   cacheHelper.__set__('rivescriptCache', undefined);
+  cacheHelper.__set__('topicsCache', undefined);
 });
 
 /**
- * Contentful entries cache
+ * Broadcasts cache
  */
-test('contentfulEntries.get should return object when cache exists', async () => {
-  cacheHelper.__set__('contentfulEntriesCache', {
+test('broadcasts.get should return object when cache exists', async () => {
+  cacheHelper.__set__('broadcastsCache', {
     get: () => Promise.resolve(contentfulEntry),
   });
-  const result = await cacheHelper.contentfulEntries.get(contentfulEntryId);
+  const result = await cacheHelper.broadcasts.get(contentfulEntryId);
   result.should.deep.equal(contentfulEntry);
 });
 
-test('contentfulEntries.get should return falsy when cache undefined', async (t) => {
-  cacheHelper.__set__('contentfulEntriesCache', {
+test('broadcasts.get should return falsy when cache undefined', async (t) => {
+  cacheHelper.__set__('broadcastsCache', {
     get: () => Promise.resolve(null),
   });
-  const result = await cacheHelper.contentfulEntries.get(contentfulEntryId);
+  const result = await cacheHelper.broadcasts.get(contentfulEntryId);
   t.falsy(result);
 });
 
-test('contentfulEntries.get should throw when cache set fails', async (t) => {
-  cacheHelper.__set__('contentfulEntriesCache', {
+test('broadcasts.get should throw when cache set fails', async (t) => {
+  cacheHelper.__set__('broadcastsCache', {
     get: () => Promise.reject(new Error()),
   });
-  await t.throws(cacheHelper.contentfulEntries.get(contentfulEntryId));
+  await t.throws(cacheHelper.broadcasts.get(contentfulEntryId));
 });
 
-test('contentfulEntries.set should return an object', async () => {
-  cacheHelper.__set__('contentfulEntriesCache', {
+test('broadcasts.set should return an object', async () => {
+  cacheHelper.__set__('broadcastsCache', {
     set: () => Promise.resolve(JSON.stringify(contentfulEntry)),
   });
-  const result = await cacheHelper.contentfulEntries.set(contentfulEntryId);
+  const result = await cacheHelper.broadcasts.set(contentfulEntryId);
   result.should.deep.equal(contentfulEntry);
 });
 
@@ -108,4 +109,38 @@ test('rivescript.set should throw when cache set fails', async (t) => {
     set: () => Promise.reject(new Error()),
   });
   await t.throws(cacheHelper.rivescript.set(rivescriptCacheId));
+});
+
+/**
+ * Topics cache
+ */
+test('topics.get should return object when cache exists', async () => {
+  cacheHelper.__set__('topicsCache', {
+    get: () => Promise.resolve(contentfulEntry),
+  });
+  const result = await cacheHelper.topics.get(contentfulEntryId);
+  result.should.deep.equal(contentfulEntry);
+});
+
+test('topics.get should return falsy when cache undefined', async (t) => {
+  cacheHelper.__set__('topicsCache', {
+    get: () => Promise.resolve(null),
+  });
+  const result = await cacheHelper.topics.get(contentfulEntryId);
+  t.falsy(result);
+});
+
+test('topics.get should throw when cache set fails', async (t) => {
+  cacheHelper.__set__('topicsCache', {
+    get: () => Promise.reject(new Error()),
+  });
+  await t.throws(cacheHelper.topics.get(contentfulEntryId));
+});
+
+test('topics.set should return an object', async () => {
+  cacheHelper.__set__('topicsCache', {
+    set: () => Promise.resolve(JSON.stringify(contentfulEntry)),
+  });
+  const result = await cacheHelper.topics.set(contentfulEntryId);
+  result.should.deep.equal(contentfulEntry);
 });

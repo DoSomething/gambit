@@ -9,7 +9,8 @@ const sinonChai = require('sinon-chai');
 const logger = require('heroku-logger');
 
 const Message = require('../../../../app/models/Message');
-const gambitContent = require('../../../../lib/gambit-content');
+const graphql = require('../../../../lib/graphql');
+const helpers = require('../../../../lib/helpers');
 const stubs = require('../../../helpers/stubs');
 const broadcastFactory = require('../../../helpers/factories/broadcast');
 
@@ -61,27 +62,15 @@ test('aggregateMessagesForBroadcastId should throw if Messages.aggregate fails',
   await t.throws(broadcastHelper.aggregateMessagesForBroadcastId(broadcastId));
 });
 
-// fetch
-test('fetch should return gambitContent.fetchBroadcasts', async () => {
-  const broadcasts = [broadcastFactory.getValidLegacyCampaignBroadcast()];
-  const query = { skip: 11 };
-  sandbox.stub(gambitContent, 'fetchBroadcasts')
-    .returns(Promise.resolve(broadcasts));
-
-  const result = await broadcastHelper.fetch(query);
-  result.should.deep.equal(broadcasts);
-  gambitContent.fetchBroadcasts.should.have.been.calledWith(query);
-});
-
 // fetchById
-test('fetchById should return gambitContent.fetchBroadcastById', async () => {
+test('fetchById should return graphql.fetchBroadcastById', async () => {
   const broadcast = broadcastFactory.getValidLegacyCampaignBroadcast();
-  sandbox.stub(gambitContent, 'fetchBroadcastById')
+  sandbox.stub(graphql, 'fetchBroadcastById')
     .returns(Promise.resolve(broadcast));
 
   const result = await broadcastHelper.fetchById(broadcastId);
   result.should.deep.equal(broadcast);
-  gambitContent.fetchBroadcastById.should.have.been.calledWith(broadcastId);
+  graphql.fetchBroadcastById.should.have.been.calledWith(broadcastId);
 });
 
 // formatStats
@@ -111,6 +100,27 @@ test('formatStats should return default object when array without _id property i
   const result = broadcastHelper.formatStats(aggregateResults);
   broadcastHelper.parseMessageDirection.should.not.have.been.called;
   result.should.deep.equal(defaultStats);
+});
+
+test('getById should return cached broadcast if exists', async () => {
+  sandbox.stub(helpers.cache.broadcasts, 'get')
+    .returns(Promise.resolve(askYesNoBroadcast));
+  sandbox.stub(broadcastHelper, 'fetchById')
+    .returns(Promise.resolve(askYesNoBroadcast));
+
+  const result = await broadcastHelper.getById(broadcastId);
+  broadcastHelper.fetchById.should.not.have.been.called;
+  result.should.deep.equal(askYesNoBroadcast);
+});
+
+test('getById should return fetchById if cached broadcasts undefined', async () => {
+  sandbox.stub(helpers.cache.broadcasts, 'get')
+    .returns(Promise.resolve(null));
+  sandbox.stub(broadcastHelper, 'fetchById')
+    .returns(Promise.resolve(askYesNoBroadcast));
+
+  const result = await broadcastHelper.getById(broadcastId);
+  result.should.deep.equal(askYesNoBroadcast);
 });
 
 // getWebhook

@@ -14,10 +14,15 @@ test.before(async () => {
 });
 
 test.beforeEach((t) => {
+  integrationHelper.hooks.cache.broadcasts.set(
+    stubs.getBroadcastId(),
+    stubs.graphql.getBroadcastSingleResponse().data.broadcast,
+  );
   integrationHelper.hooks.app(t.context);
 });
 
 test.afterEach(async () => {
+  integrationHelper.hooks.cache.broadcasts.set(stubs.getBroadcastId(), null);
   await integrationHelper.hooks.db.messages.removeAll();
   await integrationHelper.hooks.db.conversations.removeAll();
   nock.cleanAll();
@@ -95,10 +100,6 @@ test('POST /api/v2/messages?origin=broadcastLite should return 422 if mobile is 
       noMobile: true,
     }));
 
-  nock(integrationHelper.routes.gambitContent.baseURI)
-    .get(`/broadcasts/${stubs.getBroadcastId()}`)
-    .reply(200, stubs.gambitContent.getBroadcastSingleResponse());
-
   const res = await t.context.request
     .post(integrationHelper.routes.v2.messages(false, {
       origin: 'broadcastLite',
@@ -115,10 +116,6 @@ test('POST /api/v2/messages?origin=broadcastLite should return 404 if user is no
   nock(integrationHelper.routes.northstar.baseURI)
     .get(`/users/id/${cioWebhookPayload.userId}`)
     .reply(404, {});
-
-  nock(integrationHelper.routes.gambitContent.baseURI)
-    .get(`/broadcasts/${stubs.getBroadcastId()}`)
-    .reply(200, stubs.gambitContent.getBroadcastSingleResponse());
 
   const res = await t.context.request
     .post(integrationHelper.routes.v2.messages(false, {
@@ -141,10 +138,6 @@ test('POST /api/v2/messages?origin=broadcastLite should return 422 if user is un
       subscription: 'stop',
     }));
 
-  nock(integrationHelper.routes.gambitContent.baseURI)
-    .get(`/broadcasts/${stubs.getBroadcastId()}`)
-    .reply(200, stubs.gambitContent.getBroadcastSingleResponse());
-
   const res = await t.context.request
     .post(integrationHelper.routes.v2.messages(false, {
       origin: 'broadcastLite',
@@ -164,10 +157,6 @@ test('POST /api/v2/messages?origin=broadcastLite should return 200 if broadcast 
     .reply(200, stubs.northstar.getUser({
       noMobile: true,
     }));
-
-  nock(integrationHelper.routes.gambitContent.baseURI)
-    .get(`/broadcasts/${stubs.getBroadcastId()}`)
-    .reply(200, stubs.gambitContent.getBroadcastSingleResponse());
 
   /**
    * We are using Twilio Test credentials in Wercker.
