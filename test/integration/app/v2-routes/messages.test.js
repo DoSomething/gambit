@@ -6,6 +6,7 @@ const nock = require('nock');
 
 const integrationHelper = require('../../../helpers/integration');
 const stubs = require('../../../helpers/stubs');
+const metadataParserConfig = require('../../../../config/lib/middleware/metadata-parse');
 
 chai.should();
 
@@ -173,4 +174,67 @@ test('POST /api/v2/messages?origin=broadcastLite should return 200 if broadcast 
 
   res.status.should.be.equal(200);
   res.body.data.messages.length.should.be.equal(1);
+});
+
+test.serial('POST /api/v2/messages?origin=twilio should not re-send message to Twilio on retry', async (t) => {
+  const member = stubs.northstar.getUser({ validUsNumber: true });
+  const inboundRequestPayload = stubs.twilio.getInboundRequestBody(member);
+  const requestId = stubs.getRequestId();
+
+  // mock user fetch twice
+  nock(integrationHelper.routes.northstar.baseURI)
+    .get(`/users/mobile/${inboundRequestPayload.From}`)
+    .times(2)
+    .reply(200, member)
+    // mock user update twice
+    .put(`/users/_id/${member.data.id}`)
+    .times(2)
+    .reply(200, member);
+
+  /**
+   * TODO: This test will pass in wercker because we query graphql-qa directly.
+   * We should mock the response.
+   */
+
+  /**
+   * 1st attempt
+   */
+  const res1 = await t.context.request
+    .post(integrationHelper.routes.v2.messages(false, {
+      origin: 'twilio',
+    }))
+    .set({
+      Authorization: `Basic ${integrationHelper.getAuthKey()}`,
+      [metadataParserConfig.metadata.headers.requestId]: requestId,
+    })
+    .send(inboundRequestPayload);
+
+  res1.status.should.be.equal(200);
+  res1.body.data.messages.inbound.length.should.be.equal(1);
+  res1.body.data.messages.outbound.length.should.be.equal(1);
+
+  const outboundMessage1 = res1.body.data.messages.outbound[0];
+
+  /**
+   * 2nd attempt (retry)
+   */
+  const res2 = await t.context.request
+    .post(integrationHelper.routes.v2.messages(false, {
+      origin: 'twilio',
+    }))
+    .set({
+      Authorization: `Basic ${integrationHelper.getAuthKey()}`,
+      [metadataParserConfig.metadata.headers.requestId]: requestId,
+      [metadataParserConfig.metadata.headers.retryCount]: '1',
+    })
+    .send(inboundRequestPayload);
+
+  res2.status.should.be.equal(200);
+  res2.body.data.messages.inbound.length.should.be.equal(1);
+  res2.body.data.messages.outbound.length.should.be.equal(1);
+
+  const outboundMessage2 = res2.body.data.messages.outbound[0];
+
+  // The retry should not have replaced the platformUserId of the message
+  outboundMessage1.platformMessageId.should.be.equal(outboundMessage2.platformMessageId);
 });
