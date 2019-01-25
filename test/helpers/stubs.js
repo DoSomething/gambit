@@ -75,28 +75,6 @@ module.exports = {
       };
     },
   },
-  gambitContent: {
-    getSignupId() {
-      return 8496477;
-    },
-    getReceiveMessageResponse() {
-      return {
-        data: {
-          replyTemplate: module.exports.getTemplate(),
-          signup: {
-            id: this.getSignupId(),
-            campaign: {
-              id: module.exports.getCampaignId(),
-            },
-            user: {
-              id: module.exports.getUserId(),
-            },
-            totalQuantitySubmitted: null,
-          },
-        },
-      };
-    },
-  },
   graphql: {
     getBroadcastSingleResponse: () => ({
       data: {
