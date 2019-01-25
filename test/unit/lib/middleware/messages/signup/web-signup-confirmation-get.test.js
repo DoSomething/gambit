@@ -18,13 +18,12 @@ const stubs = require('../../../../../helpers/stubs');
 const campaignId = stubs.getCampaignId();
 const webSignupConfirmation = webSignupConfirmationFactory.getValidWebSignupConfirmation();
 
-
 // setup "x.should.y" assertion style
 chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const getWebSignupConfirmation = require('../../../../../../lib/middleware/messages/signup/campaign-get');
+const getWebSignupConfirmation = require('../../../../../../lib/middleware/messages/signup/web-signup-confirmation-get');
 
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();
