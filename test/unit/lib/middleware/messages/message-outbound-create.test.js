@@ -40,7 +40,6 @@ test.beforeEach((t) => {
   t.context.res = httpMocks.createResponse();
   // add params
   t.context.req.outboundMessageText = stubs.getRandomMessageText();
-  t.context.req.outboundMessageTemplate = stubs.getTemplate();
 });
 
 test.afterEach((t) => {
@@ -69,8 +68,8 @@ test('createOutboundMessage calls Conversation.createAndSetLastOutboundMessage w
   sandbox.stub(mockConversation, 'createAndSetLastOutboundMessage')
     .returns(messageCreateStub);
   t.context.req.conversation = mockConversation;
-  t.context.req.outboundMessageText = stubs.getRandomMessageText();
-  t.context.req.outboundMessageTemplate = stubs.getRandomWord();
+  const template = stubs.getRandomWord();
+  t.context.req.outboundMessageTemplate = template;
   const middleware = createOutboundMessage(configStub);
 
   // test
@@ -78,7 +77,7 @@ test('createOutboundMessage calls Conversation.createAndSetLastOutboundMessage w
   t.context.req.conversation.createAndSetLastOutboundMessage.should.have.been.calledWith(
     configStub.messageDirection,
     t.context.req.outboundMessageText,
-    t.context.req.outboundMessageTemplate,
+    template,
     t.context.req,
   );
   t.context.req.should.have.property('outboundMessage');
@@ -91,16 +90,15 @@ test('createOutboundMessage calls Conversation.createAndSetLastOutboundMessage w
   sandbox.stub(mockConversation, 'createAndSetLastOutboundMessage')
     .returns(messageCreateStub);
   t.context.req.conversation = mockConversation;
-  t.context.req.outboundMessageText = stubs.getRandomMessageText();
   const signupConfigStub = stubs.config.getMessageOutbound(false, stubs.getRandomWord());
-  const middleware = createOutboundMessage(configStub);
+  const middleware = createOutboundMessage(signupConfigStub);
 
   // test
   await middleware(t.context.req, t.context.res, next);
   t.context.req.conversation.createAndSetLastOutboundMessage.should.have.been.calledWith(
     signupConfigStub.messageDirection,
     t.context.req.outboundMessageText,
-    t.context.req.outboundMessageTemplate,
+    signupConfigStub.messageTemplate,
     t.context.req,
   );
   t.context.req.should.have.property('outboundMessage');
