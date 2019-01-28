@@ -61,12 +61,12 @@ test.afterEach((t) => {
 test('getWebSignupConfirmation should set outbound message vars if campaign has a webSignupConfirmation', async (t) => {
   const next = sinon.stub();
   const middleware = getWebSignupConfirmation();
-  sandbox.stub(helpers.campaign, 'fetchWebSignupConfirmationByCampaignId')
+  sandbox.stub(helpers.campaign, 'getWebSignupConfirmationByCampaignId')
     .returns(Promise.resolve(webSignupConfirmation));
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  helpers.campaign.fetchWebSignupConfirmationByCampaignId.should.have.been.calledWith(campaignId);
+  helpers.campaign.getWebSignupConfirmationByCampaignId.should.have.been.calledWith(campaignId);
   helpers.request.setOutboundMessageText
     .should.have.been.calledWith(t.context.req, webSignupConfirmation.text);
   helpers.request.setOutboundMessageTemplate
@@ -79,7 +79,7 @@ test('getWebSignupConfirmation should set outbound message vars if campaign has 
 test('getWebSignupConfirmation should call sendNoContent if webSignupConfirmation not found', async (t) => {
   const next = sinon.stub();
   const middleware = getWebSignupConfirmation();
-  sandbox.stub(helpers.campaign, 'fetchWebSignupConfirmationByCampaignId')
+  sandbox.stub(helpers.campaign, 'getWebSignupConfirmationByCampaignId')
     .returns(Promise.resolve(null));
 
   // test
@@ -95,7 +95,7 @@ test('getWebSignupConfirmation should call sendErrorResponse if campaign has end
   const middleware = getWebSignupConfirmation();
   const stubConfirmation = webSignupConfirmationFactory
     .getValidWebSignupConfirmation(campaignFactory.getValidClosedCampaign());
-  sandbox.stub(helpers.campaign, 'fetchWebSignupConfirmationByCampaignId')
+  sandbox.stub(helpers.campaign, 'getWebSignupConfirmationByCampaignId')
     .returns(Promise.resolve(stubConfirmation));
 
   // test
@@ -108,7 +108,7 @@ test('getWebSignupConfirmation should call sendErrorResponse if webSignupConfirm
   const next = sinon.stub();
   const middleware = getWebSignupConfirmation();
   const error = { message: 'Epic fail' };
-  sandbox.stub(helpers.campaign, 'fetchWebSignupConfirmationByCampaignId')
+  sandbox.stub(helpers.campaign, 'getWebSignupConfirmationByCampaignId')
     .returns(Promise.reject(error));
 
   // test
