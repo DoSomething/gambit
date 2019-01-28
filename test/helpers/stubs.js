@@ -59,9 +59,10 @@ function stubLogger(sandbox, logger) {
 
 module.exports = {
   config: {
-    getMessageOutbound(shouldSendWhenPaused = false) {
+    getMessageOutbound(shouldSendWhenPaused = false, messageTemplate) {
       return {
         messageDirection: 'outbound-api-send',
+        messageTemplate,
         shouldSendWhenPaused,
       };
     },

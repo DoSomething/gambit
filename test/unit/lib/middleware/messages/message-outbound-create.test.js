@@ -64,16 +64,45 @@ test('createOutboundMessage calls next if req.outboundMessage exists', async (t)
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 
-test('createOutboundMessage calls Conversation.createAndSetLastOutboundMessage', async (t) => {
+test('createOutboundMessage calls Conversation.createAndSetLastOutboundMessage with outboundMessageTemplate if set', async (t) => {
   const next = sinon.stub();
   sandbox.stub(mockConversation, 'createAndSetLastOutboundMessage')
     .returns(messageCreateStub);
   t.context.req.conversation = mockConversation;
+  t.context.req.outboundMessageText = stubs.getRandomMessageText();
+  t.context.req.outboundMessageTemplate = stubs.getRandomWord();
   const middleware = createOutboundMessage(configStub);
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  t.context.req.conversation.createAndSetLastOutboundMessage.should.have.been.called;
+  t.context.req.conversation.createAndSetLastOutboundMessage.should.have.been.calledWith(
+    configStub.messageDirection,
+    t.context.req.outboundMessageText,
+    t.context.req.outboundMessageTemplate,
+    t.context.req,
+  );
+  t.context.req.should.have.property('outboundMessage');
+  next.should.have.been.called;
+  helpers.sendErrorResponse.should.not.have.been.called;
+});
+
+test('createOutboundMessage calls Conversation.createAndSetLastOutboundMessage with config.messageTemplate if outboundMessageTemplate undefined', async (t) => {
+  const next = sinon.stub();
+  sandbox.stub(mockConversation, 'createAndSetLastOutboundMessage')
+    .returns(messageCreateStub);
+  t.context.req.conversation = mockConversation;
+  t.context.req.outboundMessageText = stubs.getRandomMessageText();
+  const signupConfigStub = stubs.config.getMessageOutbound(false, stubs.getRandomWord());
+  const middleware = createOutboundMessage(configStub);
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  t.context.req.conversation.createAndSetLastOutboundMessage.should.have.been.calledWith(
+    signupConfigStub.messageDirection,
+    t.context.req.outboundMessageText,
+    t.context.req.outboundMessageTemplate,
+    t.context.req,
+  );
   t.context.req.should.have.property('outboundMessage');
   next.should.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;

@@ -15,10 +15,8 @@ const webSignupConfirmationFactory = require('../../../helpers/factories/webSign
 chai.should();
 chai.use(sinonChai);
 
-
 // module to be tested
 const campaignHelper = require('../../../../lib/helpers/campaign');
-
 
 // sinon sandbox object
 const sandbox = sinon.sandbox.create();
