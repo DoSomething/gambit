@@ -134,7 +134,10 @@ const fetchTopicById = `
 const fetchWebSignupConfirmations = `
   query getWebSignupConfirmations {
     webSignupConfirmations {
-      campaignId
+      campaign {
+        id
+        endDate
+      }
       text
       topic {
         id

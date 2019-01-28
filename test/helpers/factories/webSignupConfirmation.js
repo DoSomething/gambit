@@ -2,9 +2,9 @@
 
 const stubs = require('../stubs');
 
-function getValidWebSignupConfirmation(campaignId) {
+function getValidWebSignupConfirmation(campaign) {
   return {
-    campaignId: campaignId || stubs.getRandomNumericId(),
+    campaign,
     text: stubs.getRandomMessageText(),
     topic: {
       id: stubs.getContentfulId(),

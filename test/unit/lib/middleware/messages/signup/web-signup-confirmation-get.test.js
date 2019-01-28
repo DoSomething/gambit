@@ -11,12 +11,14 @@ const underscore = require('underscore');
 const Promise = require('bluebird');
 
 const helpers = require('../../../../../../lib/helpers');
+const campaignFactory = require('../../../../../helpers/factories/campaign');
 const webSignupConfirmationFactory = require('../../../../../helpers/factories/webSignupConfirmation');
 const stubs = require('../../../../../helpers/stubs');
 
 // stubs
 const campaignId = stubs.getCampaignId();
-const webSignupConfirmation = webSignupConfirmationFactory.getValidWebSignupConfirmation();
+const webSignupConfirmation = webSignupConfirmationFactory
+  .getValidWebSignupConfirmation(campaignFactory.getValidCampaign());
 
 // setup "x.should.y" assertion style
 chai.should();
@@ -85,6 +87,20 @@ test('getWebSignupConfirmation should call sendNoContent if webSignupConfirmatio
   helpers.response.sendNoContent.should.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
   helpers.request.setTopic.should.not.have.been.called;
+  next.should.not.have.been.called;
+});
+
+test('getWebSignupConfirmation should call sendErrorResponse if campaign has ended', async (t) => {
+  const next = sinon.stub();
+  const middleware = getWebSignupConfirmation();
+  const stubConfirmation = webSignupConfirmationFactory
+    .getValidWebSignupConfirmation(campaignFactory.getValidClosedCampaign());
+  sandbox.stub(helpers.campaign, 'fetchWebSignupConfirmationByCampaignId')
+    .returns(Promise.resolve(stubConfirmation));
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  helpers.sendErrorResponse.should.have.been.called;
   next.should.not.have.been.called;
 });
 

@@ -25,15 +25,27 @@ test.afterEach(() => {
 });
 
 // fetchWebSignupConfirmationByCampaignId
-test('fetchWebSignupConfirmationByCampaignId calls graphql.fetchWebSignupConfirmations', async (t) => {
-  const campaignId = 8225;
-  const confirmationStub = webSignupConfirmationFactory.getValidWebSignupConfirmation(campaignId);
-  sandbox.stub(graphql, 'fetchWebSignupConfirmations')
-    .returns([confirmationStub, webSignupConfirmationFactory.getValidWebSignupConfirmation(7330)]);
+test('fetchWebSignupConfirmationByCampaignId returns webSignupConfirmation if fetchWebSignupConfirmations has a webSignupConfirmation with given campaign id', async () => {
+  const campaign = campaignFactory.getValidCampaign();
+  const firstStub = webSignupConfirmationFactory.getValidWebSignupConfirmation(campaign);
+  const secondStub = webSignupConfirmationFactory
+    .getValidWebSignupConfirmation(campaignFactory.getValidCampaign());
+  sandbox.stub(graphql, 'fetchWebSignupConfirmations').returns([firstStub, secondStub]);
 
-  const result = await campaignHelper.fetchWebSignupConfirmationByCampaignId(campaignId);
-  result.should.deep.equal(confirmationStub);
-  t.falsy(await campaignHelper.fetchWebSignupConfirmationByCampaignId(311));
+  const result = await campaignHelper.fetchWebSignupConfirmationByCampaignId(campaign.id);
+  result.should.deep.equal(firstStub);
+});
+
+test('fetchWebSignupConfirmationByCampaignId returns null if fetchWebSignupConfirmations does not have a webSignupConfirmation with given campaign id', async (t) => {
+  const firstStub = webSignupConfirmationFactory
+    .getValidWebSignupConfirmation(campaignFactory.getValidCampaign());
+  const secondStub = webSignupConfirmationFactory
+    .getValidWebSignupConfirmation(campaignFactory.getValidCampaign());
+  sandbox.stub(graphql, 'fetchWebSignupConfirmations').returns([firstStub, secondStub]);
+  const campaign = campaignFactory.getValidCampaign();
+
+  const result = await campaignHelper.fetchWebSignupConfirmationByCampaignId(campaign.id);
+  t.falsy(result);
 });
 
 // isClosedCampaign
