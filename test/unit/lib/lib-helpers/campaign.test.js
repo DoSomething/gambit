@@ -8,7 +8,7 @@ const sinonChai = require('sinon-chai');
 
 const graphql = require('../../../../lib/graphql');
 const helpers = require('../../../../lib/helpers');
-
+const stubs = require('../../../helpers/stubs');
 const campaignFactory = require('../../../helpers/factories/campaign');
 const webSignupConfirmationFactory = require('../../../helpers/factories/webSignupConfirmation');
 
@@ -38,6 +38,17 @@ test('fetchWebSignupConfirmations returns cached graphql.fetchWebSignupConfirmat
   const result = await campaignHelper.fetchWebSignupConfirmations();
   helpers.cache.webSignupConfirmations.set.should.have.been.calledWith(data);
   result.should.deep.equal(data);
+});
+
+test('fetchWebSignupConfirmations throws if graphql.fetchWebSignupConfirmations fails', async (t) => {
+  const data = [123, 345];
+  sandbox.stub(graphql, 'fetchWebSignupConfirmations')
+    .returns(Promise.reject(stubs.getError()));
+  sandbox.stub(helpers.cache.webSignupConfirmations, 'set')
+    .returns(Promise.resolve(data));
+
+  await t.throws(campaignHelper.fetchWebSignupConfirmations());
+  helpers.cache.webSignupConfirmations.set.should.not.have.been.called;
 });
 
 // getWebSignupConfirmationByCampaignId
