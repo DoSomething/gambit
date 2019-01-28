@@ -69,8 +69,6 @@ test('getWebSignupConfirmation should set outbound message vars if campaign has 
   helpers.campaign.getWebSignupConfirmationByCampaignId.should.have.been.calledWith(campaignId);
   helpers.request.setOutboundMessageText
     .should.have.been.calledWith(t.context.req, webSignupConfirmation.text);
-  helpers.request.setOutboundMessageTemplate
-    .should.have.been.calledWith(t.context.req, 'webSignupConfirmation');
   helpers.request.setTopic.should.have.been.calledWith(t.context.req, webSignupConfirmation.topic);
   helpers.sendErrorResponse.should.not.have.been.called;
   next.should.have.been.called;
