@@ -15,4 +15,9 @@ module.exports = {
     name: 'topics',
     ttl: process.env.DS_GAMBIT_CONVERSATIONS_TOPICS_CACHE_TTL || defaultTtl,
   },
+  webSignupConfirmations: {
+    allResultsKey: 'allWebSignupConfirmations',
+    name: 'webSignupConfirmations',
+    ttl: process.env.DS_GAMBIT_CONVERSATIONS_WEB_SIGNUP_CONFIRMATIONS_CACHE_TTL || defaultTtl,
+  },
 };

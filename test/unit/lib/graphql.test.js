@@ -11,6 +11,7 @@ const stubs = require('../../helpers/stubs');
 const broadcastFactory = require('../../helpers/factories/broadcast');
 const conversationTriggerFactory = require('../../helpers/factories/conversationTrigger');
 const topicFactory = require('../../helpers/factories/topic');
+const webSignupConfirmationFactory = require('../../helpers/factories/webSignupConfirmation');
 const config = require('../../../config/lib/graphql');
 
 chai.should();
@@ -59,6 +60,20 @@ test('fetchTopicById should call request with query config and id variable and r
   const result = await graphql.fetchTopicById(id);
   graphql.request.should.have.been.calledWith(config.queries.fetchTopicById, { id });
   result.should.deep.equal(topic);
+});
+
+// fetchWebSignupConfirmations
+test('fetchWebSignupConfirmations should call request with query config variable and return response.webSignupConfirmations', async () => {
+  const webSignupConfirmations = [
+    webSignupConfirmationFactory.getValidWebSignupConfirmation(),
+    webSignupConfirmationFactory.getValidWebSignupConfirmation(),
+  ];
+  sandbox.stub(graphql, 'request')
+    .returns(Promise.resolve({ webSignupConfirmations }));
+
+  const result = await graphql.fetchWebSignupConfirmations();
+  graphql.request.should.have.been.calledWith(config.queries.fetchWebSignupConfirmations);
+  result.should.deep.equal(webSignupConfirmations);
 });
 
 // request

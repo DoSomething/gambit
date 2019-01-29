@@ -59,9 +59,10 @@ function stubLogger(sandbox, logger) {
 
 module.exports = {
   config: {
-    getMessageOutbound(shouldSendWhenPaused = false) {
+    getMessageOutbound(shouldSendWhenPaused = false, messageTemplate) {
       return {
         messageDirection: 'outbound-api-send',
+        messageTemplate,
         shouldSendWhenPaused,
       };
     },
@@ -72,28 +73,6 @@ module.exports = {
     getUser(shouldSendErrorIfNotFound = true) {
       return {
         shouldSendErrorIfNotFound,
-      };
-    },
-  },
-  gambitContent: {
-    getSignupId() {
-      return 8496477;
-    },
-    getReceiveMessageResponse() {
-      return {
-        data: {
-          replyTemplate: module.exports.getTemplate(),
-          signup: {
-            id: this.getSignupId(),
-            campaign: {
-              id: module.exports.getCampaignId(),
-            },
-            user: {
-              id: module.exports.getUserId(),
-            },
-            totalQuantitySubmitted: null,
-          },
-        },
       };
     },
   },
