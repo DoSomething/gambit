@@ -33,7 +33,7 @@ const supportConfigStub = stubs.config.getMessageOutbound(true);
 test.beforeEach((t) => {
   sandbox.stub(helpers.request, 'setPlatformUserId')
     .returns(underscore.noop);
-  sandbox.stub(helpers, 'sendErrorResponseWithSuppressHeaders')
+  sandbox.stub(helpers, 'sendErrorResponseWithNoRetry')
     .returns(sendErrorResponseStub);
 
   // setup req, res mocks
@@ -50,7 +50,7 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-test('validateOutbound calls sendErrorResponseWithSuppressHeaders if user is not subscriber', (t) => {
+test('validateOutbound calls sendErrorResponseWithNoRetry if user is not subscriber', (t) => {
   // setup
   const next = sinon.stub();
   const middleware = validateOutbound(defaultConfigStub);
@@ -60,7 +60,7 @@ test('validateOutbound calls sendErrorResponseWithSuppressHeaders if user is not
   // test
   middleware(t.context.req, t.context.res, next);
   helpers.user.isSubscriber.should.have.been.called;
-  helpers.sendErrorResponseWithSuppressHeaders.should.have.been.called;
+  helpers.sendErrorResponseWithNoRetry.should.have.been.called;
   next.should.not.have.been.called;
 });
 
@@ -77,11 +77,11 @@ test('validateOutbound sends error if user is paused and config.shouldSendWhenPa
   middleware(t.context.req, t.context.res, next);
   helpers.user.isSubscriber.should.have.been.called;
   helpers.user.isPaused.should.have.been.called;
-  helpers.sendErrorResponseWithSuppressHeaders.should.have.been.called;
+  helpers.sendErrorResponseWithNoRetry.should.have.been.called;
   next.should.not.have.been.called;
 });
 
-test('validateOutbound calls sendErrorResponseWithSuppressHeaders if formatMobileNumber throws', (t) => {
+test('validateOutbound calls sendErrorResponseWithNoRetry if formatMobileNumber throws', (t) => {
   // setup
   const next = sinon.stub();
   const middleware = validateOutbound(defaultConfigStub);
@@ -97,7 +97,7 @@ test('validateOutbound calls sendErrorResponseWithSuppressHeaders if formatMobil
   helpers.user.isSubscriber.should.have.been.called;
   helpers.user.isPaused.should.have.been.called;
   helpers.util.formatMobileNumber.should.have.been.called;
-  helpers.sendErrorResponseWithSuppressHeaders.should.have.been.called;
+  helpers.sendErrorResponseWithNoRetry.should.have.been.called;
   next.should.not.have.been.called;
 });
 
@@ -118,7 +118,7 @@ test('validateOutbound calls next if user validates', (t) => {
   helpers.user.isPaused.should.have.been.called;
   helpers.util.formatMobileNumber.should.have.been.called;
   helpers.request.setPlatformUserId.should.have.been.called;
-  helpers.sendErrorResponseWithSuppressHeaders.should.not.have.been.called;
+  helpers.sendErrorResponseWithNoRetry.should.not.have.been.called;
   next.should.have.been.called;
 });
 
@@ -140,7 +140,7 @@ test('validateOutbound does not call formatMobileNumber if platform is not SMS',
   helpers.user.isPaused.should.have.been.called;
   helpers.util.formatMobileNumber.should.not.have.been.called;
   helpers.request.setPlatformUserId.should.not.have.been.called;
-  helpers.sendErrorResponseWithSuppressHeaders.should.not.have.been.called;
+  helpers.sendErrorResponseWithNoRetry.should.not.have.been.called;
   next.should.have.been.called;
 });
 
@@ -156,6 +156,6 @@ test('validateOutbound calls next if user is paused and config.shouldSendWhenPau
 
   // test
   middleware(t.context.req, t.context.res, next);
-  helpers.sendErrorResponseWithSuppressHeaders.should.not.have.been.called;
+  helpers.sendErrorResponseWithNoRetry.should.not.have.been.called;
   next.should.have.been.called;
 });

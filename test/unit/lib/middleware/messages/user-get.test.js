@@ -39,7 +39,7 @@ test.beforeEach((t) => {
     .returns(underscore.noop);
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(sendErrorResponseStub);
-  sandbox.stub(helpers, 'sendErrorResponseWithSuppressHeaders')
+  sandbox.stub(helpers, 'sendErrorResponseWithNoRetry')
     .returns(sendErrorResponseStub);
 
   // setup req, res mocks
@@ -80,7 +80,7 @@ test('getUser calls sendErrorResponse if helpers.user.fetchFromReq fails', async
   await middleware(t.context.req, t.context.res, next);
   helpers.request.setUser.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
-  helpers.sendErrorResponseWithSuppressHeaders.should.not.have.been.called;
+  helpers.sendErrorResponseWithNoRetry.should.not.have.been.called;
 });
 
 test('getUser calls sendErrorResponse if User not found and config.shouldSendError', async (t) => {
@@ -94,7 +94,7 @@ test('getUser calls sendErrorResponse if User not found and config.shouldSendErr
   await middleware(t.context.req, t.context.res, next);
   helpers.request.setUser.should.not.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
-  helpers.sendErrorResponseWithSuppressHeaders.should.have.been.called;
+  helpers.sendErrorResponseWithNoRetry.should.have.been.called;
   next.should.not.have.been.called;
 });
 
@@ -109,6 +109,6 @@ test('getUser calls next if User not found and config.shouldSendError is false',
   await middleware(t.context.req, t.context.res, next);
   helpers.request.setUser.should.not.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
-  helpers.sendErrorResponseWithSuppressHeaders.should.not.have.been.called;
+  helpers.sendErrorResponseWithNoRetry.should.not.have.been.called;
   next.should.have.been.called;
 });
