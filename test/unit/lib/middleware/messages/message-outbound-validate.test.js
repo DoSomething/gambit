@@ -35,6 +35,8 @@ test.beforeEach((t) => {
     .returns(underscore.noop);
   sandbox.stub(helpers, 'sendErrorResponseWithNoRetry')
     .returns(sendErrorResponseStub);
+  sandbox.stub(helpers.errorNoticeable, 'sendErrorResponseWithNoRetry')
+    .returns(sendErrorResponseStub);
 
   // setup req, res mocks
   t.context.req = httpMocks.createRequest();
@@ -60,7 +62,7 @@ test('validateOutbound calls sendErrorResponseWithNoRetry if user is not subscri
   // test
   middleware(t.context.req, t.context.res, next);
   helpers.user.isSubscriber.should.have.been.called;
-  helpers.sendErrorResponseWithNoRetry.should.have.been.called;
+  helpers.errorNoticeable.sendErrorResponseWithNoRetry.should.have.been.called;
   next.should.not.have.been.called;
 });
 
@@ -77,7 +79,7 @@ test('validateOutbound sends error if user is paused and config.shouldSendWhenPa
   middleware(t.context.req, t.context.res, next);
   helpers.user.isSubscriber.should.have.been.called;
   helpers.user.isPaused.should.have.been.called;
-  helpers.sendErrorResponseWithNoRetry.should.have.been.called;
+  helpers.errorNoticeable.sendErrorResponseWithNoRetry.should.have.been.called;
   next.should.not.have.been.called;
 });
 
@@ -119,6 +121,7 @@ test('validateOutbound calls next if user validates', (t) => {
   helpers.util.formatMobileNumber.should.have.been.called;
   helpers.request.setPlatformUserId.should.have.been.called;
   helpers.sendErrorResponseWithNoRetry.should.not.have.been.called;
+  helpers.errorNoticeable.sendErrorResponseWithNoRetry.should.not.have.been.called;
   next.should.have.been.called;
 });
 

@@ -37,7 +37,7 @@ const outboundMessage = messageFactory.getValidMessage();
 test.beforeEach((t) => {
   sandbox.stub(helpers, 'sendResponseWithMessage')
     .returns(underscore.noop);
-  sandbox.stub(helpers, 'sendErrorResponseWithNoRetry')
+  sandbox.stub(helpers.errorNoticeable, 'sendErrorResponseWithNoRetry')
     .returns(underscore.noop);
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(underscore.noop);
@@ -80,8 +80,8 @@ test('sendOutbound calls sendErrorResponseWithNoRetry if Twilio bad request', as
   await middleware(t.context.req, t.context.res, next);
   conversation.postLastOutboundMessageToPlatform.should.have.have.been.called;
   helpers.analytics.addTwilioError.should.have.been.called;
+  helpers.errorNoticeable.sendErrorResponseWithNoRetry.should.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
-  helpers.sendErrorResponseWithNoRetry.should.have.been.called;
   helpers.sendResponseWithMessage.should.not.have.been.called;
 });
 
@@ -100,6 +100,6 @@ test('sendOutbound calls sendErrorResponse if error is not Twilio bad request', 
   conversation.postLastOutboundMessageToPlatform.should.have.been.called;
   helpers.analytics.addTwilioError.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
-  helpers.sendErrorResponseWithNoRetry.should.not.have.been.called;
+  helpers.errorNoticeable.sendErrorResponseWithNoRetry.should.not.have.been.called;
   helpers.sendResponseWithMessage.should.not.have.been.called;
 });
