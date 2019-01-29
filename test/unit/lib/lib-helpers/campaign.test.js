@@ -6,12 +6,11 @@ const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 
-const gambitContent = require('../../../../lib/gambit-content');
-
+const graphql = require('../../../../lib/graphql');
+const helpers = require('../../../../lib/helpers');
+const stubs = require('../../../helpers/stubs');
 const campaignFactory = require('../../../helpers/factories/campaign');
-
-const campaignStub = campaignFactory.getValidCampaign();
-const campaignLookupStub = () => Promise.resolve(campaignStub);
+const webSignupConfirmationFactory = require('../../../helpers/factories/webSignupConfirmation');
 
 chai.should();
 chai.use(sinonChai);
@@ -26,15 +25,54 @@ test.afterEach(() => {
   sandbox.restore();
 });
 
-// fetchById
-test('fetchById calls gambitContent.fetchCampaignById', async () => {
-  sandbox.stub(gambitContent, 'fetchCampaignById')
-    .returns(campaignLookupStub);
-  const campaignId = campaignStub.id;
+// fetchWebSignupConfirmations
+test('fetchWebSignupConfirmations returns cached graphql.fetchWebSignupConfirmations result', async () => {
+  const data = [123, 345];
+  sandbox.stub(graphql, 'fetchWebSignupConfirmations')
+    .returns(Promise.resolve(data));
+  sandbox.stub(helpers.cache.webSignupConfirmations, 'set')
+    .returns(Promise.resolve(data));
 
-  const result = await campaignHelper.fetchById(campaignId);
-  gambitContent.fetchCampaignById.should.have.been.calledWith(campaignId);
-  result.should.deep.equal(campaignLookupStub);
+  const result = await campaignHelper.fetchWebSignupConfirmations();
+  helpers.cache.webSignupConfirmations.set.should.have.been.calledWith(data);
+  result.should.deep.equal(data);
+});
+
+test('fetchWebSignupConfirmations throws if graphql.fetchWebSignupConfirmations fails', async (t) => {
+  const data = [123, 345];
+  sandbox.stub(graphql, 'fetchWebSignupConfirmations')
+    .returns(Promise.reject(stubs.getError()));
+  sandbox.stub(helpers.cache.webSignupConfirmations, 'set')
+    .returns(Promise.resolve(data));
+
+  await t.throws(campaignHelper.fetchWebSignupConfirmations());
+  helpers.cache.webSignupConfirmations.set.should.not.have.been.called;
+});
+
+// getWebSignupConfirmationByCampaignId
+test('getWebSignupConfirmationByCampaignId returns webSignupConfirmation if fetchWebSignupConfirmations has a webSignupConfirmation with given campaign id', async () => {
+  const campaign = campaignFactory.getValidCampaign();
+  const firstStub = webSignupConfirmationFactory.getValidWebSignupConfirmation(campaign);
+  const secondStub = webSignupConfirmationFactory
+    .getValidWebSignupConfirmation(campaignFactory.getValidCampaign());
+  sandbox.stub(campaignHelper, 'getWebSignupConfirmations')
+    .returns(Promise.resolve([firstStub, secondStub]));
+
+  const result = await campaignHelper.getWebSignupConfirmationByCampaignId(campaign.id);
+  result.should.deep.equal(firstStub);
+});
+
+test('getWebSignupConfirmationByCampaignId returns null if fetchWebSignupConfirmations does not have a webSignupConfirmation with given campaign id', async (t) => {
+  const firstStub = webSignupConfirmationFactory
+    .getValidWebSignupConfirmation(campaignFactory.getValidCampaign());
+  const secondStub = webSignupConfirmationFactory
+    .getValidWebSignupConfirmation(campaignFactory.getValidCampaign());
+  sandbox.stub(campaignHelper, 'getWebSignupConfirmations')
+    .returns(Promise.resolve([firstStub, secondStub]));
+  const campaign = campaignFactory.getValidCampaign();
+
+  const result = await campaignHelper.getWebSignupConfirmationByCampaignId(campaign.id);
+  t.falsy(result);
 });
 
 // isClosedCampaign

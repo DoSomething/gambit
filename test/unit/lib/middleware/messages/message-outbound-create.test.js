@@ -40,7 +40,6 @@ test.beforeEach((t) => {
   t.context.res = httpMocks.createResponse();
   // add params
   t.context.req.outboundMessageText = stubs.getRandomMessageText();
-  t.context.req.outboundMessageTemplate = stubs.getTemplate();
 });
 
 test.afterEach((t) => {
@@ -64,16 +63,44 @@ test('createOutboundMessage calls next if req.outboundMessage exists', async (t)
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 
-test('createOutboundMessage calls Conversation.createAndSetLastOutboundMessage', async (t) => {
+test('createOutboundMessage calls Conversation.createAndSetLastOutboundMessage with outboundMessageTemplate if set', async (t) => {
   const next = sinon.stub();
   sandbox.stub(mockConversation, 'createAndSetLastOutboundMessage')
     .returns(messageCreateStub);
   t.context.req.conversation = mockConversation;
+  const template = stubs.getRandomWord();
+  t.context.req.outboundMessageTemplate = template;
   const middleware = createOutboundMessage(configStub);
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  t.context.req.conversation.createAndSetLastOutboundMessage.should.have.been.called;
+  t.context.req.conversation.createAndSetLastOutboundMessage.should.have.been.calledWith(
+    configStub.messageDirection,
+    t.context.req.outboundMessageText,
+    template,
+    t.context.req,
+  );
+  t.context.req.should.have.property('outboundMessage');
+  next.should.have.been.called;
+  helpers.sendErrorResponse.should.not.have.been.called;
+});
+
+test('createOutboundMessage calls Conversation.createAndSetLastOutboundMessage with config.messageTemplate if outboundMessageTemplate undefined', async (t) => {
+  const next = sinon.stub();
+  sandbox.stub(mockConversation, 'createAndSetLastOutboundMessage')
+    .returns(messageCreateStub);
+  t.context.req.conversation = mockConversation;
+  const signupConfigStub = stubs.config.getMessageOutbound(false, stubs.getRandomWord());
+  const middleware = createOutboundMessage(signupConfigStub);
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  t.context.req.conversation.createAndSetLastOutboundMessage.should.have.been.calledWith(
+    signupConfigStub.messageDirection,
+    t.context.req.outboundMessageText,
+    signupConfigStub.messageTemplate,
+    t.context.req,
+  );
   t.context.req.should.have.property('outboundMessage');
   next.should.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
