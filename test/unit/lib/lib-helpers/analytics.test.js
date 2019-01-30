@@ -32,6 +32,8 @@ test.beforeEach(() => {
   stubs.stubLogger(sandbox, logger);
   sandbox.stub(newrelic, 'addCustomAttributes')
     .returns(underscore.noop);
+  sandbox.stub(newrelic, 'noticeError')
+    .returns(underscore.noop);
 });
 
 // Cleanup!
@@ -56,4 +58,18 @@ test('addTwilioError should call addCustomAttributes', () => {
   const error = stubs.twilio.getPostMessageError();
   analyticsHelper.addTwilioError(error);
   analyticsHelper.addCustomAttributes.should.have.been.called;
+});
+
+test('getErrorNoticeableMethod should return a function that calls newrelic.noticeError if an Error is passed as argument', () => {
+  const dummyFunction = () => true;
+  const decoratedDummyFunction = analyticsHelper.getErrorNoticeableMethod(dummyFunction);
+  decoratedDummyFunction(new Error('boom!'));
+  newrelic.noticeError.should.have.been.called;
+});
+
+test('getErrorNoticeableMethod should return a function that doesn\'t call newrelic.noticeError if no Error is passed as argument', () => {
+  const dummyFunction = () => true;
+  const decoratedDummyFunction = analyticsHelper.getErrorNoticeableMethod(dummyFunction);
+  decoratedDummyFunction('hi', 'my', 'name', 'is');
+  newrelic.noticeError.should.not.have.been.called;
 });
