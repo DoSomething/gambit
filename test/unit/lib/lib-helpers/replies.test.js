@@ -42,6 +42,8 @@ test.beforeEach((t) => {
   t.context.res = httpMocks.createResponse();
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(() => {});
+  sandbox.stub(helpers.errorNoticeable, 'sendErrorResponse')
+    .returns(() => { });
   t.context.req.campaign = campaignFactory.getValidCampaign();
 });
 
@@ -92,7 +94,7 @@ test('sendReply(): sends error if updateByMemberMessageReq fails', async (t) => 
   await repliesHelper.sendReply(t.context.req, t.context.res, 'text', templates.campaignClosed);
 
   // asserts
-  helpers.sendErrorResponse.should.have.been.calledWith(t.context.res, error);
+  helpers.errorNoticeable.sendErrorResponse.should.have.been.calledWith(t.context.res, error);
 });
 
 test('sendReply(): responds with the inbound and outbound messages', async (t) => {
@@ -187,7 +189,7 @@ test('sendReply(): should call sendErrorResponse on failure', async (t) => {
   await repliesHelper.sendReply(req, t.context.res, 'text line', templates.campaignClosed);
 
   // asserts
-  helpers.sendErrorResponse.should.have.been.called;
+  helpers.errorNoticeable.sendErrorResponse.should.have.been.called;
 });
 
 test('askCaption(): should call sendReplyWithTopicTemplate', async (t) => {

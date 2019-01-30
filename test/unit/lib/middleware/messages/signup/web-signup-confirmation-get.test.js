@@ -31,7 +31,7 @@ const getWebSignupConfirmation = require('../../../../../../lib/middleware/messa
 const sandbox = sinon.sandbox.create();
 
 test.beforeEach((t) => {
-  sandbox.stub(helpers, 'addBlinkSuppressHeaders')
+  sandbox.stub(helpers, 'addNoRetryHeaders')
     .returns(underscore.noop);
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(underscore.noop);
