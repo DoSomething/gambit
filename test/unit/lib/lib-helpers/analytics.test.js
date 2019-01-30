@@ -42,6 +42,17 @@ test.afterEach(() => {
   sandbox.restore();
 });
 
+test('addHandledError should call newrelic.noticeError if an Error is passed', () => {
+  const error = new Error('Booom!');
+  analyticsHelper.addHandledError(error);
+  newrelic.noticeError.should.have.been.called;
+});
+
+test('addHandledError should not call newrelic.noticeError if an Error is not passed', () => {
+  analyticsHelper.addHandledError('hello world!');
+  newrelic.noticeError.should.not.have.been.called;
+});
+
 test('addCustomAttributes should call newrelic.addCustomAttributes', () => {
   analyticsHelper.addCustomAttributes(mockPayload);
   newrelic.addCustomAttributes.should.have.been.called;
