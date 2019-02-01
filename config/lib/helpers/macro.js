@@ -8,8 +8,6 @@ const invalidAnswerText = 'Sorry, I didn\'t get that.';
 
 // Subscription status.
 const activeSubscriptionStatusText = 'Hi I\'m Freddie from DoSomething.org! Welcome to my weekly updates (up to 8msg/month). Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.';
-const askSubscriptionStatusText = 'Do you want texts: A)Weekly B)Monthly C)I need more info';
-const newsUrl = 'https://www.dosomething.org/us/spot-the-signs-guide?source=sms&utm_source=dosomething&utm_medium=sms&utm_campaign=permissioning_weekly&user_id={{user.id}}';
 
 // Voting plan.
 const askVotingPlanAttendingWithText = process.env.DS_GAMBIT_CONVERSATIONS_ASK_VOTING_PLAN_ATTENDING_WITH_TEXT || 'Who are you planning on voting with? A) Alone B) Friends C) Family D) Co-workers';
@@ -105,17 +103,11 @@ module.exports = {
       text: askVotingPlanStatusText,
       topic: rivescriptTopics.askVotingPlanStatus,
     },
-    askSubscriptionStatus: {
-      name: 'askSubscriptionStatus',
-      text: askSubscriptionStatusText,
-      topic: rivescriptTopics.askSubscriptionStatus,
-    },
     catchAll: {
       name: 'catchAll',
     },
     invalidSubscriptionStatus: {
       name: 'invalidSubscriptionStatus',
-      text: `${invalidAnswerText} ${askSubscriptionStatusText}`,
     },
     invalidVotingPlanAttendingWith: {
       name: 'invalidVotingPlanAttendingWith',
@@ -153,8 +145,6 @@ module.exports = {
     },
     subscriptionStatusActive: {
       name: 'subscriptionStatusActive',
-      text: activeSubscriptionStatusText,
-      topic: defaultTopic,
       profileUpdate: {
         field: profile.subscriptionStatus.name,
         value: profile.subscriptionStatus.values.active,
@@ -162,8 +152,6 @@ module.exports = {
     },
     subscriptionStatusLess: {
       name: 'subscriptionStatusLess',
-      text: `Okay, great! I'll text you once a month with updates on what's happening in the news and/or easy ways for you to take action in your community! Wanna take 2 mins to learn how to spot the signs of an abusive relationship and what you can do about it? Read our guide here: ${newsUrl}`,
-      topic: defaultTopic,
       profileUpdate: {
         field: profile.subscriptionStatus.name,
         value: profile.subscriptionStatus.values.less,
@@ -171,7 +159,6 @@ module.exports = {
     },
     subscriptionStatusNeedMoreInfo: {
       name: 'subscriptionStatusNeedMoreInfo',
-      text: `Sure! Once a week, I text over 3 million young people with updates on what's happening in the news and/or easy ways to take action in your community.\n\nWant an example of an easy way to take action? Take 2 mins to learn how to spot the signs of an abusive relationship and what you can do about it. Read our guide: ${newsUrl}`,
     },
     subscriptionStatusResubscribed: {
       name: 'subscriptionStatusResubscribed',

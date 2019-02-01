@@ -7,6 +7,9 @@ const topicTemplates = templateConfig.templatesMap.topicTemplates;
 
 module.exports = {
   types: {
+    askSubscriptionStatus: {
+      type: 'askSubscriptionStatus',
+    },
     askVotingPlanStatus: {
       type: 'askVotingPlanStatus',
     },
@@ -38,9 +41,6 @@ module.exports = {
     },
   },
   rivescriptTopics: {
-    askSubscriptionStatus: {
-      id: 'ask_subscription_status',
-    },
     askVotingPlanAttendingWith: {
       id: 'ask_voting_plan_attending_with',
     },

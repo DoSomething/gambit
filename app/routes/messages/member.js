@@ -23,6 +23,7 @@ const parseRivescriptReplyMiddleware = require('../../../lib/middleware/messages
 const forwardSupportMessageMiddleware = require('../../../lib/middleware/messages/member/support-message');
 const replyMacroMiddleware = require('../../../lib/middleware/messages/member/macro-reply');
 const getTopicMiddleware = require('../../../lib/middleware/messages/member/topic-get');
+const askSubscriptionStatusMiddleware = require('../../../lib/middleware/messages/member/topics/ask-subscription-status');
 const askVotingPlanStatusMiddleware = require('../../../lib/middleware/messages/member/topics/ask-voting-plan-status');
 const askYesNoMiddleware = require('../../../lib/middleware/messages/member/topics/ask-yes-no');
 const autoReplyMiddleware = require('../../../lib/middleware/messages/member/topics/auto-reply');
@@ -74,10 +75,13 @@ router.use(forwardSupportMessageMiddleware());
 // Otherwise, fetch the current conversation topic.
 router.use(getTopicMiddleware());
 
-// Handles replies for askVotingPlanStatus topics.
+// Handles replies for askSubscriptionStatus broadcast topics.
+router.use(askSubscriptionStatusMiddleware());
+
+// Handles replies for askVotingPlanStatus broadcast topics.
 router.use(askVotingPlanStatusMiddleware());
 
-// Handles replies for askYesNo topics.
+// Handles replies for askYesNo broadcast topics.
 router.use(askYesNoMiddleware());
 
 // Handles autoReply topics.
