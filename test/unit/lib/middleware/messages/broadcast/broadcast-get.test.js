@@ -94,7 +94,7 @@ test('getBroadcast should call next if askYesNo topic campaign is not closed', a
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 
-test('getBroadcast should call next if broadcast type is askVotingPlanStatus', async (t) => {
+test('getBroadcast should call next if broadcast type is not legacy or askYesNo, and does not have topic', async (t) => {
   const next = sinon.stub();
   const middleware = getBroadcast();
   sandbox.stub(helpers.broadcast, 'getById')
@@ -139,7 +139,6 @@ test('getBroadcast should return next if not askYesNo and broadcast topic campai
   next.should.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
 });
-
 
 test('getBroadcast should call sendErrorResponse if getById fails', async (t) => {
   const next = sinon.stub();
