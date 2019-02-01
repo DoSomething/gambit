@@ -1,9 +1,9 @@
 
 [![wercker status](https://app.wercker.com/status/88e7574ecfa61c969df7bee4e035a7ad/s/master "wercker status")](https://app.wercker.com/project/byKey/88e7574ecfa61c969df7bee4e035a7ad) [![codecov](https://codecov.io/gh/DoSomething/gambit-conversations/branch/master/graph/badge.svg)](https://codecov.io/gh/DoSomething/gambit-conversations)
 
-# Gambit Conversations
+# Gambit
 
-Gambit Conversations is our DoSomething.org [API](/documentation/README.md) for SMS conversations:
+Gambit is the DoSomething.org [API](/documentation/README.md) for SMS conversations:
 
 * Receives inbound messages, creates/updates [users](https://www.github.com/dosomething/northstar) and/or [campaign activity](https://www.github.com/dosomething/rogue), and sends an outbound reply
 
@@ -25,7 +25,7 @@ Gambit forwards support requests from users into a [Front](https://www.frontapp.
 
 ## Development
 
-Gambit Conversations is built with:
+Gambit is built with:
 * ❤️ + ☕
 * [Express](https://expressjs.com/)
 * [Redis](https://redis.io/)
@@ -49,10 +49,10 @@ Local Node, redis, and MongoDB installations are required to run this applicatio
 
 ### Localhost
 
-With Conversations running locally, test Gambit replies by opening a new terminal window and running `node shell`.
+With Gambit running locally, test Gambit replies by opening a new terminal window and running `node shell`.
 
 ```
-PuppetSloth-MacBook-Pro-2:gambit-conversations puppetsloth$ node shell
+PuppetSloth-MacBook-Pro-2:gambit puppetsloth$ node shell
 
 
  ██████╗  █████╗ ███╗   ███╗██████╗ ██╗████████╗
