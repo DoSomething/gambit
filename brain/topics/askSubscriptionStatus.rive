@@ -1,4 +1,4 @@
-// Current options are A) Weekly B) Monthly C) Need more info
+// Current options are A) Weekly B) Monthly C) Need more info D) Stop
 // @see config/lib/helpers/macro
 
 > topic ask_subscription_status includes random
@@ -12,6 +12,9 @@
 + c [*]
 - subscriptionStatusNeedMoreInfo
 
++ d [*]
+- subscriptionStatusStop
+
 + (week|weekly)
 - subscriptionStatusActive
 
@@ -19,7 +22,7 @@
 - subscriptionStatusLess
 
 + [*] more [*]
-@ c
+- subscriptionStatusNeedMoreInfo
 
 + [*]
 - invalid

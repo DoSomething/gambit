@@ -143,19 +143,21 @@ module.exports = {
     },
     subscriptionStatusActive: {
       name: 'subscriptionStatusActive',
+      text: activeSubscriptionStatusText,
+      topic: defaultTopic,
       profileUpdate: {
         field: profile.subscriptionStatus.name,
         value: profile.subscriptionStatus.values.active,
       },
-      text: activeSubscriptionStatusText,
     },
     subscriptionStatusLess: {
       name: 'subscriptionStatusLess',
+      text: lessSubscriptionStatusText,
+      topic: defaultTopic,
       profileUpdate: {
         field: profile.subscriptionStatus.name,
         value: profile.subscriptionStatus.values.less,
       },
-      text: lessSubscriptionStatusText,
     },
     subscriptionStatusNeedMoreInfo: {
       name: 'subscriptionStatusNeedMoreInfo',
