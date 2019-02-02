@@ -92,6 +92,8 @@ const fetchTopicById = `
       id
       contentType
       ... on AskSubscriptionStatusBroadcastTopic {
+        invalidAskSubscriptionStatusResponse
+        saidNeedMoreInfo
         saidActive
         saidActiveTopic {
           id
@@ -100,7 +102,6 @@ const fetchTopicById = `
         saidLessTopic {
           id
         }
-        invalidAskSubscriptionStatusResponse
       }
       ... on AskYesNoBroadcastTopic {
         invalidAskYesNoResponse

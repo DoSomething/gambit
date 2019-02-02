@@ -106,9 +106,6 @@ module.exports = {
     catchAll: {
       name: 'catchAll',
     },
-    invalidSubscriptionStatus: {
-      name: 'invalidSubscriptionStatus',
-    },
     invalidVotingPlanAttendingWith: {
       name: 'invalidVotingPlanAttendingWith',
       text: `${invalidAnswerText} ${askVotingPlanAttendingWithText}`,
