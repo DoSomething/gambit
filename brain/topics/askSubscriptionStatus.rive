@@ -12,6 +12,12 @@
 + c [*]
 - subscriptionStatusNeedMoreInfo
 
++ (week|weekly)
+- subscriptionStatusActive
+
++ (month|monthly)
+- subscriptionStatusLess
+
 + [*] more [*]
 @ c
 

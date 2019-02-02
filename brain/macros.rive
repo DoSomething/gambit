@@ -21,10 +21,7 @@
 + join
 @ subscribe
 
-+ (week|weekly)
-- subscriptionStatusActive
-
-+ (less|month|monthly)
++ less
 - subscriptionStatusLess
 
 + stop
