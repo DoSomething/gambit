@@ -1,5 +1,4 @@
 // Current options are A) Weekly B) Monthly C) Need more info D) Stop
-// @see config/lib/helpers/macro
 
 > topic ask_subscription_status includes random
 

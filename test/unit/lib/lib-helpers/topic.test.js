@@ -107,6 +107,12 @@ test('getSupportTopic should return config.rivescriptTopics.support', () => {
   result.should.deep.equal(config.rivescriptTopics.support);
 });
 
+// getUnsubscribedTopic
+test('getUnsubscribedTopic should return config.rivescriptTopics.unsubscribed', () => {
+  const result = topicHelper.getUnsubscribedTopic();
+  result.should.deep.equal(config.rivescriptTopics.unsubscribed);
+});
+
 // hasActiveCampaign
 test('hasActiveCampaign returns true if topic has campaign that is not closed', (t) => {
   sandbox.stub(topicHelper, 'hasCampaign')

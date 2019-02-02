@@ -303,6 +303,50 @@ test('isStartCommand should return true if trimmed lowercase req.inboundMessageT
   t.truthy(requestHelper.isStartCommand(t.context.req));
 });
 
+// isSubscriptionStatusActiveMacro
+test('isSubscriptionStatusActiveMacro should return true if req.macro is subscriptionStatusActive macro', (t) => {
+  t.falsy(requestHelper.isSubscriptionStatusActiveMacro(t.context.req));
+  t.context.req.macro = stubs.getRandomWord();
+  t.falsy(requestHelper.isSubscriptionStatusActiveMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.subscriptionStatusActive();
+  t.truthy(requestHelper.isSubscriptionStatusActiveMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.subscriptionStatusLess();
+  t.falsy(requestHelper.isSubscriptionStatusActiveMacro(t.context.req));
+});
+
+// isSubscriptionStatusLessMacro
+test('isSubscriptionStatusLessMacro should return true if req.macro is subscriptionStatusLess macro', (t) => {
+  t.falsy(requestHelper.isSubscriptionStatusLessMacro(t.context.req));
+  t.context.req.macro = stubs.getRandomWord();
+  t.falsy(requestHelper.isSubscriptionStatusLessMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.subscriptionStatusActive();
+  t.falsy(requestHelper.isSubscriptionStatusLessMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.subscriptionStatusLess();
+  t.truthy(requestHelper.isSubscriptionStatusLessMacro(t.context.req));
+});
+
+// isSubscriptionStatusNeedMoreInfoMacro
+test('isSubscriptionStatusNeedMoreInfoMacro should return true if req.macro is subscriptionStatusNeedMoreInfo macro', (t) => {
+  t.falsy(requestHelper.isSubscriptionStatusNeedMoreInfoMacro(t.context.req));
+  t.context.req.macro = stubs.getRandomWord();
+  t.falsy(requestHelper.isSubscriptionStatusNeedMoreInfoMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.subscriptionStatusActive();
+  t.falsy(requestHelper.isSubscriptionStatusNeedMoreInfoMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.subscriptionStatusNeedMoreInfo();
+  t.truthy(requestHelper.isSubscriptionStatusNeedMoreInfoMacro(t.context.req));
+});
+
+// isSubscriptionStatusStopMacro
+test('isSubscriptionStatusStopMacro should return true if req.macro is subscriptionStatusStop macro', (t) => {
+  t.falsy(requestHelper.isSubscriptionStatusStopMacro(t.context.req));
+  t.context.req.macro = stubs.getRandomWord();
+  t.falsy(requestHelper.isSubscriptionStatusStopMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.subscriptionStatusActive();
+  t.falsy(requestHelper.isSubscriptionStatusStopMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.subscriptionStatusStop();
+  t.truthy(requestHelper.isSubscriptionStatusStopMacro(t.context.req));
+});
+
 // isTwilio
 test('isTwilio should return true if req.query.origin is set to twilio', (t) => {
   t.falsy(requestHelper.isTwilio(t.context.req));
