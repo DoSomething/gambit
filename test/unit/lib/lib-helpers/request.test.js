@@ -64,63 +64,17 @@ test('changeTopic does not call setTopic if not a topic change', async (t) => {
   conversation.setTopic.should.not.have.been.called;
 });
 
-test('changeTopic calls helpers.user.setPendingSubscriptionStatusForUserId and setTopic when topic change is askSubscriptionStatus', async (t) => {
+test('changeTopic calls setTopic when topic args is not equal to req.currentTopicId', async (t) => {
   sandbox.stub(requestHelper, 'setTopic')
     .returns(underscore.noop);
-  sandbox.stub(helpers.topic, 'isAskSubscriptionStatus')
-    .returns(true);
   sandbox.stub(conversation, 'setTopic')
     .returns(Promise.resolve());
-  sandbox.stub(helpers.user, 'setPendingSubscriptionStatusForUserId')
-    .returns(Promise.resolve(true));
   t.context.req.conversation = conversation;
   t.context.req.currentTopicId = 'abc';
-  t.context.req.userId = 'def';
 
   await requestHelper.changeTopic(t.context.req, topic);
   requestHelper.setTopic.should.have.been.calledWith(t.context.req, topic);
-  helpers.user.setPendingSubscriptionStatusForUserId
-    .should.have.been.calledWith(t.context.req.userId);
   conversation.setTopic.should.have.been.calledWith(topic);
-});
-
-test('changeTopic calls setTopic when topic change is not askSubscriptionStatus', async (t) => {
-  sandbox.stub(requestHelper, 'setTopic')
-    .returns(underscore.noop);
-  sandbox.stub(helpers.topic, 'isAskSubscriptionStatus')
-    .returns(false);
-  sandbox.stub(conversation, 'setTopic')
-    .returns(Promise.resolve());
-  sandbox.stub(helpers.user, 'setPendingSubscriptionStatusForUserId')
-    .returns(Promise.resolve(true));
-  t.context.req.conversation = conversation;
-  t.context.req.currentTopicId = 'abc';
-  t.context.req.userId = 'def';
-
-  await requestHelper.changeTopic(t.context.req, topic);
-  requestHelper.setTopic.should.have.been.calledWith(t.context.req, topic);
-  helpers.user.setPendingSubscriptionStatusForUserId.should.not.have.been.called;
-  conversation.setTopic.should.have.been.calledWith(topic);
-});
-
-test('changeTopic does not call setTopic when topic change is askSubscriptionStatus and setPendingSubscriptionStatusForUserId fails', async (t) => {
-  sandbox.stub(requestHelper, 'setTopic')
-    .returns(underscore.noop);
-  sandbox.stub(helpers.topic, 'isAskSubscriptionStatus')
-    .returns(true);
-  sandbox.stub(conversation, 'setTopic')
-    .returns(Promise.resolve());
-  const error = { message: 'Epic fail' };
-  sandbox.stub(helpers.user, 'setPendingSubscriptionStatusForUserId')
-    .returns(Promise.reject(error));
-  t.context.req.conversation = conversation;
-  t.context.req.currentTopicId = 'abc';
-  t.context.req.userId = 'def';
-
-  await t.throws(requestHelper.changeTopic(t.context.req, topic));
-  requestHelper.setTopic.should.have.been.calledWith(t.context.req, topic);
-  helpers.user.setPendingSubscriptionStatusForUserId.should.have.been.called;
-  conversation.setTopic.should.not.have.been.called;
 });
 
 // createDraftSubmission
