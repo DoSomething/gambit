@@ -49,12 +49,6 @@ test('fetchById should return graphql.fetchTopicById', async () => {
   result.should.deep.equal(topic);
 });
 
-// getAskSubscriptionStatusTopic
-test('getAskSubscriptionStatusTopic should return config.rivescriptTopics.askSubscriptionStatus', () => {
-  const result = topicHelper.getAskSubscriptionStatusTopic();
-  result.should.deep.equal(config.rivescriptTopics.askSubscriptionStatus);
-});
-
 // getById
 test('getById should return getRivescriptTopicById if isRivescriptTopicId', async () => {
   const topicId = topicHelper.getDefaultTopicId();
@@ -111,6 +105,12 @@ test('getRivescriptTopicById returns object with type rivescript and given id', 
 test('getSupportTopic should return config.rivescriptTopics.support', () => {
   const result = topicHelper.getSupportTopic();
   result.should.deep.equal(config.rivescriptTopics.support);
+});
+
+// getUnsubscribedTopic
+test('getUnsubscribedTopic should return config.rivescriptTopics.unsubscribed', () => {
+  const result = topicHelper.getUnsubscribedTopic();
+  result.should.deep.equal(config.rivescriptTopics.unsubscribed);
 });
 
 // hasActiveCampaign
@@ -186,10 +186,11 @@ test('hasClosedCampaign returns false if topic does not have campaign', (t) => {
 });
 
 // isAskSubscriptionStatus
-test('isAskSubscriptionStatus returns whether topic is rivescriptTopics.askSubscriptionStatus', (t) => {
-  const mockTopic = topicFactory.getValidTopic();
-  t.truthy(topicHelper.isAskSubscriptionStatus(config.rivescriptTopics.askSubscriptionStatus));
-  t.falsy(topicHelper.isAskSubscriptionStatus(mockTopic));
+test('isAskSubscriptionStatus returns whether topic type is askSubscriptionStatus', (t) => {
+  t.truthy(topicHelper
+    .isAskSubscriptionStatus(topicFactory.getValidAskSubscriptionStatusBroadcastTopic()));
+  t.falsy(topicHelper
+    .isAskSubscriptionStatus(topicFactory.getValidAskYesNoBroadcastTopic()));
 });
 
 // isAskVotingPlanStatus

@@ -344,8 +344,20 @@ test('loadBot calls getRivescripts and creates a new Rivescript bot with result'
     .calledWith(getRivescripts);
 });
 
+// parseAskSubscriptionStatusResponse
+test('parseAskSubscriptionStatusResponse should call rivescriptHelper.getBotReply with ask_subscription_status and return result text', async () => {
+  const messageText = stubs.getRandomMessageText();
+  sandbox.stub(rivescriptHelper, 'getBotReply')
+    .returns(Promise.resolve(mockRivescriptReply));
+
+  const result = await rivescriptHelper.parseAskSubscriptionStatusResponse(messageText);
+  rivescriptHelper.getBotReply
+    .should.have.been.calledWith('global', 'ask_subscription_status', messageText);
+  result.should.deep.equal(mockRivescriptReply.text);
+});
+
 // parseAskVotingPlanStatusResponse
-test('parseAskVotingPlanStatusResponse should call rivescriptHelper.getBotReply', async () => {
+test('parseAskVotingPlanStatusResponse should call rivescriptHelper.getBotReply with ask_voting_plan_status topic and return result text', async () => {
   const messageText = stubs.getRandomMessageText();
   sandbox.stub(rivescriptHelper, 'getBotReply')
     .returns(Promise.resolve(mockRivescriptReply));
@@ -357,7 +369,7 @@ test('parseAskVotingPlanStatusResponse should call rivescriptHelper.getBotReply'
 });
 
 // parseAskYesNoResponse
-test('parseAskYesNoResponse should call rivescriptHelper.getBotReply', async () => {
+test('parseAskYesNoResponse should call rivescriptHelper.getBotReply with ask_yes_no topic and return result text', async () => {
   const messageText = stubs.getRandomMessageText();
   sandbox.stub(rivescriptHelper, 'getBotReply')
     .returns(Promise.resolve(mockRivescriptReply));

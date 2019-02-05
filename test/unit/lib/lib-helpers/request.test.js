@@ -64,63 +64,17 @@ test('changeTopic does not call setTopic if not a topic change', async (t) => {
   conversation.setTopic.should.not.have.been.called;
 });
 
-test('changeTopic calls helpers.user.setPendingSubscriptionStatusForUserId and setTopic when topic change is askSubscriptionStatus', async (t) => {
+test('changeTopic calls setTopic when topic arg is not equal to req.currentTopicId', async (t) => {
   sandbox.stub(requestHelper, 'setTopic')
     .returns(underscore.noop);
-  sandbox.stub(helpers.topic, 'isAskSubscriptionStatus')
-    .returns(true);
   sandbox.stub(conversation, 'setTopic')
     .returns(Promise.resolve());
-  sandbox.stub(helpers.user, 'setPendingSubscriptionStatusForUserId')
-    .returns(Promise.resolve(true));
   t.context.req.conversation = conversation;
   t.context.req.currentTopicId = 'abc';
-  t.context.req.userId = 'def';
 
   await requestHelper.changeTopic(t.context.req, topic);
   requestHelper.setTopic.should.have.been.calledWith(t.context.req, topic);
-  helpers.user.setPendingSubscriptionStatusForUserId
-    .should.have.been.calledWith(t.context.req.userId);
   conversation.setTopic.should.have.been.calledWith(topic);
-});
-
-test('changeTopic calls setTopic when topic change is not askSubscriptionStatus', async (t) => {
-  sandbox.stub(requestHelper, 'setTopic')
-    .returns(underscore.noop);
-  sandbox.stub(helpers.topic, 'isAskSubscriptionStatus')
-    .returns(false);
-  sandbox.stub(conversation, 'setTopic')
-    .returns(Promise.resolve());
-  sandbox.stub(helpers.user, 'setPendingSubscriptionStatusForUserId')
-    .returns(Promise.resolve(true));
-  t.context.req.conversation = conversation;
-  t.context.req.currentTopicId = 'abc';
-  t.context.req.userId = 'def';
-
-  await requestHelper.changeTopic(t.context.req, topic);
-  requestHelper.setTopic.should.have.been.calledWith(t.context.req, topic);
-  helpers.user.setPendingSubscriptionStatusForUserId.should.not.have.been.called;
-  conversation.setTopic.should.have.been.calledWith(topic);
-});
-
-test('changeTopic does not call setTopic when topic change is askSubscriptionStatus and setPendingSubscriptionStatusForUserId fails', async (t) => {
-  sandbox.stub(requestHelper, 'setTopic')
-    .returns(underscore.noop);
-  sandbox.stub(helpers.topic, 'isAskSubscriptionStatus')
-    .returns(true);
-  sandbox.stub(conversation, 'setTopic')
-    .returns(Promise.resolve());
-  const error = { message: 'Epic fail' };
-  sandbox.stub(helpers.user, 'setPendingSubscriptionStatusForUserId')
-    .returns(Promise.reject(error));
-  t.context.req.conversation = conversation;
-  t.context.req.currentTopicId = 'abc';
-  t.context.req.userId = 'def';
-
-  await t.throws(requestHelper.changeTopic(t.context.req, topic));
-  requestHelper.setTopic.should.have.been.calledWith(t.context.req, topic);
-  helpers.user.setPendingSubscriptionStatusForUserId.should.have.been.called;
-  conversation.setTopic.should.not.have.been.called;
 });
 
 // createDraftSubmission
@@ -301,6 +255,50 @@ test('isStartCommand should return true if trimmed lowercase req.inboundMessageT
   t.falsy(requestHelper.isStartCommand(t.context.req));
   t.context.req.inboundMessageText = ` ${config.commands.start} `;
   t.truthy(requestHelper.isStartCommand(t.context.req));
+});
+
+// isSubscriptionStatusActiveMacro
+test('isSubscriptionStatusActiveMacro should return true if req.macro is subscriptionStatusActive macro', (t) => {
+  t.falsy(requestHelper.isSubscriptionStatusActiveMacro(t.context.req));
+  t.context.req.macro = stubs.getRandomWord();
+  t.falsy(requestHelper.isSubscriptionStatusActiveMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.subscriptionStatusActive();
+  t.truthy(requestHelper.isSubscriptionStatusActiveMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.subscriptionStatusLess();
+  t.falsy(requestHelper.isSubscriptionStatusActiveMacro(t.context.req));
+});
+
+// isSubscriptionStatusLessMacro
+test('isSubscriptionStatusLessMacro should return true if req.macro is subscriptionStatusLess macro', (t) => {
+  t.falsy(requestHelper.isSubscriptionStatusLessMacro(t.context.req));
+  t.context.req.macro = stubs.getRandomWord();
+  t.falsy(requestHelper.isSubscriptionStatusLessMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.subscriptionStatusActive();
+  t.falsy(requestHelper.isSubscriptionStatusLessMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.subscriptionStatusLess();
+  t.truthy(requestHelper.isSubscriptionStatusLessMacro(t.context.req));
+});
+
+// isSubscriptionStatusNeedMoreInfoMacro
+test('isSubscriptionStatusNeedMoreInfoMacro should return true if req.macro is subscriptionStatusNeedMoreInfo macro', (t) => {
+  t.falsy(requestHelper.isSubscriptionStatusNeedMoreInfoMacro(t.context.req));
+  t.context.req.macro = stubs.getRandomWord();
+  t.falsy(requestHelper.isSubscriptionStatusNeedMoreInfoMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.subscriptionStatusActive();
+  t.falsy(requestHelper.isSubscriptionStatusNeedMoreInfoMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.subscriptionStatusNeedMoreInfo();
+  t.truthy(requestHelper.isSubscriptionStatusNeedMoreInfoMacro(t.context.req));
+});
+
+// isSubscriptionStatusStopMacro
+test('isSubscriptionStatusStopMacro should return true if req.macro is subscriptionStatusStop macro', (t) => {
+  t.falsy(requestHelper.isSubscriptionStatusStopMacro(t.context.req));
+  t.context.req.macro = stubs.getRandomWord();
+  t.falsy(requestHelper.isSubscriptionStatusStopMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.subscriptionStatusActive();
+  t.falsy(requestHelper.isSubscriptionStatusStopMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.subscriptionStatusStop();
+  t.truthy(requestHelper.isSubscriptionStatusStopMacro(t.context.req));
 });
 
 // isTwilio
