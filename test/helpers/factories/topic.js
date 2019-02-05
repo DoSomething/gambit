@@ -73,6 +73,19 @@ function getValidTextPostConfig() {
 /**
  * @return {Object}
  */
+function getValidAskSubscriptionStatusBroadcastTopic() {
+  return getValidTopicWithoutCampaign(config.types.askSubscriptionStatus.type, {
+    invalidAskSubscriptionStatusResponse: getTemplate(),
+    saidActive: getTemplate(),
+    saidActiveTopic: getValidTopicWithoutCampaign(),
+    saidLess: getTemplate(),
+    saidLessTopic: getValidTopicWithoutCampaign(),
+  });
+}
+
+/**
+ * @return {Object}
+ */
 function getValidAskYesNoBroadcastTopic() {
   return getValidTopicWithoutCampaign(config.types.askYesNo.type, {
     invalidAskYesNoResponse: getTemplate(),
@@ -84,6 +97,7 @@ function getValidAskYesNoBroadcastTopic() {
 }
 
 module.exports = {
+  getValidAskSubscriptionStatusBroadcastTopic,
   getValidAskYesNoBroadcastTopic,
   getValidAutoReply,
   getValidPhotoPostConfig,

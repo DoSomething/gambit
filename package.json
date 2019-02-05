@@ -1,12 +1,12 @@
 {
-  "name": "gambit-conversations",
-  "version": "6.0.2",
+  "name": "gambit",
+  "version": "6.1.0",
   "description": "The DoSomething.org chatbot service for multi-platform conversations.",
   "author": "DoSomething.org",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DoSomething/gambit-conversations.git"
+    "url": "git+https://github.com/DoSomething/gambit.git"
   },
   "scripts": {
     "test-fast": "NODE_ENV=test ava --serial --fail-fast",

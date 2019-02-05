@@ -91,6 +91,18 @@ const fetchTopicById = `
     topic(id: $id) {
       id
       contentType
+      ... on AskSubscriptionStatusBroadcastTopic {
+        invalidAskSubscriptionStatusResponse
+        saidNeedMoreInfo
+        saidActive
+        saidActiveTopic {
+          id
+        }
+        saidLess
+        saidLessTopic {
+          id
+        }
+      }
       ... on AskYesNoBroadcastTopic {
         invalidAskYesNoResponse
         saidNo
