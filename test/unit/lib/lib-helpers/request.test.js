@@ -64,7 +64,7 @@ test('changeTopic does not call setTopic if not a topic change', async (t) => {
   conversation.setTopic.should.not.have.been.called;
 });
 
-test('changeTopic calls setTopic when topic args is not equal to req.currentTopicId', async (t) => {
+test('changeTopic calls setTopic when topic arg is not equal to req.currentTopicId', async (t) => {
   sandbox.stub(requestHelper, 'setTopic')
     .returns(underscore.noop);
   sandbox.stub(conversation, 'setTopic')
