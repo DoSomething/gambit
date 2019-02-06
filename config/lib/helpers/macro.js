@@ -96,9 +96,9 @@ function votingPlanMethodOfTransport(valueKey) {
 
 /**
  * Macros are configured with the following properties:
- * name - Matches the Rivescript reply used to execute the macro
+ * name - Matches the Rivescript reply text used to execute the macro
  * text - If set, the outbound message text (may be defined/overridden on a topic)
- * topic - If set, to topic to change conversation topic to
+ * topic - If set, the topic to change conversation topic to
  * profileUpdate - If set, the field name and value to update a user with
  */
 module.exports = {
