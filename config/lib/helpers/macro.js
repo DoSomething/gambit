@@ -107,6 +107,10 @@ module.exports = {
     catchAll: {
       name: 'catchAll',
     },
+    invalidAskVotingPlanStatusResponse: {
+      name: 'invalidAskVotingPlanStatusResponse',
+      text: `${invalidAnswerText} ${askVotingPlanStatusText}`,
+    },
     invalidVotingPlanAttendingWith: {
       name: 'invalidVotingPlanAttendingWith',
       text: `${invalidAnswerText} ${askVotingPlanAttendingWithText}`,
@@ -114,10 +118,6 @@ module.exports = {
     invalidVotingPlanMethodOfTransport: {
       name: 'invalidVotingPlanMethodOfTransport',
       text: `${invalidAnswerText} ${askVotingPlanMethodOfTransportText}`,
-    },
-    invalidVotingPlanStatus: {
-      name: 'invalidVotingPlanStatus',
-      text: `${invalidAnswerText} ${askVotingPlanStatusText}`,
     },
     invalidVotingPlanTimeOfDay: {
       name: 'invalidVotingPlanTimeOfDay',
@@ -208,6 +208,7 @@ module.exports = {
       },
     },
     votingPlanStatusVoted: {
+      name: 'votingPlanStatusVoted',
       profileUpdate: {
         field: profile.votingPlanStatus.name,
         value: profile.votingPlanStatus.values.voted,

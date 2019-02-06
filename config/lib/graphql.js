@@ -103,6 +103,20 @@ const fetchTopicById = `
           id
         }
       }
+      ... on AskVotingPlanStatusBroadcastTopic {
+        saidCantVote
+        saidCantVoteTopic {
+          id
+        }
+        saidNotVoting
+        saidNotVotingTopic {
+          id
+        }
+        saidVoted
+        saidVotedTopic {
+          id
+        }
+      }
       ... on AskYesNoBroadcastTopic {
         invalidAskYesNoResponse
         saidNo

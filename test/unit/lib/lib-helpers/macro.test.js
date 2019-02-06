@@ -61,12 +61,6 @@ test('isCompletedVotingPlan should return boolean', (t) => {
   t.falsy(macroHelper.isCompletedVotingPlan(undefinedMacroName));
 });
 
-// isInvalidVotingPlanStatus
-test('isInvalidVotingPlanStatus should return boolean', (t) => {
-  t.true(macroHelper.isInvalidVotingPlanStatus(macros.invalidVotingPlanStatus.name));
-  t.falsy(macroHelper.isInvalidVotingPlanStatus(undefinedMacroName));
-});
-
 // isMacro
 test('isMacro returns whether text exists for given macro', (t) => {
   const macro = config.macros.subscriptionStatusStop;
