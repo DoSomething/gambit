@@ -94,10 +94,15 @@ function votingPlanMethodOfTransport(valueKey) {
   };
 }
 
+/**
+ * Macros are configured with the following properties:
+ * name - Matches the Rivescript reply used to execute the macro
+ * text - If set, the outbound message text (may be defined/overridden on a topic)
+ * topic - If set, to topic to change conversation topic to
+ * profileUpdate - If set, the field name and value to update a user with
+ */
 module.exports = {
   completedVotingPlanMacro,
-  // If a macro contains a text property, it's sent as the reply to the inbound message.
-  // If it doesn't, the reply text is sourced from the current topic.
   macros: {
     askVotingPlanStatus: {
       name: 'askVotingPlanStatus',

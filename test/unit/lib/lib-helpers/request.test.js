@@ -290,6 +290,39 @@ test('isSubscriptionStatusNeedMoreInfoMacro should return true if req.macro is s
   t.truthy(requestHelper.isSubscriptionStatusNeedMoreInfoMacro(t.context.req));
 });
 
+// isVotingPlanStatusCantVoteMacro
+test('isVotingPlanStatusCantVoteMacro should return true if req.macro is votingPlanStatusCantVote macro', (t) => {
+  t.falsy(requestHelper.isVotingPlanStatusCantVoteMacro(t.context.req));
+  t.context.req.macro = stubs.getRandomWord();
+  t.falsy(requestHelper.isVotingPlanStatusCantVoteMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.votingPlanStatusVoted();
+  t.falsy(requestHelper.isVotingPlanStatusCantVoteMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.votingPlanStatusCantVote();
+  t.truthy(requestHelper.isVotingPlanStatusCantVoteMacro(t.context.req));
+});
+
+// isVotingPlanStatusNotVotingMacro
+test('isVotingPlanStatusNotVotingMacro should return true if req.macro is votingPlanStatusNotVoting macro', (t) => {
+  t.falsy(requestHelper.isVotingPlanStatusNotVotingMacro(t.context.req));
+  t.context.req.macro = stubs.getRandomWord();
+  t.falsy(requestHelper.isVotingPlanStatusNotVotingMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.votingPlanStatusVoted();
+  t.falsy(requestHelper.isVotingPlanStatusNotVotingMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.votingPlanStatusNotVoting();
+  t.truthy(requestHelper.isVotingPlanStatusNotVotingMacro(t.context.req));
+});
+
+// isVotingPlanStatusVotedMacro
+test('isVotingPlanStatusVotedMacro should return true if req.macro is votingPlanStatusVoted macro', (t) => {
+  t.falsy(requestHelper.isVotingPlanStatusVotedMacro(t.context.req));
+  t.context.req.macro = stubs.getRandomWord();
+  t.falsy(requestHelper.isVotingPlanStatusVotedMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.votingPlanStatusVoted();
+  t.truthy(requestHelper.isVotingPlanStatusVotedMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.votingPlanStatusCantVote();
+  t.falsy(requestHelper.isVotingPlanStatusVotedMacro(t.context.req));
+});
+
 // isSubscriptionStatusStopMacro
 test('isSubscriptionStatusStopMacro should return true if req.macro is subscriptionStatusStop macro', (t) => {
   t.falsy(requestHelper.isSubscriptionStatusStopMacro(t.context.req));

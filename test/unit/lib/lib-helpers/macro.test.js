@@ -85,10 +85,3 @@ test('isSaidNo should return boolean', (t) => {
   t.true(macroHelper.isSaidNo(macros.saidNo.name));
   t.falsy(macroHelper.isSaidNo(undefinedMacroName));
 });
-
-// isVotingPlanStatusVoting
-test('isVotingPlanStatusVoting should return boolean', (t) => {
-  t.falsy(macroHelper.isVotingPlanStatusVoting(null));
-  t.true(macroHelper.isVotingPlanStatusVoting(macros.votingPlanStatusVoting.name));
-  t.falsy(macroHelper.isVotingPlanStatusVoting(undefinedMacroName));
-});

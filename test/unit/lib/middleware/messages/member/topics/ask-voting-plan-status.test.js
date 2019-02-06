@@ -106,21 +106,20 @@ test('askVotingPlanStatusCatchAll should change topic to macro topic and send ma
   // test
   await middleware(t.context.req, t.context.res, next);
 
-  helpers.topic.isAskVotingPlanStatus.should.have.been.calledWith(t.context.req.topic);
   next.should.not.have.been.called;
   helpers.request.changeTopic.should.have.been.calledWith(t.context.req, topic);
   helpers.replies.sendReply
     .should.have.been.calledWith(t.context.req, t.context.res, messageText, macro);
 });
 
-test('askVotingPlanStatusCatchAll should change topic to saidVoted topic and send saidVoted reply if macro is votingPlanStatusVoted', async (t) => {
+test('askVotingPlanStatusCatchAll should change topic to saidVotedTopic and send saidVoted reply if macro is votingPlanStatusVoted', async (t) => {
   const next = sinon.stub();
-  const macro = 'votingPlanStatusVoted';
+  const macro = helpers.macro.macros.votingPlanStatusVoted();
   const middleware = askVotingPlanStatusCatchAll();
   sandbox.stub(helpers.request, 'parseAskVotingPlanStatusResponse')
     .returns(Promise.resolve(true));
   t.context.req.topic = askVotingPlanStatus;
-  t.context.req.macro = helpers.macro.macros.votingPlanStatusVoted();
+  t.context.req.macro = macro;
 
   // test
   await middleware(t.context.req, t.context.res, next);
@@ -132,6 +131,52 @@ test('askVotingPlanStatusCatchAll should change topic to saidVoted topic and sen
     t.context.req,
     t.context.res,
     askVotingPlanStatus.saidActive,
+    macro,
+  );
+});
+
+test('askVotingPlanStatusCatchAll should change topic to cantVoteTopic and send cantVote reply if macro is votingPlanStatusCantVote', async (t) => {
+  const next = sinon.stub();
+  const macro = helpers.macro.macros.votingPlanStatusCantVote();
+  const middleware = askVotingPlanStatusCatchAll();
+  sandbox.stub(helpers.request, 'parseAskVotingPlanStatusResponse')
+    .returns(Promise.resolve(true));
+  t.context.req.topic = askVotingPlanStatus;
+  t.context.req.macro = macro;
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+
+  next.should.not.have.been.called;
+  helpers.request.changeTopic
+    .should.have.been.calledWith(t.context.req, askVotingPlanStatus.saidCantVoteTopic);
+  helpers.replies.sendReply.should.have.been.calledWith(
+    t.context.req,
+    t.context.res,
+    askVotingPlanStatus.saidCantVote,
+    macro,
+  );
+});
+
+test('askVotingPlanStatusCatchAll should change topic to notVotingTopic and send notVoting reply if macro is votingPlanStatusNotVoting', async (t) => {
+  const next = sinon.stub();
+  const macro = helpers.macro.macros.votingPlanStatusNotVoting();
+  const middleware = askVotingPlanStatusCatchAll();
+  sandbox.stub(helpers.request, 'parseAskVotingPlanStatusResponse')
+    .returns(Promise.resolve(true));
+  t.context.req.topic = askVotingPlanStatus;
+  t.context.req.macro = macro;
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+
+  next.should.not.have.been.called;
+  helpers.request.changeTopic
+    .should.have.been.calledWith(t.context.req, askVotingPlanStatus.saidNotVotingTopic);
+  helpers.replies.sendReply.should.have.been.calledWith(
+    t.context.req,
+    t.context.res,
+    askVotingPlanStatus.saidNotVoting,
     macro,
   );
 });
