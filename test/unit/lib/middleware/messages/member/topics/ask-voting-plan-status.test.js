@@ -70,11 +70,12 @@ test('askVotingPlanStatusCatchAll should call sendErrorResponse if parseAskVotin
 
 test('askVotingPlanStatusCatchAll should not call changeTopic, sends invalidAskVotingPlanStatusResponse macro reply if request is not a votingPlanStatus macro', async (t) => {
   const next = sinon.stub();
+  const macro = helpers.macro.macros.invalidAskVotingPlanStatusResponse();
   const middleware = askVotingPlanStatusCatchAll();
   sandbox.stub(helpers.request, 'parseAskVotingPlanStatusResponse')
     .returns(Promise.resolve(true));
   t.context.req.topic = askVotingPlanStatus;
-  t.context.req.macro = helpers.macro.macros.invalidAskVotingPlanStatusResponse();
+  t.context.req.macro = macro;
 
   // test
   await middleware(t.context.req, t.context.res, next);
@@ -84,32 +85,31 @@ test('askVotingPlanStatusCatchAll should not call changeTopic, sends invalidAskV
   helpers.replies.sendReply.should.have.been.calledWith(
     t.context.req,
     t.context.res,
-    helpers.macro.getMacro(t.context.req.macro).text,
-    t.context.req.macro,
+    helpers.macro.getMacro(macro).text,
+    macro,
   );
 });
 
-test('askVotingPlanStatusCatchAll should change topic to macro topic and send macro text if status is voting', async (t) => {
+test('askVotingPlanStatusCatchAll should change topic to hardcoded macro topic and send macro text if macro is votingPlanStatusVoting', async (t) => {
   const next = sinon.stub();
-  const macro = 'votingPlanStatusVoting';
+  const macro = helpers.macro.macros.votingPlanStatusVoting();
   const middleware = askVotingPlanStatusCatchAll();
   const topic = topicFactory.getValidAutoReply();
   sandbox.stub(helpers.request, 'parseAskVotingPlanStatusResponse')
     .returns(Promise.resolve(true));
-  sandbox.stub(helpers.macro, 'isVotingPlanStatusVoting')
-    .returns(true);
   sandbox.stub(helpers.macro, 'getMacro')
     .returns({ text: messageText, topic });
   t.context.req.topic = askVotingPlanStatus;
   t.context.req.macro = macro;
+  const config = helpers.macro.getMacro(macro);
 
   // test
   await middleware(t.context.req, t.context.res, next);
 
   next.should.not.have.been.called;
-  helpers.request.changeTopic.should.have.been.calledWith(t.context.req, topic);
+  helpers.request.changeTopic.should.have.been.calledWith(t.context.req, config.topic);
   helpers.replies.sendReply
-    .should.have.been.calledWith(t.context.req, t.context.res, messageText, macro);
+    .should.have.been.calledWith(t.context.req, t.context.res, config.text, macro);
 });
 
 test('askVotingPlanStatusCatchAll should change topic to saidVotedTopic and send saidVoted reply if macro is votingPlanStatusVoted', async (t) => {
