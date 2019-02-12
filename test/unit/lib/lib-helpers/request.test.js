@@ -170,17 +170,45 @@ test('getRivescriptReply should call helpers.rivescript.getBotReply with req var
   const mockRivescriptTopicId = 'random';
   const mockRivescriptTopic = { id: mockRivescriptTopicId };
   const botReply = { text: stubs.getRandomMessageText(), match: '@hello' };
+  sandbox.stub(helpers.rivescript, 'isBotReady')
+    .returns(true);
+  sandbox.stub(helpers.rivescript, 'loadBot')
+    .returns(Promise.resolve());
   sandbox.stub(helpers.rivescript, 'getBotReply')
     .returns(Promise.resolve(botReply));
   sandbox.stub(helpers.topic, 'getRivescriptTopicById')
     .returns(mockRivescriptTopic);
+
   const result = await requestHelper.getRivescriptReply(t.context.req);
   helpers.rivescript.getBotReply.should.have.been
     .calledWith(userId, mockRivescriptTopicId, t.context.req.inboundMessageText);
   result.text.should.equal(botReply.text);
   result.match.should.equal(botReply.match);
+  helpers.rivescript.loadBot.should.not.have.been.called;
   // TODO: Add tests for various topic changes.
   // result.topicId.should.deep.equal(mockRivescriptTopic);
+});
+
+test('getRivescriptReply should call helpers.rivescript.loadBot if bot is not ready', async (t) => {
+  t.context.req.userId = userId;
+  t.context.req.conversation = conversation;
+  t.context.req.currentTopicId = stubs.getContentfulId();
+  t.context.req.inboundMessageText = stubs.getRandomMessageText();
+  // TODO: This should be renamed as default topic the way we're using it -- stub getDefaultTopicId.
+  const mockRivescriptTopicId = 'random';
+  const mockRivescriptTopic = { id: mockRivescriptTopicId };
+  const botReply = { text: stubs.getRandomMessageText(), match: '@hello' };
+  sandbox.stub(helpers.rivescript, 'isBotReady')
+    .returns(false);
+  sandbox.stub(helpers.rivescript, 'loadBot')
+    .returns(Promise.resolve());
+  sandbox.stub(helpers.rivescript, 'getBotReply')
+    .returns(Promise.resolve(botReply));
+  sandbox.stub(helpers.topic, 'getRivescriptTopicById')
+    .returns(mockRivescriptTopic);
+
+  await requestHelper.getRivescriptReply(t.context.req);
+  helpers.rivescript.loadBot.should.have.been.called;
 });
 
 // hasCampaign
@@ -288,6 +316,39 @@ test('isSubscriptionStatusNeedMoreInfoMacro should return true if req.macro is s
   t.falsy(requestHelper.isSubscriptionStatusNeedMoreInfoMacro(t.context.req));
   t.context.req.macro = helpers.macro.macros.subscriptionStatusNeedMoreInfo();
   t.truthy(requestHelper.isSubscriptionStatusNeedMoreInfoMacro(t.context.req));
+});
+
+// isVotingPlanStatusCantVoteMacro
+test('isVotingPlanStatusCantVoteMacro should return true if req.macro is votingPlanStatusCantVote macro', (t) => {
+  t.falsy(requestHelper.isVotingPlanStatusCantVoteMacro(t.context.req));
+  t.context.req.macro = stubs.getRandomWord();
+  t.falsy(requestHelper.isVotingPlanStatusCantVoteMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.votingPlanStatusVoted();
+  t.falsy(requestHelper.isVotingPlanStatusCantVoteMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.votingPlanStatusCantVote();
+  t.truthy(requestHelper.isVotingPlanStatusCantVoteMacro(t.context.req));
+});
+
+// isVotingPlanStatusNotVotingMacro
+test('isVotingPlanStatusNotVotingMacro should return true if req.macro is votingPlanStatusNotVoting macro', (t) => {
+  t.falsy(requestHelper.isVotingPlanStatusNotVotingMacro(t.context.req));
+  t.context.req.macro = stubs.getRandomWord();
+  t.falsy(requestHelper.isVotingPlanStatusNotVotingMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.votingPlanStatusVoted();
+  t.falsy(requestHelper.isVotingPlanStatusNotVotingMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.votingPlanStatusNotVoting();
+  t.truthy(requestHelper.isVotingPlanStatusNotVotingMacro(t.context.req));
+});
+
+// isVotingPlanStatusVotedMacro
+test('isVotingPlanStatusVotedMacro should return true if req.macro is votingPlanStatusVoted macro', (t) => {
+  t.falsy(requestHelper.isVotingPlanStatusVotedMacro(t.context.req));
+  t.context.req.macro = stubs.getRandomWord();
+  t.falsy(requestHelper.isVotingPlanStatusVotedMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.votingPlanStatusVoted();
+  t.truthy(requestHelper.isVotingPlanStatusVotedMacro(t.context.req));
+  t.context.req.macro = helpers.macro.macros.votingPlanStatusCantVote();
+  t.falsy(requestHelper.isVotingPlanStatusVotedMacro(t.context.req));
 });
 
 // isSubscriptionStatusStopMacro
