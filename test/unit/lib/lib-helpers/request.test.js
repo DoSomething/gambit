@@ -170,17 +170,45 @@ test('getRivescriptReply should call helpers.rivescript.getBotReply with req var
   const mockRivescriptTopicId = 'random';
   const mockRivescriptTopic = { id: mockRivescriptTopicId };
   const botReply = { text: stubs.getRandomMessageText(), match: '@hello' };
+  sandbox.stub(helpers.rivescript, 'isBotReady')
+    .returns(true);
+  sandbox.stub(helpers.rivescript, 'loadBot')
+    .returns(Promise.resolve());
   sandbox.stub(helpers.rivescript, 'getBotReply')
     .returns(Promise.resolve(botReply));
   sandbox.stub(helpers.topic, 'getRivescriptTopicById')
     .returns(mockRivescriptTopic);
+
   const result = await requestHelper.getRivescriptReply(t.context.req);
   helpers.rivescript.getBotReply.should.have.been
     .calledWith(userId, mockRivescriptTopicId, t.context.req.inboundMessageText);
   result.text.should.equal(botReply.text);
   result.match.should.equal(botReply.match);
+  helpers.rivescript.loadBot.should.not.have.been.called;
   // TODO: Add tests for various topic changes.
   // result.topicId.should.deep.equal(mockRivescriptTopic);
+});
+
+test('getRivescriptReply should call helpers.rivescript.loadBot if bot is not ready', async (t) => {
+  t.context.req.userId = userId;
+  t.context.req.conversation = conversation;
+  t.context.req.currentTopicId = stubs.getContentfulId();
+  t.context.req.inboundMessageText = stubs.getRandomMessageText();
+  // TODO: This should be renamed as default topic the way we're using it -- stub getDefaultTopicId.
+  const mockRivescriptTopicId = 'random';
+  const mockRivescriptTopic = { id: mockRivescriptTopicId };
+  const botReply = { text: stubs.getRandomMessageText(), match: '@hello' };
+  sandbox.stub(helpers.rivescript, 'isBotReady')
+    .returns(false);
+  sandbox.stub(helpers.rivescript, 'loadBot')
+    .returns(Promise.resolve());
+  sandbox.stub(helpers.rivescript, 'getBotReply')
+    .returns(Promise.resolve(botReply));
+  sandbox.stub(helpers.topic, 'getRivescriptTopicById')
+    .returns(mockRivescriptTopic);
+
+  await requestHelper.getRivescriptReply(t.context.req);
+  helpers.rivescript.loadBot.should.have.been.called;
 });
 
 // hasCampaign
