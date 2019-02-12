@@ -31,6 +31,10 @@ function getValidAskSubscriptionStatus() {
   return getBroadcast(config.types.askSubscriptionStatus);
 }
 
+function getValidAskVotingPlanStatus() {
+  return getBroadcast(config.types.askVotingPlanStatus);
+}
+
 function getValidAskYesNo() {
   return getBroadcast(config.types.askYesNo, {
     invalidAskYesNoResponse: stubs.getRandomMessageText(),
@@ -62,6 +66,7 @@ module.exports = {
   getBroadcast,
   getValidAutoReplyBroadcast,
   getValidAskSubscriptionStatus,
+  getValidAskVotingPlanStatus,
   getValidAskYesNo,
   getValidLegacyCampaignBroadcast,
   getValidLegacyRivescriptTopicBroadcast,
