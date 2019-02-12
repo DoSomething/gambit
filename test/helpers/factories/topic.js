@@ -86,6 +86,20 @@ function getValidAskSubscriptionStatusBroadcastTopic() {
 /**
  * @return {Object}
  */
+function getValidAskVotingPlanStatusBroadcastTopic() {
+  return getValidTopicWithoutCampaign(config.types.askVotingPlanStatus.type, {
+    saidCantVote: getTemplate(),
+    saidCantVoteTopic: getValidTopicWithoutCampaign(),
+    saidNotVoting: getTemplate(),
+    saidNotVotingTopic: getValidTopicWithoutCampaign(),
+    saidVoting: getTemplate(),
+    saidVotingTopic: getValidTopicWithoutCampaign(),
+  });
+}
+
+/**
+ * @return {Object}
+ */
 function getValidAskYesNoBroadcastTopic() {
   return getValidTopicWithoutCampaign(config.types.askYesNo.type, {
     invalidAskYesNoResponse: getTemplate(),
@@ -98,6 +112,7 @@ function getValidAskYesNoBroadcastTopic() {
 
 module.exports = {
   getValidAskSubscriptionStatusBroadcastTopic,
+  getValidAskVotingPlanStatusBroadcastTopic,
   getValidAskYesNoBroadcastTopic,
   getValidAutoReply,
   getValidPhotoPostConfig,

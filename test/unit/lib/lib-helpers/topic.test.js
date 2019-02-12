@@ -196,7 +196,8 @@ test('isAskSubscriptionStatus returns whether topic type is askSubscriptionStatu
 // isAskVotingPlanStatus
 test('isAskVotingPlanStatus returns whether topic is rivescriptTopics.askVotingPlanStatus', (t) => {
   const mockTopic = topicFactory.getValidTopic();
-  t.truthy(topicHelper.isAskVotingPlanStatus(broadcastFactory.getValidAskVotingPlanStatus()));
+  const askVotingPlanStatusTopic = topicFactory.getValidAskVotingPlanStatusBroadcastTopic();
+  t.truthy(topicHelper.isAskVotingPlanStatus(askVotingPlanStatusTopic));
   t.falsy(topicHelper.isAskVotingPlanStatus(mockTopic));
 });
 
@@ -215,7 +216,7 @@ test('isAutoReply returns whether topic type is autoReply', (t) => {
 // isBroadcastable
 test('isBroadcastable returns whether topic is rivescriptTopics.askVotingPlanStatus', (t) => {
   const mockTopic = topicFactory.getValidTopic();
-  t.truthy(topicHelper.isBroadcastable(broadcastFactory.getValidAskVotingPlanStatus()));
+  t.truthy(topicHelper.isBroadcastable(topicFactory.getValidAskVotingPlanStatusBroadcastTopic()));
   t.falsy(topicHelper.isBroadcastable(mockTopic));
 });
 
