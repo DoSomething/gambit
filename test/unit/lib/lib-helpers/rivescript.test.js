@@ -344,6 +344,18 @@ test('loadBot calls getRivescripts and creates a new Rivescript bot with result'
     .calledWith(getRivescripts);
 });
 
+// parseAskMultipleChoiceResponse
+test('parseAskMultipleChoiceResponse should call rivescriptHelper.getBotReply with ask_multiple_choice and return result text', async () => {
+  const messageText = stubs.getRandomMessageText();
+  sandbox.stub(rivescriptHelper, 'getBotReply')
+    .returns(Promise.resolve(mockRivescriptReply));
+
+  const result = await rivescriptHelper.parseAskMultipleChoiceResponse(messageText);
+  rivescriptHelper.getBotReply
+    .should.have.been.calledWith('global', 'ask_multiple_choice', messageText);
+  result.should.deep.equal(mockRivescriptReply.text);
+});
+
 // parseAskSubscriptionStatusResponse
 test('parseAskSubscriptionStatusResponse should call rivescriptHelper.getBotReply with ask_subscription_status and return result text', async () => {
   const messageText = stubs.getRandomMessageText();

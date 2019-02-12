@@ -382,6 +382,25 @@ test('isTwilioStudio should return true if req.query.origin is set to twilioStud
   t.truthy(requestHelper.isTwilioStudio(t.context.req));
 });
 
+// parseAskMultipleChoiceResponse
+test('parseAskMultipleChoiceResponse updates macro with helpers.rivescript.parseAskMultipleChoiceResponse result', async (t) => {
+  const mockParseMultipleChoiceResponse = stubs.getRandomWord();
+  sandbox.stub(helpers.request, 'setMacro')
+    .returns(underscore.noop);
+  sandbox.stub(message, 'updateMacro')
+    .returns(Promise.resolve());
+  sandbox.stub(helpers.rivescript, 'parseAskMultipleChoiceResponse')
+    .returns(Promise.resolve(mockParseMultipleChoiceResponse));
+  t.context.req.inboundMessage = message;
+
+  await requestHelper.parseAskMultipleChoiceResponse(t.context.req);
+  helpers.rivescript.parseAskMultipleChoiceResponse.should.have.been
+    .calledWith(message.text);
+  helpers.request.setMacro
+    .should.have.been.calledWith(t.context.req, mockParseMultipleChoiceResponse);
+  message.updateMacro.should.have.been.calledWith(mockParseMultipleChoiceResponse);
+});
+
 // parseAskYesNoResponse
 test('parseAskYesNoResponse updates macro if parseAskYesNoResponse returns isSaidYesMacro', async (t) => {
   const mockParseAskYesNoResponse = 'dragon';

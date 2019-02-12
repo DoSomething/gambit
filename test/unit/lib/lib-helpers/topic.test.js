@@ -185,6 +185,14 @@ test('hasClosedCampaign returns false if topic does not have campaign', (t) => {
   t.falsy(topicHelper.hasClosedCampaign(topic));
 });
 
+// isAskMultipleChoice
+test('isAskMultipleChoice returns whether topic type is askMultipleChoice', (t) => {
+  t.truthy(topicHelper
+    .isAskMultipleChoice(topicFactory.getValidAskMultipleChoiceBroadcastTopic()));
+  t.falsy(topicHelper
+    .isAskSubscriptionStatus(topicFactory.getValidAskYesNoBroadcastTopic()));
+});
+
 // isAskSubscriptionStatus
 test('isAskSubscriptionStatus returns whether topic type is askSubscriptionStatus', (t) => {
   t.truthy(topicHelper
