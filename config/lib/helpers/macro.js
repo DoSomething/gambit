@@ -112,6 +112,9 @@ module.exports = {
     catchAll: {
       name: 'catchAll',
     },
+    invalidAskMultipleChoiceResponse: {
+      name: 'invalidAskMultipleChoiceResponse',
+    },
     invalidAskVotingPlanStatusResponse: {
       name: 'invalidAskVotingPlanStatusResponse',
       text: `${invalidAnswerText} ${askVotingPlanStatusText}`,
@@ -132,8 +135,17 @@ module.exports = {
       name: 'noReply',
       text: '',
     },
+    saidFirstChoice: {
+      name: 'saidFirstChoice',
+    },
     saidNo: {
       name: 'saidNo',
+    },
+    saidSecondChoice: {
+      name: 'saidSecondChoice',
+    },
+    saidThirdChoice: {
+      name: 'saidThirdChoice',
     },
     saidYes: {
       name: 'saidYes',
