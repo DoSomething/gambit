@@ -15,13 +15,10 @@ const campaignTopicFields = `
   }
 `;
 
-const saidYesTopicFields = `
-  saidYesTopic {
-    id
-    ...autoReplySignupCampaign
-    ...photoPostCampaign
-    ...textPostCampaign
-  }
+const campaignTopicTypes = `
+  ...autoReplySignupCampaign
+  ...photoPostCampaign
+  ...textPostCampaign
 `;
 
 const campaignTopicFragments = `
@@ -36,6 +33,17 @@ const campaignTopicFragments = `
   }
 `;
 
+const saidYesTopicFields = `
+  saidYesTopic {
+    id
+    ${campaignTopicTypes}
+  }
+`;
+
+/**
+ * TODO: Fetch the AskMultipleChoiceBroadcastTopic choice topics to validate that they don't change
+ * topic to a campaign that has ended.
+ */
 const fetchBroadcastById = `
   query getBroadcastById($id: String!) {
     broadcast(id: $id) {
@@ -91,6 +99,24 @@ const fetchTopicById = `
     topic(id: $id) {
       id
       contentType
+      ... on AskMultipleChoiceBroadcastTopic {
+        invalidAskMultipleChoiceResponse
+        saidFirstChoice
+        saidFirstChoiceTopic {
+          id
+          ${campaignTopicTypes}
+        }
+        saidSecondChoice
+        saidSecondChoiceTopic {
+          id
+          ${campaignTopicTypes}
+        }
+        saidThirdChoice
+        saidThirdChoiceTopic {
+          id
+          ${campaignTopicTypes}
+        }
+      }
       ... on AskSubscriptionStatusBroadcastTopic {
         invalidAskSubscriptionStatusResponse
         saidNeedMoreInfo

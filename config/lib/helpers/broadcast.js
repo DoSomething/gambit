@@ -2,6 +2,7 @@
 
 module.exports = {
   types: {
+    askMultipleChoice: 'askMultipleChoice',
     askSubscriptionStatus: 'askSubscriptionStatus',
     askVotingPlanStatus: 'askVotingPlanStatus',
     askYesNo: 'askYesNo',
