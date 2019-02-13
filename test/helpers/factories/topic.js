@@ -73,6 +73,21 @@ function getValidTextPostConfig() {
 /**
  * @return {Object}
  */
+function getValidAskMultipleChoiceBroadcastTopic() {
+  return getValidTopicWithoutCampaign(config.types.askMultipleChoice.type, {
+    invalidAskMultipleChoiceResponse: getTemplate(),
+    saidFirstChoice: getTemplate(),
+    saidFirstChoiceTopic: getValidTopicWithoutCampaign(),
+    saidSecondChoice: getTemplate(),
+    saidSecondChoiceTopic: getValidTopicWithoutCampaign(),
+    saidThirdChoice: getTemplate(),
+    saidThirdChoiceTopic: getValidTextPostConfig(),
+  });
+}
+
+/**
+ * @return {Object}
+ */
 function getValidAskSubscriptionStatusBroadcastTopic() {
   return getValidTopicWithoutCampaign(config.types.askSubscriptionStatus.type, {
     invalidAskSubscriptionStatusResponse: getTemplate(),
@@ -111,6 +126,7 @@ function getValidAskYesNoBroadcastTopic() {
 }
 
 module.exports = {
+  getValidAskMultipleChoiceBroadcastTopic,
   getValidAskSubscriptionStatusBroadcastTopic,
   getValidAskVotingPlanStatusBroadcastTopic,
   getValidAskYesNoBroadcastTopic,

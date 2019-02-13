@@ -1,0 +1,26 @@
+// Current options are A) B) C)
+
+> topic ask_multiple_choice includes random
+
++ a [*]
+- saidFirstChoice
+
++ b [*]
+- saidSecondChoice
+
++ c [*]
+- saidThirdChoice
+
++ 1 [*]
+- saidFirstChoice
+
++ 2 [*]
+- saidSecondChoice
+
++ 3 [*]
+- saidThirdChoice
+
++ [*]
+- invalidAskMultipleChoiceResponse
+
+< topic

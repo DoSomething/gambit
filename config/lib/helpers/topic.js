@@ -7,6 +7,9 @@ const topicTemplates = templateConfig.templatesMap.topicTemplates;
 
 module.exports = {
   types: {
+    askMultipleChoice: {
+      type: 'askMultipleChoice',
+    },
     askSubscriptionStatus: {
       type: 'askSubscriptionStatus',
     },
