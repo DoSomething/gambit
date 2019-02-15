@@ -44,6 +44,8 @@ test('createPost should call gateway.getClient.Posts.create', async () => {
   result.should.deep.equal(mockGatewayResponse);
 });
 
+// TODO: Add test for truncated text post.
+
 // createSignup
 test('createSignup should call gateway.getClient.Signup.create', async () => {
   const mockPayload = { northstar_id: mockUser.id, campaignId: stubs.getCampaignId() };
