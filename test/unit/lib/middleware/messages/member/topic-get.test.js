@@ -29,8 +29,6 @@ const error = stubs.getError();
 test.beforeEach((t) => {
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(underscore.noop);
-  sandbox.stub(helpers.replies, 'noCampaign')
-    .returns(underscore.noop);
   t.context.req = httpMocks.createRequest();
   t.context.req.currentTopicId = stubs.getContentfulId();
   t.context.res = httpMocks.createResponse();
@@ -41,37 +39,20 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-test('getTopic calls next if topic.getById result is not deprecated', async (t) => {
+test('getTopic calls next after calling setTopic with getById result', async (t) => {
   const next = sinon.stub();
   const middleware = getTopic();
   sandbox.stub(helpers.topic, 'getById')
     .returns(Promise.resolve(topic));
   sandbox.stub(helpers.request, 'setTopic')
     .returns(underscore.noop);
-  sandbox.stub(helpers.topic, 'isDeprecated')
-    .returns(false);
 
   await middleware(t.context.req, t.context.res, next);
   helpers.topic.getById.should.have.been.calledWith(t.context.req.currentTopicId);
   helpers.request.setTopic.should.have.been.calledWith(t.context.req, topic);
-  helpers.replies.noCampaign.should.not.have.been.called;
   next.should.have.been.called;
 });
 
-test('getTopic sends noCampaign reply if topic.getById result is deprecated', async (t) => {
-  const next = sinon.stub();
-  const middleware = getTopic();
-  sandbox.stub(helpers.topic, 'getById')
-    .returns(Promise.resolve(topic));
-  sandbox.stub(helpers.request, 'setTopic')
-    .returns(underscore.noop);
-  sandbox.stub(helpers.topic, 'isDeprecated')
-    .returns(true);
-
-  await middleware(t.context.req, t.context.res, next);
-  helpers.replies.noCampaign.should.have.been.calledWith(t.context.req, t.context.res);
-  next.should.not.have.been.called;
-});
 
 test('getTopic calls sendErrorResponse if topic.getById returns error', async (t) => {
   const next = sinon.stub();
