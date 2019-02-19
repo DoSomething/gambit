@@ -1,0 +1,15 @@
+// We no longer use these topics, but some old conversations may still remain in them.
+
+> topic campaign includes random 
+
++ [*]
+- Sorry, that campaign is no longer available. Text Q if you have a question.{topic=random}
+
+< topic
+
+> topic survey_response includes random 
+
++ [*]
+- Sorry, I didn't get that. Text Q if you have a question.{topic=random}
+
+< topic
