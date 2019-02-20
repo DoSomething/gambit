@@ -1,0 +1,22 @@
+// We no longer use these topics, but some old conversations may still remain in them.
+
+/**
+ * This topic was used in tandem with the deprecated conversations.campaignId property, when replies were on a campaign (before defining on topics, as we do now).
+ */
+> topic campaign includes random 
+
++ [*]
+- Sorry, that campaign is no longer available. Text Q if you have a question.{topic=random}
+
+< topic
+
+/**
+ * This topic was used mainly by the legacy broadcast content type, before our AutoReplyBroadcast
+ * type existed.
+ */
+> topic survey_response includes random 
+
++ [*]
+- Sorry, I didn't get that. Text Q if you have a question.{topic=random}
+
+< topic
