@@ -87,7 +87,6 @@ test('textPostCatchAll should send invalidText reply if inboundMessageText is no
 test('textPostCatchAll should call createTextPost and send completedTextPost if inboundMessageText is valid text post', async (t) => {
   const next = sinon.stub();
   const middleware = textPostCatchAll();
-  const mockCampaign = mockTopic.campaign;
   sandbox.stub(helpers.topic, 'isTextPostConfig')
     .returns(true);
   sandbox.stub(helpers.util, 'isValidTextFieldValue')
