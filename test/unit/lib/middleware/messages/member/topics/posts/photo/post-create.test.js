@@ -20,7 +20,6 @@ chai.use(sinonChai);
 
 const completeDraft = draftSubmissionFactory.getValidCompletePhotoPostDraftSubmission();
 const mockPost = { id: stubs.getPostId() };
-const mockTopic = topicFactory.getValidTopic();
 const mockUser = userFactory.getValidUser();
 
 // module to be tested
@@ -29,7 +28,7 @@ const createPhotoPost = require('../../../../../../../../../lib/middleware/messa
 const sandbox = sinon.sandbox.create();
 
 test.beforeEach((t) => {
-  sandbox.stub(helpers, 'sendErrorResponse')
+  sandbox.stub(helpers.errorNoticeable, 'sendErrorResponse')
     .returns(underscore.noop);
   t.context.req = httpMocks.createRequest();
   t.context.res = httpMocks.createResponse();
@@ -60,7 +59,7 @@ test('createPhotoPost should call next if topic is not a photoPostConfig', async
   helpers.replies.completedPhotoPost.should.not.have.been.called;
 });
 
-test('createPhotoPost should call sendErrorResponse if req.draftSubmission is undefined', async (t) => {
+test('createPhotoPost should call errorNoticeable.sendErrorResponse if req.draftSubmission is undefined', async (t) => {
   const next = sinon.stub();
   const middleware = createPhotoPost();
   sandbox.stub(helpers.topic, 'isPhotoPostConfig')
@@ -77,7 +76,7 @@ test('createPhotoPost should call sendErrorResponse if req.draftSubmission is un
   next.should.not.have.been.called;
   helpers.user.createPhotoPost.should.not.have.been.called;
   helpers.replies.completedPhotoPost.should.not.have.been.called;
-  helpers.sendErrorResponse.should.have.been.called;
+  helpers.errorNoticeable.sendErrorResponse.should.have.been.called;
 });
 
 test('createPhotoPost should call sendErrorResponse if createPhotoPost fails', async (t) => {
@@ -99,7 +98,7 @@ test('createPhotoPost should call sendErrorResponse if createPhotoPost fails', a
   next.should.not.have.been.called;
   helpers.user.createPhotoPost.should.have.been.called;
   helpers.replies.completedPhotoPost.should.not.have.been.called;
-  helpers.sendErrorResponse.should.have.been.calledWith(t.context.res, error);
+  helpers.errorNoticeable.sendErrorResponse.should.have.been.calledWith(t.context.res, error);
 });
 
 test('createPhotoPost should call completedPhotoPost on createPhotoPost success', async (t) => {
@@ -122,10 +121,16 @@ test('createPhotoPost should call completedPhotoPost on createPhotoPost success'
   helpers.topic.isPhotoPostConfig.should.have.been.calledWith(t.context.req.topic);
   next.should.not.have.been.called;
   helpers.user.createPhotoPost
-    .should.have.been.calledWith(mockUser, mockTopic.campaign, t.context.req.platform, values);
+    .should.have.been.calledWith({
+      userId: mockUser.id,
+      campaignId: t.context.req.topic.campaign.id,
+      actionId: t.context.req.topic.actionId,
+      photoPostSource: t.context.req.platform,
+      photoPostValues: values,
+    });
   helpers.request.deleteDraftSubmission.should.have.been.calledWith(t.context.req);
   helpers.replies.completedPhotoPost.should.have.been.called;
-  helpers.sendErrorResponse.should.not.have.been.called;
+  helpers.errorNoticeable.sendErrorResponse.should.not.have.been.called;
 });
 
 test('createPhotoPost should call sendErrorResponse on createPhotoPost error', async (t) => {
@@ -150,5 +155,5 @@ test('createPhotoPost should call sendErrorResponse on createPhotoPost error', a
   helpers.user.createPhotoPost.should.have.been.called;
   helpers.request.deleteDraftSubmission.should.not.have.been.called;
   helpers.replies.completedPhotoPost.should.not.have.been.called;
-  helpers.sendErrorResponse.should.have.been.calledWith(t.context.res, error);
+  helpers.errorNoticeable.sendErrorResponse.should.have.been.calledWith(t.context.res, error);
 });

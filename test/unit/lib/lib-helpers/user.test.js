@@ -28,12 +28,15 @@ const conversationFactory = require('../../../helpers/factories/conversation');
 const draftSubmissionFactory = require('../../../helpers/factories/draftSubmission');
 const messageFactory = require('../../../helpers/factories/message');
 const userFactory = require('../../../helpers/factories/user');
+const topicFactory = require('../../../helpers/factories/topic');
 
 const campaign = campaignFactory.getValidCampaign();
 const campaignId = stubs.getCampaignId();
 const mockPost = { id: 890332 };
 const mockSignup = { id: 251696 };
 const mockUser = userFactory.getValidUser();
+const mockPhotoPostTopic = topicFactory.getValidPhotoPostConfig();
+const mockTextPostTopic = topicFactory.getValidTextPostConfig();
 const userLookupStub = () => Promise.resolve(mockUser);
 const platformUserAddressStub = {
   country: 'US',
@@ -61,10 +64,16 @@ test('createPhotoPost passes user.id, campaignId, file, quantity, source, text, 
   sandbox.stub(helpers.util, 'fetchImageFileFromUrl')
     .returns(Promise.resolve(file));
 
-  const result = await userHelper.createPhotoPost(mockUser, campaign, source, values);
+  const result = await userHelper.createPhotoPost({
+    userId: mockUser.id,
+    campaignId: mockPhotoPostTopic.campaign.id,
+    actionId: mockPhotoPostTopic.actionId,
+    photoPostSource: source,
+    photoPostValues: values,
+  });
   gateway.createPost.should.have.been.calledWith({
-    campaign_id: campaign.id,
     file,
+    action_id: mockPhotoPostTopic.actionId,
     quantity: values.quantity,
     northstar_id: mockUser.id,
     source,
@@ -97,9 +106,15 @@ test('createSignup passes user.id, campaignId, source args to gateway.createSign
 test('createTextPost passes user.id, campaignId, source, and text fields to gateway.createSignup', async () => {
   const text = 'test';
 
-  const result = await userHelper.createTextPost(mockUser, campaign, source, text);
+  const result = await userHelper.createTextPost({
+    userId: mockUser.id,
+    campaignId: mockTextPostTopic.campaign.id,
+    actionId: mockTextPostTopic.actionId,
+    textPostSource: source,
+    textPostText: text,
+  });
   gateway.createPost.should.have.been.calledWith({
-    campaign_id: campaign.id,
+    action_id: mockTextPostTopic.actionId,
     northstar_id: mockUser.id,
     source,
     text,

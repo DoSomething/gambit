@@ -29,7 +29,7 @@ const textPostCatchAll = require('../../../../../../../../../lib/middleware/mess
 const sandbox = sinon.sandbox.create();
 
 test.beforeEach((t) => {
-  sandbox.stub(helpers, 'sendErrorResponse')
+  sandbox.stub(helpers.errorNoticeable, 'sendErrorResponse')
     .returns(underscore.noop);
   t.context.req = httpMocks.createRequest();
   t.context.res = httpMocks.createResponse();
@@ -105,7 +105,13 @@ test('textPostCatchAll should call createTextPost and send completedTextPost if 
   helpers.topic.isTextPostConfig.should.have.been.calledWith(t.context.req.topic);
   next.should.not.have.been.called;
   helpers.user.createTextPost
-    .should.have.been.calledWith(mockUser, mockCampaign, mockPlatform, mockInboundMessageText);
+    .should.have.been.calledWith({
+      userId: mockUser.id,
+      campaignId: mockTopic.campaign.id,
+      actionId: mockTopic.actionId,
+      textPostSource: mockPlatform,
+      textPostText: mockInboundMessageText,
+    });
   helpers.replies.invalidText.should.not.have.been.called;
   helpers.replies.completedTextPost.should.have.been.calledWith(t.context.req, t.context.res);
 });
@@ -128,5 +134,5 @@ test('textPostCatchAll should send error response post if completedTextPost repl
   // test
   await middleware(t.context.req, t.context.res, next);
 
-  helpers.sendErrorResponse.should.have.been.calledWith(t.context.res, error);
+  helpers.errorNoticeable.sendErrorResponse.should.have.been.calledWith(t.context.res, error);
 });
