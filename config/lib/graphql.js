@@ -26,9 +26,11 @@ const campaignTopicFragments = `
     ${campaignFields}
   }
   fragment photoPostCampaign on PhotoPostTopic {
+    actionId
     ${campaignFields}
   }
   fragment textPostCampaign on TextPostTopic {
+    actionId
     ${campaignFields}
   }
 `;
