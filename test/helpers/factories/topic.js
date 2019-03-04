@@ -14,14 +14,14 @@ function getTemplate() {
  *
  * @see https://www.apollographql.com/docs/graphql-tools/mocking.html Probably?
  *
- * These topic stubs correspond to data returned from Query.topic GraphQL requests.s
+ * These topic stubs correspond to data returned from Query.topic GraphQL requests.
  * @see https://github.com/DoSomething/gambit-content/blob/master/documentation/endpoints/topics.md#retrieve-topic
  *
  * @param {String} type
- * @param {Object} templates
+ * @param {Object} metadata Attributes unique to the respective topic (templates, actionId, etc)
  * @return {Object}
  */
-function getValidTopic(type = 'photoPostConfig', templates = {}) {
+function getValidTopic(type = 'photoPostConfig', metadata = {}) {
   return {
     id: stubs.getContentfulId(),
     name: stubs.getRandomName(),
@@ -30,7 +30,7 @@ function getValidTopic(type = 'photoPostConfig', templates = {}) {
     campaign: {
       id: stubs.getCampaignId(),
     },
-    ...templates,
+    ...metadata,
   };
 }
 
@@ -56,28 +56,27 @@ function getValidAutoReply() {
  * @return {Object}
  */
 function getValidPhotoPostConfig() {
-  const topic = getValidTopic(config.types.photoPostConfig.type, {
-    startPhotoPostAutoReply: getTemplate(),
+  return getValidTopic(config.types.photoPostConfig.type, {
+    actionId: stubs.getRandomNumericId(),
     askQuantity: getTemplate(),
     invalidQuantity: getTemplate(),
+    startPhotoPostAutoReply: getTemplate(),
+
     // TODO: Cleanup config/lib/helpers/template, possibly move into config/lib/helpers/topic
     // and use it to define the various templates per topic here.
   });
-  topic.actionId = stubs.getRandomNumericId();
-  return topic;
 }
 
 /**
  * @return {Object}
  */
 function getValidTextPostConfig() {
-  const topic = getValidTopic(config.types.textPostConfig.type, {
-    invalidAskText: getTemplate(),
+  return getValidTopic(config.types.textPostConfig.type, {
+    actionId: stubs.getRandomNumericId(),
     completedTextPost: getTemplate(),
     completedTextPostAutoReply: getTemplate(),
+    invalidAskText: getTemplate(),
   });
-  topic.actionId = stubs.getRandomNumericId();
-  return topic;
 }
 
 /**
