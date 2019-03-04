@@ -181,6 +181,11 @@ test.serial('POST /api/v2/messages?origin=twilio should not re-send message to T
   const inboundRequestPayload = stubs.twilio.getInboundRequestBody(member);
   const requestId = stubs.getRequestId();
 
+  nock(integrationHelper.routes.graphql.baseURI)
+    .post('/graphql')
+    .times(2)
+    .reply(200, stubs.graphql.fetchConversationTriggers());
+
   // mock user fetch twice
   nock(integrationHelper.routes.northstar.baseURI)
     .get(`/users/mobile/${inboundRequestPayload.From}`)
@@ -190,11 +195,6 @@ test.serial('POST /api/v2/messages?origin=twilio should not re-send message to T
     .put(`/users/_id/${member.data.id}`)
     .times(2)
     .reply(200, member);
-
-  /**
-   * TODO: This test will pass in wercker because we query graphql-qa directly.
-   * We should mock the response.
-   */
 
   /**
    * 1st attempt

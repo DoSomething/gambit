@@ -8,14 +8,20 @@ function getTemplate() {
 }
 
 /**
+ * TODO: Let's figure out a way to utilize the queries setup in config/lib/graphql.
+ * Managing this factory completely separate from where we defined the expected
+ * topic schema is a hard job!
+ *
+ * @see https://www.apollographql.com/docs/graphql-tools/mocking.html Probably?
+ *
  * These topic stubs correspond to data returned from Query.topic GraphQL requests.
  * @see https://github.com/DoSomething/gambit-content/blob/master/documentation/endpoints/topics.md#retrieve-topic
  *
  * @param {String} type
- * @param {Object} templates
+ * @param {Object} metadata Attributes unique to the respective topic (templates, actionId, etc)
  * @return {Object}
  */
-function getValidTopic(type = 'photoPostConfig', templates = {}) {
+function getValidTopic(type = 'photoPostConfig', metadata = {}) {
   return {
     id: stubs.getContentfulId(),
     name: stubs.getRandomName(),
@@ -24,7 +30,7 @@ function getValidTopic(type = 'photoPostConfig', templates = {}) {
     campaign: {
       id: stubs.getCampaignId(),
     },
-    ...templates,
+    ...metadata,
   };
 }
 
@@ -51,9 +57,11 @@ function getValidAutoReply() {
  */
 function getValidPhotoPostConfig() {
   return getValidTopic(config.types.photoPostConfig.type, {
-    startPhotoPostAutoReply: getTemplate(),
+    actionId: stubs.getRandomNumericId(),
     askQuantity: getTemplate(),
     invalidQuantity: getTemplate(),
+    startPhotoPostAutoReply: getTemplate(),
+
     // TODO: Cleanup config/lib/helpers/template, possibly move into config/lib/helpers/topic
     // and use it to define the various templates per topic here.
   });
@@ -64,9 +72,10 @@ function getValidPhotoPostConfig() {
  */
 function getValidTextPostConfig() {
   return getValidTopic(config.types.textPostConfig.type, {
-    invalidAskText: getTemplate(),
+    actionId: stubs.getRandomNumericId(),
     completedTextPost: getTemplate(),
     completedTextPostAutoReply: getTemplate(),
+    invalidAskText: getTemplate(),
   });
 }
 
