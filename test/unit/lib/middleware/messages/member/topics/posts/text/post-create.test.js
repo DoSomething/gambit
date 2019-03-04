@@ -17,7 +17,7 @@ const userFactory = require('../../../../../../../../helpers/factories/user');
 const mockInboundMessageText = stubs.getRandomMessageText;
 const mockPlatform = stubs.getPlatform();
 const mockPost = { id: 23121 };
-const mockTopic = topicFactory.getValidTextPostConfig();
+const mockTextPostTopic = topicFactory.getValidTextPostConfig();
 const mockUser = userFactory.getValidUser();
 
 chai.should();
@@ -35,7 +35,7 @@ test.beforeEach((t) => {
   t.context.res = httpMocks.createResponse();
   t.context.req.inboundMessageText = mockInboundMessageText;
   t.context.req.platform = mockPlatform;
-  t.context.req.topic = mockTopic;
+  t.context.req.topic = mockTextPostTopic;
   t.context.req.user = mockUser;
 });
 
@@ -106,8 +106,7 @@ test('textPostCatchAll should call createTextPost and send completedTextPost if 
   helpers.user.createTextPost
     .should.have.been.calledWith({
       userId: mockUser.id,
-      campaignId: mockTopic.campaign.id,
-      actionId: mockTopic.actionId,
+      actionId: t.context.req.topic.actionId,
       textPostSource: mockPlatform,
       textPostText: mockInboundMessageText,
     });

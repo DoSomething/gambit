@@ -66,7 +66,6 @@ test('createPhotoPost passes user.id, campaignId, file, quantity, source, text, 
 
   const result = await userHelper.createPhotoPost({
     userId: mockUser.id,
-    campaignId: mockPhotoPostTopic.campaign.id,
     actionId: mockPhotoPostTopic.actionId,
     photoPostSource: source,
     photoPostValues: values,
@@ -108,7 +107,6 @@ test('createTextPost passes user.id, campaignId, source, and text fields to gate
 
   const result = await userHelper.createTextPost({
     userId: mockUser.id,
-    campaignId: mockTextPostTopic.campaign.id,
     actionId: mockTextPostTopic.actionId,
     textPostSource: source,
     textPostText: text,

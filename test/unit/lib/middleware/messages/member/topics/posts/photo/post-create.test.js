@@ -123,7 +123,6 @@ test('createPhotoPost should call completedPhotoPost on createPhotoPost success'
   helpers.user.createPhotoPost
     .should.have.been.calledWith({
       userId: mockUser.id,
-      campaignId: t.context.req.topic.campaign.id,
       actionId: t.context.req.topic.actionId,
       photoPostSource: t.context.req.platform,
       photoPostValues: values,
