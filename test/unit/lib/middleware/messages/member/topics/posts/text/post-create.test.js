@@ -17,7 +17,7 @@ const userFactory = require('../../../../../../../../helpers/factories/user');
 const mockInboundMessageText = stubs.getRandomMessageText;
 const mockPlatform = stubs.getPlatform();
 const mockPost = { id: 23121 };
-const mockTopic = topicFactory.getValidTextPostConfig();
+const mockTextPostTopic = topicFactory.getValidTextPostConfig();
 const mockUser = userFactory.getValidUser();
 
 chai.should();
@@ -29,13 +29,13 @@ const textPostCatchAll = require('../../../../../../../../../lib/middleware/mess
 const sandbox = sinon.sandbox.create();
 
 test.beforeEach((t) => {
-  sandbox.stub(helpers, 'sendErrorResponse')
+  sandbox.stub(helpers.errorNoticeable, 'sendErrorResponse')
     .returns(underscore.noop);
   t.context.req = httpMocks.createRequest();
   t.context.res = httpMocks.createResponse();
   t.context.req.inboundMessageText = mockInboundMessageText;
   t.context.req.platform = mockPlatform;
-  t.context.req.topic = mockTopic;
+  t.context.req.topic = mockTextPostTopic;
   t.context.req.user = mockUser;
 });
 
@@ -87,7 +87,6 @@ test('textPostCatchAll should send invalidText reply if inboundMessageText is no
 test('textPostCatchAll should call createTextPost and send completedTextPost if inboundMessageText is valid text post', async (t) => {
   const next = sinon.stub();
   const middleware = textPostCatchAll();
-  const mockCampaign = mockTopic.campaign;
   sandbox.stub(helpers.topic, 'isTextPostConfig')
     .returns(true);
   sandbox.stub(helpers.util, 'isValidTextFieldValue')
@@ -105,7 +104,12 @@ test('textPostCatchAll should call createTextPost and send completedTextPost if 
   helpers.topic.isTextPostConfig.should.have.been.calledWith(t.context.req.topic);
   next.should.not.have.been.called;
   helpers.user.createTextPost
-    .should.have.been.calledWith(mockUser, mockCampaign, mockPlatform, mockInboundMessageText);
+    .should.have.been.calledWith({
+      userId: mockUser.id,
+      actionId: t.context.req.topic.actionId,
+      textPostSource: mockPlatform,
+      textPostText: mockInboundMessageText,
+    });
   helpers.replies.invalidText.should.not.have.been.called;
   helpers.replies.completedTextPost.should.have.been.calledWith(t.context.req, t.context.res);
 });
@@ -128,5 +132,5 @@ test('textPostCatchAll should send error response post if completedTextPost repl
   // test
   await middleware(t.context.req, t.context.res, next);
 
-  helpers.sendErrorResponse.should.have.been.calledWith(t.context.res, error);
+  helpers.errorNoticeable.sendErrorResponse.should.have.been.calledWith(t.context.res, error);
 });

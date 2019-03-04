@@ -99,6 +99,17 @@ module.exports = {
         },
       },
     }),
+    fetchConversationTriggers: () => ({
+      data: {
+        conversationTriggers: [{
+          trigger: 'thetalk',
+          reply: 'Sorry, The Talk is no longer available. Text Q if you have a question.',
+          topic: {
+            id: '6gg4Ce09FK6UG6K6cyC6aa',
+          },
+        }],
+      },
+    }),
   },
   getError,
   stubLogger,
@@ -318,7 +329,7 @@ module.exports = {
     getInboundRequestBody(user) {
       const sid = this.getSmsMessageSid();
       return {
-        Body: module.exports.getRandomMessageText(),
+        Body: module.exports.getRandomWord(),
         From: user ? user.data.mobile : module.exports.getMobileNumber(),
         FromCity: chance.city(),
         FromCountry: country,
