@@ -66,10 +66,6 @@ module.exports = {
         shouldSendWhenPaused,
       };
     },
-    /**
-     * TODO: broadcastLite config differs from this default, should we have a separate stub
-     * for that?
-     */
     getUser(shouldSendErrorIfNotFound = true) {
       return {
         shouldSendErrorIfNotFound,
