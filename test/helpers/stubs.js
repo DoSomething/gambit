@@ -137,11 +137,10 @@ module.exports = {
     };
   },
   broadcast: {
-    getCioWebhookPayload(validMobileNumber = true) {
+    getCioWebhookPayload() {
       return {
         userId: module.exports.getUserId(),
         broadcastId: module.exports.getBroadcastId(),
-        mobile: module.exports.getPlatformUserId(validMobileNumber),
       };
     },
   },

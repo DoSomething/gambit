@@ -47,6 +47,102 @@ test('GET /api/v2/messages should return 404', async (t) => {
   res.status.should.be.equal(404);
 });
 
+test('POST /api/v2/messages?origin=broadcast should return 422 if userId is not found', async (t) => {
+  const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
+  cioWebhookPayload.userId = null;
+  const res = await t.context.request
+    .post(integrationHelper.routes.v2.messages(false, {
+      origin: 'broadcast',
+    }))
+    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
+    .send(cioWebhookPayload);
+
+  res.status.should.be.equal(422);
+  /**
+   * TODO: checking against a hard coded string is brittle.
+   * Will break w/ updating the error sent to user. Let's update when we cross that bridge.
+   */
+  res.body.message.should.include('Missing required userId');
+});
+
+test('POST /api/v2/messages?origin=broadcast should return 422 if broadcastId is not found', async (t) => {
+  const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
+  cioWebhookPayload.broadcastId = null;
+  const res = await t.context.request
+    .post(integrationHelper.routes.v2.messages(false, {
+      origin: 'broadcast',
+    }))
+    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
+    .send(cioWebhookPayload);
+  res.status.should.be.equal(422);
+  res.body.message.should.include('Missing required broadcastId');
+});
+
+test('POST /api/v2/messages?origin=broadcast should return 404 if user is not found', async (t) => {
+  const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
+
+  nock(integrationHelper.routes.northstar.baseURI)
+    .get(`/users/id/${cioWebhookPayload.userId}`)
+    .reply(404, {});
+
+  const res = await t.context.request
+    .post(integrationHelper.routes.v2.messages(false, {
+      origin: 'broadcast',
+    }))
+    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
+    .send(cioWebhookPayload);
+
+  res.status.should.be.equal(404);
+  res.body.message.should.include('Northstar user not found');
+});
+
+test('POST /api/v2/messages?origin=broadcast should return 422 if user is unsubscribed', async (t) => {
+  const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
+
+  nock(integrationHelper.routes.northstar.baseURI)
+    .get(`/users/id/${cioWebhookPayload.userId}`)
+    .reply(200, stubs.northstar.getUser({
+      noMobile: true,
+      subscription: 'stop',
+    }));
+
+  const res = await t.context.request
+    .post(integrationHelper.routes.v2.messages(false, {
+      origin: 'broadcast',
+    }))
+    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
+    .send(cioWebhookPayload);
+
+  res.status.should.be.equal(422);
+  res.body.message.should.include('Northstar User is unsubscribed');
+});
+
+test('POST /api/v2/messages?origin=broadcast should return 200 if broadcast is sent successfully', async (t) => {
+  const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
+
+  nock(integrationHelper.routes.northstar.baseURI)
+    .get(`/users/id/${cioWebhookPayload.userId}`)
+    .reply(200, stubs.northstar.getUser({
+      validUsNumber: true,
+    }));
+
+  /**
+   * We are using Twilio Test credentials in Wercker.
+   * When this runs on wercker we are indeed making a call to the Twilio API.
+   * But we do it with the Test credentials so its free and we are not actually
+   * sending the text.
+   */
+  const res = await t.context.request
+    .post(integrationHelper.routes.v2.messages(false, {
+      origin: 'broadcast',
+    }))
+    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
+    .send(cioWebhookPayload);
+
+  res.status.should.be.equal(200);
+  res.body.data.messages.length.should.be.equal(1);
+});
+
 test.serial('POST /api/v2/messages?origin=twilio should not re-send message to Twilio on retry', async (t) => {
   const member = stubs.northstar.getUser({ validUsNumber: true });
   const inboundRequestPayload = stubs.twilio.getInboundRequestBody(member);
