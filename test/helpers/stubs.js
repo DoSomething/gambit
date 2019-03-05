@@ -66,10 +66,6 @@ module.exports = {
         shouldSendWhenPaused,
       };
     },
-    /**
-     * TODO: broadcastLite config differs from this default, should we have a separate stub
-     * for that?
-     */
     getUser(shouldSendErrorIfNotFound = true) {
       return {
         shouldSendErrorIfNotFound,
@@ -141,11 +137,10 @@ module.exports = {
     };
   },
   broadcast: {
-    getCioWebhookPayload(validMobileNumber = true) {
+    getCioWebhookPayload() {
       return {
         userId: module.exports.getUserId(),
         broadcastId: module.exports.getBroadcastId(),
-        mobile: module.exports.getPlatformUserId(validMobileNumber),
       };
     },
   },

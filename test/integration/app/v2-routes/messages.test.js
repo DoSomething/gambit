@@ -47,12 +47,12 @@ test('GET /api/v2/messages should return 404', async (t) => {
   res.status.should.be.equal(404);
 });
 
-test('POST /api/v2/messages?origin=broadcastLite should return 422 if userId is not found', async (t) => {
+test('POST /api/v2/messages?origin=broadcast should return 422 if userId is not found', async (t) => {
   const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
   cioWebhookPayload.userId = null;
   const res = await t.context.request
     .post(integrationHelper.routes.v2.messages(false, {
-      origin: 'broadcastLite',
+      origin: 'broadcast',
     }))
     .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
     .send(cioWebhookPayload);
@@ -65,12 +65,12 @@ test('POST /api/v2/messages?origin=broadcastLite should return 422 if userId is 
   res.body.message.should.include('Missing required userId');
 });
 
-test('POST /api/v2/messages?origin=broadcastLite should return 422 if broadcastId is not found', async (t) => {
+test('POST /api/v2/messages?origin=broadcast should return 422 if broadcastId is not found', async (t) => {
   const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
   cioWebhookPayload.broadcastId = null;
   const res = await t.context.request
     .post(integrationHelper.routes.v2.messages(false, {
-      origin: 'broadcastLite',
+      origin: 'broadcast',
     }))
     .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
     .send(cioWebhookPayload);
@@ -78,40 +78,7 @@ test('POST /api/v2/messages?origin=broadcastLite should return 422 if broadcastI
   res.body.message.should.include('Missing required broadcastId');
 });
 
-test('POST /api/v2/messages?origin=broadcastLite should return 422 if mobile is not found', async (t) => {
-  const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
-  cioWebhookPayload.mobile = null;
-  const res = await t.context.request
-    .post(integrationHelper.routes.v2.messages(false, {
-      origin: 'broadcastLite',
-    }))
-    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
-    .send(cioWebhookPayload);
-  res.status.should.be.equal(422);
-  res.body.message.should.include('Missing required mobile');
-});
-
-test('POST /api/v2/messages?origin=broadcastLite should return 422 if mobile is not valid', async (t) => {
-  const validMobileNumber = false;
-  const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload(validMobileNumber);
-
-  nock(integrationHelper.routes.northstar.baseURI)
-    .get(`/users/id/${cioWebhookPayload.userId}`)
-    .reply(200, stubs.northstar.getUser({
-      noMobile: true,
-    }));
-
-  const res = await t.context.request
-    .post(integrationHelper.routes.v2.messages(false, {
-      origin: 'broadcastLite',
-    }))
-    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
-    .send(cioWebhookPayload);
-  res.status.should.be.equal(422);
-  res.body.message.should.include('Cannot format mobile number');
-});
-
-test('POST /api/v2/messages?origin=broadcastLite should return 404 if user is not found', async (t) => {
+test('POST /api/v2/messages?origin=broadcast should return 404 if user is not found', async (t) => {
   const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
 
   nock(integrationHelper.routes.northstar.baseURI)
@@ -120,7 +87,7 @@ test('POST /api/v2/messages?origin=broadcastLite should return 404 if user is no
 
   const res = await t.context.request
     .post(integrationHelper.routes.v2.messages(false, {
-      origin: 'broadcastLite',
+      origin: 'broadcast',
     }))
     .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
     .send(cioWebhookPayload);
@@ -129,7 +96,7 @@ test('POST /api/v2/messages?origin=broadcastLite should return 404 if user is no
   res.body.message.should.include('Northstar user not found');
 });
 
-test('POST /api/v2/messages?origin=broadcastLite should return 422 if user is unsubscribed', async (t) => {
+test('POST /api/v2/messages?origin=broadcast should return 422 if user is unsubscribed', async (t) => {
   const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
 
   nock(integrationHelper.routes.northstar.baseURI)
@@ -141,7 +108,7 @@ test('POST /api/v2/messages?origin=broadcastLite should return 422 if user is un
 
   const res = await t.context.request
     .post(integrationHelper.routes.v2.messages(false, {
-      origin: 'broadcastLite',
+      origin: 'broadcast',
     }))
     .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
     .send(cioWebhookPayload);
@@ -150,13 +117,13 @@ test('POST /api/v2/messages?origin=broadcastLite should return 422 if user is un
   res.body.message.should.include('Northstar User is unsubscribed');
 });
 
-test('POST /api/v2/messages?origin=broadcastLite should return 200 if broadcast is sent successfully', async (t) => {
+test('POST /api/v2/messages?origin=broadcast should return 200 if broadcast is sent successfully', async (t) => {
   const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
 
   nock(integrationHelper.routes.northstar.baseURI)
     .get(`/users/id/${cioWebhookPayload.userId}`)
     .reply(200, stubs.northstar.getUser({
-      noMobile: true,
+      validUsNumber: true,
     }));
 
   /**
@@ -167,7 +134,7 @@ test('POST /api/v2/messages?origin=broadcastLite should return 200 if broadcast 
    */
   const res = await t.context.request
     .post(integrationHelper.routes.v2.messages(false, {
-      origin: 'broadcastLite',
+      origin: 'broadcast',
     }))
     .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
     .send(cioWebhookPayload);

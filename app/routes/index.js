@@ -24,8 +24,7 @@ module.exports = function init(app) {
   // Restified routes.
   app.use(mongooseRoutes);
   // v2
-  app.use('/api/v2/broadcasts/:broadcastId',
-    broadcastsSingleRoute);
+  app.use('/api/v2/broadcasts/:broadcastId', broadcastsSingleRoute);
   app.use('/api/v2/messages',
     /**
      * parses Metadata like requestId and retryCount
@@ -34,6 +33,5 @@ module.exports = function init(app) {
      */
     parseMessageMetadataMiddleware(),
     v2MessagesRoute);
-  app.use('/api/v2/rivescript',
-    rivescriptRoute);
+  app.use('/api/v2/rivescript', rivescriptRoute);
 };
