@@ -5,7 +5,6 @@ const metadataConfig = require('./middleware/metadata-parse');
 const metadataKeys = metadataConfig.metadata.keys;
 const requestIdKey = metadataKeys.requestId;
 const retryCountKey = metadataKeys.retryCount;
-const failureInjectionTestIdKey = metadataKeys.failureInjectionTestId;
 
 const extraDataConfigs = [
   {
@@ -16,10 +15,6 @@ const extraDataConfigs = [
   {
     key: retryCountKey,
     path: `metadata.${retryCountKey}`,
-  },
-  {
-    key: failureInjectionTestIdKey,
-    path: `metadata.${failureInjectionTestIdKey}`,
   },
 ];
 
