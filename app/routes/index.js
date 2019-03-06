@@ -28,7 +28,7 @@ module.exports = function init(app) {
   app.use('/api/v2/messages',
     /**
      * parses Metadata like requestId and retryCount
-     * TODO: We should split parsing X-Request-Id, X-Blink-Retry-Count, and X-Failure-Injection-Test
+     * TODO: We should split parsing X-Request-Id and X-Blink-Retry-Count
      * to a different middleware. That mw should intercept ALL requests, not just /messages.
      */
     parseMessageMetadataMiddleware(),
