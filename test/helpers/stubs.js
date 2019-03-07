@@ -8,6 +8,7 @@ const httpMocks = require('node-mocks-http');
 const url = require('url');
 const Chance = require('chance');
 const moment = require('moment');
+const lodash = require('lodash');
 
 const twilioHelperConfig = require('../../config/lib/helpers/twilio');
 const subscriptionHelper = require('../../lib/helpers/subscription');
@@ -211,9 +212,6 @@ module.exports = {
   getPlatformUserId(valid) {
     return module.exports.getMobileNumber(valid);
   },
-  getPostId() {
-    return { id: module.exports.getRandomNumericId() };
-  },
   getPostType() {
     return 'text';
   },
@@ -222,6 +220,12 @@ module.exports = {
   },
   getRandomNumericId() {
     return chance.integer({ min: 200, max: 2000000 });
+  },
+  getRandomStringNumber() {
+    return chance.string({ length: 5, pool: '0123456789' });
+  },
+  getLongString(length = 1000) {
+    return chance.string({ length });
   },
   getRandomName() {
     return `${chance.animal()} ${chance.animal()} - ${chance.month()} ${chance.year()}`;
@@ -410,6 +414,43 @@ module.exports = {
           // TODO: These are private properties, should we differentiate the returned user?
           ...mobileData,
           ...smsStatusData,
+        },
+      };
+    },
+  },
+  gateway: {
+    getPostsIndexResponse(qty = 1) {
+      const types = ['photo', 'text'];
+      return {
+        data: lodash.times(qty, () => {
+          const type = lodash.sample(types);
+          return module.exports.gateway.getCreatePostResponse(type).data;
+        }),
+      };
+    },
+    getSignupsIndexResponse(qty = 1) {
+      return {
+        data: lodash.times(qty, () => module.exports.gateway.getCreatePostResponse().data),
+      };
+    },
+    getCreatePostResponse(type = 'photo', extraProps = {}) {
+      return {
+        data: {
+          id: module.exports.getRandomNumericId(),
+          type,
+          action_id: module.exports.getRandomNumericId(),
+          signup_id: module.exports.getRandomNumericId(),
+          ...extraProps,
+        },
+      };
+    },
+    getCreateSignupResponse(extraProps = {}) {
+      return {
+        data: {
+          id: module.exports.getRandomNumericId(),
+          campaign_id: module.exports.getRandomStringNumber(),
+          details: 'keyword/winterishere',
+          ...extraProps,
         },
       };
     },
