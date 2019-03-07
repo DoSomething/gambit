@@ -7,7 +7,6 @@ const router = express.Router();
 
 const analyticsHelper = require('../../../lib/helpers/analytics');
 const broadcastMessagesRoute = require('./broadcast');
-const broadcastLiteMessagesRoute = require('./broadcast-lite');
 const frontMessagesRoute = require('./front');
 const memberMessagesRoute = require('./member');
 const signupMessagesRoute = require('./signup');
@@ -27,9 +26,6 @@ router.post('/', (req, res, next) => {
   switch (origin) {
     case 'broadcast':
       broadcastMessagesRoute(req, res, next);
-      break;
-    case 'broadcastLite':
-      broadcastLiteMessagesRoute(req, res, next);
       break;
     case 'front':
       frontMessagesRoute(req, res, next);

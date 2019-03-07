@@ -31,7 +31,6 @@ const messageSchema = new mongoose.Schema({
   agentId: String,
   match: String,
   macro: String,
-  // TODO: Add metadata.failureInjectionTestId when we implement that feature.
   metadata: {
     requestId: { type: String, index: true },
     retryCount: Number,

@@ -24,16 +24,14 @@ module.exports = function init(app) {
   // Restified routes.
   app.use(mongooseRoutes);
   // v2
-  app.use('/api/v2/broadcasts/:broadcastId',
-    broadcastsSingleRoute);
+  app.use('/api/v2/broadcasts/:broadcastId', broadcastsSingleRoute);
   app.use('/api/v2/messages',
     /**
      * parses Metadata like requestId and retryCount
-     * TODO: We should split parsing X-Request-Id, X-Blink-Retry-Count, and X-Failure-Injection-Test
+     * TODO: We should split parsing X-Request-Id and X-Blink-Retry-Count
      * to a different middleware. That mw should intercept ALL requests, not just /messages.
      */
     parseMessageMetadataMiddleware(),
     v2MessagesRoute);
-  app.use('/api/v2/rivescript',
-    rivescriptRoute);
+  app.use('/api/v2/rivescript', rivescriptRoute);
 };
