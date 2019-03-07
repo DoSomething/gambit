@@ -33,7 +33,10 @@ const topicFactory = require('../../../helpers/factories/topic');
 const campaign = campaignFactory.getValidCampaign();
 const campaignId = stubs.getCampaignId();
 const mockPost = { id: 890332 };
-const mockSignup = { id: 251696 };
+const mockGatewayPhotoPostResponse = stubs.gateway.getCreatePostResponse();
+const mockGatewayTextPostResponse = stubs.gateway.getCreatePostResponse('text');
+const mockGatewaySignupResponse = stubs.gateway.getCreateSignupResponse();
+const mockGatewaySignupsIndexResponse = stubs.gateway.getSignupsIndexResponse();
 const mockUser = userFactory.getValidUser();
 const mockPhotoPostTopic = topicFactory.getValidPhotoPostConfig();
 const mockTextPostTopic = topicFactory.getValidTextPostConfig();
@@ -45,8 +48,6 @@ const source = stubs.getPlatform();
 
 test.beforeEach((t) => {
   t.context.req = httpMocks.createRequest();
-  sandbox.stub(gateway, 'createPost')
-    .returns(Promise.resolve(mockPost));
 });
 
 test.afterEach((t) => {
@@ -59,6 +60,8 @@ test('createPhotoPost passes user.id, campaignId, file, quantity, source, text, 
   const file = stubs.getRandomMessageText();
   const draftSubmission = draftSubmissionFactory.getValidCompletePhotoPostDraftSubmission();
   const values = draftSubmission.values;
+  sandbox.stub(gateway, 'createPost')
+    .returns(Promise.resolve(mockGatewayPhotoPostResponse));
   sandbox.stub(gateway, 'getClient')
     .returns({ photoPostCreation: { fileProperty: 'file' } });
   sandbox.stub(helpers.util, 'fetchImageFileFromUrl')
@@ -80,16 +83,15 @@ test('createPhotoPost passes user.id, campaignId, file, quantity, source, text, 
     type: config.posts.photo.type,
     why_participated: values.whyParticipated,
   });
-  result.should.deep.equal(mockPost);
+  result.should.deep.equal(mockGatewayPhotoPostResponse);
   helpers.util.fetchImageFileFromUrl.should.have.been.calledWith(values.url);
 });
 
 // createSignup
 test('createSignup passes user.id, campaignId, source args to gateway.createSignup', async () => {
-  const signup = { id: campaignId, campaign_id: campaignId };
   const details = 'test';
   sandbox.stub(gateway, 'createSignup')
-    .returns(Promise.resolve(signup));
+    .returns(Promise.resolve(mockGatewaySignupResponse));
 
   const result = await userHelper.createSignup(mockUser, campaign, source, details);
   gateway.createSignup.should.have.been.calledWith({
@@ -98,12 +100,14 @@ test('createSignup passes user.id, campaignId, source args to gateway.createSign
     source,
     details,
   });
-  result.should.deep.equal(signup);
+  result.should.deep.equal(mockGatewaySignupResponse);
 });
 
 // createTextPost
 test('createTextPost passes user.id, campaignId, source, and text fields to gateway.createSignup', async () => {
   const text = 'test';
+  sandbox.stub(gateway, 'createPost')
+    .returns(Promise.resolve(mockGatewayTextPostResponse));
 
   const result = await userHelper.createTextPost({
     userId: mockUser.id,
@@ -118,12 +122,14 @@ test('createTextPost passes user.id, campaignId, source, and text fields to gate
     text,
     type: config.posts.text.type,
   });
-  result.should.deep.equal(mockPost);
+  result.should.deep.equal(mockGatewayTextPostResponse);
 });
 
 // createVotingPlan
 test('createVotingPlan passes user voting plan info to gateway.createPost', async () => {
   const mockValues = { test: stubs.getRandomWord() };
+  sandbox.stub(gateway, 'createPost')
+    .returns(Promise.resolve(mockPost));
   sandbox.stub(userHelper, 'getVotingPlanValues')
     .returns(mockValues);
   const details = JSON.stringify(mockValues);
@@ -144,24 +150,24 @@ test('fetchOrCreateSignup returns createSignup result if fetchSignup result is n
   sandbox.stub(userHelper, 'fetchSignup')
     .returns(Promise.resolve(null));
   sandbox.stub(userHelper, 'createSignup')
-    .returns(Promise.resolve(mockSignup));
+    .returns(Promise.resolve(mockGatewaySignupResponse));
 
   const result = await userHelper.fetchOrCreateSignup(mockUser, campaign);
   userHelper.fetchSignup.should.have.calledWith(mockUser, campaign);
   userHelper.createSignup.should.have.calledWith(mockUser, campaign);
-  result.should.deep.equal(mockSignup);
+  result.should.deep.equal(mockGatewaySignupResponse);
 });
 
 test('fetchOrCreateSignup returns fetchSignup result if exists', async () => {
   sandbox.stub(userHelper, 'fetchSignup')
-    .returns(Promise.resolve(mockSignup));
+    .returns(Promise.resolve(mockGatewaySignupResponse));
   sandbox.stub(userHelper, 'createSignup')
-    .returns(Promise.resolve({ id: stubs.getRandomWord() }));
+    .returns(Promise.resolve(mockGatewaySignupResponse));
 
   const result = await userHelper.fetchOrCreateSignup(mockUser, campaign);
   userHelper.fetchSignup.should.have.been.calledWith(mockUser, campaign);
   userHelper.createSignup.should.not.have.been.called;
-  result.should.deep.equal(mockSignup);
+  result.should.deep.equal(mockGatewaySignupResponse);
 });
 
 // fetchOrCreateVotingPlan
@@ -238,13 +244,13 @@ test('fetchFromReq calls fetchByMobile if req.platformUserId', async (t) => {
 test('fetchSignup should call gateway.fetchSignups with getFetchSignupsQuery result and return first result', async () => {
   sandbox.spy(userHelper, 'getFetchSignupsQuery');
   sandbox.stub(gateway, 'fetchSignups')
-    .returns(Promise.resolve({ data: [mockSignup, mockPost] }));
+    .returns(Promise.resolve(mockGatewaySignupsIndexResponse));
 
   const result = await userHelper.fetchSignup(mockUser, campaign);
   userHelper.getFetchSignupsQuery.should.have.been.calledWith(mockUser.id, campaign.id);
   gateway.fetchSignups
     .should.have.been.calledWith(userHelper.getFetchSignupsQuery(mockUser.id, campaign.id));
-  result.should.deep.equal(mockSignup);
+  result.should.deep.equal(mockGatewaySignupsIndexResponse.data[0]);
 });
 
 test('fetchSignup should return null if fetchSignup result is empty array', async (t) => {

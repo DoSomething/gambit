@@ -16,7 +16,7 @@ const userFactory = require('../../../../../../../../helpers/factories/user');
 
 const mockInboundMessageText = stubs.getRandomMessageText;
 const mockPlatform = stubs.getPlatform();
-const mockPost = { id: 23121 };
+const mockGatewayTextPostResponse = stubs.gateway.getCreatePostResponse('text');
 const mockTextPostTopic = topicFactory.getValidTextPostConfig();
 const mockUser = userFactory.getValidUser();
 
@@ -24,7 +24,7 @@ chai.should();
 chai.use(sinonChai);
 
 // module to be tested
-const textPostCatchAll = require('../../../../../../../../../lib/middleware/messages/member/topics/posts/text/post-create');
+const createTextPost = require('../../../../../../../../../lib/middleware/messages/member/topics/posts/text/post-create');
 
 const sandbox = sinon.sandbox.create();
 
@@ -44,9 +44,9 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-test('textPostCatchAll should call next if topic.isTextPostConfig is false', async (t) => {
+test('createTextPost should call next if topic.isTextPostConfig is false', async (t) => {
   const next = sinon.stub();
-  const middleware = textPostCatchAll();
+  const middleware = createTextPost();
   sandbox.stub(helpers.topic, 'isTextPostConfig')
     .returns(false);
   sandbox.stub(helpers.replies, 'invalidText')
@@ -63,9 +63,9 @@ test('textPostCatchAll should call next if topic.isTextPostConfig is false', asy
   helpers.replies.completedTextPost.should.not.have.been.called;
 });
 
-test('textPostCatchAll should send invalidText reply if inboundMessageText is not valid text post', async (t) => {
+test('createTextPost should send invalidText reply if inboundMessageText is not valid text post', async (t) => {
   const next = sinon.stub();
-  const middleware = textPostCatchAll();
+  const middleware = createTextPost();
   sandbox.stub(helpers.topic, 'isTextPostConfig')
     .returns(true);
   sandbox.stub(helpers.util, 'isValidTextFieldValue')
@@ -84,9 +84,9 @@ test('textPostCatchAll should send invalidText reply if inboundMessageText is no
   helpers.replies.completedTextPost.should.not.have.been.called;
 });
 
-test('textPostCatchAll should call createTextPost and send completedTextPost if inboundMessageText is valid text post', async (t) => {
+test('createTextPost should call createTextPost and send completedTextPost if inboundMessageText is valid text post', async (t) => {
   const next = sinon.stub();
-  const middleware = textPostCatchAll();
+  const middleware = createTextPost();
   sandbox.stub(helpers.topic, 'isTextPostConfig')
     .returns(true);
   sandbox.stub(helpers.util, 'isValidTextFieldValue')
@@ -94,7 +94,7 @@ test('textPostCatchAll should call createTextPost and send completedTextPost if 
   sandbox.stub(helpers.replies, 'invalidText')
     .returns(underscore.noop);
   sandbox.stub(helpers.user, 'createTextPost')
-    .returns(Promise.resolve({ data: mockPost }));
+    .returns(Promise.resolve(mockGatewayTextPostResponse));
   sandbox.stub(helpers.replies, 'completedTextPost')
     .returns(underscore.noop);
 
@@ -114,9 +114,9 @@ test('textPostCatchAll should call createTextPost and send completedTextPost if 
   helpers.replies.completedTextPost.should.have.been.calledWith(t.context.req, t.context.res);
 });
 
-test('textPostCatchAll should send error response post if completedTextPost reply fails', async (t) => {
+test('createTextPost should call errorNoticeable.sendErrorResponse if completedTextPost reply fails', async (t) => {
   const next = sinon.stub();
-  const middleware = textPostCatchAll();
+  const middleware = createTextPost();
   const error = stubs.getError();
   sandbox.stub(helpers.topic, 'isTextPostConfig')
     .returns(true);
@@ -125,7 +125,7 @@ test('textPostCatchAll should send error response post if completedTextPost repl
   sandbox.stub(helpers.replies, 'invalidText')
     .returns(underscore.noop);
   sandbox.stub(helpers.user, 'createTextPost')
-    .returns(Promise.resolve({ data: mockPost }));
+    .returns(Promise.resolve(mockGatewayTextPostResponse));
   sandbox.stub(helpers.replies, 'completedTextPost')
     .returns(Promise.reject(error));
 

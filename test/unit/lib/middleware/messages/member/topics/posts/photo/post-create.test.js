@@ -19,7 +19,7 @@ chai.should();
 chai.use(sinonChai);
 
 const completeDraft = draftSubmissionFactory.getValidCompletePhotoPostDraftSubmission();
-const mockPost = { id: stubs.getPostId() };
+const mockGatewayPhotoPostResponse = stubs.gateway.getCreatePostResponse();
 const mockUser = userFactory.getValidUser();
 
 // module to be tested
@@ -65,7 +65,7 @@ test('createPhotoPost should call errorNoticeable.sendErrorResponse if req.draft
   sandbox.stub(helpers.topic, 'isPhotoPostConfig')
     .returns(true);
   sandbox.stub(helpers.user, 'createPhotoPost')
-    .returns(Promise.resolve(mockPost));
+    .returns(Promise.resolve(mockGatewayPhotoPostResponse));
   sandbox.stub(helpers.replies, 'completedPhotoPost')
     .returns(underscore.noop);
 
@@ -79,7 +79,7 @@ test('createPhotoPost should call errorNoticeable.sendErrorResponse if req.draft
   helpers.errorNoticeable.sendErrorResponse.should.have.been.called;
 });
 
-test('createPhotoPost should call sendErrorResponse if createPhotoPost fails', async (t) => {
+test('createPhotoPost should call errorNoticeable.sendErrorResponse if createPhotoPost fails', async (t) => {
   const next = sinon.stub();
   const middleware = createPhotoPost();
   const error = stubs.getError();
@@ -107,7 +107,7 @@ test('createPhotoPost should call completedPhotoPost on createPhotoPost success'
   sandbox.stub(helpers.topic, 'isPhotoPostConfig')
     .returns(true);
   sandbox.stub(helpers.user, 'createPhotoPost')
-    .returns({ data: Promise.resolve(mockPost) });
+    .returns(Promise.resolve(mockGatewayPhotoPostResponse));
   sandbox.stub(helpers.request, 'deleteDraftSubmission')
     .returns(Promise.resolve(underscore.noop));
   sandbox.stub(helpers.replies, 'completedPhotoPost')
@@ -132,7 +132,7 @@ test('createPhotoPost should call completedPhotoPost on createPhotoPost success'
   helpers.errorNoticeable.sendErrorResponse.should.not.have.been.called;
 });
 
-test('createPhotoPost should call sendErrorResponse on createPhotoPost error', async (t) => {
+test('createPhotoPost should call errorNoticeable.sendErrorResponse on createPhotoPost error', async (t) => {
   const next = sinon.stub();
   const middleware = createPhotoPost();
   const error = stubs.getError();

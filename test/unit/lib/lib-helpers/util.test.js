@@ -185,3 +185,15 @@ test('parseStatusAndMessageFromError(error) sets message to error.message if exi
   result.status.should.equal(500);
   result.message.should.equal(error.message);
 });
+
+test('truncateText should return a text truncated to the correct length', () => {
+  // Rogue's limit
+  const text = stubs.getLongString();
+  const truncatedText = utilHelper.truncateText(text);
+  truncatedText.length.should.be.equal(500);
+
+  // other test case
+  const otherText = stubs.getLongString();
+  const otherTruncatedText = utilHelper.truncateText(otherText, { length: 100 });
+  otherTruncatedText.length.should.be.equal(100);
+});
