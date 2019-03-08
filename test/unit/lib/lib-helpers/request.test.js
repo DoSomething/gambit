@@ -525,7 +525,7 @@ test('setCampaignId should inject a campaignId property to req', (t) => {
 
 // setConversation
 test('setConversation should inject a conversation property to req', (t) => {
-  sandbox.stub(requestHelper, 'setLastOutboundMessage')
+  sandbox.stub(requestHelper, 'setLastOutboundMessageProperties')
     .returns(underscore.noop);
   requestHelper.setConversation(t.context.req, conversation);
   t.context.req.conversation.should.equal(conversation);
@@ -543,7 +543,7 @@ test('setConversation should inject a conversation property to req', (t) => {
 test('setConversation should not call setLastOutboundMessage does not exist', (t) => {
   const newConversation = conversationFactory.getValidConversation();
   newConversation.lastOutboundMessage = null;
-  sandbox.stub(requestHelper, 'setLastOutboundMessage')
+  sandbox.stub(requestHelper, 'setLastOutboundMessageProperties')
     .returns(underscore.noop);
 
   requestHelper.setConversation(t.context.req, newConversation);
@@ -560,7 +560,7 @@ test('setDraftSubmission should return boolean of whether req.draftSubmission de
     .should.have.been.calledWith({ draftSubmissionId: draftSubmission.id });
 });
 
-test('setLastOutboundMessage should inject lastOutbound properties to req', (t) => {
+test('setLastOutboundMessageProperties should inject lastOutbound properties to req', (t) => {
   requestHelper.setLastOutboundMessageProperties(t.context.req, message);
   t.context.req.lastOutboundTemplate.should.equal(message.template);
   t.context.req.lastOutboundBroadcastId.should.equal(message.broadcastId);

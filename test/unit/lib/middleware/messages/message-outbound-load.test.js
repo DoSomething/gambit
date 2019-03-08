@@ -68,7 +68,7 @@ test('loadOutbound calls updateMessageByRequestIdAndDirection if retry', async (
   t.context.req.isARetryRequest = stubTrueIsARetryRequest;
   sandbox.stub(Message, 'updateMessageByRequestIdAndDirection')
     .returns(Promise.resolve(outboundMessage));
-  sandbox.stub(t.context.req.conversation, 'setLastOutboundMessage')
+  sandbox.stub(t.context.req.conversation, 'setLastOutboundMessageProperties')
     .returns(Promise.resolve(outboundMessage));
   const middleware = loadOutbound(configStub);
 
