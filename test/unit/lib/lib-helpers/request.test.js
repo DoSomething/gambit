@@ -546,7 +546,7 @@ test('setConversation should inject a conversation property to req', (t) => {
     conversationId,
     currentTopicId,
   });
-  requestHelper.setLastOutboundMessage.should.have.been.calledWith(t.context.req, message);
+  requestHelper.setLastOutboundMessageProperties.should.have.been.calledWith(t.context.req, message);
 });
 
 test('setConversation should not call setLastOutboundMessage does not exist', (t) => {
@@ -556,7 +556,7 @@ test('setConversation should not call setLastOutboundMessage does not exist', (t
     .returns(underscore.noop);
 
   requestHelper.setConversation(t.context.req, newConversation);
-  requestHelper.setLastOutboundMessage.should.not.have.been.called;
+  requestHelper.setLastOutboundMessageProperties.should.not.have.been.called;
 });
 
 // setDraftSubmission
@@ -570,7 +570,7 @@ test('setDraftSubmission should return boolean of whether req.draftSubmission de
 });
 
 test('setLastOutboundMessage should inject lastOutbound properties to req', (t) => {
-  requestHelper.setLastOutboundMessage(t.context.req, message);
+  requestHelper.setLastOutboundMessageProperties(t.context.req, message);
   t.context.req.lastOutboundTemplate.should.equal(message.template);
   t.context.req.lastOutboundBroadcastId.should.equal(message.broadcastId);
   helpers.analytics.addCustomAttributes.should.have.been.called;
