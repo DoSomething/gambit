@@ -516,16 +516,6 @@ test('setCampaign should inject a campaign property to req and call setCampaignI
   requestHelper.setCampaignId.should.have.been.calledWith(t.context.req, campaign.id);
 });
 
-test('setCampaign should not call setCampaignId if req.campaignId', (t) => {
-  sandbox.spy(requestHelper, 'setCampaignId');
-  const campaign = campaignFactory.getValidCampaign();
-  t.context.req.campaignId = stubs.getCampaignId();
-
-  requestHelper.setCampaign(t.context.req, campaign);
-  t.context.req.campaign.should.deep.equal(campaign);
-  requestHelper.setCampaignId.should.not.have.been.called;
-});
-
 // setCampaignId
 test('setCampaignId should inject a campaignId property to req', (t) => {
   requestHelper.setCampaignId(t.context.req, campaignId);
