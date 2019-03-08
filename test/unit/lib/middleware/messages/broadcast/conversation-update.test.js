@@ -47,7 +47,7 @@ test('updateConversation should call sendErrorResponse if req.topic undefined', 
   // test
   await middleware(t.context.req, t.context.res, next);
 
-  helpers.request.changeTopic.should.not.have.been.called;
+  helpers.request.updateTopicIfChanged.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.called;
   next.should.not.have.been.called;
 });
@@ -63,7 +63,7 @@ test('updateConversation should call conversation.setTopic if req.topic is set',
   // test
   await middleware(t.context.req, t.context.res, next);
 
-  helpers.request.changeTopic.should.have.been.calledWith(t.context.req, topic);
+  helpers.request.updateTopicIfChanged.should.have.been.calledWith(t.context.req, topic);
   next.should.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
 });
@@ -80,7 +80,7 @@ test('updateConversation should call sendErrorResponse if changeTopic throws', a
   // test
   await middleware(t.context.req, t.context.res, next);
 
-  helpers.request.changeTopic.should.have.been.called;
+  helpers.request.updateTopicIfChanged.should.have.been.called;
   helpers.sendErrorResponse.should.have.been.calledWith(t.context.res, error);
   next.should.not.have.been.called;
 });

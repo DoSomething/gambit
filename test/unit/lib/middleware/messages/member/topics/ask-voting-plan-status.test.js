@@ -81,7 +81,7 @@ test('askVotingPlanStatusCatchAll should not call changeTopic, sends invalidAskV
   await middleware(t.context.req, t.context.res, next);
 
   next.should.not.have.been.called;
-  helpers.request.changeTopic.should.not.have.been.called;
+  helpers.request.updateTopicIfChanged.should.not.have.been.called;
   helpers.replies.sendReply.should.have.been.calledWith(
     t.context.req,
     t.context.res,
@@ -107,7 +107,7 @@ test('askVotingPlanStatusCatchAll should change topic to hardcoded macro topic a
   await middleware(t.context.req, t.context.res, next);
 
   next.should.not.have.been.called;
-  helpers.request.changeTopic.should.have.been.calledWith(t.context.req, config.topic);
+  helpers.request.updateTopicIfChanged.should.have.been.calledWith(t.context.req, config.topic);
   helpers.replies.sendReply
     .should.have.been.calledWith(t.context.req, t.context.res, config.text, macro);
 });
@@ -125,7 +125,7 @@ test('askVotingPlanStatusCatchAll should change topic to saidVotedTopic and send
   await middleware(t.context.req, t.context.res, next);
 
   next.should.not.have.been.called;
-  helpers.request.changeTopic
+  helpers.request.updateTopicIfChanged
     .should.have.been.calledWith(t.context.req, askVotingPlanStatus.saidVotedTopic);
   helpers.replies.sendReply.should.have.been.calledWith(
     t.context.req,
@@ -148,7 +148,7 @@ test('askVotingPlanStatusCatchAll should change topic to cantVoteTopic and send 
   await middleware(t.context.req, t.context.res, next);
 
   next.should.not.have.been.called;
-  helpers.request.changeTopic
+  helpers.request.updateTopicIfChanged
     .should.have.been.calledWith(t.context.req, askVotingPlanStatus.saidCantVoteTopic);
   helpers.replies.sendReply.should.have.been.calledWith(
     t.context.req,
@@ -171,7 +171,7 @@ test('askVotingPlanStatusCatchAll should change topic to notVotingTopic and send
   await middleware(t.context.req, t.context.res, next);
 
   next.should.not.have.been.called;
-  helpers.request.changeTopic
+  helpers.request.updateTopicIfChanged
     .should.have.been.calledWith(t.context.req, askVotingPlanStatus.saidNotVotingTopic);
   helpers.replies.sendReply.should.have.been.calledWith(
     t.context.req,

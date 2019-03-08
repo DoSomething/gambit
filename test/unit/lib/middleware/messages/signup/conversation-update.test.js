@@ -44,7 +44,8 @@ test('updateConversation should call next on changeTopic success', async (t) => 
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  helpers.request.changeTopic.should.have.been.calledWith(t.context.req, t.context.req.topic);
+  helpers.request.updateTopicIfChanged
+    .should.have.been.calledWith(t.context.req, t.context.req.topic);
   helpers.sendErrorResponse.should.not.have.been.called;
   next.should.have.been.called;
 });
