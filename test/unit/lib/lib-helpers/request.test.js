@@ -546,7 +546,8 @@ test('setConversation should inject a conversation property to req', (t) => {
     conversationId,
     currentTopicId,
   });
-  requestHelper.setLastOutboundMessageProperties.should.have.been.calledWith(t.context.req, message);
+  requestHelper.setLastOutboundMessageProperties
+    .should.have.been.calledWith(t.context.req, message);
 });
 
 test('setConversation should not call setLastOutboundMessage does not exist', (t) => {
