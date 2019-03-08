@@ -59,7 +59,7 @@ test('changeTopic does not call setTopic if not a topic change', async (t) => {
   t.context.req.conversation = conversation;
   t.context.req.currentTopicId = topic.id;
 
-  await requestHelper.changeTopic(t.context.req, topic);
+  await requestHelper.updateTopicIfChanged(t.context.req, topic);
   requestHelper.setTopic.should.have.been.calledWith(t.context.req, topic);
   conversation.setTopic.should.not.have.been.called;
 });
@@ -72,7 +72,7 @@ test('changeTopic calls setTopic when topic arg is not equal to req.currentTopic
   t.context.req.conversation = conversation;
   t.context.req.currentTopicId = 'abc';
 
-  await requestHelper.changeTopic(t.context.req, topic);
+  await requestHelper.updateTopicIfChanged(t.context.req, topic);
   requestHelper.setTopic.should.have.been.calledWith(t.context.req, topic);
   conversation.setTopic.should.have.been.calledWith(topic);
 });
@@ -122,7 +122,7 @@ test('executeInboundTopicChange get topic, create signup if topic has active cam
 
   helpers.user.fetchOrCreateSignup
     .should.have.been.calledWith(t.context.req.user, topic.campaign, platform, keyword);
-  requestHelper.changeTopic
+  requestHelper.updateTopicIfChanged
     .should.have.been.calledWith(t.context.req, topic);
 });
 
@@ -143,7 +143,7 @@ test('executeInboundTopicChange does not create signup if topic does not have ac
   await requestHelper.executeInboundTopicChange(t.context.req, topic, keyword);
 
   helpers.user.fetchOrCreateSignup.should.not.have.been.called;
-  requestHelper.changeTopic
+  requestHelper.updateTopicIfChanged
     .should.have.been.calledWith(t.context.req, topic);
 });
 
