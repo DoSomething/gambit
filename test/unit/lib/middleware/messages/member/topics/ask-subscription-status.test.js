@@ -27,7 +27,7 @@ const sandbox = sinon.sandbox.create();
 test.beforeEach((t) => {
   sandbox.stub(helpers.replies, 'sendReply')
     .returns(underscore.noop);
-  sandbox.stub(helpers.request, 'changeTopic')
+  sandbox.stub(helpers.request, 'updateTopicIfChanged')
     .returns(Promise.resolve(true));
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(underscore.noop);

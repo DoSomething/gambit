@@ -41,7 +41,7 @@ test.afterEach((t) => {
 test('updateConversation should call sendErrorResponse if req.topic undefined', async (t) => {
   const next = sinon.stub();
   const middleware = updateConversation();
-  sandbox.stub(helpers.request, 'changeTopic')
+  sandbox.stub(helpers.request, 'updateTopicIfChanged')
     .returns(Promise.resolve());
 
   // test
@@ -57,7 +57,7 @@ test('updateConversation should call conversation.setTopic if req.topic is set',
   const middleware = updateConversation();
   const topic = stubs.getTopic();
   t.context.req.topic = topic;
-  sandbox.stub(helpers.request, 'changeTopic')
+  sandbox.stub(helpers.request, 'updateTopicIfChanged')
     .returns(Promise.resolve());
 
   // test
@@ -74,7 +74,7 @@ test('updateConversation should call sendErrorResponse if changeTopic throws', a
   const topic = stubs.getTopic();
   t.context.req.topic = topic;
   const error = { message: 'Epic fail' };
-  sandbox.stub(helpers.request, 'changeTopic')
+  sandbox.stub(helpers.request, 'updateTopicIfChanged')
     .returns(Promise.reject(error));
 
   // test

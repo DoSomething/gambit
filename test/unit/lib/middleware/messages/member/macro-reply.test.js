@@ -62,7 +62,7 @@ test('replyMacro sends reply if macro text is set', async (t) => {
   const middleware = replyMacro();
   sandbox.stub(helpers.macro, 'getMacro')
     .returns(mockMacro);
-  sandbox.stub(helpers.request, 'changeTopic')
+  sandbox.stub(helpers.request, 'updateTopicIfChanged')
     .returns(Promise.resolve());
   sandbox.stub(helpers.replies, 'sendReply')
     .returns(underscore.noop);
@@ -84,7 +84,7 @@ test('replyMacro calls helpers.request.updateTopicIfChanged if macro topic is se
     .returns(mockMacroWithTopic);
   sandbox.stub(helpers.replies, 'sendReply')
     .returns(underscore.noop);
-  sandbox.stub(helpers.request, 'changeTopic')
+  sandbox.stub(helpers.request, 'updateTopicIfChanged')
     .returns(Promise.resolve());
 
   // test
@@ -105,7 +105,7 @@ test('replyMacro calls sendErrorResponse if changeTopic fails', async (t) => {
   sandbox.stub(helpers.replies, 'sendReply')
     .returns(underscore.noop);
   const mockError = { message: 'Epic fail' };
-  sandbox.stub(helpers.request, 'changeTopic')
+  sandbox.stub(helpers.request, 'updateTopicIfChanged')
     .returns(Promise.reject(mockError));
 
   // test

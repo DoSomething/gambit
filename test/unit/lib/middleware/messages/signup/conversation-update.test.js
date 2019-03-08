@@ -39,7 +39,7 @@ test.afterEach((t) => {
 test('updateConversation should call next on changeTopic success', async (t) => {
   const next = sinon.stub();
   const middleware = changeTopic();
-  sandbox.stub(helpers.request, 'changeTopic')
+  sandbox.stub(helpers.request, 'updateTopicIfChanged')
     .returns(Promise.resolve());
 
   // test
@@ -54,7 +54,7 @@ test('updateConversation should call sendErrorResponse if changeTopic fails', as
   const next = sinon.stub();
   const middleware = changeTopic();
   const mockError = { status: 500 };
-  sandbox.stub(helpers.request, 'changeTopic')
+  sandbox.stub(helpers.request, 'updateTopicIfChanged')
     .returns(Promise.reject(mockError));
 
   // test

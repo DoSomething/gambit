@@ -109,7 +109,7 @@ test('executeInboundTopicChange get topic, create signup if topic has active cam
   t.context.req.rivescriptReplyTopicId = stubs.getContentfulId();
   t.context.req.macro = stubs.getRandomWord();
   t.context.req.platform = platform;
-  sandbox.stub(requestHelper, 'changeTopic')
+  sandbox.stub(requestHelper, 'updateTopicIfChanged')
     .returns(Promise.resolve(true));
   sandbox.stub(helpers.topic, 'hasActiveCampaign')
     .returns(true);
@@ -131,7 +131,7 @@ test('executeInboundTopicChange does not create signup if topic does not have ac
   t.context.req.rivescriptReplyTopicId = stubs.getContentfulId();
   t.context.req.macro = stubs.getRandomWord();
   t.context.req.platform = stubs.getPlatform();
-  sandbox.stub(requestHelper, 'changeTopic')
+  sandbox.stub(requestHelper, 'updateTopicIfChanged')
     .returns(Promise.resolve(true));
   sandbox.stub(helpers.topic, 'hasActiveCampaign')
     .returns(false);
