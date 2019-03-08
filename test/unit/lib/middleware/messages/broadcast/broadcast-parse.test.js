@@ -25,8 +25,6 @@ const sandbox = sinon.sandbox.create();
 test.beforeEach((t) => {
   sandbox.stub(helpers.attachments, 'add')
     .returns(underscore.noop);
-  sandbox.stub(helpers.request, 'setCampaignId')
-    .returns(underscore.noop);
   sandbox.stub(helpers.request, 'setOutboundMessageTemplate')
     .returns(underscore.noop);
   sandbox.stub(helpers.request, 'setTopic')
@@ -52,7 +50,6 @@ test('parseBroadcast should inject the broadcast.topic into req.topic if exists'
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  helpers.request.setCampaignId.should.not.have.been.called;
   helpers.request.setTopic.should.have.been.calledWith(t.context.req, broadcast.topic);
   helpers.request.setOutboundMessageText
     .should.have.been.calledWith(t.context.req, broadcast.text);
