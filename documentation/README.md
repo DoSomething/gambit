@@ -2,6 +2,9 @@
 
 This is __Gambit Conversations__, the DoSomething.org multi-platform chatbot service.
 
+## Schema
+See [Wiki](https://github.com/DoSomething/gambit/wiki/Schema) for details on the Message model schema and properties.
+
 ## Authentication
 See [Authentication](authentication.md) for details on authorizing your requests.
 
