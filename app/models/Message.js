@@ -32,6 +32,8 @@ const messageSchema = new mongoose.Schema({
   match: String,
   macro: String,
   metadata: {
+    // Campaign Associated with this message, used for conversion analysis by Team Storm.
+    campaignId: Number,
     requestId: { type: String, index: true },
     retryCount: Number,
     delivery: {
