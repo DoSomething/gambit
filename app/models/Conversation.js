@@ -119,6 +119,11 @@ conversationSchema.methods.setTopic = function (topic) {
   logger.debug('updating conversation.topic', { topicId });
   if (topic.campaign && topic.campaign.id) {
     const campaignId = topic.campaign.id;
+    /**
+     * TODO: Why does it matter if the conversation's id is the same as the one in the topic?
+     * We are making the trip to save the topic anyway. Removing this logic makes the function
+     * easier to read.
+     */
     if (this.campaignId !== campaignId) {
       logger.debug('updating conversation.campaignId', { campaignId });
       this.campaignId = campaignId;
