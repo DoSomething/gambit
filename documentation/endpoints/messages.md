@@ -286,6 +286,8 @@ Creates an outbound `subscriptionStatusActive` (Welcome) message in given User's
 
 * Sends the message if given platform is SMS.
 
+**Note**: This message text can be overridden by setting the `DS_GAMBIT_CONVERSATIONS_SUBSCRIPTION_STATUS_ACTIVE_TEXT` config var in `.env`.
+
 ### Input
 
 Name | Type | Description
