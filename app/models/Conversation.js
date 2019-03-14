@@ -113,9 +113,6 @@ conversationSchema.statics.findOneAndPopulateLastOutboundMessage = function (que
 conversationSchema.methods.setTopic = function (topic) {
   const topicId = topic.id;
   this.topic = topicId;
-  if (helpers.topic.isBroadcastable(topic)) {
-    this.lastReceivedBroadcastId = topicId;
-  }
   logger.debug('updating conversation.topic', { topicId });
   if (topic.campaign && topic.campaign.id) {
     const campaignId = topic.campaign.id;
@@ -129,6 +126,15 @@ conversationSchema.methods.setTopic = function (topic) {
       this.campaignId = campaignId;
     }
   }
+  return this.save();
+};
+
+/**
+ * Saves the lastReceivedBroadcastId to the conversation
+ * @param {String} broadcastId
+ */
+conversationSchema.methods.setLastReceivedBroadcastId = function (broadcastId) {
+  this.lastReceivedBroadcastId = broadcastId;
   return this.save();
 };
 
@@ -224,6 +230,10 @@ conversationSchema.methods.getMessagePayloadFromReq = function (req = {}, direct
 
   // Add extras if present.
 
+  // // Record campaignId associated with this message.
+  // if (req.topic) {
+  //   data.metadata.campaignId = helpers.topic.getCampaignIdFromTopic(req.topic);
+  // }
   // If inbound message and includes platformMessageId
   if (isInbound && req.platformMessageId) {
     data.platformMessageId = req.platformMessageId;
