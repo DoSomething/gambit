@@ -11,6 +11,7 @@ const helpers = require('../../lib/helpers');
 const front = require('../../lib/front');
 const twilio = require('../../lib/twilio');
 const bertly = require('../../lib/bertly');
+const messageConfig = require('../../config/app/models/message');
 
 /**
  * Schema.
@@ -31,7 +32,13 @@ const conversationSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Message',
   },
+  /**
+   * TODO: Should we continue to use it since it wasn't working for a while but
+   * broadcasts continued to work as expected.
+   */
   lastReceivedBroadcastId: String,
+  // Set when a broadcast is received. Unset when we respond.
+  lastReceivedBroadcastCampaignId: Number,
 }, { timestamps: true });
 
 conversationSchema.index({ createdAt: 1 });
@@ -130,11 +137,12 @@ conversationSchema.methods.setTopic = function (topic) {
 };
 
 /**
- * Saves the lastReceivedBroadcastId to the conversation
+ * Saves the lastReceivedBroadcastId and lastReceivedBroadcastCampaignId to the conversation
  * @param {String} broadcastId
  */
-conversationSchema.methods.setLastReceivedBroadcastId = function (broadcastId) {
+conversationSchema.methods.setLastReceivedBroadcast = function (broadcastId, broadcastCampaignId) {
   this.lastReceivedBroadcastId = broadcastId;
+  this.lastReceivedBroadcastCampaignId = broadcastCampaignId;
   return this.save();
 };
 
@@ -228,12 +236,11 @@ conversationSchema.methods.getMessagePayloadFromReq = function (req = {}, direct
     attachments: req.attachments ? req.attachments[attachmentDirection] : [],
   };
 
+  // Record campaignId associated with this message.
+  data.metadata.campaignId = this.lastReceivedBroadcastCampaignId;
+
   // Add extras if present.
 
-  // // Record campaignId associated with this message.
-  // if (req.topic) {
-  //   data.metadata.campaignId = helpers.topic.getCampaignIdFromTopic(req.topic);
-  // }
   // If inbound message and includes platformMessageId
   if (isInbound && req.platformMessageId) {
     data.platformMessageId = req.platformMessageId;
@@ -262,14 +269,15 @@ conversationSchema.methods.getMessagePayloadFromReq = function (req = {}, direct
 conversationSchema.methods.createMessage = async function (direction, text, template, req) {
   logger.debug('createMessage', { direction }, req);
   let messageText;
-  if (direction !== 'inbound') {
+
+  if (messageConfig.isInbound(direction)) {
+    messageText = text;
+  } else {
     messageText = helpers.tags.render(text, req);
 
     if (bertly.isEnabled() && bertly.textHasLinks(messageText)) {
       messageText = await bertly.parseLinksIntoRedirects(messageText);
     }
-  } else {
-    messageText = text;
   }
 
   const data = {
@@ -281,6 +289,15 @@ conversationSchema.methods.createMessage = async function (direction, text, temp
   // Merge default payload and payload from req
   const defaultPayload = this.getDefaultMessagePayload();
   Object.assign(data, defaultPayload, this.getMessagePayloadFromReq(req, direction));
+
+  /**
+   * If we are replying, we should unset the conversation's lastReceivedBroadcastCampaignId
+   * this way it's clear the expected broadcast interaction has been fulfilled.
+   */
+  if (messageConfig.isOutbound(direction) && !messageConfig.isOutboundApi(direction)) {
+    this.lastReceivedBroadcastCampaignId = null;
+    await this.save();
+  }
 
   return Message.create(data);
 };
