@@ -1,5 +1,8 @@
 'use strict';
 
+// Must be updated if the MongoDB message schema changes.
+const SCHEMA_VERSION = 1;
+
 const DIRECTION = {
   inbound: 'inbound',
   outboundReply: 'outbound-reply',
@@ -23,4 +26,5 @@ module.exports = {
   isOutbound,
   isInbound,
   isOutboundApi,
+  SCHEMA_VERSION,
 };

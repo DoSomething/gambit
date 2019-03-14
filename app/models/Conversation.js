@@ -236,6 +236,9 @@ conversationSchema.methods.getMessagePayloadFromReq = function (req = {}, direct
     attachments: req.attachments ? req.attachments[attachmentDirection] : [],
   };
 
+  // Adds schema version to all messages
+  data.metadata.schemaVersion = messageConfig.SCHEMA_VERSION;
+
   // Record campaignId associated with this message.
   data.metadata.campaignId = this.lastReceivedBroadcastCampaignId;
 

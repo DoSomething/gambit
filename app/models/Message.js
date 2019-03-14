@@ -8,6 +8,8 @@ const utilHelper = require('../../lib/helpers/util');
 
 /**
  * Schema.
+ * NOTE: schemaVersion Must be updated if the MongoDB message schema changes.
+ * See config in ../../config/app/models/message.js
  */
 const messageSchema = new mongoose.Schema({
   conversationId: {
@@ -34,8 +36,6 @@ const messageSchema = new mongoose.Schema({
   metadata: {
     // Campaign Associated with this message, used for conversion analysis by Team Storm.
     campaignId: Number,
-    requestId: { type: String, index: true },
-    retryCount: Number,
     delivery: {
       queuedAt: Date,
       deliveredAt: Date,
@@ -43,6 +43,9 @@ const messageSchema = new mongoose.Schema({
       failureData: { type: mongoose.Schema.Types.Mixed },
       totalSegments: Number,
     },
+    requestId: { type: String, index: true },
+    retryCount: Number,
+    schemaVersion: Number,
   },
 }, { timestamps: true });
 
