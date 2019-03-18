@@ -50,9 +50,9 @@ test.afterEach((t) => {
   sandbox.restore();
 });
 
-// changeTopic
-test('changeTopic does not call setTopic if not a topic change', async (t) => {
-  sandbox.stub(requestHelper, 'setTopic')
+// updateTopicIfChanged
+test('updateTopicIfChanged does not call setTopic if not a topic change', async (t) => {
+  sandbox.stub(requestHelper, 'updateTopicIfChanged')
     .returns(underscore.noop);
   sandbox.stub(conversation, 'setTopic')
     .returns(Promise.resolve(true));
@@ -60,11 +60,11 @@ test('changeTopic does not call setTopic if not a topic change', async (t) => {
   t.context.req.currentTopicId = topic.id;
 
   await requestHelper.updateTopicIfChanged(t.context.req, topic);
-  requestHelper.setTopic.should.have.been.calledWith(t.context.req, topic);
+  requestHelper.updateTopicIfChanged.should.have.been.calledWith(t.context.req, topic);
   conversation.setTopic.should.not.have.been.called;
 });
 
-test('changeTopic calls setTopic when topic arg is not equal to req.currentTopicId', async (t) => {
+test('updateTopicIfChanged calls setTopic when topic arg is not equal to req.currentTopicId', async (t) => {
   sandbox.stub(requestHelper, 'setTopic')
     .returns(underscore.noop);
   sandbox.stub(conversation, 'setTopic')

@@ -23,6 +23,20 @@ function getBroadcast(type, fields = {}) {
   };
 }
 
+// TODO: Remove the "Valid" nomenclature as this factory only creates valid objects
+
+function getPhotoPostBroadcast() {
+  return getBroadcast(config.types.photoPostBroadcast, {
+    // TODO: Use the topic factory to return graphql nested topic data without templates
+    topic: {
+      id: stubs.getTopicId(),
+      campaign: {
+        id: stubs.getRandomNumericId(),
+      },
+    },
+  });
+}
+
 function getValidAutoReplyBroadcast() {
   return getBroadcast(config.types.autoReplyBroadcast, { topic: topicFactory.getValidAutoReply() });
 }
@@ -64,6 +78,7 @@ function getValidLegacyRivescriptTopicBroadcast() {
 
 module.exports = {
   getBroadcast,
+  getPhotoPostBroadcast,
   getValidAutoReplyBroadcast,
   getValidAskSubscriptionStatus,
   getValidAskVotingPlanStatus,

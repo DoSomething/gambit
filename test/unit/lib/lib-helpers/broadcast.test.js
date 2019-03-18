@@ -64,7 +64,7 @@ test('aggregateMessagesForBroadcastId should throw if Messages.aggregate fails',
 
 // fetchById
 test('fetchById should return graphql.fetchBroadcastById', async () => {
-  const broadcast = broadcastFactory.getValidLegacyCampaignBroadcast();
+  const broadcast = broadcastFactory.getPhotoPostBroadcast();
   sandbox.stub(graphql, 'fetchBroadcastById')
     .returns(Promise.resolve(broadcast));
 

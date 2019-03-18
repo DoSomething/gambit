@@ -22,6 +22,7 @@ module.exports.getRawConversationData = function getRawConversationData(platform
     lastOutboundMessage: messageFactory.getValidMessage(),
     campaignId: stubs.getCampaignId(),
     lastReceivedBroadcastId: stubs.getContentfulId(),
+    lastReceivedBroadcastCampaignId: stubs.getRandomNumericId(),
   };
 };
 
