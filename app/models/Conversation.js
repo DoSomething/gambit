@@ -37,7 +37,7 @@ const conversationSchema = new mongoose.Schema({
    * broadcasts continued to work as expected.
    */
   lastReceivedBroadcastId: String,
-  // Set when a broadcast is received. Unset when we respond.
+  // Set when a broadcast w/ campaign topic is received.
   lastReceivedBroadcastCampaignId: Number,
 }, { timestamps: true });
 
