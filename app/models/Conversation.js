@@ -214,36 +214,35 @@ conversationSchema.methods.getDraftSubmission = function (topicId) {
  */
 conversationSchema.methods.getMessagePayloadFromReq = function (req = {}, direction = '') {
   let broadcastId = null;
+  let broadcastCampaignId = null;
 
   // Attachments are stored in sub objects named according to the direction of the message
   // 'inbound' or 'outbound'
-  const isOutbound = direction.includes('outbound');
+  const isOutbound = messageConfig.isOutbound(direction);
   const isInbound = !isOutbound;
   const attachmentDirection = isOutbound ? 'outbound' : 'inbound';
 
   // Should only exist in outbound broadcast messages
   if (req.broadcastId) {
     broadcastId = req.broadcastId;
+    // Add campaignId associated with this broadcast message to the outbound message
+    broadcastCampaignId = this.lastReceivedBroadcastCampaignId;
   // Set broadcastId when this is an inbound message responding to an outbound broadcast:
   } else if (direction === 'inbound') {
     broadcastId = req.lastOutboundBroadcastId;
   }
 
-  // TODO: Handle platform dependent message properties here
   const data = {
     broadcastId,
     metadata: req.metadata || {},
     attachments: req.attachments ? req.attachments[attachmentDirection] : [],
   };
 
-  // Adds schema version to all messages
-  data.metadata.schemaVersion = messageConfig.SCHEMA_VERSION;
-
-  // Record campaignId associated with this message.
-  data.metadata.campaignId = this.lastReceivedBroadcastCampaignId;
-
   // Add extras if present.
 
+  if (broadcastCampaignId) {
+    data.metadata.campaignId = broadcastCampaignId;
+  }
   // If inbound message and includes platformMessageId
   if (isInbound && req.platformMessageId) {
     data.platformMessageId = req.platformMessageId;
@@ -257,6 +256,10 @@ conversationSchema.methods.getMessagePayloadFromReq = function (req = {}, direct
   if (req.macro) {
     data.macro = req.macro;
   }
+
+  // Adds schema version to all messages
+  data.metadata.schemaVersion = messageConfig.SCHEMA_VERSION;
+
   return data;
 };
 
@@ -292,15 +295,6 @@ conversationSchema.methods.createMessage = async function (direction, text, temp
   // Merge default payload and payload from req
   const defaultPayload = this.getDefaultMessagePayload();
   Object.assign(data, defaultPayload, this.getMessagePayloadFromReq(req, direction));
-
-  /**
-   * If we are replying, we should unset the conversation's lastReceivedBroadcastCampaignId
-   * this way it's clear the expected broadcast interaction has been fulfilled.
-   */
-  if (messageConfig.isOutbound(direction) && !messageConfig.isOutboundApi(direction)) {
-    this.lastReceivedBroadcastCampaignId = null;
-    await this.save();
-  }
 
   return Message.create(data);
 };
