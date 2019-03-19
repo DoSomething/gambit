@@ -33,7 +33,7 @@ const conversationSchema = new mongoose.Schema({
     ref: 'Message',
   },
   /**
-   * TODO: Should we continue to use it since it wasn't working for a while but
+   * Should we continue to set it? it wasn't being set correctly before PR #486 and
    * broadcasts continued to work as expected.
    */
   lastReceivedBroadcastId: String,
@@ -123,22 +123,16 @@ conversationSchema.methods.setTopic = function (topic) {
   logger.debug('updating conversation.topic', { topicId });
   if (topic.campaign && topic.campaign.id) {
     const campaignId = topic.campaign.id;
-    /**
-     * TODO: Why does it matter if the conversation's id is the same as the one in the topic?
-     * We are making the trip to save the topic anyway. Removing this logic makes the function
-     * easier to read.
-     */
-    if (this.campaignId !== campaignId) {
-      logger.debug('updating conversation.campaignId', { campaignId });
-      this.campaignId = campaignId;
-    }
+    logger.debug('updating conversation.campaignId', { campaignId });
+    this.campaignId = campaignId;
   }
   return this.save();
 };
 
 /**
- * Saves the lastReceivedBroadcastId and lastReceivedBroadcastCampaignId to the conversation
  * @param {String} broadcastId
+ * @param {Number} broadcastCampaignId
+ * @return {Promise}
  */
 conversationSchema.methods.setLastReceivedBroadcast = function (broadcastId, broadcastCampaignId) {
   this.lastReceivedBroadcastId = broadcastId;

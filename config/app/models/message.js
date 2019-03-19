@@ -10,6 +10,11 @@ const DIRECTION = {
 };
 
 function isOutbound(direction) {
+  /**
+   * The direction is considered to be 'outbound' if it uses the 'outbound' word somewhere
+   * in the string. Example: 'outbound-reply' and 'outbound-api-send'.
+   * They both qualify as outbound.
+   */
   return direction.includes('outbound');
 }
 
