@@ -208,5 +208,4 @@ test('setTopic calls save for new topic', async () => {
   await mockConversation.setTopic(mockTopic);
   mockConversation.save.should.have.been.called;
   mockConversation.topic.should.equal(mockResult.topic);
-  mockConversation.campaignId.should.equal(mockResult.campaignId);
 });

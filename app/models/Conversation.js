@@ -27,7 +27,6 @@ const conversationSchema = new mongoose.Schema({
     index: true,
   },
   topic: String,
-  campaignId: Number,
   lastOutboundMessage: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Message',
@@ -112,8 +111,7 @@ conversationSchema.statics.findOneAndPopulateLastOutboundMessage = function (que
 };
 
 /**
- * Saves topicId as topic property, updates the campaignId property if topic contains a campaign.
- *
+ * Saves topicId
  * @param {Object} topic
  * @return {Promise}
  */
@@ -121,11 +119,6 @@ conversationSchema.methods.setTopic = function (topic) {
   const topicId = topic.id;
   this.topic = topicId;
   logger.debug('updating conversation.topic', { topicId });
-  if (topic.campaign && topic.campaign.id) {
-    const campaignId = topic.campaign.id;
-    logger.debug('updating conversation.campaignId', { campaignId });
-    this.campaignId = campaignId;
-  }
   return this.save();
 };
 
@@ -175,7 +168,6 @@ conversationSchema.methods.createDraftSubmission = function (topicId, values = {
 conversationSchema.methods.getDefaultMessagePayload = function (text, template) {
   const data = {
     conversationId: this,
-    campaignId: this.campaignId,
     topic: this.topic,
     userId: this.userId,
   };

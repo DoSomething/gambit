@@ -24,7 +24,6 @@ const messageSchema = new mongoose.Schema({
   },
   userId: { type: String, index: true },
   platformMessageId: { type: String, index: true },
-  campaignId: Number,
   template: String,
   text: String,
   topic: String,

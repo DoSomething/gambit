@@ -20,7 +20,6 @@ module.exports.getRawConversationData = function getRawConversationData(platform
     createdAt: date,
     updatedAt: date,
     lastOutboundMessage: messageFactory.getValidMessage(),
-    campaignId: stubs.getCampaignId(),
     lastReceivedBroadcastId: stubs.getContentfulId(),
     lastReceivedBroadcastCampaignId: stubs.getRandomNumericId(),
   };

@@ -3,7 +3,7 @@
 ```
 GET /api/v2/broadcasts/:broadcastId
 ```
-Fetches a broadcast from [Gambit Content API](https://github.com/DoSomething/gambit-content/tree/master/documentation), and returns additional data properties for send configuration and message stats. 
+Fetches a broadcast from [Gambit Content API](https://github.com/DoSomething/gambit-content/tree/master/documentation), and returns additional data properties for send configuration and message stats.
 
 
 ## Examples
@@ -12,7 +12,7 @@ Fetches a broadcast from [Gambit Content API](https://github.com/DoSomething/gam
 <summary><strong>Example Request</strong></summary>
 
 ```
-curl -X "GET" "http://localhost:5100/api/v2/broadcasts/1S4pnWcZ3qeK0IyU6u4gYE" \
+curl -X "GET" "http://localhost:5100/api/v2/broadcasts/2CE7oRjLpU4y7v9uo5W7Or" \
      -H "Authorization: Basic cHVwcGV0OnRvdGFsbHlzZWNyZXQ="
 ```
 </details>
@@ -23,19 +23,11 @@ curl -X "GET" "http://localhost:5100/api/v2/broadcasts/1S4pnWcZ3qeK0IyU6u4gYE" \
 ```
 {
   "data": {
-    "id": "257eBFFXnay6QoUOCuuiS0",
-    "name": "GrabTheMic2018_Jul3_Pending_FINAL",
-    "createdAt": "2018-07-04T13:24:32.793Z",
-    "updatedAt": "2018-07-05T13:34:50.370Z",
-    "message": {
-      "text": "It's Freddie, happy 5th of July! Even though the holiday's over, you can still enjoy this playlist we made you all summer. Enjoy: https://www.dosomething.org/us/fourth-of-july-playlist?user_id={{user.id}}&broadcastid=257eBFFXnay6QoUOCuuiS0",
-      "attachments": [
-        
-      ],
-      "template": "rivescript"
-    },
-    "campaignId": null,
-    "topic": "survey_response",
+    "id": "2CE7oRjLpU4y7v9uo5W7Or",
+    "name": "EngagementTests2019_Feb14_Unresponsive_FINAL",
+    "text": "Hey it's Freddie! What would you like me to send you today?\nA) My weekly advice column\nB) A news update\nC) A social change action",
+    "attachments": [],
+    "contentType": "askMultipleChoice",
     "webhook": {
       "headers": {
         "Content-Type": "application/json"
@@ -43,21 +35,25 @@ curl -X "GET" "http://localhost:5100/api/v2/broadcasts/1S4pnWcZ3qeK0IyU6u4gYE" \
       "url": "http://<secret>:<secret>@localhost:5050/api/v1/webhooks/customerio-gambit-broadcast",
       "body": {
         "northstarId": "{{customer.id}}",
-        "broadcastId": "257eBFFXnay6QoUOCuuiS0"
+        "broadcastId": "2CE7oRjLpU4y7v9uo5W7Or"
       }
     },
     "stats": {
       "outbound": {
-        "total": 13059
+        "total": 827540,
+        "macros": {}
       },
       "inbound": {
-        "total": 460,
+        "total": 8106,
         "macros": {
-          "subscriptionStatusStop": 25,
-          "sendInfoMessage": 1,
-          "declinedTopic": 40,
-          "confirmedTopic": 384,
-          "catchAll": 10
+          "sendInfoMessage": 5,
+          "supportRequested": 3,
+          "saidThirdChoice": 377,
+          "subscriptionStatusStop": 3648,
+          "catchAll": 100,
+          "invalidAskMultipleChoiceResponse": 1902,
+          "saidSecondChoice": 750,
+          "saidFirstChoice": 1131
         }
       }
     }
