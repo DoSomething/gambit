@@ -15,10 +15,6 @@ test.before(async () => {
 });
 
 test.beforeEach((t) => {
-  integrationHelper.hooks.cache.broadcasts.set(
-    stubs.getBroadcastId(),
-    stubs.graphql.getBroadcastSingleResponse().data.broadcast,
-  );
   integrationHelper.hooks.app(t.context);
 });
 
@@ -68,18 +64,24 @@ test('POST /api/v2/messages?origin=broadcast should return 422 if userId is not 
 test('POST /api/v2/messages?origin=broadcast should return 422 if broadcastId is not found', async (t) => {
   const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
   cioWebhookPayload.broadcastId = null;
+
   const res = await t.context.request
     .post(integrationHelper.routes.v2.messages(false, {
       origin: 'broadcast',
     }))
     .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
     .send(cioWebhookPayload);
+
   res.status.should.be.equal(422);
   res.body.message.should.include('Missing required broadcastId');
 });
 
 test('POST /api/v2/messages?origin=broadcast should return 404 if user is not found', async (t) => {
   const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
+
+  nock(integrationHelper.routes.graphql.baseURI)
+    .post('/graphql')
+    .reply(200, stubs.graphql.getBroadcastSingleResponse());
 
   nock(integrationHelper.routes.northstar.baseURI)
     .get(`/users/id/${cioWebhookPayload.userId}`)
@@ -98,6 +100,10 @@ test('POST /api/v2/messages?origin=broadcast should return 404 if user is not fo
 
 test('POST /api/v2/messages?origin=broadcast should return 422 if user is unsubscribed', async (t) => {
   const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
+
+  nock(integrationHelper.routes.graphql.baseURI)
+    .post('/graphql')
+    .reply(200, stubs.graphql.getBroadcastSingleResponse());
 
   nock(integrationHelper.routes.northstar.baseURI)
     .get(`/users/id/${cioWebhookPayload.userId}`)
@@ -120,6 +126,10 @@ test('POST /api/v2/messages?origin=broadcast should return 422 if user is unsubs
 test('POST /api/v2/messages?origin=broadcast should return 200 if broadcast is sent successfully', async (t) => {
   const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
 
+  nock(integrationHelper.routes.graphql.baseURI)
+    .post('/graphql')
+    .reply(200, stubs.graphql.getBroadcastSingleResponse());
+
   nock(integrationHelper.routes.northstar.baseURI)
     .get(`/users/id/${cioWebhookPayload.userId}`)
     .reply(200, stubs.northstar.getUser({
@@ -141,6 +151,36 @@ test('POST /api/v2/messages?origin=broadcast should return 200 if broadcast is s
 
   res.status.should.be.equal(200);
   res.body.data.messages.length.should.be.equal(1);
+});
+
+test('POST /api/v2/messages?origin=broadcast should inject the campaignId in the metadata for photoPostBroadcasts', async (t) => {
+  const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload();
+  const mockGraphqlBroadcastResponse = stubs.graphql.getBroadcastSingleResponse();
+
+  nock(integrationHelper.routes.graphql.baseURI)
+    .post('/graphql')
+    .reply(200, mockGraphqlBroadcastResponse);
+
+  nock(integrationHelper.routes.northstar.baseURI)
+    .get(`/users/id/${cioWebhookPayload.userId}`)
+    .reply(200, stubs.northstar.getUser({
+      validUsNumber: true,
+    }));
+
+  const res = await t.context.request
+    .post(integrationHelper.routes.v2.messages(false, {
+      origin: 'broadcast',
+    }))
+    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
+    .send(cioWebhookPayload);
+
+  res.status.should.be.equal(200);
+  res.body.data.messages.length.should.be.equal(1);
+
+  const outboundMessage = res.body.data.messages[0];
+
+  outboundMessage.metadata.campaignId.should.equal(
+    mockGraphqlBroadcastResponse.data.broadcast.topic.campaign.id);
 });
 
 test.serial('POST /api/v2/messages?origin=twilio should not re-send message to Twilio on retry', async (t) => {

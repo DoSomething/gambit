@@ -77,21 +77,18 @@ module.exports = {
     getBroadcastSingleResponse: () => ({
       data: {
         broadcast: {
-          id: '429qioxAt2swYoMQUUymYW',
-          name: 'VoterRegistration2018_Sept24_NVRD_Staff_Test',
-          type: 'autoReplyBroadcast',
-          contentType: 'autoReplyBroadcast',
-          createdAt: '2018-09-24T16:29:02.299Z',
-          updatedAt: '2018-09-24T20:55:31.249Z',
-          text: "It's Freddie! Happy National Voter Registration Day! Did you know 1 in 8 registrations are invalid? Don't miss out & register now. <Link>",
+          id: '5t2fmKd2iQgaCCy8Kgg0CI',
+          name: 'Test photoPostBroadcast - Mirror messages',
+          text: 'Have you posted an inspirational quote lately? Text START to share your photo.',
           attachments: [],
+          contentType: 'photoPostBroadcast',
           topic: {
-            id: '6DPUt3MrTymOo4yWgUWYqk',
-            name: 'NVRD autoReply',
-            type: 'autoReply',
-            createdAt: '2018-09-24T16:30:58.210Z',
-            updatedAt: '2018-09-24T20:54:45.601Z',
-            campaign: {},
+            id: '6swLaA7HKE8AGI6iQuWk4y',
+            campaign: {
+              id: 7,
+              endDate: null,
+              internalTitle: 'Mirror Messages Run 11',
+            },
           },
         },
       },
@@ -138,15 +135,15 @@ module.exports = {
     };
   },
   broadcast: {
-    getCioWebhookPayload() {
+    getCioWebhookPayload(broadcastId) {
       return {
         userId: module.exports.getUserId(),
-        broadcastId: module.exports.getBroadcastId(),
+        broadcastId: broadcastId || module.exports.getBroadcastId(),
       };
     },
   },
   getBroadcastId() {
-    return '429qioxAt2swYoMQUUymYW';
+    return '5t2fmKd2iQgaCCy8Kgg0CI';
   },
   getBroadcastMessageText() {
     return 'Winter is coming, will you be prepared? Yes or No.';
