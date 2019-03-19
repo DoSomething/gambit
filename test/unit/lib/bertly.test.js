@@ -36,16 +36,16 @@ test('bertly should respond to', () => {
   bertly.should.respondTo('textHasLinks');
   bertly.should.respondTo('findAllLinks');
   bertly.should.respondTo('getRedirectForUrl');
-  bertly.should.respondTo('parseLinksInTextIntoRedirects');
+  bertly.should.respondTo('parseLinksIntoRedirects');
 });
 
 test('bertly.restClient should respond to', () => {
   bertly.restClient.should.respondTo('createRedirect');
 });
 
-test('bertly.parseLinksInTextIntoRedirects should return same text if no links found', async () => {
+test('bertly.parseLinksIntoRedirects should return same text if no links found', async () => {
   const textWithNoLink = stubs.getBroadcastMessageText();
-  const parsedText = await bertly.parseLinksInTextIntoRedirects(textWithNoLink);
+  const parsedText = await bertly.parseLinksIntoRedirects(textWithNoLink);
   parsedText.should.be.equal(textWithNoLink);
 });
 
@@ -57,18 +57,18 @@ test('bertly.restClient.createRedirect should return a rejected promise if an ur
   }
 });
 
-test.serial('bertly.parseLinksInTextIntoRedirects should return same text if it cant create redirects', async () => {
+test.serial('bertly.parseLinksIntoRedirects should return same text if it cant create redirects', async () => {
   bertly.__set__('restClient', { createRedirect: () => Promise.reject(false) });
   const textWithLink = stubs.getBroadcastMessageTextWithLink();
-  const parsedText = await bertly.parseLinksInTextIntoRedirects(textWithLink);
+  const parsedText = await bertly.parseLinksIntoRedirects(textWithLink);
   parsedText.should.be.equal(textWithLink);
   bertly.__set__('restClient', bertlyRestClient);
 });
 
-test.serial('bertly.parseLinksInTextIntoRedirects should get redirect for found links', async () => {
+test.serial('bertly.parseLinksIntoRedirects should get redirect for found links', async () => {
   bertly.__set__('restClient', { createRedirect: () => Promise.resolve(getRedirect()) });
   const textWithLink = stubs.getBroadcastMessageTextWithLink();
-  const parsedText = await bertly.parseLinksInTextIntoRedirects(textWithLink);
+  const parsedText = await bertly.parseLinksIntoRedirects(textWithLink);
   parsedText.should.include(getRedirect().url);
   bertly.__set__('restClient', bertlyRestClient);
 });

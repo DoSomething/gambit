@@ -59,7 +59,7 @@ test('changeTopic does not call setTopic if not a topic change', async (t) => {
   t.context.req.conversation = conversation;
   t.context.req.currentTopicId = topic.id;
 
-  await requestHelper.changeTopic(t.context.req, topic);
+  await requestHelper.updateTopicIfChanged(t.context.req, topic);
   requestHelper.setTopic.should.have.been.calledWith(t.context.req, topic);
   conversation.setTopic.should.not.have.been.called;
 });
@@ -72,7 +72,7 @@ test('changeTopic calls setTopic when topic arg is not equal to req.currentTopic
   t.context.req.conversation = conversation;
   t.context.req.currentTopicId = 'abc';
 
-  await requestHelper.changeTopic(t.context.req, topic);
+  await requestHelper.updateTopicIfChanged(t.context.req, topic);
   requestHelper.setTopic.should.have.been.calledWith(t.context.req, topic);
   conversation.setTopic.should.have.been.calledWith(topic);
 });
@@ -109,7 +109,7 @@ test('executeInboundTopicChange get topic, create signup if topic has active cam
   t.context.req.rivescriptReplyTopicId = stubs.getContentfulId();
   t.context.req.macro = stubs.getRandomWord();
   t.context.req.platform = platform;
-  sandbox.stub(requestHelper, 'changeTopic')
+  sandbox.stub(requestHelper, 'updateTopicIfChanged')
     .returns(Promise.resolve(true));
   sandbox.stub(helpers.topic, 'hasActiveCampaign')
     .returns(true);
@@ -122,7 +122,7 @@ test('executeInboundTopicChange get topic, create signup if topic has active cam
 
   helpers.user.fetchOrCreateSignup
     .should.have.been.calledWith(t.context.req.user, topic.campaign, platform, keyword);
-  requestHelper.changeTopic
+  requestHelper.updateTopicIfChanged
     .should.have.been.calledWith(t.context.req, topic);
 });
 
@@ -131,7 +131,7 @@ test('executeInboundTopicChange does not create signup if topic does not have ac
   t.context.req.rivescriptReplyTopicId = stubs.getContentfulId();
   t.context.req.macro = stubs.getRandomWord();
   t.context.req.platform = stubs.getPlatform();
-  sandbox.stub(requestHelper, 'changeTopic')
+  sandbox.stub(requestHelper, 'updateTopicIfChanged')
     .returns(Promise.resolve(true));
   sandbox.stub(helpers.topic, 'hasActiveCampaign')
     .returns(false);
@@ -143,7 +143,7 @@ test('executeInboundTopicChange does not create signup if topic does not have ac
   await requestHelper.executeInboundTopicChange(t.context.req, topic, keyword);
 
   helpers.user.fetchOrCreateSignup.should.not.have.been.called;
-  requestHelper.changeTopic
+  requestHelper.updateTopicIfChanged
     .should.have.been.calledWith(t.context.req, topic);
 });
 
@@ -516,16 +516,6 @@ test('setCampaign should inject a campaign property to req and call setCampaignI
   requestHelper.setCampaignId.should.have.been.calledWith(t.context.req, campaign.id);
 });
 
-test('setCampaign should not call setCampaignId if req.campaignId', (t) => {
-  sandbox.spy(requestHelper, 'setCampaignId');
-  const campaign = campaignFactory.getValidCampaign();
-  t.context.req.campaignId = stubs.getCampaignId();
-
-  requestHelper.setCampaign(t.context.req, campaign);
-  t.context.req.campaign.should.deep.equal(campaign);
-  requestHelper.setCampaignId.should.not.have.been.called;
-});
-
 // setCampaignId
 test('setCampaignId should inject a campaignId property to req', (t) => {
   requestHelper.setCampaignId(t.context.req, campaignId);
@@ -535,7 +525,7 @@ test('setCampaignId should inject a campaignId property to req', (t) => {
 
 // setConversation
 test('setConversation should inject a conversation property to req', (t) => {
-  sandbox.stub(requestHelper, 'setLastOutboundMessage')
+  sandbox.stub(requestHelper, 'setLastOutboundMessageProperties')
     .returns(underscore.noop);
   requestHelper.setConversation(t.context.req, conversation);
   t.context.req.conversation.should.equal(conversation);
@@ -546,17 +536,18 @@ test('setConversation should inject a conversation property to req', (t) => {
     conversationId,
     currentTopicId,
   });
-  requestHelper.setLastOutboundMessage.should.have.been.calledWith(t.context.req, message);
+  requestHelper.setLastOutboundMessageProperties
+    .should.have.been.calledWith(t.context.req, message);
 });
 
 test('setConversation should not call setLastOutboundMessage does not exist', (t) => {
   const newConversation = conversationFactory.getValidConversation();
   newConversation.lastOutboundMessage = null;
-  sandbox.stub(requestHelper, 'setLastOutboundMessage')
+  sandbox.stub(requestHelper, 'setLastOutboundMessageProperties')
     .returns(underscore.noop);
 
   requestHelper.setConversation(t.context.req, newConversation);
-  requestHelper.setLastOutboundMessage.should.not.have.been.called;
+  requestHelper.setLastOutboundMessageProperties.should.not.have.been.called;
 });
 
 // setDraftSubmission
@@ -569,8 +560,8 @@ test('setDraftSubmission should return boolean of whether req.draftSubmission de
     .should.have.been.calledWith({ draftSubmissionId: draftSubmission.id });
 });
 
-test('setLastOutboundMessage should inject lastOutbound properties to req', (t) => {
-  requestHelper.setLastOutboundMessage(t.context.req, message);
+test('setLastOutboundMessageProperties should inject lastOutbound properties to req', (t) => {
+  requestHelper.setLastOutboundMessageProperties(t.context.req, message);
   t.context.req.lastOutboundTemplate.should.equal(message.template);
   t.context.req.lastOutboundBroadcastId.should.equal(message.broadcastId);
   helpers.analytics.addCustomAttributes.should.have.been.called;

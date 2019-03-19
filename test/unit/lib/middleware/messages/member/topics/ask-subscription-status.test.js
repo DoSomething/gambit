@@ -27,7 +27,7 @@ const sandbox = sinon.sandbox.create();
 test.beforeEach((t) => {
   sandbox.stub(helpers.replies, 'sendReply')
     .returns(underscore.noop);
-  sandbox.stub(helpers.request, 'changeTopic')
+  sandbox.stub(helpers.request, 'updateTopicIfChanged')
     .returns(Promise.resolve(true));
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(underscore.noop);
@@ -180,7 +180,7 @@ test('askSubscriptionStatusCatchAll should not change topic, sends invalidAskSub
   await middleware(t.context.req, t.context.res, next);
 
   next.should.not.have.been.called;
-  helpers.request.changeTopic.should.not.have.been.called;
+  helpers.request.updateTopicIfChanged.should.not.have.been.called;
   helpers.replies.sendReply.should.have.been.calledWith(
     t.context.req,
     t.context.res,

@@ -62,7 +62,7 @@ test('replyMacro sends reply if macro text is set', async (t) => {
   const middleware = replyMacro();
   sandbox.stub(helpers.macro, 'getMacro')
     .returns(mockMacro);
-  sandbox.stub(helpers.request, 'changeTopic')
+  sandbox.stub(helpers.request, 'updateTopicIfChanged')
     .returns(Promise.resolve());
   sandbox.stub(helpers.replies, 'sendReply')
     .returns(underscore.noop);
@@ -71,12 +71,12 @@ test('replyMacro sends reply if macro text is set', async (t) => {
   // test
   await middleware(t.context.req, t.context.res, next);
   helpers.macro.getMacro.should.have.been.calledWith(t.context.req.macro);
-  helpers.request.changeTopic.should.not.have.been.called;
+  helpers.request.updateTopicIfChanged.should.not.have.been.called;
   helpers.replies.sendReply
     .should.have.been.calledWith(t.context.req, t.context.res, mockMacro.text, mockMacro.name);
 });
 
-test('replyMacro calls helpers.request.changeTopic if macro topic is set', async (t) => {
+test('replyMacro calls helpers.request.updateTopicIfChanged if macro topic is set', async (t) => {
   const next = sinon.stub();
   const middleware = replyMacro();
   t.context.req.macro = mockMacro.name;
@@ -84,7 +84,7 @@ test('replyMacro calls helpers.request.changeTopic if macro topic is set', async
     .returns(mockMacroWithTopic);
   sandbox.stub(helpers.replies, 'sendReply')
     .returns(underscore.noop);
-  sandbox.stub(helpers.request, 'changeTopic')
+  sandbox.stub(helpers.request, 'updateTopicIfChanged')
     .returns(Promise.resolve());
 
   // test
@@ -92,7 +92,7 @@ test('replyMacro calls helpers.request.changeTopic if macro topic is set', async
   helpers.macro.getMacro.should.have.been.calledWith(t.context.req.macro);
   helpers.replies.sendReply.should.have.been
     .calledWith(t.context.req, t.context.res, mockMacroWithTopic.text, mockMacroWithTopic.name);
-  helpers.request.changeTopic.should.have.been.calledWith(t.context.req, mockTopic);
+  helpers.request.updateTopicIfChanged.should.have.been.calledWith(t.context.req, mockTopic);
   next.should.not.have.been.called;
 });
 
@@ -105,14 +105,14 @@ test('replyMacro calls sendErrorResponse if changeTopic fails', async (t) => {
   sandbox.stub(helpers.replies, 'sendReply')
     .returns(underscore.noop);
   const mockError = { message: 'Epic fail' };
-  sandbox.stub(helpers.request, 'changeTopic')
+  sandbox.stub(helpers.request, 'updateTopicIfChanged')
     .returns(Promise.reject(mockError));
 
   // test
   await middleware(t.context.req, t.context.res, next);
   helpers.macro.getMacro.should.have.been.calledWith(t.context.req.macro);
   helpers.replies.sendReply.should.not.have.been.called;
-  helpers.request.changeTopic.should.have.been.calledWith(t.context.req, mockTopic);
+  helpers.request.updateTopicIfChanged.should.have.been.calledWith(t.context.req, mockTopic);
   next.should.not.have.been.called;
   helpers.sendErrorResponse.should.have.been.calledWith(t.context.res, mockError);
 });
