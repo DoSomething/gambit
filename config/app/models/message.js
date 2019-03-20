@@ -22,14 +22,9 @@ function isInbound(direction) {
   return direction === DIRECTION.inbound;
 }
 
-function isOutboundApi(direction) {
-  return direction === DIRECTION.outboundReply;
-}
-
 module.exports = {
   DIRECTION,
   isOutbound,
   isInbound,
-  isOutboundApi,
   SCHEMA_VERSION,
 };
