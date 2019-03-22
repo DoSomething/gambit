@@ -27,10 +27,12 @@ const conversationSchema = new mongoose.Schema({
   },
   topic: String,
   campaignId: Number,
+  // Used to determine how to reply to an inbound messages for the conversation.
   lastOutboundMessage: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Message',
   },
+  // Used to support rendering a {{broadcast}} tag in outbound messages for the conversation.
   lastReceivedBroadcastId: String,
 }, { timestamps: true });
 

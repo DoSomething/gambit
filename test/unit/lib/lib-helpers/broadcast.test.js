@@ -69,7 +69,7 @@ test('fetchById should return graphql.fetchBroadcastById', async () => {
     .returns(Promise.resolve(broadcast));
 
   const result = await broadcastHelper.fetchById(broadcastId);
-  result.should.deep.equal(broadcast);
+  Object.assign(result, { type: result.contentType }).should.deep.equal(broadcast);
   graphql.fetchBroadcastById.should.have.been.calledWith(broadcastId);
 });
 
