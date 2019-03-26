@@ -118,6 +118,16 @@ const fetchTopicById = `
           id
           ${campaignTopicTypes}
         }
+        saidFourthChoice
+        saidFourthChoiceTopic {
+          id
+          ${campaignTopicTypes}
+        }
+        saidFifthChoice
+        saidFifthChoiceTopic {
+          id
+          ${campaignTopicTypes}
+        }
       }
       ... on AskSubscriptionStatusBroadcastTopic {
         invalidAskSubscriptionStatusResponse

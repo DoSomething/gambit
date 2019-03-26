@@ -147,6 +147,12 @@ module.exports = {
     saidThirdChoice: {
       name: 'saidThirdChoice',
     },
+    saidFourthChoice: {
+      name: 'saidFourthChoice',
+    },
+    saidFifthChoice: {
+      name: 'saidFifthChoice',
+    },
     saidYes: {
       name: 'saidYes',
     },

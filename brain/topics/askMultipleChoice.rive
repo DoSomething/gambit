@@ -11,6 +11,12 @@
 + c [*]
 - saidThirdChoice
 
++ d [*]
+- saidFourthChoice
+
++ e [*]
+- saidFifthChoice
+
 + 1 [*]
 - saidFirstChoice
 
@@ -19,6 +25,12 @@
 
 + 3 [*]
 - saidThirdChoice
+
++ 4 [*]
+- saidFourthChoice
+
++ 5 [*]
+- saidFifthChoice
 
 + [*]
 - invalidAskMultipleChoiceResponse
