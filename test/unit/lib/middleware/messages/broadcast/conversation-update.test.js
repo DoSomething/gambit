@@ -31,7 +31,7 @@ test.beforeEach((t) => {
   sandbox.stub(helpers.errorNoticeable, 'sendErrorResponse')
     .returns(underscore.noop);
   t.context.req = httpMocks.createRequest();
-  t.context.req.broadcastId = stubs.getContentfulId();
+  t.context.req.broadcastId = stubs.getBroadcastId();
   t.context.req.conversation = conversation;
   t.context.res = httpMocks.createResponse();
 });

@@ -15,7 +15,6 @@ const helpers = require('../../../../lib/helpers');
 const front = require('../../../../lib/front');
 const twilio = require('../../../../lib/twilio');
 const stubs = require('../../../helpers/stubs');
-const broadcastFactory = require('../../../helpers/factories/broadcast');
 const conversationFactory = require('../../../helpers/factories/conversation');
 const messageFactory = require('../../../helpers/factories/message');
 const topicFactory = require('../../../helpers/factories/topic');

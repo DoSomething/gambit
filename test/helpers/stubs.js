@@ -29,7 +29,6 @@ function getContentfulId() {
   return '72mon4jUeQOaokEIkQMaoa';
 }
 
-
 /**
  * @return {Object}
  */
@@ -241,7 +240,7 @@ module.exports = {
   getTemplate() {
     return 'askQuantity';
   },
-  // TODO: Refator this -- this is ancient, before we had topic objects and id's.
+  // TODO: Refactor or remove this -- this is ancient, before we had topic objects and id's.
   getTopic() {
     return 'random';
   },

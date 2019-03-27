@@ -106,12 +106,12 @@ conversationSchema.statics.findOneAndPopulateLastOutboundMessage = function (que
 };
 
 /**
- * Saves topicId as topic property, saves last .
+ * Saves topicId as topic property.
  *
  * @param {Object} topic
  * @return {Promise}
  */
-conversationSchema.methods.setTopic = function (topic, broadcastId) {
+conversationSchema.methods.setTopic = function (topic) {
   const topicId = topic.id;
   this.topic = topicId;
   logger.debug('updating conversation.topic', { topicId });
