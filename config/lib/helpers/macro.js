@@ -138,9 +138,6 @@ module.exports = {
     saidFirstChoice: {
       name: 'saidFirstChoice',
     },
-    saidNo: {
-      name: 'saidNo',
-    },
     saidSecondChoice: {
       name: 'saidSecondChoice',
     },
@@ -152,6 +149,9 @@ module.exports = {
     },
     saidFifthChoice: {
       name: 'saidFifthChoice',
+    },
+    saidNo: {
+      name: 'saidNo',
     },
     saidYes: {
       name: 'saidYes',
