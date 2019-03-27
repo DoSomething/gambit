@@ -26,11 +26,12 @@ const conversationSchema = new mongoose.Schema({
     index: true,
   },
   topic: String,
-  campaignId: Number,
+  // Used to determine how to reply to an inbound messages for the conversation.
   lastOutboundMessage: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Message',
   },
+  // Used to support rendering a {{broadcast}} tag in outbound messages for the conversation.
   lastReceivedBroadcastId: String,
 }, { timestamps: true });
 
@@ -105,7 +106,7 @@ conversationSchema.statics.findOneAndPopulateLastOutboundMessage = function (que
 };
 
 /**
- * Saves topicId as topic property, updates the campaignId property if topic contains a campaign.
+ * Saves topicId as topic property.
  *
  * @param {Object} topic
  * @return {Promise}
@@ -113,17 +114,7 @@ conversationSchema.statics.findOneAndPopulateLastOutboundMessage = function (que
 conversationSchema.methods.setTopic = function (topic) {
   const topicId = topic.id;
   this.topic = topicId;
-  if (helpers.topic.isBroadcastable(topic)) {
-    this.lastReceivedBroadcastId = topicId;
-  }
   logger.debug('updating conversation.topic', { topicId });
-  if (topic.campaign && topic.campaign.id) {
-    const campaignId = topic.campaign.id;
-    if (this.campaignId !== campaignId) {
-      logger.debug('updating conversation.campaignId', { campaignId });
-      this.campaignId = campaignId;
-    }
-  }
   return this.save();
 };
 
