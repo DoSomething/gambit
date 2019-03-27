@@ -7,8 +7,8 @@ const defaultTopic = rivescriptTopics.default;
 const invalidAnswerText = 'Sorry, I didn\'t get that.';
 
 // Subscription status.
-const activeSubscriptionStatusText = process.env.DS_GAMBIT_CONVERSATIONS_SUBSCRIPTION_STATUS_ACTIVE_TEXT || 'Hi I\'m Freddie from DoSomething.org! Welcome to my weekly updates (up to 8msg/month). Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.';
-const lessSubscriptionStatusText = 'Great, you\'ll start to receive 1 monthly update from Freddie at DoSomething.org! Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.';
+const activeSubscriptionStatusText = process.env.DS_GAMBIT_CONVERSATIONS_SUBSCRIPTION_STATUS_ACTIVE_TEXT || 'Hi I\'m Tej from DoSomething.org! Welcome to my weekly updates (up to 8msg/month). Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.';
+const lessSubscriptionStatusText = 'Great, you\'ll start to receive 1 monthly update from Tej at DoSomething.org! Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.';
 
 // Voting plan.
 const askVotingPlanAttendingWithText = process.env.DS_GAMBIT_CONVERSATIONS_ASK_VOTING_PLAN_ATTENDING_WITH_TEXT || 'Who are you planning on voting with? A) Alone B) Friends C) Family D) Co-workers';
