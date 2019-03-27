@@ -241,6 +241,7 @@ module.exports = {
   getTemplate() {
     return 'askQuantity';
   },
+  // TODO: Refator this -- this is ancient, before we had topic objects and id's.
   getTopic() {
     return 'random';
   },

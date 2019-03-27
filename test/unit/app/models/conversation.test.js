@@ -200,27 +200,10 @@ test('setTopic calls save for new topic', async () => {
   const mockTopic = topicFactory.getValidTopic();
   const mockResult = conversationFactory.getValidConversation();
   mockResult.topic = mockTopic.id;
-  sandbox.stub(helpers.topic, 'isBroadcastable')
-    .returns(false);
-  mockResult.campaignId = mockTopic.campaign.id;
   sandbox.stub(mockConversation, 'save')
     .returns(Promise.resolve(mockResult));
 
   await mockConversation.setTopic(mockTopic);
   mockConversation.save.should.have.been.called;
   mockConversation.topic.should.equal(mockResult.topic);
-  mockConversation.campaignId.should.equal(mockResult.campaignId);
-});
-
-test('setTopic sets lastReceivedBroadcastId if topic arg is broadcastable', async () => {
-  const mockConversation = conversationFactory.getValidConversation();
-  const mockTopic = broadcastFactory.getValidAutoReplyBroadcast();
-  sandbox.stub(helpers.topic, 'isBroadcastable')
-    .returns(true);
-  sandbox.stub(mockConversation, 'save')
-    .returns(Promise.resolve(conversationFactory.getValidConversation()));
-
-  await mockConversation.setTopic(mockTopic);
-  mockConversation.save.should.have.been.called;
-  mockConversation.lastReceivedBroadcastId.should.equal(mockTopic.id);
 });
