@@ -29,7 +29,6 @@ function getContentfulId() {
   return '72mon4jUeQOaokEIkQMaoa';
 }
 
-
 /**
  * @return {Object}
  */
@@ -79,7 +78,6 @@ module.exports = {
         broadcast: {
           id: '429qioxAt2swYoMQUUymYW',
           name: 'VoterRegistration2018_Sept24_NVRD_Staff_Test',
-          type: 'autoReplyBroadcast',
           contentType: 'autoReplyBroadcast',
           createdAt: '2018-09-24T16:29:02.299Z',
           updatedAt: '2018-09-24T20:55:31.249Z',
@@ -242,6 +240,7 @@ module.exports = {
   getTemplate() {
     return 'askQuantity';
   },
+  // TODO: Refactor or remove this -- this is ancient, before we had topic objects and id's.
   getTopic() {
     return 'random';
   },

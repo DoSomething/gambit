@@ -39,12 +39,13 @@ test.afterEach((t) => {
 test('updateConversation should call next on changeTopic success', async (t) => {
   const next = sinon.stub();
   const middleware = changeTopic();
-  sandbox.stub(helpers.request, 'changeTopic')
+  sandbox.stub(helpers.request, 'updateTopicIfChanged')
     .returns(Promise.resolve());
 
   // test
   await middleware(t.context.req, t.context.res, next);
-  helpers.request.changeTopic.should.have.been.calledWith(t.context.req, t.context.req.topic);
+  helpers.request.updateTopicIfChanged
+    .should.have.been.calledWith(t.context.req, t.context.req.topic);
   helpers.sendErrorResponse.should.not.have.been.called;
   next.should.have.been.called;
 });
@@ -53,7 +54,7 @@ test('updateConversation should call sendErrorResponse if changeTopic fails', as
   const next = sinon.stub();
   const middleware = changeTopic();
   const mockError = { status: 500 };
-  sandbox.stub(helpers.request, 'changeTopic')
+  sandbox.stub(helpers.request, 'updateTopicIfChanged')
     .returns(Promise.reject(mockError));
 
   // test

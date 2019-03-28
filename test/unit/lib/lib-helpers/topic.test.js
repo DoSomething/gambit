@@ -221,13 +221,6 @@ test('isAutoReply returns whether topic type is autoReply', (t) => {
   t.falsy(topicHelper.isAutoReply(topicFactory.getValidTextPostConfig()));
 });
 
-// isBroadcastable
-test('isBroadcastable returns whether topic is rivescriptTopics.askVotingPlanStatus', (t) => {
-  const mockTopic = topicFactory.getValidTopic();
-  t.truthy(topicHelper.isBroadcastable(topicFactory.getValidAskVotingPlanStatusBroadcastTopic()));
-  t.falsy(topicHelper.isBroadcastable(mockTopic));
-});
-
 // isRivescriptTopicId
 test('isRivescriptTopicId should return whether topicId exists deparsed rivescript topics', (t) => {
   t.truthy(topicHelper.isRivescriptTopicId(mockRivescriptTopicId));
