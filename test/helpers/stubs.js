@@ -81,7 +81,7 @@ module.exports = {
           contentType: 'autoReplyBroadcast',
           createdAt: '2018-09-24T16:29:02.299Z',
           updatedAt: '2018-09-24T20:55:31.249Z',
-          text: "It's Freddie! Happy National Voter Registration Day! Did you know 1 in 8 registrations are invalid? Don't miss out & register now. <Link>",
+          text: "It's Tej! Happy National Voter Registration Day! Did you know 1 in 8 registrations are invalid? Don't miss out & register now. <Link>",
           attachments: [],
           topic: {
             id: '6DPUt3MrTymOo4yWgUWYqk',
