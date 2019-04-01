@@ -3,7 +3,7 @@
 // Bot variables
 ! var cmd_support = Q
 ! var member_count = 6 MILLION+
-! var name = Freddie
+! var name = Tej
 ! var url  = DoSomething.org
 
 // Substitutions
@@ -63,7 +63,7 @@
 ! array alone     = alone|me|myself|self|solo
 ! array bike      = bicycle|bike|bikin|biking|cycling
 ! array bot       = bot robot machine computer
-! array botname   = freddie freddi alicia alysa alysha
+! array botname   = freddie freddi alicia alysa alysha tej
 ! array coworkers = co-workers coworkers work
 ! array die       = die|kill myself|killing myself
   ^ commit suicide|committing suicide|commiting suicide

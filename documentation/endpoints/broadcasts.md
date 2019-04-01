@@ -28,7 +28,7 @@ curl -X "GET" "http://localhost:5100/api/v2/broadcasts/1S4pnWcZ3qeK0IyU6u4gYE" \
     "createdAt": "2018-07-04T13:24:32.793Z",
     "updatedAt": "2018-07-05T13:34:50.370Z",
     "message": {
-      "text": "It's Freddie, happy 5th of July! Even though the holiday's over, you can still enjoy this playlist we made you all summer. Enjoy: https://www.dosomething.org/us/fourth-of-july-playlist?user_id={{user.id}}&broadcastid=257eBFFXnay6QoUOCuuiS0",
+      "text": "It's Tej, happy 5th of July! Even though the holiday's over, you can still enjoy this playlist we made you all summer. Enjoy: https://www.dosomething.org/us/fourth-of-july-playlist?user_id={{user.id}}&broadcastid=257eBFFXnay6QoUOCuuiS0",
       "attachments": [
         
       ],
