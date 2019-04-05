@@ -37,6 +37,8 @@ test.beforeEach((t) => {
   t.context.req.platform = mockPlatform;
   t.context.req.topic = mockTextPostTopic;
   t.context.req.user = mockUser;
+  // US-NY
+  t.context.req.platformUserStateISOCode = helpers.twilio.getMemberStateISOCode('NY');
 });
 
 test.afterEach((t) => {
@@ -109,6 +111,7 @@ test('createTextPost should call createTextPost and send completedTextPost if in
       actionId: t.context.req.topic.actionId,
       textPostSource: mockPlatform,
       textPostText: mockInboundMessageText,
+      location: t.context.req.platformUserStateISOCode,
     });
   helpers.replies.invalidText.should.not.have.been.called;
   helpers.replies.completedTextPost.should.have.been.calledWith(t.context.req, t.context.res);

@@ -48,6 +48,8 @@ const source = stubs.getPlatform();
 
 test.beforeEach((t) => {
   t.context.req = httpMocks.createRequest();
+  // US-NY
+  t.context.req.platformUserStateISOCode = helpers.twilio.getMemberStateISOCode('NY');
 });
 
 test.afterEach((t) => {
@@ -56,7 +58,7 @@ test.afterEach((t) => {
 });
 
 // createPhotoPost
-test('createPhotoPost passes user.id, campaignId, file, quantity, source, text, and whyParticipated args to gateway.createSignup', async () => {
+test('createPhotoPost passes user.id, campaignId, file, quantity, source, text, and whyParticipated args to gateway.createSignup', async (t) => {
   const file = stubs.getRandomMessageText();
   const draftSubmission = draftSubmissionFactory.getValidCompletePhotoPostDraftSubmission();
   const values = draftSubmission.values;
@@ -72,6 +74,7 @@ test('createPhotoPost passes user.id, campaignId, file, quantity, source, text, 
     actionId: mockPhotoPostTopic.actionId,
     photoPostSource: source,
     photoPostValues: values,
+    location: t.context.req.platformUserStateISOCode,
   });
   gateway.createPost.should.have.been.calledWith({
     file,
@@ -82,6 +85,7 @@ test('createPhotoPost passes user.id, campaignId, file, quantity, source, text, 
     text: values.caption,
     type: config.posts.photo.type,
     why_participated: values.whyParticipated,
+    location: t.context.req.platformUserStateISOCode,
   });
   result.should.deep.equal(mockGatewayPhotoPostResponse);
   helpers.util.fetchImageFileFromUrl.should.have.been.calledWith(values.url);
@@ -104,7 +108,7 @@ test('createSignup passes user.id, campaignId, source args to gateway.createSign
 });
 
 // createTextPost
-test('createTextPost passes user.id, campaignId, source, and text fields to gateway.createSignup', async () => {
+test('createTextPost passes user.id, campaignId, source, and text fields to gateway.createSignup', async (t) => {
   const text = 'test';
   sandbox.stub(gateway, 'createPost')
     .returns(Promise.resolve(mockGatewayTextPostResponse));
@@ -114,6 +118,7 @@ test('createTextPost passes user.id, campaignId, source, and text fields to gate
     actionId: mockTextPostTopic.actionId,
     textPostSource: source,
     textPostText: text,
+    location: t.context.req.platformUserStateISOCode,
   });
   gateway.createPost.should.have.been.calledWith({
     action_id: mockTextPostTopic.actionId,
@@ -121,12 +126,13 @@ test('createTextPost passes user.id, campaignId, source, and text fields to gate
     source,
     text,
     type: config.posts.text.type,
+    location: t.context.req.platformUserStateISOCode,
   });
   result.should.deep.equal(mockGatewayTextPostResponse);
 });
 
 // createVotingPlan
-test('createVotingPlan passes user voting plan info to gateway.createPost', async () => {
+test('createVotingPlan passes user voting plan info to gateway.createPost', async (t) => {
   const mockValues = { test: stubs.getRandomWord() };
   sandbox.stub(gateway, 'createPost')
     .returns(Promise.resolve(mockPost));
@@ -134,13 +140,15 @@ test('createVotingPlan passes user voting plan info to gateway.createPost', asyn
     .returns(mockValues);
   const details = JSON.stringify(mockValues);
 
-  const result = await userHelper.createVotingPlan(mockUser, source);
+  const result = await userHelper
+    .createVotingPlan(mockUser, source, t.context.req.platformUserStateISOCode);
   gateway.createPost.should.have.been.calledWith({
     campaign_id: config.posts.votingPlan.campaignId,
     northstar_id: mockUser.id,
     source,
     text: details,
     type: config.posts.votingPlan.type,
+    location: t.context.req.platformUserStateISOCode,
   });
   result.should.deep.equal(mockPost);
 });

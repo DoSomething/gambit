@@ -36,6 +36,8 @@ test.beforeEach((t) => {
   t.context.req.user = mockUser;
   t.context.req.inboundMessageText = stubs.getRandomMessageText();
   t.context.req.platform = stubs.getPlatform();
+  // US-NY
+  t.context.req.platformUserStateISOCode = helpers.twilio.getMemberStateISOCode('NY');
 });
 
 test.afterEach((t) => {
@@ -126,6 +128,7 @@ test('createPhotoPost should call completedPhotoPost on createPhotoPost success'
       actionId: t.context.req.topic.actionId,
       photoPostSource: t.context.req.platform,
       photoPostValues: values,
+      location: t.context.req.platformUserStateISOCode,
     });
   helpers.request.deleteDraftSubmission.should.have.been.calledWith(t.context.req);
   helpers.replies.completedPhotoPost.should.have.been.called;
