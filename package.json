@@ -55,6 +55,7 @@
     "google-libphonenumber": "^3.2.2",
     "graphql-request": "^1.8.2",
     "heroku-logger": "^0.3.3",
+    "iso-3166-2": "^1.0.0",
     "linkify-it": "^2.1.0",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
