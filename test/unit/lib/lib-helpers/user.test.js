@@ -354,24 +354,24 @@ test('isPaused should return user.sms_paused', (t) => {
 
 // updateByMemberMessageReq
 test('updateByMemberMessageReq should return rejected error if getDefaultUpdatePayloadFromReq throws', async (t) => {
-  const error = { message: 'Epic fail' };
+  const error = stubs.getError();
   sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
     .throws(error);
   t.context.req.macro = stubs.getMacro();
 
-  const result = await t.throws(userHelper.updateByMemberMessageReq(t.context.req));
+  const result = await t.throwsAsync(() => userHelper.updateByMemberMessageReq(t.context.req));
   result.should.deep.equal(error);
 });
 
 test('updateByMemberMessageReq should return rejected error if getProfileUpdate throws', async (t) => {
-  const error = { message: 'Epic fail' };
+  const error = stubs.getError();
   sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
     .returns({});
   sandbox.stub(helpers.macro, 'getProfileUpdate')
     .throws(error);
   t.context.req.macro = stubs.getMacro();
 
-  const result = await t.throws(userHelper.updateByMemberMessageReq(t.context.req));
+  const result = await t.throwsAsync(() => userHelper.updateByMemberMessageReq(t.context.req));
   result.should.deep.equal(error);
 });
 

@@ -66,12 +66,12 @@ test('getBot should return the existing Rivescript bot if already created', () =
 
 // getBotReply
 test('getBotReply should throw an error if brain undefined', async (t) => {
-  await t.throws(rivescript.getBotReply(userId, topicId, messageText));
+  await t.throwsAsync(() => rivescript.getBotReply(userId, topicId, messageText));
 });
 
 test('getBotReply should throw an error if not hasSortedReplies', async (t) => {
   rivescript.__set__('brain', new RiveScript());
-  await t.throws(rivescript.getBotReply(userId, topicId, messageText));
+  await t.throwsAsync(() => rivescript.getBotReply(userId, topicId, messageText));
 });
 
 test('getBotReply should return object if brain exists and hasSortedReplies', async () => {
@@ -102,7 +102,7 @@ test('isReady should return hasSortedReplies', (t) => {
 
 // loadBotWithRivescripts
 test('loadBotWithRivescripts should return error if rivescripts arg is not passsed', async (t) => {
-  await t.throws(rivescript.loadBotWithRivescripts());
+  await t.throwsAsync(() => rivescript.loadBotWithRivescripts());
 });
 
 test('loadBotWithRivescripts should call createNewBot', async () => {
