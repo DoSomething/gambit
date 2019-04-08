@@ -45,7 +45,7 @@ test('fetchWebSignupConfirmations throws if graphql.fetchWebSignupConfirmations 
   sandbox.stub(helpers.cache.webSignupConfirmations, 'set')
     .returns(Promise.resolve(data));
 
-  await t.throws(campaignHelper.fetchWebSignupConfirmations());
+  await t.throwsAsync(() => campaignHelper.fetchWebSignupConfirmations());
   helpers.cache.webSignupConfirmations.set.should.not.have.been.called;
 });
 

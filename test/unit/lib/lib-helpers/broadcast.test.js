@@ -58,8 +58,8 @@ test('aggregateMessagesForBroadcastId should call Messages.aggregate and return 
 
 test('aggregateMessagesForBroadcastId should throw if Messages.aggregate fails', async (t) => {
   sandbox.stub(Message, 'aggregate')
-    .returns(Promise.reject(new Error()));
-  await t.throws(broadcastHelper.aggregateMessagesForBroadcastId(broadcastId));
+    .returns(Promise.reject(stubs.getError()));
+  await t.throwsAsync(() => broadcastHelper.aggregateMessagesForBroadcastId(broadcastId));
 });
 
 // fetchById
