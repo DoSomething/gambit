@@ -157,7 +157,7 @@ test('fetchRivescripts should throw on graphql.fetchConversationTriggers fail', 
   sandbox.stub(rivescriptHelper, 'parseRivescript')
     .returns(conversationTrigger);
 
-  const result = await t.throws(rivescriptHelper.fetchRivescripts());
+  const result = await t.throwsAsync(() => rivescriptHelper.fetchRivescripts());
   graphql.fetchConversationTriggers.should.have.been.called;
   rivescriptHelper.parseRivescript.should.not.have.been.called;
   result.should.deep.equal(mockError);

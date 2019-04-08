@@ -33,7 +33,7 @@ function getContentfulId() {
  * @return {Object}
  */
 function getError() {
-  return { message: 'Epic fail' };
+  return new Error('Epic fail');
 }
 
 /**

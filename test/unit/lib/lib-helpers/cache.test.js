@@ -60,7 +60,7 @@ test('broadcasts.get should throw when cache set fails', async (t) => {
   cacheHelper.__set__('broadcastsCache', {
     get: () => Promise.reject(new Error()),
   });
-  await t.throws(cacheHelper.broadcasts.get(contentfulEntryId));
+  await t.throwsAsync(() => cacheHelper.broadcasts.get(contentfulEntryId));
 });
 
 test('broadcasts.set should return an object', async () => {
@@ -92,9 +92,9 @@ test('rivescript.get should return falsy when cache undefined', async (t) => {
 
 test('rivescript.get should throw when cache set fails', async (t) => {
   cacheHelper.__set__('rivescriptCache', {
-    get: () => Promise.reject(new Error()),
+    get: () => Promise.reject(stubs.getError()),
   });
-  await t.throws(cacheHelper.rivescript.get(rivescriptCacheId));
+  await t.throwsAsync(() => cacheHelper.rivescript.get(rivescriptCacheId));
 });
 
 test('rivescript.set should return an object', async () => {
@@ -107,9 +107,9 @@ test('rivescript.set should return an object', async () => {
 
 test('rivescript.set should throw when cache set fails', async (t) => {
   cacheHelper.__set__('rivescriptCache', {
-    set: () => Promise.reject(new Error()),
+    set: () => Promise.reject(stubs.getError()),
   });
-  await t.throws(cacheHelper.rivescript.set(rivescriptCacheId));
+  await t.throwsAsync(() => cacheHelper.rivescript.set(rivescriptCacheId));
 });
 
 /**
@@ -133,9 +133,9 @@ test('topics.get should return falsy when cache undefined', async (t) => {
 
 test('topics.get should throw when cache set fails', async (t) => {
   cacheHelper.__set__('topicsCache', {
-    get: () => Promise.reject(new Error()),
+    get: () => Promise.reject(stubs.getError()),
   });
-  await t.throws(cacheHelper.topics.get(contentfulEntryId));
+  await t.throwsAsync(() => cacheHelper.topics.get(contentfulEntryId));
 });
 
 test('topics.set should return an object', async () => {
@@ -167,9 +167,9 @@ test('webSignupConfirmations.get should return falsy when cache undefined', asyn
 
 test('webSignupConfirmations.get should throw when cache set fails', async (t) => {
   cacheHelper.__set__('webSignupConfirmationsCache', {
-    get: () => Promise.reject(new Error()),
+    get: () => Promise.reject(stubs.getError()),
   });
-  await t.throws(cacheHelper.webSignupConfirmations.get());
+  await t.throwsAsync(() => cacheHelper.webSignupConfirmations.get());
 });
 
 test('webSignupConfirmations.set should return an array', async () => {
