@@ -32,8 +32,10 @@ const messageSchema = new mongoose.Schema({
   match: String,
   macro: String,
   metadata: {
-    requestId: { type: String, index: true },
-    retryCount: Number,
+    // CampaignId associated with this broadcast outbound message.
+    // Not set for inbound or non broadcast outbound messages.
+    campaignId: Number,
+    // Delivery metadata reported by Twilio via the statusCallback webhook for outbound messages
     delivery: {
       queuedAt: Date,
       deliveredAt: Date,
@@ -41,6 +43,8 @@ const messageSchema = new mongoose.Schema({
       failureData: { type: mongoose.Schema.Types.Mixed },
       totalSegments: Number,
     },
+    requestId: { type: String, index: true },
+    retryCount: Number,
   },
 }, { timestamps: true });
 
