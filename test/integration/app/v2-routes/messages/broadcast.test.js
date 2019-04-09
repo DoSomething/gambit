@@ -129,13 +129,13 @@ test('POST /api/v2/messages?origin=broadcast should return 200 if broadcast is s
 });
 
 test('POST /api/v2/messages?origin=broadcast should save campaign id in outbound metadata for text post broadcasts', async (t) => {
-  const textBroadcast = stubs.graphql.getBroadcastSingleResponse('textPostBroadcast').data.broadcast;
+  const textPostBroadcast = stubs.graphql.getBroadcastSingleResponse('textPostBroadcast').data.broadcast;
 
   integrationHelper.hooks.cache.broadcasts.set(
-    textBroadcast.id,
-    textBroadcast,
+    textPostBroadcast.id,
+    textPostBroadcast,
   );
-  const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload(textBroadcast.id);
+  const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload(textPostBroadcast.id);
 
   const reply = stubs.northstar.getUser({
     validUsNumber: true,
@@ -159,21 +159,21 @@ test('POST /api/v2/messages?origin=broadcast should save campaign id in outbound
 
   res.status.should.be.equal(200);
   res.body.data.messages.length.should.be.equal(1);
-  res.body.data.messages[0].metadata.campaignId.should.equal(textBroadcast.action.campaignId);
+  res.body.data.messages[0].metadata.campaignId.should.equal(textPostBroadcast.action.campaignId);
 
   // clear cache
   // TODO: DRY
-  integrationHelper.hooks.cache.broadcasts.set(textBroadcast.id, null);
+  integrationHelper.hooks.cache.broadcasts.set(textPostBroadcast.id, null);
 });
 
 test('POST /api/v2/messages?origin=broadcast should save campaign id in outbound metadata for photo post broadcasts', async (t) => {
-  const textBroadcast = stubs.graphql.getBroadcastSingleResponse('textPostBroadcast').data.broadcast;
+  const photoPostBroadcast = stubs.graphql.getBroadcastSingleResponse('photoPostBroadcast').data.broadcast;
 
   integrationHelper.hooks.cache.broadcasts.set(
-    textBroadcast.id,
-    textBroadcast,
+    photoPostBroadcast.id,
+    photoPostBroadcast,
   );
-  const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload(textBroadcast.id);
+  const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload(photoPostBroadcast.id);
 
   const reply = stubs.northstar.getUser({
     validUsNumber: true,
@@ -197,9 +197,47 @@ test('POST /api/v2/messages?origin=broadcast should save campaign id in outbound
 
   res.status.should.be.equal(200);
   res.body.data.messages.length.should.be.equal(1);
-  res.body.data.messages[0].metadata.campaignId.should.equal(textBroadcast.action.campaignId);
+  res.body.data.messages[0].metadata.campaignId.should.equal(photoPostBroadcast.action.campaignId);
 
   // clear cache
   // TODO: DRY
-  integrationHelper.hooks.cache.broadcasts.set(textBroadcast.id, null);
+  integrationHelper.hooks.cache.broadcasts.set(photoPostBroadcast.id, null);
+});
+
+test('POST /api/v2/messages?origin=broadcast should save campaign id in outbound metadata for ask yes no broadcasts', async (t) => {
+  const askYesNoBroadcast = stubs.graphql.getBroadcastSingleResponse('askYesNo').data.broadcast;
+
+  integrationHelper.hooks.cache.broadcasts.set(
+    askYesNoBroadcast.id,
+    askYesNoBroadcast,
+  );
+  const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload(askYesNoBroadcast.id);
+
+  const reply = stubs.northstar.getUser({
+    validUsNumber: true,
+  });
+
+  integrationHelper.routes.northstar
+    .intercept.fetchUserById(cioWebhookPayload.userId, reply, 1);
+
+  /**
+   * We are using Twilio Test credentials in Wercker.
+   * When this runs on wercker we are indeed making a call to the Twilio API.
+   * But we do it with the Test credentials so its free and we are not actually
+   * sending the text.
+   */
+  const res = await t.context.request
+    .post(integrationHelper.routes.v2.messages(false, {
+      origin: 'broadcast',
+    }))
+    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
+    .send(cioWebhookPayload);
+
+  res.status.should.be.equal(200);
+  res.body.data.messages.length.should.be.equal(1);
+  res.body.data.messages[0].metadata.campaignId.should.equal(askYesNoBroadcast.action.campaignId);
+
+  // clear cache
+  // TODO: DRY
+  integrationHelper.hooks.cache.broadcasts.set(askYesNoBroadcast.id, null);
 });

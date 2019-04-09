@@ -76,6 +76,57 @@ module.exports = {
     getBroadcastSingleResponse: (contentType = 'autoReplyBroadcast') => {
       const broadcast = { data: {} };
       switch (contentType) {
+        case 'askYesNo':
+          broadcast.data = {
+            broadcast: {
+              id: '4ml3uv0uuL6zsbYCzgt3P2',
+              name: 'MeritOverMoney2019_Apr2_Pending_FINAL',
+              contentType: 'askYesNo',
+              text: 'Hi it\'s Tej! I\'ll be taking over for Freddie! Before we get to know each other, wanna take your first action with me? Y or N',
+              attachments: [],
+              action: {
+                id: 859,
+                name: 'Merit Over Money Petition Action',
+                campaignId: 9013,
+                postType: 'text',
+              },
+              saidYesTopic: {
+                id: '4VYcFMPC5z6BR1xX9geVfj',
+                actionId: 859,
+                campaign: {
+                  id: 9013,
+                  endDate: null,
+                  internalTitle: 'Merit Over Money 2019-04',
+                },
+              },
+            },
+          };
+          break;
+        case 'photoPostBroadcast':
+          broadcast.data = {
+            broadcast: {
+              id: '5t2fmKd2iQgaCCy8Kgg0CI',
+              name: 'Test photoPostBroadcast - Mirror messages',
+              contentType: 'photoPostBroadcast',
+              text: 'Have you posted an inspirational quote lately? Text START to share your photo.',
+              attachments: [],
+              action: {
+                id: 501,
+                name: 'default',
+                campaignId: 7,
+                postType: 'photo',
+              },
+              topic: {
+                id: '6swLaA7HKE8AGI6iQuWk4y',
+                campaign: {
+                  id: 7,
+                  endDate: null,
+                  internalTitle: 'Mirror Messages Run 11',
+                },
+              },
+            },
+          };
+          break;
         case 'textPostBroadcast':
           broadcast.data = {
             broadcast: {
