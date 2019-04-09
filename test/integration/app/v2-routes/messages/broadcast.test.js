@@ -127,3 +127,79 @@ test('POST /api/v2/messages?origin=broadcast should return 200 if broadcast is s
   res.status.should.be.equal(200);
   res.body.data.messages.length.should.be.equal(1);
 });
+
+test('POST /api/v2/messages?origin=broadcast should save campaign id in outbound metadata for text post broadcasts', async (t) => {
+  const textBroadcast = stubs.graphql.getBroadcastSingleResponse('textPostBroadcast').data.broadcast;
+
+  integrationHelper.hooks.cache.broadcasts.set(
+    textBroadcast.id,
+    textBroadcast,
+  );
+  const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload(textBroadcast.id);
+
+  const reply = stubs.northstar.getUser({
+    validUsNumber: true,
+  });
+
+  integrationHelper.routes.northstar
+    .intercept.fetchUserById(cioWebhookPayload.userId, reply, 1);
+
+  /**
+   * We are using Twilio Test credentials in Wercker.
+   * When this runs on wercker we are indeed making a call to the Twilio API.
+   * But we do it with the Test credentials so its free and we are not actually
+   * sending the text.
+   */
+  const res = await t.context.request
+    .post(integrationHelper.routes.v2.messages(false, {
+      origin: 'broadcast',
+    }))
+    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
+    .send(cioWebhookPayload);
+
+  res.status.should.be.equal(200);
+  res.body.data.messages.length.should.be.equal(1);
+  res.body.data.messages[0].metadata.campaignId.should.equal(textBroadcast.action.campaignId);
+
+  // clear cache
+  // TODO: DRY
+  integrationHelper.hooks.cache.broadcasts.set(textBroadcast.id, null);
+});
+
+test('POST /api/v2/messages?origin=broadcast should save campaign id in outbound metadata for photo post broadcasts', async (t) => {
+  const textBroadcast = stubs.graphql.getBroadcastSingleResponse('textPostBroadcast').data.broadcast;
+
+  integrationHelper.hooks.cache.broadcasts.set(
+    textBroadcast.id,
+    textBroadcast,
+  );
+  const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload(textBroadcast.id);
+
+  const reply = stubs.northstar.getUser({
+    validUsNumber: true,
+  });
+
+  integrationHelper.routes.northstar
+    .intercept.fetchUserById(cioWebhookPayload.userId, reply, 1);
+
+  /**
+   * We are using Twilio Test credentials in Wercker.
+   * When this runs on wercker we are indeed making a call to the Twilio API.
+   * But we do it with the Test credentials so its free and we are not actually
+   * sending the text.
+   */
+  const res = await t.context.request
+    .post(integrationHelper.routes.v2.messages(false, {
+      origin: 'broadcast',
+    }))
+    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
+    .send(cioWebhookPayload);
+
+  res.status.should.be.equal(200);
+  res.body.data.messages.length.should.be.equal(1);
+  res.body.data.messages[0].metadata.campaignId.should.equal(textBroadcast.action.campaignId);
+
+  // clear cache
+  // TODO: DRY
+  integrationHelper.hooks.cache.broadcasts.set(textBroadcast.id, null);
+});

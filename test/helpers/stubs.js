@@ -73,27 +73,51 @@ module.exports = {
     },
   },
   graphql: {
-    getBroadcastSingleResponse: () => ({
-      data: {
-        broadcast: {
-          id: '429qioxAt2swYoMQUUymYW',
-          name: 'VoterRegistration2018_Sept24_NVRD_Staff_Test',
-          contentType: 'autoReplyBroadcast',
-          createdAt: '2018-09-24T16:29:02.299Z',
-          updatedAt: '2018-09-24T20:55:31.249Z',
-          text: "It's Tej! Happy National Voter Registration Day! Did you know 1 in 8 registrations are invalid? Don't miss out & register now. <Link>",
-          attachments: [],
-          topic: {
-            id: '6DPUt3MrTymOo4yWgUWYqk',
-            name: 'NVRD autoReply',
-            type: 'autoReply',
-            createdAt: '2018-09-24T16:30:58.210Z',
-            updatedAt: '2018-09-24T20:54:45.601Z',
-            campaign: {},
-          },
-        },
-      },
-    }),
+    getBroadcastSingleResponse: (contentType = 'autoReplyBroadcast') => {
+      const broadcast = { data: {} };
+      switch (contentType) {
+        case 'textPostBroadcast':
+          broadcast.data = {
+            broadcast: {
+              id: '1vPr1KhgVP0j8j2ZAWrKXF',
+              name: 'Prom2019_Mar25_New_FINAL',
+              contentType: 'textPostBroadcast',
+              text: 'It’s Freddie! Have a story of unfair practices at prom (like not allowing same-sex or interracial couples)? Text it back now & enter to win a scholarship!',
+              attachments: [],
+              action: {
+                id: 836,
+                name: 'default',
+                campaignId: 9004,
+                postType: 'text',
+              },
+              topic: {
+                id: '3XMMXwm4ZGXG4XDlVso68T',
+                campaign: {
+                  id: 9004,
+                  endDate: null,
+                  internalTitle: 'Mapping Prom Injustices 2019-03',
+                },
+              },
+            },
+          };
+          break;
+        default:
+          broadcast.data = {
+            broadcast: {
+              id: '429qioxAt2swYoMQUUymYW',
+              name: 'VoterRegistration2018_Sept24_NVRD_Staff_Test',
+              contentType: 'autoReplyBroadcast',
+              text: "It's Tej! Happy National Voter Registration Day! Did you know 1 in 8 registrations are invalid? Don't miss out & register now. <Link>",
+              attachments: [],
+              topic: {
+                id: '6DPUt3MrTymOo4yWgUWYqk',
+              },
+            },
+          };
+          break;
+      }
+      return broadcast;
+    },
     fetchConversationTriggers: () => ({
       data: {
         conversationTriggers: [{
@@ -136,10 +160,10 @@ module.exports = {
     };
   },
   broadcast: {
-    getCioWebhookPayload() {
+    getCioWebhookPayload(broadcastId) {
       return {
         userId: module.exports.getUserId(),
-        broadcastId: module.exports.getBroadcastId(),
+        broadcastId: broadcastId || module.exports.getBroadcastId(),
       };
     },
   },
