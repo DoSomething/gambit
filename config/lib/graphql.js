@@ -47,7 +47,6 @@ const actionFields = `
     id
     name
     campaignId
-    postType
   }
 `;
 
