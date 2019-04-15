@@ -2,6 +2,7 @@
 
 /* eslint-disable no-param-reassign */
 
+const nock = require('nock');
 const mongoose = require('mongoose');
 const supertest = require('supertest');
 
@@ -29,5 +30,8 @@ module.exports = {
     conversations: {
       removeAll: (query = {}) => Conversation.remove(query),
     },
+  },
+  interceptor: {
+    cleanAll: () => nock.cleanAll(),
   },
 };

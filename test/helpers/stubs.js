@@ -73,27 +73,102 @@ module.exports = {
     },
   },
   graphql: {
-    getBroadcastSingleResponse: () => ({
-      data: {
-        broadcast: {
-          id: '429qioxAt2swYoMQUUymYW',
-          name: 'VoterRegistration2018_Sept24_NVRD_Staff_Test',
-          contentType: 'autoReplyBroadcast',
-          createdAt: '2018-09-24T16:29:02.299Z',
-          updatedAt: '2018-09-24T20:55:31.249Z',
-          text: "It's Tej! Happy National Voter Registration Day! Did you know 1 in 8 registrations are invalid? Don't miss out & register now. <Link>",
-          attachments: [],
-          topic: {
-            id: '6DPUt3MrTymOo4yWgUWYqk',
-            name: 'NVRD autoReply',
-            type: 'autoReply',
-            createdAt: '2018-09-24T16:30:58.210Z',
-            updatedAt: '2018-09-24T20:54:45.601Z',
-            campaign: {},
-          },
-        },
-      },
-    }),
+    getBroadcastSingleResponse: (contentType = 'autoReplyBroadcast') => {
+      const broadcast = { data: {} };
+      switch (contentType) {
+        case 'askYesNo':
+          broadcast.data = {
+            broadcast: {
+              id: '4ml3uv0uuL6zsbYCzgt3P2',
+              name: 'MeritOverMoney2019_Apr2_Pending_FINAL',
+              contentType: 'askYesNo',
+              text: 'Hi it\'s Tej! I\'ll be taking over for Freddie! Before we get to know each other, wanna take your first action with me? Y or N',
+              attachments: [],
+              action: {
+                id: 859,
+                name: 'Merit Over Money Petition Action',
+                campaignId: 9013,
+                postType: 'text',
+              },
+              saidYesTopic: {
+                id: '4VYcFMPC5z6BR1xX9geVfj',
+                actionId: 859,
+                campaign: {
+                  id: 9013,
+                  endDate: null,
+                  internalTitle: 'Merit Over Money 2019-04',
+                },
+              },
+            },
+          };
+          break;
+        case 'photoPostBroadcast':
+          broadcast.data = {
+            broadcast: {
+              id: '5t2fmKd2iQgaCCy8Kgg0CI',
+              name: 'Test photoPostBroadcast - Mirror messages',
+              contentType: 'photoPostBroadcast',
+              text: 'Have you posted an inspirational quote lately? Text START to share your photo.',
+              attachments: [],
+              action: {
+                id: 501,
+                name: 'default',
+                campaignId: 7,
+                postType: 'photo',
+              },
+              topic: {
+                id: '6swLaA7HKE8AGI6iQuWk4y',
+                campaign: {
+                  id: 7,
+                  endDate: null,
+                  internalTitle: 'Mirror Messages Run 11',
+                },
+              },
+            },
+          };
+          break;
+        case 'textPostBroadcast':
+          broadcast.data = {
+            broadcast: {
+              id: '1vPr1KhgVP0j8j2ZAWrKXF',
+              name: 'Prom2019_Mar25_New_FINAL',
+              contentType: 'textPostBroadcast',
+              text: 'It’s Freddie! Have a story of unfair practices at prom (like not allowing same-sex or interracial couples)? Text it back now & enter to win a scholarship!',
+              attachments: [],
+              action: {
+                id: 836,
+                name: 'default',
+                campaignId: 9004,
+                postType: 'text',
+              },
+              topic: {
+                id: '3XMMXwm4ZGXG4XDlVso68T',
+                campaign: {
+                  id: 9004,
+                  endDate: null,
+                  internalTitle: 'Mapping Prom Injustices 2019-03',
+                },
+              },
+            },
+          };
+          break;
+        default:
+          broadcast.data = {
+            broadcast: {
+              id: '429qioxAt2swYoMQUUymYW',
+              name: 'VoterRegistration2018_Sept24_NVRD_Staff_Test',
+              contentType: 'autoReplyBroadcast',
+              text: "It's Tej! Happy National Voter Registration Day! Did you know 1 in 8 registrations are invalid? Don't miss out & register now. <Link>",
+              attachments: [],
+              topic: {
+                id: '6DPUt3MrTymOo4yWgUWYqk',
+              },
+            },
+          };
+          break;
+      }
+      return broadcast;
+    },
     fetchConversationTriggers: () => ({
       data: {
         conversationTriggers: [{
@@ -136,10 +211,10 @@ module.exports = {
     };
   },
   broadcast: {
-    getCioWebhookPayload() {
+    getCioWebhookPayload(broadcastId) {
       return {
         userId: module.exports.getUserId(),
-        broadcastId: module.exports.getBroadcastId(),
+        broadcastId: broadcastId || module.exports.getBroadcastId(),
       };
     },
   },
