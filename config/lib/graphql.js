@@ -42,6 +42,14 @@ const saidYesTopicFields = `
   }
 `;
 
+const actionFields = `
+  action {
+    id
+    name
+    campaignId
+  }
+`;
+
 /**
  * TODO: Fetch the AskMultipleChoiceBroadcastTopic choice topics to validate that they don't change
  * topic to a campaign that has ended.
@@ -56,8 +64,12 @@ const fetchBroadcastById = `
         url
       }
       contentType
+      ... on AskVotingPlanStatusBroadcastTopic {
+        ${actionFields}
+      }
       ... on AskYesNoBroadcastTopic {
         ${saidYesTopicFields}
+        ${actionFields}
       }
       ... on AutoReplyBroadcast {
         topic {
@@ -65,9 +77,11 @@ const fetchBroadcastById = `
         }
       }
       ... on PhotoPostBroadcast {
+        ${actionFields}
         ${campaignTopicFields}
       }
       ... on TextPostBroadcast {
+        ${actionFields}
         ${campaignTopicFields}
       }
     }

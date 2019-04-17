@@ -24,7 +24,12 @@ const sendOutboundMessageMiddleware = require('../../../lib/middleware/messages/
 router.use(paramsMiddleware());
 router.use(getBroadcastMiddleware());
 router.use(parseBroadcastMiddleware());
-
+/**
+ * TODO: Do not fetch user from NS once we move to use Northstar-less broadcasts.
+ * We get the userId and broadcastId from the payload sent to us by Customer.io.
+ * Once we have the subscription cache (or unsubscribed blacklist) operational, we won't
+ * have to make this round trip to Northstar for the user data.
+ */
 router.use(getUserMiddleware(getUserConfig));
 router.use(validateOutboundMessageMiddleware(outboundMessageConfig));
 

@@ -8,16 +8,14 @@ require('dotenv').config();
 
 const test = require('ava');
 const chai = require('chai');
-const nock = require('nock');
 
-const tagsHelper = require('../../../../lib/helpers/tags');
-const repliesHelper = require('../../../../lib/helpers/replies');
-const integrationHelper = require('../../../helpers/integration');
-const Message = require('../../../../app/models/Message');
-const Conversation = require('../../../../app/models/Conversation');
-const stubs = require('../../../helpers/stubs');
-const seederHelper = require('../../../helpers/integration/seeder');
-const northstarConfig = require('../../../../config/lib/northstar');
+const tagsHelper = require('../../../../../lib/helpers/tags');
+const repliesHelper = require('../../../../../lib/helpers/replies');
+const integrationHelper = require('../../../../helpers/integration');
+const Message = require('../../../../../app/models/Message');
+const Conversation = require('../../../../../app/models/Conversation');
+const stubs = require('../../../../helpers/stubs');
+const seederHelper = require('../../../../helpers/integration/seeder');
 
 const origin = 'subscriptionStatusActive';
 
@@ -33,9 +31,9 @@ test.beforeEach((t) => {
 });
 
 test.afterEach(async () => {
+  integrationHelper.hooks.interceptor.cleanAll();
   await integrationHelper.hooks.db.messages.removeAll();
   await integrationHelper.hooks.db.conversations.removeAll();
-  nock.cleanAll();
 });
 
 test.after.always(async () => {
@@ -59,15 +57,14 @@ test('POST /api/v2/messages?origin=subscriptionStatusActive without a northstarI
   res.status.should.be.equal(422);
 });
 
-test.serial('POST /api/v2/messages?origin=subscriptionStatusActive should create convo as well as an outbound welcome message for a new user', async (t) => {
+test.serial('POST /api/v2/messages?origin=subscriptionStatusActive should create conversation as well as an outbound welcome message for a new user', async (t) => {
   const user = stubs.northstar.getUser({
     validUsNumber: true,
   });
   const subscriptionStatusActiveData = repliesHelper.templates.subscriptionStatusActive();
 
-  nock(integrationHelper.routes.northstar.baseURI)
-    .get(`/users/${northstarConfig.getUserFields.id}/${stubs.getUserId()}`)
-    .reply(200, user);
+  integrationHelper.routes.northstar
+    .intercept.fetchUserById(stubs.getUserId(), user);
 
   // test
   const res = await t.context.request
@@ -87,7 +84,7 @@ test.serial('POST /api/v2/messages?origin=subscriptionStatusActive should create
   outboundMessage.text.should.be.equal(renderedText);
 });
 
-test.serial('POST /api/v2/messages?origin=subscriptionStatusActive should not create a new convo if the user has one already', async (t) => {
+test.serial('POST /api/v2/messages?origin=subscriptionStatusActive should not create a new conversation if the user has one already', async (t) => {
   await seederHelper.seed.conversations(1);
 
   const user = stubs.northstar.getUser({
@@ -95,9 +92,8 @@ test.serial('POST /api/v2/messages?origin=subscriptionStatusActive should not cr
   });
   const subscriptionStatusActiveData = repliesHelper.templates.subscriptionStatusActive();
 
-  nock(integrationHelper.routes.northstar.baseURI)
-    .get(`/users/${northstarConfig.getUserFields.id}/${stubs.getUserId()}`)
-    .reply(200, user);
+  integrationHelper.routes.northstar
+    .intercept.fetchUserById(stubs.getUserId(), user);
 
   // test
   const res = await t.context.request
@@ -119,15 +115,13 @@ test.serial('POST /api/v2/messages?origin=subscriptionStatusActive should not cr
   message.text.should.be.equal(renderedText);
 });
 
-test.serial('POST /api/v2/messages?origin=subscriptionStatusActive should not create convo if the user has no mobile', async (t) => {
+test.serial('POST /api/v2/messages?origin=subscriptionStatusActive should not create conversation if the user has no mobile', async (t) => {
   const user = stubs.northstar.getUser({
     noMobile: true,
   });
-  // const subscriptionStatusActiveData = templatesHelper.getSubscriptionStatusActive();
 
-  nock(integrationHelper.routes.northstar.baseURI)
-    .get(`/users/${northstarConfig.getUserFields.id}/${stubs.getUserId()}`)
-    .reply(200, user);
+  integrationHelper.routes.northstar
+    .intercept.fetchUserById(stubs.getUserId(), user);
 
   // test
   const res = await t.context.request
@@ -142,14 +136,13 @@ test.serial('POST /api/v2/messages?origin=subscriptionStatusActive should not cr
   should.not.exist(conversation);
 });
 
-test.serial('POST /api/v2/messages?origin=subscriptionStatusActive should not create convo if the user in unsubscribed', async (t) => {
+test.serial('POST /api/v2/messages?origin=subscriptionStatusActive should not create conversation if the user in unsubscribed', async (t) => {
   const user = stubs.northstar.getUser({
     subscription: 'undeliverable',
   });
 
-  nock(integrationHelper.routes.northstar.baseURI)
-    .get(`/users/${northstarConfig.getUserFields.id}/${stubs.getUserId()}`)
-    .reply(200, user);
+  integrationHelper.routes.northstar
+    .intercept.fetchUserById(stubs.getUserId(), user);
 
   // test
   const res = await t.context.request

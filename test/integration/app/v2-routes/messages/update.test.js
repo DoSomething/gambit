@@ -4,12 +4,11 @@ const test = require('ava');
 const chai = require('chai');
 const nock = require('nock');
 
-const integrationHelper = require('../../../helpers/integration');
-const Message = require('../../../../app/models/Message');
-const stubs = require('../../../helpers/stubs');
-const subscriptionHelper = require('../../../../config/lib/helpers/subscription');
-const seederHelper = require('../../../helpers/integration/seeder');
-const northstarConfig = require('../../../../config/lib/northstar');
+const integrationHelper = require('../../../../helpers/integration');
+const Message = require('../../../../../app/models/Message');
+const stubs = require('../../../../helpers/stubs');
+const subscriptionHelper = require('../../../../../config/lib/helpers/subscription');
+const seederHelper = require('../../../../helpers/integration/seeder');
 
 const should = chai.should();
 const expect = chai.expect;
@@ -23,9 +22,9 @@ test.beforeEach((t) => {
 });
 
 test.afterEach(async () => {
+  integrationHelper.hooks.interceptor.cleanAll();
   await integrationHelper.hooks.db.messages.removeAll();
   await integrationHelper.hooks.db.conversations.removeAll();
-  nock.cleanAll();
 });
 
 test.after.always(async () => {
@@ -62,13 +61,9 @@ test('PATCH /api/v2/messages/:id should update the message failedAt and failureD
   const { outboundMessage } = await seederHelper.seed.conversationMessages();
   const updateBody = stubs.twilio.getFailedMessageUpdate(true);
 
-  /**
-   * intercept request to get Northstar user by mobile.
-   * TODO: Should be using routes integration helper
-   */
-  nock(integrationHelper.routes.northstar.baseURI)
-    .get(`/users/${northstarConfig.getUserFields.id}/${stubs.getUserId()}`)
-    .reply(200, stubs.northstar.getUser());
+
+  integrationHelper.routes.northstar
+    .intercept.fetchUserById(stubs.getUserId(), stubs.northstar.getUser());
 
   /**
    * intercept request to update Northstar user with new undeliverable sms_status

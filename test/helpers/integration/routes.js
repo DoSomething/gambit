@@ -1,5 +1,6 @@
 'use strict';
 
+const nock = require('nock');
 const querystring = require('querystring');
 
 const northstarConfig = require('../../../config/lib/northstar');
@@ -34,8 +35,36 @@ module.exports = {
   },
   northstar: {
     baseURI: northstarConfig.clientOptions.baseURI,
+    intercept: {
+      fetchUserById: (id, reply = {}, times = 1, status = 200) =>
+        nock(module.exports.northstar.baseURI)
+          .get(`/users/id/${id}`)
+          .times(times)
+          .reply(status, reply),
+      fetchUserByEmail: (email, reply = {}, times = 1, status = 200) =>
+        nock(module.exports.northstar.baseURI)
+          .get(`/users/email/${email}`)
+          .times(times)
+          .reply(status, reply),
+      fetchUserByMobile: (mobile, reply = {}, times = 1, status = 200) =>
+        nock(module.exports.northstar.baseURI)
+          .get(`/users/mobile/${mobile}`)
+          .times(times)
+          .reply(status, reply),
+      updateUserById: (id, reply = {}, times = 1, status = 200) =>
+        nock(module.exports.northstar.baseURI)
+          .put(`/users/_id/${id}`)
+          .times(times)
+          .reply(status, reply),
+    },
   },
   graphql: {
     baseURI: graphqlConfig.clientOptions.baseURI,
+    intercept: function intercept(reply = {}, times = 1, status = 200) {
+      return nock(this.baseURI)
+        .post('/graphql')
+        .times(times)
+        .reply(status, reply);
+    },
   },
 };
