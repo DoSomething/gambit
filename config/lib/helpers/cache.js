@@ -1,6 +1,7 @@
 'use strict';
 
-const defaultTtl = 1800;
+const defaultTtl = '30m';
+const defaultLongTtl = '24h';
 
 module.exports = {
   broadcasts: {
@@ -9,7 +10,9 @@ module.exports = {
   },
   rivescript: {
     name: 'rivescript',
-    ttl: process.env.DS_GAMBIT_CONVERSATIONS_RIVESCRIPT_CACHE_TTL || 36000,
+    // 24hr default TTL
+    // GraphQL will not cache this response so we need to keep it around for longer
+    ttl: process.env.DS_GAMBIT_CONVERSATIONS_RIVESCRIPT_CACHE_TTL || defaultLongTtl,
   },
   topics: {
     name: 'topics',
@@ -18,6 +21,8 @@ module.exports = {
   webSignupConfirmations: {
     allResultsKey: 'allWebSignupConfirmations',
     name: 'webSignupConfirmations',
-    ttl: process.env.DS_GAMBIT_CONVERSATIONS_WEB_SIGNUP_CONFIRMATIONS_CACHE_TTL || defaultTtl,
+    // 24hr default TTL
+    // GraphQL will not cache this response so we need to keep it around for longer
+    ttl: process.env.DS_GAMBIT_CONVERSATIONS_WEB_SIGNUP_CONFIRMATIONS_CACHE_TTL || defaultLongTtl,
   },
 };
