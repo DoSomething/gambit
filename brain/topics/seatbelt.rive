@@ -3,17 +3,57 @@
 /**
  * Game Start keywords
  */
-+ fomo
-- Hi, I’m Tej from DoSomething! I see our flyer caught your eye. So, "90% of this generation ___________ every weekend." Answer: wears a seat belt. Yep, almost *everyone* is doing it, but the 10% who aren’t are at serious risk.\s
-^ \n\nSeatbelts may seem kinda boring, but know what isn’t? *Literally* saving someone’s life. Want super, easy effective ways to keep friends safe? Text Y.{topic=seatbelt_level1}
++ flex
+- I see our flyer caught your eye. So, "What's stretchy, flexible and clicks?" Answer: A seat belt. In 2016, the use of seat belts in passenger vehicles saved an estimated 14,668 lives of occupants ages 5 and older. Let's keep saving lives by encouraging others to use their seat belts.\s
+^ \n\nSeat belts may seem kinda boring, but know what isn't? *Literally* saving someone's life. Want super, easy effective ways to keep friends safe? Text Y.{topic=seatbelt_level1}
 
-+ hero
-- Hi, I’m Tej from DoSomething! I see our flyer caught your eye. So, "__________ saved 14,000 lives in one year."" Answer: seat belts!
-^ \n\nThese real-life superheroes are *literally* saving lives, and you can too. Want super, easy effective ways to keep friends safe? Text Y.{topic=seatbelt_level1}
++ comfy
+- I see our flyer caught your eye. Question: "What is secure like underwear but won't ride up all day?" Answer: Seat belts! Young adults (age 18-24) are less likely to wear seat belts than those in older age groups. 
+^ \n\nBeat the status quo by wearing your seat belt. Want super, easy effective ways to keep friends safe? Text Y.{topic=seatbelt_level1}
 
-+ trend
-- Hi, I’m Tej from DoSomething! I see our flyer caught your eye. So, "90% of this generation is wearing ________." The answer: seat belts! (The 10% who aren’t are at serious risk.)
-^ \n\nSeatbelts aren’t just the trend of the season -- they're *literally* saving lives, and you can too. Want super, easy effective ways to keep friends safe? Text Y.{topic=seatbelt_level1}
++ fit
+- I see our flyer caught your eye. Question: "If a _______ is too tight, that's a problem. If it's too loose that's a bigger problem. Where does size matter most?" The answer: Seat belts! The risk of injury among child passengers is significantly higher when their seat belts are loose and/or improperly positioned. Fit and size matter.
+^ \n\nSeat belts are *literally* saving lives, and you can too. Want super, easy effective ways to keep friends safe? Text Y.{topic=seatbelt_level1}
+
++ size
+- I see our flyer caught your eye. Question: "If a _______ is too tight, that's a problem. If it's too loose that's a bigger problem. Where does size matter most?" The answer: Seat belts! The risk of injury among child passengers is significantly higher when their seat belts are loose and/or improperly positioned. Fit and size matter.
+^ \n\n Seat belts are *literally* saving lives, and you can too. Want super, easy effective ways to keep friends safe? Text Y. {topic=seatbelt_level1}
+
++ style
+- I see our flyer caught your eye. Question: "Ready to serve lewks? A _______ is the summer accessory you *need*. What is it?" Answer: Wearing a seat belt in the front seat and rear seat.
+^ \n\n Seat belts are *literally* saving lives, and you can too. Want super, easy effective ways to keep friends safe in the car? Text Y. {topic=seatbelt_level1}
+
++ cash
+- I see our flyer caught your eye. Question: "Better have my money! Americans could save $48 BILLION if we all ________." Answer: wear a seat belt. (What were YOU thinking, jeez!)
+^ \n\n Want to save live AND money? If you want easy effective ways to keep friends safe in the car. Text Y. {topic=seatbelt_level1}
+
++ yikes
+- I see our flyer caught your eye. Question: "Running into your ex? Scary. _________? Even scarier." Answer: Seat belt. What were YOU thinking, jeez! ;)
+^ \n\n Seat belts may seem kinda boring, but know what isn't? *Literally* saving someone's life. Want super, easy effective ways to keep friends safe in the car? Text Y. {topic=seatbelt_level1}
+
++ usa
+- I see our flyer caught your eye. Question: "The country may feel divided. The good news is, ALL Americans are getting better at __________." Answer: Seat belt. What were YOU thinking, jeez!
+^ \n\n Seat belts may seem kinda boring, but know what isn't? *Literally* saving someone's life. Want super, easy effective ways to keep friends safe in the car? Text Y. {topic=seatbelt_level1}
+
++ mom
+- The national seat belt use rate is on the rise...up to 89.6%! Let's keep pushing and create the safest generation, starting with your friends and family.
+^ \n\n Seat belts are *literally* saving lives, and you can too. Want super, easy effective ways to keep friends safe? Text Y. {topic=seatbelt_level1}
+
++ dad
+- The national seat belt use rate is on the rise...up to 89.6%! Let's keep pushing and create the safest generation, starting with your friends and family.
+^ \n\n Seat belts are *literally* saving lives, and you can too. Want super, easy effective ways to keep friends safe? Text Y. {topic=seatbelt_level1}
+
++ faves
+- The national seat belt use rate is on the rise...up to 89.6%! Let's keep pushing and create the safest generation, starting with your friends and family.
+^ \n\n Seat belts are *literally* saving lives, and you can too. Want super, easy effective ways to keep friends safe? Text Y. {topic=seatbelt_level1}
+
++ rear
+- I see our flyer caught your eye. Question: "It's as routine as brushing your teeth but only 62% of people do it in the back." Answer: Wear a seat belt. What were YOU thinking, jeez! ;)
+^ \n\n Seat belts may seem unnecessary in the rear seat, but know what isn't? *Literally* saving someone's life. Want super, easy effective ways to keep friends safe in the car? Text Y. {topic=seatbelt_level1}
+
++ safety
+- Question: "What is secure like underwear but won't ride up all day?" Answer: Seat belts! Young adults (age 18-24) are less likely to wear seat belts than those in older age groups.
+^ \n\n Seat belts may seem unnecessary in the rear seat, but know what isn't? *Literally* saving someone's life. Want super, easy effective ways to keep friends safe in the car? Text Y. {topic=seatbelt_level1}
 
 /**
  * Level 1: Send Y
@@ -21,7 +61,7 @@
 > topic seatbelt_level1 includes random
 
 + y
-- Picture this: You're about to drive a friend home from school. They get in but they don’t put their seat belt on even after you ask them to. What do you do? A) blast *awful* music until they put it or B) hit them with cold hard facts on why wearing a seat belt is important? Text A or B.{topic=seatbelt_level2}
+- Picture this: You're about to drive a friend home from school. They get in but they don't put their seat belt on even after you ask them to. What do you do? A) blast *awful* music until they put it or B) hit them with cold hard facts on why wearing a seat belt is important? Text A or B{topic=seatbelt_level2}
 
 + [*]
 - Sorry, I didn't get that. Text Y to find out more.
@@ -34,11 +74,11 @@
 > topic seatbelt_level2 includes random
 
 + a
-- Strong choice. Put the car in park and crank "Achy Breaky Heart" by Billy Ray Cyrus (or another terrible song of your choice) until they buckle up. 
+- Strong pick. Put the car in park and crank a terrible song of your choice. Tell your friend you're not leaving until they buckle up. Sorry not sorry.
 ^ \n\nText NEXT for another tip.{topic=seatbelt_level3}
 
 + b
-- Nice. Try this: seat belts saved 14,000 lives in the US in a single year, but teenagers are least likely to wear a seat belt out of any age group. Know what’s cool? Staying alive.
+- Nice. Tell them: seat belts saved 15,000 lives in the US in a single year. Know what's cool? Staying alive.
 ^ \n\nText NEXT for another tip.{topic=seatbelt_level3}
 
 + [*]
@@ -52,7 +92,7 @@
 > topic seatbelt_level3 includes random
 
 + next
-- Leave a "Buckle up!" sticky note in the car where people will see it. Bonus points for making your sticky note more clever than that. Extra bonus points for using a terrible pun: “I TOAD you to buckle up!” - Frogs
+- Leave a "Buckle up!" sticky note in the car where passengers will see it. Bonus points for making your sticky note more clever than that. Extra bonus points for using a terrible pun: "I TOAD you to buckle up!" - Frogs
 ^ \n\nText Y for more.{topic=seatbelt_level4}
 
 + [*]
@@ -66,8 +106,8 @@
 > topic seatbelt_level4 includes random
 
 + y
-- You and your friends are headed out for the night. You and two others jump in the backseat, and you realize they didn't buckle up. 91% of people wear seat belts in the front seat, but only 72% do in the back... even though it could save someone's life.
-^ \n\nDo you:\na) use Kanye to keep them safe or\nb) spout movie trivia with a purpose?{topic=seatbelt_level5}
+- When your ride arrives, you and two friends jump in the backseat, and you realize they didn't buckle up. 91% of people wear seat belts in the front seat, but only 62% do in the back. People often think they're safer in the backseat, but don't realize that during an accident, unbelted backseat passengers can fly forward and injure people in the front.
+^ \n\nDo you: a) use Kanye to keep them safe or b) spout movie trivia with a purpose? Text A or B{topic=seatbelt_level5}
 
 + [*]
 - Sorry, I didn't get that. Text Y for more.
@@ -80,7 +120,7 @@
 > topic seatbelt_level5 includes random
 
 + a
-- If your friends won't put on their seat belt, tell them that even Kanye wears one. Quote his song "Through the Wire": "You would know how Mase felt / Thank God I ain’t too cool for the safe belt." Huh!
+- If your friends won't put on their seat belt, tell them that even Kanye wears one. Quote his song "Through the Wire": "You would know how Mase felt / Thank God I ain't too cool for the safe belt." Huh!
 ^\n\nText Y for more.{topic=seatbelt_level6}
 
 + b
@@ -114,7 +154,7 @@
 
 + y
 - Another distraction: cell phones. Everyone knows texting and driving is dangerous and dumb, but 666,000 drivers are doing it...literally at this moment!
-^ \n\nCreate a "no phone zone." When you get in the car, put your phone in the glove compartment and don't take it out until you reach your destination. Or if a friend is in the car, make them your personal assistant: Get a text? Tell them what to say. Need a photo? They’ll be happy to take one of you...after all, you *are* giving them a ride.
+^ \n\nCreate a "no phone zone." When you get in the car, put your phone in the glove compartment and don't take it out until you reach your destination. Or if a friend is in the car, make them your personal assistant: Get a text? Tell them what to say. Need a photo? They'll be happy to take one of you...after all, you *are* giving them a ride.
 ^ \n\nText NEXT for something you can do IRL.{topic=seatbelt_completed}
 
 + [*]
@@ -128,7 +168,7 @@
 > topic seatbelt_completed includes random
 
 + next
-- Want to help others keep their friends and family safe? Lead them through a game of Ride & Seek by texting SEEK to 38383. There, you can create flyers with fill-in-the-blank questions. When friends text in for the answer, they’ll get tips to help them *literally* save people's lives. You’ll also have the chance to be famed on our Facebook page and the chance to win a $5,000 scholarship!{topic=random}
+- Now that you're a seat belt safety expert, want a fun and creative way to pass the knowledge on to your friends and family? Text SEEK to get started. {topic=random}
 
 + [*]
 - Sorry, I didn't get that. Text NEXT for something you can do IRL.
