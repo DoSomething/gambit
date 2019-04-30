@@ -1,0 +1,177 @@
+// seatbelt.rive
+
+/**
+ * Game Start keywords
+ */
++ flex
+- I see our flyer caught your eye. So, "What's stretchy, flexible and clicks?" Answer: A seat belt. In 2016, the use of seat belts in passenger vehicles saved an estimated 14,668 lives of occupants ages 5 and older. Let's keep saving lives by encouraging others to use their seat belts.\s
+^ \n\nSeat belts may seem kinda boring, but know what isn't? *Literally* saving someone's life. Want super, easy effective ways to keep friends safe? Text Y.{topic=seatbelt_level1}
+
++ comfy
+- I see our flyer caught your eye. Question: "What is secure like underwear but won't ride up all day?" Answer: Seat belts! Young adults (age 18-24) are less likely to wear seat belts than those in older age groups. 
+^ \n\nBeat the status quo by wearing your seat belt. Want super, easy effective ways to keep friends safe? Text Y.{topic=seatbelt_level1}
+
++ fit
+- I see our flyer caught your eye. Question: "If a _______ is too tight, that's a problem. If it's too loose that's a bigger problem. Where does size matter most?" The answer: Seat belts! The risk of injury among child passengers is significantly higher when their seat belts are loose and/or improperly positioned. Fit and size matter.
+^ \n\nSeat belts are *literally* saving lives, and you can too. Want super, easy effective ways to keep friends safe? Text Y.{topic=seatbelt_level1}
+
++ size
+- I see our flyer caught your eye. Question: "If a _______ is too tight, that's a problem. If it's too loose that's a bigger problem. Where does size matter most?" The answer: Seat belts! The risk of injury among child passengers is significantly higher when their seat belts are loose and/or improperly positioned. Fit and size matter.
+^ \n\n Seat belts are *literally* saving lives, and you can too. Want super, easy effective ways to keep friends safe? Text Y. {topic=seatbelt_level1}
+
++ style
+- I see our flyer caught your eye. Question: "Ready to serve lewks? A _______ is the summer accessory you *need*. What is it?" Answer: Wearing a seat belt in the front seat and rear seat.
+^ \n\n Seat belts are *literally* saving lives, and you can too. Want super, easy effective ways to keep friends safe in the car? Text Y. {topic=seatbelt_level1}
+
++ cash
+- I see our flyer caught your eye. Question: “Better have my money! Americans could save $48 BILLION if we all ________.” Answer: wore a seat belt. (What were YOU thinking, jeez!)
+^ \n\n Want to save live AND money? If you want easy effective ways to keep friends safe in the car. Text Y. {topic=seatbelt_level1}
+
++ yikes
+- I see our flyer caught your eye. Question: "Running into your ex? Scary. _________? Even scarier." Answer: Not wearing a seat belt. What were YOU thinking, jeez! ;)
+^ \n\n Seat belts may seem kinda boring, but know what isn't? *Literally* saving someone's life. Want super, easy effective ways to keep friends safe in the car? Text Y. {topic=seatbelt_level1}
+
++ usa
+- I see our flyer caught your eye. Question: “The country may feel divided. The good news is, ALL Americans are getting better at __________.” Answer: Wearing a seat belt. What were YOU thinking, jeez!
+^ \n\n Seat belts may seem kinda boring, but know what isn’t? *Literally* saving someone’s life. Want super, easy effective ways to keep friends safe in the car? Text Y. {topic=seatbelt_level1}
+
++ mom
+- The national seat belt use rate is on the rise...up to 89.6%! Let's keep pushing and create the safest generation, starting with your friends and family.
+^ \n\n Seat belts are *literally* saving lives, and you can too. Want super, easy effective ways to keep friends safe? Text Y. {topic=seatbelt_level1}
+
++ dad
+- The national seat belt use rate is on the rise...up to 89.6%! Let's keep pushing and create the safest generation, starting with your friends and family.
+^ \n\n Seat belts are *literally* saving lives, and you can too. Want super, easy effective ways to keep friends safe? Text Y. {topic=seatbelt_level1}
+
++ faves
+- The national seat belt use rate is on the rise...up to 89.6%! Let's keep pushing and create the safest generation, starting with your friends and family.
+^ \n\n Seat belts are *literally* saving lives, and you can too. Want super, easy effective ways to keep friends safe? Text Y. {topic=seatbelt_level1}
+
++ rear
+- I see our flyer caught your eye. Question: "It's as routine as brushing your teeth but only 62% of people do it in the back." Answer: Wear a seat belt. What were YOU thinking, jeez! ;)
+^ \n\n Seat belts may seem unnecessary in the rear seat, but know what isn't? *Literally* saving someone's life. Want super, easy effective ways to keep friends safe in the car? Text Y. {topic=seatbelt_level1}
+
++ safety
+- Question: “What is secure like underwear but won’t ride up all day?” Answer: Seat belts! Young adults (age 18-24) are less likely to wear seat belts than those in older age groups, but they keep you secure in your vehicle, so buckle up!
+^ \n\n Seat belts are saving lives everyday! Want super, easy effective ways to keep friends safe in the car? Text Y. {topic=seatbelt_level1}
+
+/**
+ * Level 1: Send Y
+ */
+> topic seatbelt_level1 includes random
+
++ y
+- Picture this: You’re about to drive a friend home from school. They get in but they don’t put their seat belt on even after you ask them to. What do you do? A) blast *awful* music until they put it on or B) hit them with cold hard facts on why wearing a seat belt is important?
+^ \n\nText A or B {topic=seatbelt_level2}
+
++ [*]
+- Sorry, I didn't get that. Text Y to find out more.
+
+< topic
+
+/**
+ * Level 2: Send A or B
+ */
+> topic seatbelt_level2 includes random
+
++ a
+- Strong pick. Put the car in park and crank a terrible song of your choice. Tell your friend you're not leaving until they buckle up. Sorry not sorry.
+^ \n\nText NEXT for another tip.{topic=seatbelt_level3}
+
++ b
+- Nice. Tell them: seat belts saved 15,000 lives in the US in a single year. Know what's cool? Staying alive.
+^ \n\nText NEXT for another tip.{topic=seatbelt_level3}
+
++ [*]
+- Sorry, I didn't get that. Text A or B.
+
+< topic
+
+/**
+ * Level 3: Send NEXT
+ */
+> topic seatbelt_level3 includes random
+
++ next
+- Leave a "Buckle up!" sticky note in the car where passengers will see it. Bonus points for making your sticky note more clever than that. Extra bonus points for using a terrible pun: "I TOAD you to buckle up!" - Frogs
+^ \n\nText Y for more.{topic=seatbelt_level4}
+
++ [*]
+- Sorry, I didn't get that. Text NEXT for another tip.
+
+< topic
+
+/**
+ * Level 4: Send Y
+ */
+> topic seatbelt_level4 includes random
+
++ y
+- When your ride arrives, you and two friends jump in the backseat, and you realize they didn't buckle up. 91% of people wear seat belts in the front seat, but only 62% do in the back. People often think they're safer in the backseat, but don't realize that during an accident, unbelted backseat passengers can fly forward and injure people in the front.
+^ \n\nDo you: a) use Kanye to keep them safe or b) spout movie trivia with a purpose? Text A or B{topic=seatbelt_level5}
+
++ [*]
+- Sorry, I didn't get that. Text Y for more.
+
+< topic
+
+/**
+ * Level 5: Send A or B
+ */
+> topic seatbelt_level5 includes random
+
++ a
+- If your friends won't put on their seat belt, tell them that even Kanye wears one. Quote his song "Through the Wire": "You would know how Mase felt / Thank God I ain't too cool for the safe belt." Huh!
+^\n\nText Y for more.{topic=seatbelt_level6}
+
++ b
+- Tell them this true tale. On the set of "The Fast and the Furious," Vin Diesel accidentally broke a stuntman's nose when the guy wasn't wearing his seat belt. If stuntmen need to buckle up, all of us should too.
+^\n\nText Y for more.{topic=seatbelt_level6}
+
++ [*]
+- Sorry, I didn't get that. Text A or B.
+
+< topic
+
+/**
+ * Level 6: Send Y
+ */
+> topic seatbelt_level6 includes random
+
++ y
+- Reminding your friends to wear a seat belt is a great way to keep them safe. Want another way? Learn how to cut out distractions, like your radio.
+^ \n\nHere's how: Make your DJ set *before* you leave the house. Cue up your playlist before you leave so you won't be tempted to switch the song while driving.
+^ \n\nText Y for the last tip.{topic=seatbelt_level7}
+
++ [*]
+- Sorry, I didn't get that. Text Y for more.
+
+< topic
+
+/**
+ * Level 7: Send NEXT
+ */
+> topic seatbelt_level7 includes random
+
++ y
+- Another distraction: cell phones. Everyone knows texting and driving is dangerous and dumb, but 666,000 drivers are doing it...literally at this moment!
+^ \n\nCreate a "no phone zone." When you get in the car, put your phone in the glove compartment and don't take it out until you reach your destination. Or if a friend is in the car, make them your personal assistant: Get a text? Tell them what to say. Need a photo? They'll be happy to take one of you...after all, you *are* giving them a ride.
+^ \n\nText NEXT for something you can do IRL.{topic=seatbelt_completed}
+
++ [*]
+- Sorry, I didn't get that. Text Y for the last tip.
+
+< topic
+
+/**
+ * Final boss: Send NEXT
+ */
+> topic seatbelt_completed includes random
+
++ next
+- Now that you're a seat belt safety expert, want a fun and creative way to pass the knowledge on to your friends and family? Text SEEK to get started. {topic=random}
+
++ [*]
+- Sorry, I didn't get that. Text NEXT for something you can do IRL.
+
+< topic
