@@ -24,7 +24,7 @@
 ^ \n\n Seat belts are *literally* saving lives, and you can too. Want super, easy effective ways to keep friends safe in the car? Text Y. {topic=seatbelt_level1}
 
 + cash
-- I see our flyer caught your eye. Question: "Better have my money! Americans could save $48 BILLION if we all ________." Answer: wear a seat belt. (What were YOU thinking, jeez!)
+- I see our flyer caught your eye. Question: “Better have my money! Americans could save $48 BILLION if we all ________.” Answer: wore a seat belt. (What were YOU thinking, jeez!)
 ^ \n\n Want to save live AND money? If you want easy effective ways to keep friends safe in the car. Text Y. {topic=seatbelt_level1}
 
 + yikes
@@ -32,8 +32,8 @@
 ^ \n\n Seat belts may seem kinda boring, but know what isn't? *Literally* saving someone's life. Want super, easy effective ways to keep friends safe in the car? Text Y. {topic=seatbelt_level1}
 
 + usa
-- I see our flyer caught your eye. Question: "The country may feel divided. The good news is, ALL Americans are getting better at __________." Answer: Seat belt. What were YOU thinking, jeez!
-^ \n\n Seat belts may seem kinda boring, but know what isn't? *Literally* saving someone's life. Want super, easy effective ways to keep friends safe in the car? Text Y. {topic=seatbelt_level1}
+- I see our flyer caught your eye. Question: “The country may feel divided. The good news is, ALL Americans are getting better at __________.” Answer: Wearing a seat belt. What were YOU thinking, jeez!
+^ \n\n Seat belts may seem kinda boring, but know what isn’t? *Literally* saving someone’s life. Want super, easy effective ways to keep friends safe in the car? Text Y. {topic=seatbelt_level1}
 
 + mom
 - The national seat belt use rate is on the rise...up to 89.6%! Let's keep pushing and create the safest generation, starting with your friends and family.
@@ -52,8 +52,8 @@
 ^ \n\n Seat belts may seem unnecessary in the rear seat, but know what isn't? *Literally* saving someone's life. Want super, easy effective ways to keep friends safe in the car? Text Y. {topic=seatbelt_level1}
 
 + safety
-- Question: "What is secure like underwear but won't ride up all day?" Answer: Seat belts! Young adults (age 18-24) are less likely to wear seat belts than those in older age groups.
-^ \n\n Seat belts may seem unnecessary in the rear seat, but know what isn't? *Literally* saving someone's life. Want super, easy effective ways to keep friends safe in the car? Text Y. {topic=seatbelt_level1}
+- Question: “What is secure like underwear but won’t ride up all day?” Answer: Seat belts! Young adults (age 18-24) are less likely to wear seat belts than those in older age groups, but they keep you secure in your vehicle, so buckle up!
+^ \n\n Seat belts are saving lives everyday! Want super, easy effective ways to keep friends safe in the car? Text Y. {topic=seatbelt_level1}
 
 /**
  * Level 1: Send Y
@@ -61,7 +61,8 @@
 > topic seatbelt_level1 includes random
 
 + y
-- Picture this: You're about to drive a friend home from school. They get in but they don't put their seat belt on even after you ask them to. What do you do? A) blast *awful* music until they put it or B) hit them with cold hard facts on why wearing a seat belt is important? Text A or B{topic=seatbelt_level2}
+- Picture this: You’re about to drive a friend home from school. They get in but they don’t put their seat belt on even after you ask them to. What do you do? A) blast *awful* music until they put it on or B) hit them with cold hard facts on why wearing a seat belt is important?
+^ \n\nText A or B {topic=seatbelt_level2}
 
 + [*]
 - Sorry, I didn't get that. Text Y to find out more.
