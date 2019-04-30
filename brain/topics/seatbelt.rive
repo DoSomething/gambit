@@ -61,7 +61,7 @@
 > topic seatbelt_level1 includes random
 
 + y
-- Picture this: You’re about to drive a friend home from school. They get in but they don’t put their seat belt on even after you ask them to. What do you do? A) blast *awful* music until they put it or B) hit them with cold hard facts on why wearing a seat belt is important?
+- Picture this: You’re about to drive a friend home from school. They get in but they don’t put their seat belt on even after you ask them to. What do you do? A) blast *awful* music until they put it on or B) hit them with cold hard facts on why wearing a seat belt is important?
 ^ \n\nText A or B {topic=seatbelt_level2}
 
 + [*]
