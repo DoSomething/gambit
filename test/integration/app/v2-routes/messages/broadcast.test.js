@@ -5,7 +5,7 @@ const chai = require('chai');
 
 const integrationHelper = require('../../../../helpers/integration');
 const stubs = require('../../../../helpers/stubs');
-
+const messageFactory = require('../../../../helpers/factories/message');
 /**
  * We are using Twilio Test credentials in Wercker.
  * When this runs on wercker we are indeed making a call to the Twilio API.
@@ -252,4 +252,35 @@ test('POST /api/v2/messages?origin=broadcast should save broadcast id in outboun
   // clear cache
   // TODO: DRY
   integrationHelper.hooks.cache.broadcasts.set(cioWebhookPayload.broadcastId, null);
+});
+
+test('POST /api/v2/messages?origin=twilio outbound message should match sendInfoMessage if user texts INFO or HELP', async (t) => {
+  // const askYesNoBroadcast = stubs.graphql.getBroadcastSingleResponse('askYesNo').data.broadcast;
+
+  // integrationHelper.hooks.cache.broadcasts.set(
+  //   askYesNoBroadcast.id,
+  //   askYesNoBroadcast,
+  // );
+  // const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload(askYesNoBroadcast.id);
+  // const reply = stubs.northstar.getUser({
+  //   validUsNumber: true,
+  // });
+  const message = messageFactory.getRawMessageData('inbound', 'info');
+  // integrationHelper.routes.northstar
+  //   .intercept.fetchUserById(cioWebhookPayload.userId, reply, 1);
+
+  const res = await t.context.request
+    .post(integrationHelper.routes.v2.messages(false, {
+      origin: 'twilio',
+    }))
+    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
+    .send(message);
+
+  res.status.should.be.equal(200);
+  // res.body.data.messages.length.should.be.equal(1);
+  // res.body.data.messages[0].broadcastId.should.equal(cioWebhookPayload.broadcastId);
+
+  // clear cache
+  // TODO: DRY
+  // integrationHelper.hooks.cache.broadcasts.set(cioWebhookPayload.broadcastId, null);
 });

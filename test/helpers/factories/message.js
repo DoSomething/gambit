@@ -4,14 +4,14 @@ const ObjectID = require('mongoose').Types.ObjectId;
 const Message = require('../../../app/models/Message');
 const stubs = require('../stubs');
 
-module.exports.getRawMessageData = function getRawMessageData(direction) {
+module.exports.getRawMessageData = function getRawMessageData(direction, text) {
   const id = new ObjectID();
   const date = new Date();
   return {
     _id: id,
     createdAt: date,
     updatedAt: date,
-    text: stubs.getRandomMessageText(),
+    text: text || stubs.getRandomMessageText(),
     direction: direction || 'inbound',
     template: stubs.getTemplate(),
     broadcastId: stubs.getBroadcastId(),
