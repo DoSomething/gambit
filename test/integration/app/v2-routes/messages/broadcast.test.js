@@ -222,3 +222,34 @@ test('POST /api/v2/messages?origin=broadcast should save campaign id in outbound
   // TODO: DRY
   integrationHelper.hooks.cache.broadcasts.set(askYesNoBroadcast.id, null);
 });
+
+test('POST /api/v2/messages?origin=broadcast should save broadcast id in outbound data for ask yes no broadcasts', async (t) => {
+  const askYesNoBroadcast = stubs.graphql.getBroadcastSingleResponse('askYesNo').data.broadcast;
+
+  integrationHelper.hooks.cache.broadcasts.set(
+    askYesNoBroadcast.id,
+    askYesNoBroadcast,
+  );
+  const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload(askYesNoBroadcast.id);
+  const reply = stubs.northstar.getUser({
+    validUsNumber: true,
+  });
+
+  integrationHelper.routes.northstar
+    .intercept.fetchUserById(cioWebhookPayload.userId, reply, 1);
+
+  const res = await t.context.request
+    .post(integrationHelper.routes.v2.messages(false, {
+      origin: 'broadcast',
+    }))
+    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
+    .send(cioWebhookPayload);
+
+  res.status.should.be.equal(200);
+  res.body.data.messages.length.should.be.equal(1);
+  res.body.data.messages[0].broadcastId.should.equal(cioWebhookPayload.broadcastId);
+
+  // clear cache
+  // TODO: DRY
+  integrationHelper.hooks.cache.broadcasts.set(cioWebhookPayload.broadcastId, null);
+});
