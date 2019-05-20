@@ -2,7 +2,7 @@
 
 const test = require('ava');
 const chai = require('chai');
-const inspect = require('util').inspect;
+
 const integrationHelper = require('../../../../helpers/integration');
 const stubs = require('../../../../helpers/stubs');
 
@@ -244,6 +244,7 @@ test('POST /api/v2/messages?origin=broadcast should save broadcast id in outboun
     }))
     .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
     .send(cioWebhookPayload);
+
   res.status.should.be.equal(200);
   res.body.data.messages.length.should.be.equal(1);
   res.body.data.messages[0].broadcastId.should.equal(cioWebhookPayload.broadcastId);
