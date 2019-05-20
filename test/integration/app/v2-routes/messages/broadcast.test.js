@@ -254,39 +254,3 @@ test('POST /api/v2/messages?origin=broadcast should save broadcast id in outboun
   integrationHelper.hooks.cache.broadcasts.set(cioWebhookPayload.broadcastId, null);
 });
 
-test('POST /api/v2/messages?origin=twilio outbound message should match sendInfoMessage if user texts INFO', async (t) => {
-  const message = {
-    getSmsMessageSid: stubs.twilio.getSmsMessageSid(),
-    From: stubs.getMobileNumber('valid'),
-    Body: 'info',
-  };
-
-  const res = await t.context.request
-    .post(integrationHelper.routes.v2.messages(false, {
-      origin: 'twilio',
-    }))
-    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
-    .send(message);
-  res.status.should.be.equal(200);
-  res.body.data.messages.outbound[0].text.should.equal('These are Do Something Alerts - 4 messages/mo. Info help@dosomething.org or https://dosome.click/zt6mc. Txt STOP to quit. Msg&Data Rates May Apply.');
-  res.body.data.messages.inbound[0].topic.should.equal(res.body.data.messages.outbound[0].topic);
-});
-
-test('POST /api/v2/messages?origin=twilio outbound message should match sendInfoMessage if user texts HELP', async (t) => {
-  const message = {
-    getSmsMessageSid: stubs.twilio.getSmsMessageSid(),
-    From: stubs.getMobileNumber('valid'),
-    Body: 'help',
-  };
-
-  const res = await t.context.request
-    .post(integrationHelper.routes.v2.messages(false, {
-      origin: 'twilio',
-    }))
-    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
-    .send(message);
-
-  res.status.should.be.equal(200);
-  res.body.data.messages.outbound[0].text.should.equal('These are Do Something Alerts - 4 messages/mo. Info help@dosomething.org or https://dosome.click/zt6mc. Txt STOP to quit. Msg&Data Rates May Apply.');
-  res.body.data.messages.inbound[0].topic.should.equal(res.body.data.messages.outbound[0].topic);
-});
