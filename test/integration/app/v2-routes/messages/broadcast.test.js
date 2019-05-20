@@ -2,10 +2,10 @@
 
 const test = require('ava');
 const chai = require('chai');
-
+const inspect = require('util').inspect;
 const integrationHelper = require('../../../../helpers/integration');
 const stubs = require('../../../../helpers/stubs');
-const messageFactory = require('../../../../helpers/factories/message');
+
 /**
  * We are using Twilio Test credentials in Wercker.
  * When this runs on wercker we are indeed making a call to the Twilio API.
@@ -244,7 +244,6 @@ test('POST /api/v2/messages?origin=broadcast should save broadcast id in outboun
     }))
     .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
     .send(cioWebhookPayload);
-
   res.status.should.be.equal(200);
   res.body.data.messages.length.should.be.equal(1);
   res.body.data.messages[0].broadcastId.should.equal(cioWebhookPayload.broadcastId);
@@ -254,20 +253,12 @@ test('POST /api/v2/messages?origin=broadcast should save broadcast id in outboun
   integrationHelper.hooks.cache.broadcasts.set(cioWebhookPayload.broadcastId, null);
 });
 
-test('POST /api/v2/messages?origin=twilio outbound message should match sendInfoMessage if user texts INFO or HELP', async (t) => {
-  // const askYesNoBroadcast = stubs.graphql.getBroadcastSingleResponse('askYesNo').data.broadcast;
-
-  // integrationHelper.hooks.cache.broadcasts.set(
-  //   askYesNoBroadcast.id,
-  //   askYesNoBroadcast,
-  // );
-  // const cioWebhookPayload = stubs.broadcast.getCioWebhookPayload(askYesNoBroadcast.id);
-  // const reply = stubs.northstar.getUser({
-  //   validUsNumber: true,
-  // });
-  const message = messageFactory.getRawMessageData('inbound', 'info');
-  // integrationHelper.routes.northstar
-  //   .intercept.fetchUserById(cioWebhookPayload.userId, reply, 1);
+test('POST /api/v2/messages?origin=twilio outbound message should match sendInfoMessage if user texts INFO', async (t) => {
+  const message = {
+    getSmsMessageSid: stubs.twilio.getSmsMessageSid(),
+    From: stubs.getMobileNumber('valid'),
+    Body: "info",
+  };
 
   const res = await t.context.request
     .post(integrationHelper.routes.v2.messages(false, {
@@ -277,10 +268,23 @@ test('POST /api/v2/messages?origin=twilio outbound message should match sendInfo
     .send(message);
 
   res.status.should.be.equal(200);
-  // res.body.data.messages.length.should.be.equal(1);
-  // res.body.data.messages[0].broadcastId.should.equal(cioWebhookPayload.broadcastId);
+  res.body.data.messages.outbound[0].text.should.equal('These are Do Something Alerts - 4 messages/mo. Info help@dosomething.org or https://dosome.click/zt6mc. Txt STOP to quit. Msg&Data Rates May Apply.');
+});
 
-  // clear cache
-  // TODO: DRY
-  // integrationHelper.hooks.cache.broadcasts.set(cioWebhookPayload.broadcastId, null);
+test('POST /api/v2/messages?origin=twilio outbound message should match sendInfoMessage if user texts HELP', async (t) => {
+  const message = {
+    getSmsMessageSid: stubs.twilio.getSmsMessageSid(),
+    From: stubs.getMobileNumber('valid'),
+    Body: "help",
+  };
+
+  const res = await t.context.request
+    .post(integrationHelper.routes.v2.messages(false, {
+      origin: 'twilio',
+    }))
+    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
+    .send(message);
+
+  res.status.should.be.equal(200);
+  res.body.data.messages.outbound[0].text.should.equal('These are Do Something Alerts - 4 messages/mo. Info help@dosomething.org or https://dosome.click/zt6mc. Txt STOP to quit. Msg&Data Rates May Apply.');
 });
