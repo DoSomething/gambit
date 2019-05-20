@@ -258,7 +258,7 @@ test('POST /api/v2/messages?origin=twilio outbound message should match sendInfo
   const message = {
     getSmsMessageSid: stubs.twilio.getSmsMessageSid(),
     From: stubs.getMobileNumber('valid'),
-    Body: "info",
+    Body: 'info',
   };
 
   const res = await t.context.request
@@ -276,7 +276,7 @@ test('POST /api/v2/messages?origin=twilio outbound message should match sendInfo
   const message = {
     getSmsMessageSid: stubs.twilio.getSmsMessageSid(),
     From: stubs.getMobileNumber('valid'),
-    Body: "help",
+    Body: 'help',
   };
 
   const res = await t.context.request
