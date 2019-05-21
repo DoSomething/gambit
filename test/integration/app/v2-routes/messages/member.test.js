@@ -112,6 +112,12 @@ test('POST /api/v2/messages?origin=twilio outbound message should match sendInfo
     From: stubs.getMobileNumber('valid'),
     Body: 'info',
   };
+  const reply = stubs.northstar.getUser({
+    validUsNumber: true,
+  });
+
+  integrationHelper.routes.northstar
+    .intercept.fetchUserById(stubs.getUserId(), reply, 1);
 
   const res = await t.context.request
     .post(integrationHelper.routes.v2.messages(false, {

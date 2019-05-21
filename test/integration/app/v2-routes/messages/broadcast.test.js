@@ -253,4 +253,3 @@ test('POST /api/v2/messages?origin=broadcast should save broadcast id in outboun
   // TODO: DRY
   integrationHelper.hooks.cache.broadcasts.set(cioWebhookPayload.broadcastId, null);
 });
-
