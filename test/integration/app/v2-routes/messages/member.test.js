@@ -2,6 +2,7 @@
 
 const test = require('ava');
 const chai = require('chai');
+const inspect = require('util').inspect;
 
 const integrationHelper = require('../../../../helpers/integration');
 const stubs = require('../../../../helpers/stubs');
@@ -126,9 +127,15 @@ test('POST /api/v2/messages?origin=twilio outbound message should match sendInfo
 test('POST /api/v2/messages?origin=twilio outbound message should match sendInfoMessage if user texts HELP', async (t) => {
   const message = {
     getSmsMessageSid: stubs.twilio.getSmsMessageSid(),
-    From: stubs.getMobileNumber('valid'),
+    From: stubs.getMobileNumber(true),
     Body: 'help',
   };
+  const reply = stubs.northstar.getUser({
+    validUsNumber: true,
+  });
+
+  integrationHelper.routes.northstar
+    .intercept.fetchUserById(stubs.getUserId(), reply, 1);
 
   const res = await t.context.request
     .post(integrationHelper.routes.v2.messages(false, {
