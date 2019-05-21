@@ -112,12 +112,20 @@ test('POST /api/v2/messages?origin=twilio outbound message should match sendInfo
     From: stubs.getMobileNumber('valid'),
     Body: 'info',
   };
-  const reply = stubs.northstar.getUser({
+  const member = stubs.northstar.getUser({
     validUsNumber: true,
   });
 
+  integrationHelper.routes.graphql
+    .intercept(stubs.graphql.fetchConversationTriggers(), 1);
+
+  // mock user fetch
   integrationHelper.routes.northstar
-    .intercept.fetchUserById(stubs.getUserId(), reply, 1);
+    .intercept.fetchUserByMobile(message.From, member, 1);
+
+  // mock user update
+  integrationHelper.routes.northstar
+    .intercept.updateUserById(member.data.id, member, 1);
 
   const res = await t.context.request
     .post(integrationHelper.routes.v2.messages(false, {
@@ -133,15 +141,23 @@ test('POST /api/v2/messages?origin=twilio outbound message should match sendInfo
 test('POST /api/v2/messages?origin=twilio outbound message should match sendInfoMessage if user texts HELP', async (t) => {
   const message = {
     getSmsMessageSid: stubs.twilio.getSmsMessageSid(),
-    From: stubs.getMobileNumber(true),
+    From: stubs.getMobileNumber('valid'),
     Body: 'help',
   };
-  const reply = stubs.northstar.getUser({
+  const member = stubs.northstar.getUser({
     validUsNumber: true,
   });
 
+  integrationHelper.routes.graphql
+    .intercept(stubs.graphql.fetchConversationTriggers(), 1);
+
+  // mock user fetch
   integrationHelper.routes.northstar
-    .intercept.fetchUserById(stubs.getUserId(), reply, 1);
+    .intercept.fetchUserByMobile(message.From, member, 1);
+
+  // mock user update
+  integrationHelper.routes.northstar
+    .intercept.updateUserById(member.data.id, member, 1);
 
   const res = await t.context.request
     .post(integrationHelper.routes.v2.messages(false, {
@@ -149,7 +165,6 @@ test('POST /api/v2/messages?origin=twilio outbound message should match sendInfo
     }))
     .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
     .send(message);
-
   res.status.should.be.equal(200);
   res.body.data.messages.outbound[0].text.should.equal('These are Do Something Alerts - 4 messages/mo. Info help@dosomething.org or https://dosome.click/zt6mc. Txt STOP to quit. Msg&Data Rates May Apply.');
   res.body.data.messages.inbound[0].topic.should.equal(res.body.data.messages.outbound[0].topic);
