@@ -126,6 +126,9 @@ test('POST /api/v2/messages?origin=twilio outbound message should match sendInfo
   integrationHelper.routes.northstar
     .intercept.updateUserById(member.data.id, member, 1);
 
+  integrationHelper.routes.northstar
+    .intercept.fetchUserById(stubs.getUserId(), member, 1);
+
   const res = await t.context.request
     .post(integrationHelper.routes.v2.messages(false, {
       origin: 'twilio',
@@ -157,6 +160,9 @@ test('POST /api/v2/messages?origin=twilio outbound message should match sendInfo
   // mock user update
   integrationHelper.routes.northstar
     .intercept.updateUserById(member.data.id, member, 1);
+
+  integrationHelper.routes.northstar
+    .intercept.fetchUserById(stubs.getUserId(), member, 1);
 
   const res = await t.context.request
     .post(integrationHelper.routes.v2.messages(false, {
