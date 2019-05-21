@@ -2,7 +2,6 @@
 
 const test = require('ava');
 const chai = require('chai');
-const inspect = require('util').inspect;
 
 const integrationHelper = require('../../../../helpers/integration');
 const stubs = require('../../../../helpers/stubs');
