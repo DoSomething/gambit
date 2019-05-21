@@ -1,5 +1,5 @@
 'use strict';
 
 module.exports = {
-  shouldSendErrorIfNotFound: true,
+  shouldSendErrorIfNotFound: false,
 };
