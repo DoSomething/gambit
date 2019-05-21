@@ -32,6 +32,26 @@ test.after.always(async () => {
   await integrationHelper.hooks.db.disconnect();
 });
 
+function mockExternalCallsForUserInputMessage(message) {
+  const member = stubs.northstar.getUser({
+    validUsNumber: true,
+  });
+
+  integrationHelper.routes.graphql
+    .intercept(stubs.graphql.fetchConversationTriggers(), 1);
+
+  // mock user fetch
+  integrationHelper.routes.northstar
+    .intercept.fetchUserByMobile(message.From, member, 1);
+
+  // mock user update
+  integrationHelper.routes.northstar
+    .intercept.updateUserById(member.data.id, member, 1);
+
+  integrationHelper.routes.northstar
+    .intercept.fetchUserById(stubs.getUserId(), member, 1);
+}
+
 /**
  * GET /
  */
@@ -111,23 +131,8 @@ test('POST /api/v2/messages?origin=twilio outbound message should match sendInfo
     From: stubs.getMobileNumber('valid'),
     Body: 'info',
   };
-  const member = stubs.northstar.getUser({
-    validUsNumber: true,
-  });
 
-  integrationHelper.routes.graphql
-    .intercept(stubs.graphql.fetchConversationTriggers(), 1);
-
-  // mock user fetch
-  integrationHelper.routes.northstar
-    .intercept.fetchUserByMobile(message.From, member, 1);
-
-  // mock user update
-  integrationHelper.routes.northstar
-    .intercept.updateUserById(member.data.id, member, 1);
-
-  integrationHelper.routes.northstar
-    .intercept.fetchUserById(stubs.getUserId(), member, 1);
+  mockExternalCallsForUserInputMessage(message);
 
   const res = await t.context.request
     .post(integrationHelper.routes.v2.messages(false, {
@@ -146,23 +151,8 @@ test('POST /api/v2/messages?origin=twilio outbound message should match sendInfo
     From: stubs.getMobileNumber('valid'),
     Body: 'help',
   };
-  const member = stubs.northstar.getUser({
-    validUsNumber: true,
-  });
 
-  integrationHelper.routes.graphql
-    .intercept(stubs.graphql.fetchConversationTriggers(), 1);
-
-  // mock user fetch
-  integrationHelper.routes.northstar
-    .intercept.fetchUserByMobile(message.From, member, 1);
-
-  // mock user update
-  integrationHelper.routes.northstar
-    .intercept.updateUserById(member.data.id, member, 1);
-
-  integrationHelper.routes.northstar
-    .intercept.fetchUserById(stubs.getUserId(), member, 1);
+  mockExternalCallsForUserInputMessage(message);
 
   const res = await t.context.request
     .post(integrationHelper.routes.v2.messages(false, {
