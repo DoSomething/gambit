@@ -529,4 +529,11 @@ module.exports = {
       };
     },
   },
+  bertly: {
+    getBertlyUrl(url) {
+      return {
+        messageText: url;
+      };
+    },
+  },
 };
