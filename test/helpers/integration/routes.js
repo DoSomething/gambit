@@ -70,7 +70,7 @@ module.exports = {
   bertly: {
     intercept: function intercept(reply = {}, times = 1, status = 200) {
       return nock('http://shorturl')
-        .post()
+        .post('/')
         .times(times)
         .reply(status, reply);
     },
