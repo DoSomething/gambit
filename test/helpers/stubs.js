@@ -530,9 +530,9 @@ module.exports = {
     },
   },
   bertly: {
-    getBertlyUrl(url) {
+    getBertlyUrl(urlToShorten) {
       return {
-        messageText: url,
+        messageText: urlToShorten,
       };
     },
   },
