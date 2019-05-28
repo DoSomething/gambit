@@ -68,10 +68,9 @@ module.exports = {
     },
   },
   bertly: {
-    baseURI: graphqlConfig.clientOptions.baseURI,
     intercept: function intercept(reply = {}, times = 1, status = 200) {
-      return nock(this.baseURI)
-        .post('http://shorturl')
+      return nock('http://shorturl')
+        .post()
         .times(times)
         .reply(status, reply);
     },
