@@ -52,7 +52,7 @@ function mockExternalCallsForUserInputMessage(message) {
     .intercept.fetchUserById(stubs.getUserId(), member, 1);
 
   // mock bertly link shortener
-  integrationHelper.routes.bertly.intercept(stubs.bertly.getBertlyUrl('https://dosome.click/zt6mc'));
+  integrationHelper.routes.bertly.intercept(stubs.bertly.getBertlyUrl('https://dosome.click/zt6mc').messageText);
 }
 
 /**
