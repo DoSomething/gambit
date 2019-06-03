@@ -70,7 +70,7 @@ module.exports = {
     },
   },
   bertly: {
-    baseURI: bertlyConfig.baseURI,
+    baseURI: bertlyConfig.baseUri,
     intercept: function intercept(reply = {}, times = 1, status = 200) {
       return nock(this.baseURI)
         .post('/')
