@@ -73,7 +73,7 @@ module.exports = {
     baseURI: bertlyConfig.baseUri,
     intercept: function intercept(urlPath, reply = {}, times = 1, status = 200) {
       return nock(this.baseURI)
-        .post(`/${urlPath}`)
+        .post()
         .times(times)
         .reply(status, reply);
     },
