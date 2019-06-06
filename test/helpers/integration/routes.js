@@ -5,6 +5,8 @@ const querystring = require('querystring');
 
 const northstarConfig = require('../../../config/lib/northstar');
 const graphqlConfig = require('../../../config/lib/graphql');
+const bertlyConfig = require('../../../config/lib/bertly');
+
 
 /**
  * TODO: Use the Node.js url module to standardize the return of all the methods
@@ -63,6 +65,15 @@ module.exports = {
     intercept: function intercept(reply = {}, times = 1, status = 200) {
       return nock(this.baseURI)
         .post('/graphql')
+        .times(times)
+        .reply(status, reply);
+    },
+  },
+  bertly: {
+    baseURI: bertlyConfig.baseUri,
+    intercept: function intercept(reply = {}, times = 1, status = 200) {
+      return nock(this.baseURI)
+        .post()
         .times(times)
         .reply(status, reply);
     },
