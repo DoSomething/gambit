@@ -6,6 +6,7 @@ const chai = require('chai');
 const integrationHelper = require('../../../../helpers/integration');
 const stubs = require('../../../../helpers/stubs');
 const metadataParserConfig = require('../../../../../config/lib/middleware/metadata-parse');
+const rivescriptMacro = require('../../../../../config/lib/helpers/macro');
 
 chai.should();
 
@@ -144,7 +145,7 @@ test('POST /api/v2/messages?origin=twilio outbound message should match sendInfo
     .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
     .send(message);
   res.status.should.be.equal(200);
-  res.body.data.messages.outbound[0].text.should.equal('These are Do Something Alerts - 4 messages/mo. Info help@dosomething.org or https://dosome.click/zt6mc. Txt STOP to quit. Msg&Data Rates May Apply.');
+  res.body.data.messages.outbound[0].text.should.equal(rivescriptMacro.macros.sendInfoMessage.text);
   res.body.data.messages.outbound[0].topic.should.equal('random');
 });
 
@@ -164,6 +165,6 @@ test('POST /api/v2/messages?origin=twilio outbound message should match sendInfo
     .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
     .send(message);
   res.status.should.be.equal(200);
-  res.body.data.messages.outbound[0].text.should.equal('These are Do Something Alerts - 4 messages/mo. Info help@dosomething.org or https://dosome.click/zt6mc. Txt STOP to quit. Msg&Data Rates May Apply.');
+  res.body.data.messages.outbound[0].text.should.equal(rivescriptMacro.macros.sendInfoMessage.text);
   res.body.data.messages.outbound[0].topic.should.equal('random');
 });
