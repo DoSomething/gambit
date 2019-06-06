@@ -6,6 +6,7 @@ const chai = require('chai');
 const integrationHelper = require('../../../../helpers/integration');
 const stubs = require('../../../../helpers/stubs');
 const metadataParserConfig = require('../../../../../config/lib/middleware/metadata-parse');
+const rivescriptMacro = require('../../../../../config/lib/helpers/macro');
 
 chai.should();
 
@@ -31,6 +32,29 @@ test.afterEach(async () => {
 test.after.always(async () => {
   await integrationHelper.hooks.db.disconnect();
 });
+
+function mockExternalCallsForUserInputMessage(message) {
+  const member = stubs.northstar.getUser({
+    validUsNumber: true,
+  });
+
+  integrationHelper.routes.graphql
+    .intercept(stubs.graphql.fetchConversationTriggers(), 1);
+
+  // mock user fetch
+  integrationHelper.routes.northstar
+    .intercept.fetchUserByMobile(message.From, member, 1);
+
+  // mock user update
+  integrationHelper.routes.northstar
+    .intercept.updateUserById(member.data.id, member, 1);
+
+  integrationHelper.routes.northstar
+    .intercept.fetchUserById(stubs.getUserId(), member, 1);
+
+  // mock bertly link shortener
+  integrationHelper.routes.bertly.intercept(stubs.bertly.getBertlyUrl('https://dosome.click/zt6mc').messageText);
+}
 
 /**
  * GET /
@@ -103,4 +127,44 @@ test.serial('POST /api/v2/messages?origin=twilio should not re-send message to T
 
   // The retry should not have replaced the platformUserId of the message
   outboundMessage1.platformMessageId.should.be.equal(outboundMessage2.platformMessageId);
+});
+
+test('POST /api/v2/messages?origin=twilio outbound message should match sendInfoMessage if user texts INFO', async (t) => {
+  const message = {
+    getSmsMessageSid: stubs.twilio.getSmsMessageSid(),
+    From: stubs.getMobileNumber('valid'),
+    Body: 'info',
+  };
+
+  mockExternalCallsForUserInputMessage(message);
+
+  const res = await t.context.request
+    .post(integrationHelper.routes.v2.messages(false, {
+      origin: 'twilio',
+    }))
+    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
+    .send(message);
+  res.status.should.be.equal(200);
+  res.body.data.messages.outbound[0].text.should.equal(rivescriptMacro.macros.sendInfoMessage.text);
+  res.body.data.messages.outbound[0].topic.should.equal('random');
+});
+
+test('POST /api/v2/messages?origin=twilio outbound message should match sendInfoMessage if user texts HELP', async (t) => {
+  const message = {
+    getSmsMessageSid: stubs.twilio.getSmsMessageSid(),
+    From: stubs.getMobileNumber('valid'),
+    Body: 'help',
+  };
+
+  mockExternalCallsForUserInputMessage(message);
+
+  const res = await t.context.request
+    .post(integrationHelper.routes.v2.messages(false, {
+      origin: 'twilio',
+    }))
+    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
+    .send(message);
+  res.status.should.be.equal(200);
+  res.body.data.messages.outbound[0].text.should.equal(rivescriptMacro.macros.sendInfoMessage.text);
+  res.body.data.messages.outbound[0].topic.should.equal('random');
 });
