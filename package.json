@@ -63,6 +63,7 @@
     "mustache": "^2.3.0",
     "newrelic": "^5.6.3",
     "query-string": "^6.4.2",
+    "rate-limiter-flexible": "^1.0.2",
     "redis": "^2.8.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
