@@ -3,12 +3,25 @@
 const test = require('ava');
 const chai = require('chai');
 
+// helpers
 const integrationHelper = require('../../../../helpers/integration');
 const stubs = require('../../../../helpers/stubs');
+
+// configs
 const metadataParserConfig = require('../../../../../config/lib/middleware/metadata-parse');
 const rivescriptMacro = require('../../../../../config/lib/helpers/macro');
+const rateLimitersConfig = require('../../../../../config/rate-limiters');
+
+const rateLimiters = require('../../../../../lib/rate-limiters');
+// Should have been already initialized when bootstrapping app so we would just
+// be getting the cached list of initialized rate limiters here
+const { memberRoute: memberRouteRateLimiter } = rateLimiters.getRegistry();
 
 chai.should();
+
+async function rewindRateLimit(key) {
+  await memberRouteRateLimiter.delete(key);
+}
 
 test.before(async () => {
   await integrationHelper.hooks.db.connect();
@@ -75,6 +88,7 @@ test.serial('POST /api/v2/messages?origin=twilio should not re-send message to T
   const inboundRequestPayload = stubs.twilio.getInboundRequestBody(member);
   const requestId = stubs.getRequestId();
 
+  // mock graphQL query twice
   integrationHelper.routes.graphql
     .intercept(stubs.graphql.fetchConversationTriggers(), 2);
 
@@ -129,7 +143,7 @@ test.serial('POST /api/v2/messages?origin=twilio should not re-send message to T
   outboundMessage1.platformMessageId.should.be.equal(outboundMessage2.platformMessageId);
 });
 
-test('POST /api/v2/messages?origin=twilio outbound message should match sendInfoMessage if user texts INFO', async (t) => {
+test.serial('POST /api/v2/messages?origin=twilio outbound message should match sendInfoMessage if user texts INFO', async (t) => {
   const message = {
     getSmsMessageSid: stubs.twilio.getSmsMessageSid(),
     From: stubs.getMobileNumber('valid'),
@@ -149,7 +163,7 @@ test('POST /api/v2/messages?origin=twilio outbound message should match sendInfo
   res.body.data.messages.outbound[0].topic.should.equal('random');
 });
 
-test('POST /api/v2/messages?origin=twilio outbound message should match sendInfoMessage if user texts HELP', async (t) => {
+test.serial('POST /api/v2/messages?origin=twilio outbound message should match sendInfoMessage if user texts HELP', async (t) => {
   const message = {
     getSmsMessageSid: stubs.twilio.getSmsMessageSid(),
     From: stubs.getMobileNumber('valid'),
@@ -167,4 +181,53 @@ test('POST /api/v2/messages?origin=twilio outbound message should match sendInfo
   res.status.should.be.equal(200);
   res.body.data.messages.outbound[0].text.should.equal(rivescriptMacro.macros.sendInfoMessage.text);
   res.body.data.messages.outbound[0].topic.should.equal('random');
+});
+
+test.serial('POST /api/v2/messages?origin=twilio should trigger rate limiter', async (t) => {
+  const member = stubs.northstar.getUser({ validUsNumber: true });
+  const inboundRequestPayload = stubs.twilio.getInboundRequestBody(member);
+  const rateLimiterUpperBound = rateLimitersConfig.memberRoute.init.points;
+  // Let's make sure this key has all it's rate limit points.
+  await rewindRateLimit(inboundRequestPayload.From);
+
+  // mock graphQL query twice
+  integrationHelper.routes.graphql
+    .intercept(stubs.graphql.fetchConversationTriggers(), rateLimiterUpperBound + 1);
+
+  // mock user fetch twice
+  integrationHelper.routes.northstar
+    .intercept.fetchUserByMobile(inboundRequestPayload.From, member, rateLimiterUpperBound + 1);
+
+  // mock user update twice
+  integrationHelper.routes.northstar
+    .intercept.updateUserById(member.data.id, member, rateLimiterUpperBound + 1);
+
+
+  [...Array(rateLimiterUpperBound).keys()].forEach(async () => {
+    const res = await t.context.request
+      .post(integrationHelper.routes.v2.messages(false, {
+        origin: 'twilio',
+      }))
+      .set({
+        Authorization: `Basic ${integrationHelper.getAuthKey()}`,
+      })
+      .send(inboundRequestPayload);
+
+    res.status.should.be.equal(200);
+    res.body.data.messages.inbound.length.should.be.equal(1);
+    res.body.data.messages.outbound.length.should.be.equal(1);
+  });
+
+  // should be rate limited
+
+  const res = await t.context.request
+    .post(integrationHelper.routes.v2.messages(false, {
+      origin: 'twilio',
+    }))
+    .set({
+      Authorization: `Basic ${integrationHelper.getAuthKey()}`,
+    })
+    .send(inboundRequestPayload);
+
+  res.status.should.not.be.equal(200);
 });
