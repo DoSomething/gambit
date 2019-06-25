@@ -5,7 +5,7 @@ const config = {
   memberRoute: {
     init: {
       keyPrefix: 'memberRouteRateLimiter',
-      points: 10, // Max allowed requests in the "duration" period
+      points: 25, // Max allowed requests in the "duration" period
       duration: 3600, // 1 hour in seconds
       timeoutMs: 5000,
     },
