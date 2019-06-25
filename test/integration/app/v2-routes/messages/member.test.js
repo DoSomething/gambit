@@ -228,5 +228,10 @@ test.serial('POST /api/v2/messages?origin=twilio should trigger rate limiter', a
     })
     .send(inboundRequestPayload);
 
-  res.status.should.not.be.equal(200);
+  res.status.should.be.equal(429);
+  res.headers.should.include.keys(
+    'retry-after',
+    'x-ratelimit-remaining',
+    'x-ratelimit-reset',
+  );
 });
