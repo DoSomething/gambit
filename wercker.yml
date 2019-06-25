@@ -1,4 +1,4 @@
-box: node:8.14.0
+box: node:8.16.0
 services:
   - id: mongo
   - id: redis

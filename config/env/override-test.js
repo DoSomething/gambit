@@ -22,4 +22,5 @@ if (process.env.MONGO_PORT_27017_TCP_ADDR) {
 
 module.exports = (config) => {
   config.dbUri = dbUri;
+  config.rateLimiters.memberRoute.test = true;
 };

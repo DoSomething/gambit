@@ -10,6 +10,7 @@ const loadOutboundMessageConfig = require('../../../config/lib/middleware/messag
 
 // Middleware
 const paramsMiddleware = require('../../../lib/middleware/messages/member/params');
+const rateLimiterMiddleware = require('../../../lib/middleware/messages/member/rate-limiter');
 const getConversationMiddleware = require('../../../lib/middleware/messages/conversation-get');
 const createConversationMiddleware = require('../../../lib/middleware/messages/conversation-create');
 const getUserMiddleware = require('../../../lib/middleware/messages/user-get');
@@ -39,6 +40,8 @@ const createTextPostMiddleware = require('../../../lib/middleware/messages/membe
 const catchAllMiddleware = require('../../../lib/middleware/messages/member/catchall');
 
 router.use(paramsMiddleware());
+
+router.use(rateLimiterMiddleware());
 
 // Get or create user for conversation.
 router.use(getUserMiddleware(getUserConfig));

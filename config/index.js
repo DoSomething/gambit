@@ -3,6 +3,7 @@
 const fs = require('fs');
 
 const processes = require('./processes');
+const rateLimiters = require('./rate-limiters');
 
 const config = {
   corsEnabled: process.env.CORS_DISABLED || true,
@@ -13,6 +14,7 @@ const config = {
   port: process.env.PORT || 5100,
   // concurrent processes config
   processes,
+  rateLimiters,
 };
 
 // Require env-dependent configs
