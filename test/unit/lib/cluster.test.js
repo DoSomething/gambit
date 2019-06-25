@@ -31,6 +31,12 @@ test('initMasterProcess() should fork at least 1 new process', () => {
   Object.values(cluster.clusterRef.workers).length.should.be.equal(config.processes.total);
 });
 
+test('initMasterProcess() should call initMasterRateLimiter', () => {
+  sandbox.spy(cluster, 'initMasterRateLimiter');
+  cluster.initMasterProcess();
+  cluster.initMasterRateLimiter.should.have.been.called;
+});
+
 // initWorkerProcess
 test('initWorkerProcess() should call the worker.start() function', () => {
   sandbox.spy(worker, 'start');
