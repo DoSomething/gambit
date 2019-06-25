@@ -19,6 +19,7 @@ const { memberRoute: memberRouteRateLimiter } = rateLimiters.getRegistry();
 
 chai.should();
 
+// Deletes rate limit state of the given key from the in-memory rate limiter
 async function rewindRateLimit(key) {
   await memberRouteRateLimiter.delete(key);
 }
@@ -202,7 +203,6 @@ test.serial('POST /api/v2/messages?origin=twilio should trigger rate limiter', a
   integrationHelper.routes.northstar
     .intercept.updateUserById(member.data.id, member, rateLimiterUpperBound + 1);
 
-
   [...Array(rateLimiterUpperBound).keys()].forEach(async () => {
     const res = await t.context.request
       .post(integrationHelper.routes.v2.messages(false, {
@@ -219,7 +219,6 @@ test.serial('POST /api/v2/messages?origin=twilio should trigger rate limiter', a
   });
 
   // should be rate limited
-
   const res = await t.context.request
     .post(integrationHelper.routes.v2.messages(false, {
       origin: 'twilio',
