@@ -162,7 +162,7 @@ module.exports = {
     },
     sendInfoMessage: {
       name: 'sendInfoMessage',
-      text: 'These are Do Something Alerts - 4 messages/mo. Info help@dosomething.org or http://doso.me/1jf4/291kep. Txt STOP to quit. Msg&Data Rates May Apply.',
+      text: 'These are Do Something Alerts - 4 messages/mo. Info help@dosomething.org or https://dosome.click/2z6uc. Txt STOP to quit. Msg&Data Rates May Apply.',
     },
     subscriptionStatusActive: {
       name: 'subscriptionStatusActive',
