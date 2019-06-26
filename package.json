@@ -1,6 +1,6 @@
 {
   "name": "gambit",
-  "version": "6.8.0",
+  "version": "6.8.1",
   "description": "The DoSomething.org chatbot service for multi-platform conversations.",
   "author": "DoSomething.org",
   "license": "MIT",
@@ -81,7 +81,7 @@
     "chance": "^1.0.18",
     "codecov": "^3.1.0",
     "eslint": "^5.6.0",
-    "eslint-plugin-ava": "^5.1.1",
+    "eslint-plugin-ava": "^7.1.0",
     "nock": "^10.0.6",
     "node-mocks-http": "^1.7.3",
     "nyc": "^14.1.1",
