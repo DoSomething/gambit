@@ -1,6 +1,9 @@
 'use strict';
 
 const campaignFields = `
+  legacyCampaign {
+    campaignId
+  }
   campaign {
     id
     endDate
@@ -16,13 +19,48 @@ const campaignTopicFields = `
 `;
 
 const campaignTopicTypes = `
-  ...autoReplySignupCampaign
+  ...autoReplyCampaign
   ...photoPostCampaign
   ...textPostCampaign
 `;
 
+const campaignTransitionTypes = `
+  ...autoReplyCampaignTransition
+  ...photoPostCampaignTransition
+  ...textPostCampaignTransition
+`;
+
+const campaignTransitionFields = `
+  id
+  text
+`;
+
+const campaignTopicTransitionFragments = `
+  fragment autoReplyCampaignTransition on AutoReplyTransition {
+    ${campaignTransitionFields}
+    topic {
+      id
+      ...autoReplyCampaign
+    }
+  }
+  fragment photoPostCampaignTransition on PhotoPostTransition {
+    ${campaignTransitionFields}
+    topic {
+      id
+      ...photoPostCampaign
+    }
+  }
+  fragment textPostCampaignTransition on TextPostTransition {
+    ${campaignTransitionFields}
+    topic {
+      id
+      ...textPostCampaign
+    }
+  }
+`;
+
 const campaignTopicFragments = `
-  fragment autoReplySignupCampaign on AutoReplySignupTopic {
+  fragment autoReplyCampaign on AutoReplyTopic {
     ${campaignFields}
   }
   fragment photoPostCampaign on PhotoPostTopic {
@@ -96,7 +134,7 @@ const fetchConversationTriggers = `
       reply
       topic {
         id
-        ... on AutoReplySignupTopic {
+        ... on AutoReplyTopic {
           ${campaignFields}
         }
         ... on PhotoPostTopic {
@@ -117,30 +155,20 @@ const fetchTopicById = `
       contentType
       ... on AskMultipleChoiceBroadcastTopic {
         invalidAskMultipleChoiceResponse
-        saidFirstChoice
-        saidFirstChoiceTopic {
-          id
-          ${campaignTopicTypes}
+        saidFirstChoiceTransition {
+          ${campaignTransitionTypes}
         }
-        saidSecondChoice
-        saidSecondChoiceTopic {
-          id
-          ${campaignTopicTypes}
+        saidSecondChoiceTransition {
+          ${campaignTransitionTypes}
         }
-        saidThirdChoice
-        saidThirdChoiceTopic {
-          id
-          ${campaignTopicTypes}
+        saidThirdChoiceTransition {
+          ${campaignTransitionTypes}
         }
-        saidFourthChoice
-        saidFourthChoiceTopic {
-          id
-          ${campaignTopicTypes}
+        saidFourthChoiceTransition {
+          ${campaignTransitionTypes}
         }
-        saidFifthChoice
-        saidFifthChoiceTopic {
-          id
-          ${campaignTopicTypes}
+        saidFifthChoiceTransition {
+          ${campaignTransitionTypes}
         }
       }
       ... on AskSubscriptionStatusBroadcastTopic {
@@ -178,8 +206,8 @@ const fetchTopicById = `
         saidYes
         ${saidYesTopicFields}
       }
-      ... on AutoReplySignupTopic {
-        ...autoReplySignupCampaign
+      ... on AutoReplyTopic {
+        ...autoReplyCampaign
         autoReply
       }
       ... on AutoReplyTopic {
@@ -207,6 +235,7 @@ const fetchTopicById = `
     }
   }
   ${campaignTopicFragments}
+  ${campaignTopicTransitionFragments}
 `;
 
 const fetchWebSignupConfirmations = `
