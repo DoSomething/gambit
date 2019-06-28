@@ -177,13 +177,17 @@ const fetchTopicById = `
       ... on AskSubscriptionStatusBroadcastTopic {
         invalidAskSubscriptionStatusResponse
         saidNeedMoreInfo
-        saidActive
-        saidActiveTopic {
-          id
+        saidActiveTransition {
+          text
+          topic {
+            id
+          }
         }
-        saidLess
-        saidLessTopic {
-          id
+        saidLessTransition {
+          text
+          topic {
+            id
+          }
         }
       }
       ... on AskVotingPlanStatusBroadcastTopic {
