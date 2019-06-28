@@ -40,6 +40,7 @@ const campaignTopicTransitionFragments = `
     ${campaignTransitionFields}
     topic {
       id
+      contentType
       ...autoReplyCampaign
     }
   }
@@ -47,6 +48,7 @@ const campaignTopicTransitionFragments = `
     ${campaignTransitionFields}
     topic {
       id
+      contentType
       ...photoPostCampaign
     }
   }
@@ -54,6 +56,7 @@ const campaignTopicTransitionFragments = `
     ${campaignTransitionFields}
     topic {
       id
+      contentType
       ...textPostCampaign
     }
   }
