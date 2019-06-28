@@ -203,12 +203,12 @@ const fetchTopicById = `
       }
       ... on AskYesNoBroadcastTopic {
         invalidAskYesNoResponse
-        saidNo
-        saidNoTopic {
-          id
+        saidNoTransition {
+          ${campaignTransitionTypes}
         }
-        saidYes
-        ${saidYesTopicFields}
+        saidYesTransition {
+          ${campaignTransitionTypes}
+        }
       }
       ... on AutoReplyTopic {
         ...autoReplyCampaign
