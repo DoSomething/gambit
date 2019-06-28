@@ -191,17 +191,14 @@ const fetchTopicById = `
         }
       }
       ... on AskVotingPlanStatusBroadcastTopic {
-        saidCantVote
-        saidCantVoteTopic {
-          id
+        saidCantVoteTransition {
+          ${campaignTransitionTypes}
         }
-        saidNotVoting
-        saidNotVotingTopic {
-          id
+        saidNotVotingTransition {
+          ${campaignTransitionTypes}
         }
-        saidVoted
-        saidVotedTopic {
-          id
+        saidVotedTransition {
+          ${campaignTransitionTypes}
         }
       }
       ... on AskYesNoBroadcastTopic {
