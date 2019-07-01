@@ -106,6 +106,11 @@ const fetchBroadcastById = `
       }
       contentType
       ... on AskVotingPlanStatusBroadcastTopic {
+        # need to ask for saidVotedTransition so we can receive action info
+        # since it depends on it's topic!
+        saidVotedTransition {
+          ${campaignTransitionTypes}
+        }
         ${actionFields}
       }
       ... on AskYesNoBroadcastTopic {
