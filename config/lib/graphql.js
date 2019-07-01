@@ -214,9 +214,6 @@ const fetchTopicById = `
         ...autoReplyCampaign
         autoReply
       }
-      ... on AutoReplyTopic {
-        autoReply
-      }
       ... on PhotoPostTopic {
         ...photoPostCampaign
         askCaption
