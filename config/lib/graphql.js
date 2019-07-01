@@ -18,12 +18,6 @@ const campaignTopicFields = `
   }
 `;
 
-const campaignTopicTypes = `
-  ...autoReplyCampaign
-  ...photoPostCampaign
-  ...textPostCampaign
-`;
-
 const campaignTransitionTypes = `
   ...autoReplyCampaignTransition
   ...photoPostCampaignTransition
@@ -76,13 +70,6 @@ const campaignTopicFragments = `
   }
 `;
 
-const saidYesTopicFields = `
-  saidYesTopic {
-    id
-    ${campaignTopicTypes}
-  }
-`;
-
 const actionFields = `
   action {
     id
@@ -114,7 +101,9 @@ const fetchBroadcastById = `
         ${actionFields}
       }
       ... on AskYesNoBroadcastTopic {
-        ${saidYesTopicFields}
+        saidYesTransition {
+          ${campaignTransitionTypes}
+        }
         ${actionFields}
       }
       ... on AutoReplyBroadcast {
