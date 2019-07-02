@@ -122,27 +122,29 @@ const fetchBroadcastById = `
     }
   }
   ${campaignTopicFragments}
+  ${campaignTopicTransitionFragments}
 `;
 
 const fetchConversationTriggers = `
   query getConversationTriggers {
     conversationTriggers {
       trigger
-      reply
-      topic {
+      response {
+        contentType
         id
-        ... on AutoReplyTopic {
-          ${campaignFields}
+        ... on AskMultipleChoiceBroadcastTopic {
+          id
+          text
         }
-        ... on PhotoPostTopic {
-          ${campaignFields}
+        ... on FaqAnswerTopic {
+          text
         }
-        ... on TextPostTopic {
-          ${campaignFields}
-        }
+        ${campaignTransitionTypes}
       }
     }
   }
+  ${campaignTopicFragments}
+  ${campaignTopicTransitionFragments}
 `;
 
 const fetchTopicById = `
