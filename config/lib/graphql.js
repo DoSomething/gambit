@@ -242,12 +242,13 @@ const fetchWebSignupConfirmations = `
         id
         endDate
       }
-      text
       topic {
-        id
+        ${campaignTransitionTypes}
       }
     }
   }
+  ${campaignTopicFragments}
+  ${campaignTopicTransitionFragments}
 `;
 
 module.exports = {
