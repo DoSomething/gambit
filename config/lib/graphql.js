@@ -1,6 +1,9 @@
 'use strict';
 
 const campaignFields = `
+  legacyCampaign {
+    campaignId
+  }
   campaign {
     id
     endDate
@@ -15,14 +18,46 @@ const campaignTopicFields = `
   }
 `;
 
-const campaignTopicTypes = `
-  ...autoReplySignupCampaign
-  ...photoPostCampaign
-  ...textPostCampaign
+const campaignTransitionTypes = `
+  ...autoReplyCampaignTransition
+  ...photoPostCampaignTransition
+  ...textPostCampaignTransition
+`;
+
+const campaignTransitionFields = `
+  id
+  text
+`;
+
+const campaignTopicTransitionFragments = `
+  fragment autoReplyCampaignTransition on AutoReplyTransition {
+    ${campaignTransitionFields}
+    topic {
+      id
+      contentType
+      ...autoReplyCampaign
+    }
+  }
+  fragment photoPostCampaignTransition on PhotoPostTransition {
+    ${campaignTransitionFields}
+    topic {
+      id
+      contentType
+      ...photoPostCampaign
+    }
+  }
+  fragment textPostCampaignTransition on TextPostTransition {
+    ${campaignTransitionFields}
+    topic {
+      id
+      contentType
+      ...textPostCampaign
+    }
+  }
 `;
 
 const campaignTopicFragments = `
-  fragment autoReplySignupCampaign on AutoReplySignupTopic {
+  fragment autoReplyCampaign on AutoReplyTopic {
     ${campaignFields}
   }
   fragment photoPostCampaign on PhotoPostTopic {
@@ -32,13 +67,6 @@ const campaignTopicFragments = `
   fragment textPostCampaign on TextPostTopic {
     actionId
     ${campaignFields}
-  }
-`;
-
-const saidYesTopicFields = `
-  saidYesTopic {
-    id
-    ${campaignTopicTypes}
   }
 `;
 
@@ -65,10 +93,17 @@ const fetchBroadcastById = `
       }
       contentType
       ... on AskVotingPlanStatusBroadcastTopic {
+        # need to ask for saidVotedTransition so we can receive action info
+        # since it depends on its topic!
+        saidVotedTransition {
+          ${campaignTransitionTypes}
+        }
         ${actionFields}
       }
       ... on AskYesNoBroadcastTopic {
-        ${saidYesTopicFields}
+        saidYesTransition {
+          ${campaignTransitionTypes}
+        }
         ${actionFields}
       }
       ... on AutoReplyBroadcast {
@@ -87,27 +122,29 @@ const fetchBroadcastById = `
     }
   }
   ${campaignTopicFragments}
+  ${campaignTopicTransitionFragments}
 `;
 
 const fetchConversationTriggers = `
   query getConversationTriggers {
     conversationTriggers {
       trigger
-      reply
-      topic {
+      response {
+        contentType
         id
-        ... on AutoReplySignupTopic {
-          ${campaignFields}
+        ... on AskMultipleChoiceBroadcastTopic {
+          id
+          text
         }
-        ... on PhotoPostTopic {
-          ${campaignFields}
+        ... on FaqAnswerTopic {
+          text
         }
-        ... on TextPostTopic {
-          ${campaignFields}
-        }
+        ${campaignTransitionTypes}
       }
     }
   }
+  ${campaignTopicFragments}
+  ${campaignTopicTransitionFragments}
 `;
 
 const fetchTopicById = `
@@ -117,72 +154,60 @@ const fetchTopicById = `
       contentType
       ... on AskMultipleChoiceBroadcastTopic {
         invalidAskMultipleChoiceResponse
-        saidFirstChoice
-        saidFirstChoiceTopic {
-          id
-          ${campaignTopicTypes}
+        saidFirstChoiceTransition {
+          ${campaignTransitionTypes}
         }
-        saidSecondChoice
-        saidSecondChoiceTopic {
-          id
-          ${campaignTopicTypes}
+        saidSecondChoiceTransition {
+          ${campaignTransitionTypes}
         }
-        saidThirdChoice
-        saidThirdChoiceTopic {
-          id
-          ${campaignTopicTypes}
+        saidThirdChoiceTransition {
+          ${campaignTransitionTypes}
         }
-        saidFourthChoice
-        saidFourthChoiceTopic {
-          id
-          ${campaignTopicTypes}
+        saidFourthChoiceTransition {
+          ${campaignTransitionTypes}
         }
-        saidFifthChoice
-        saidFifthChoiceTopic {
-          id
-          ${campaignTopicTypes}
+        saidFifthChoiceTransition {
+          ${campaignTransitionTypes}
         }
       }
       ... on AskSubscriptionStatusBroadcastTopic {
         invalidAskSubscriptionStatusResponse
         saidNeedMoreInfo
-        saidActive
-        saidActiveTopic {
-          id
+        saidActiveTransition {
+          text
+          topic {
+            id
+          }
         }
-        saidLess
-        saidLessTopic {
-          id
+        saidLessTransition {
+          text
+          topic {
+            id
+          }
         }
       }
       ... on AskVotingPlanStatusBroadcastTopic {
-        saidCantVote
-        saidCantVoteTopic {
-          id
+        saidCantVoteTransition {
+          ${campaignTransitionTypes}
         }
-        saidNotVoting
-        saidNotVotingTopic {
-          id
+        saidNotVotingTransition {
+          ${campaignTransitionTypes}
         }
-        saidVoted
-        saidVotedTopic {
-          id
+        saidVotedTransition {
+          ${campaignTransitionTypes}
         }
       }
       ... on AskYesNoBroadcastTopic {
         invalidAskYesNoResponse
-        saidNo
-        saidNoTopic {
-          id
+        saidNoTransition {
+          ${campaignTransitionTypes}
         }
-        saidYes
-        ${saidYesTopicFields}
-      }
-      ... on AutoReplySignupTopic {
-        ...autoReplySignupCampaign
-        autoReply
+        saidYesTransition {
+          ${campaignTransitionTypes}
+        }
       }
       ... on AutoReplyTopic {
+        ...autoReplyCampaign
         autoReply
       }
       ... on PhotoPostTopic {
@@ -207,6 +232,7 @@ const fetchTopicById = `
     }
   }
   ${campaignTopicFragments}
+  ${campaignTopicTransitionFragments}
 `;
 
 const fetchWebSignupConfirmations = `
@@ -216,12 +242,13 @@ const fetchWebSignupConfirmations = `
         id
         endDate
       }
-      text
       topic {
-        id
+        ${campaignTransitionTypes}
       }
     }
   }
+  ${campaignTopicFragments}
+  ${campaignTopicTransitionFragments}
 `;
 
 module.exports = {

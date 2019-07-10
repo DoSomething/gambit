@@ -2,10 +2,18 @@
 
 const stubs = require('../stubs');
 
-function getValidConversationTrigger() {
+function getValidConversationTrigger(type) {
   return {
     trigger: stubs.getRandomWord(),
-    reply: stubs.getRandomMessageText(),
+    /**
+     * askMultipleChoice, faqAnswer, photoPostTransition, textPostTransition
+     * or autoReplyTransition
+     */
+    response: {
+      contentType: type || 'photoPostTransition',
+      text: stubs.getRandomMessageText(),
+      topic: {},
+    },
   };
 }
 

@@ -133,21 +133,30 @@ test('getRivescripts should call fetchRivescripts if resetCache arg is true', as
 });
 
 test('fetchRivescripts should call graphql.fetchConversationTriggers and parseRivescript', async () => {
-  const data = [conversationTrigger, conversationTrigger];
-  const mockParsedTrigger = conversationTriggerFactory.getValidConversationTrigger();
+  const data = [
+    conversationTriggerFactory
+      .getValidConversationTrigger(config.response.types.askMultipleChoice.type),
+    conversationTriggerFactory.getValidConversationTrigger(),
+  ];
+  const transformed = data.map(rivescriptHelper.defaultTopicTriggerTransformer);
+  const parsed = transformed.map(rivescriptHelper.parseRivescript);
+
   sandbox.stub(graphql, 'fetchConversationTriggers')
     .returns(Promise.resolve(data));
-  sandbox.stub(rivescriptHelper, 'parseRivescript')
-    .returns(mockParsedTrigger);
+  sandbox.spy(rivescriptHelper, 'parseRivescript');
+  sandbox.spy(rivescriptHelper, 'defaultTopicTriggerTransformer');
   sandbox.stub(helpers.cache.rivescript, 'set')
-    .returns(Promise.resolve([mockParsedTrigger, mockParsedTrigger]));
+    .returns(Promise.resolve(parsed));
 
   const result = await rivescriptHelper.fetchRivescripts();
   data.forEach((item) => {
+    rivescriptHelper.defaultTopicTriggerTransformer.should.have.been.calledWith(item);
+  });
+  transformed.forEach((item) => {
     rivescriptHelper.parseRivescript.should.have.been.calledWith(item);
   });
   graphql.fetchConversationTriggers.should.have.been.called;
-  result.should.deep.equal([mockParsedTrigger, mockParsedTrigger]);
+  result.should.deep.equal(parsed);
 });
 
 test('fetchRivescripts should throw on graphql.fetchConversationTriggers fail', async (t) => {

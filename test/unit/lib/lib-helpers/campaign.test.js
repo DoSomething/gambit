@@ -28,14 +28,15 @@ test.afterEach(() => {
 // fetchWebSignupConfirmations
 test('fetchWebSignupConfirmations returns cached graphql.fetchWebSignupConfirmations result', async () => {
   const data = [123, 345];
+  sandbox.spy(campaignHelper, 'webSignupConfirmationTransformer');
   sandbox.stub(graphql, 'fetchWebSignupConfirmations')
     .returns(Promise.resolve(data));
   sandbox.stub(helpers.cache.webSignupConfirmations, 'set')
     .returns(Promise.resolve(data));
 
-  const result = await campaignHelper.fetchWebSignupConfirmations();
-  helpers.cache.webSignupConfirmations.set.should.have.been.calledWith(data);
-  result.should.deep.equal(data);
+  await campaignHelper.fetchWebSignupConfirmations();
+  campaignHelper.webSignupConfirmationTransformer.should.have.been.called;
+  helpers.cache.webSignupConfirmations.set.should.have.been.called;
 });
 
 test('fetchWebSignupConfirmations throws if graphql.fetchWebSignupConfirmations fails', async (t) => {

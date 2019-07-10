@@ -73,6 +73,7 @@ module.exports = {
     },
   },
   graphql: {
+    // TODO: Refactor to respond with new schema contracts
     getBroadcastSingleResponse: (contentType = 'autoReplyBroadcast') => {
       const broadcast = { data: {} };
       switch (contentType) {
@@ -173,9 +174,16 @@ module.exports = {
       data: {
         conversationTriggers: [{
           trigger: 'thetalk',
-          reply: 'Sorry, The Talk is no longer available. Text Q if you have a question.',
-          topic: {
-            id: '6gg4Ce09FK6UG6K6cyC6aa',
+          response: {
+            contentType: 'autoReplyTransition',
+            id: '8vuIobzBrUGGUUoK8y0cO',
+            text: 'Sorry, The Talk is no longer available. Text Q if you have a question.',
+            topic: {
+              id: '6gg4Ce09FK6UG6K6cyC6aa',
+              contentType: 'autoReply',
+              legacyCampaign: null,
+              campaign: null,
+            },
           },
         }],
       },
