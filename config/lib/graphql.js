@@ -113,11 +113,15 @@ const fetchBroadcastById = `
       }
       ... on PhotoPostBroadcast {
         ${actionFields}
-        ${campaignTopicFields}
+        topic {
+          ...photoPostCampaign
+        }
       }
       ... on TextPostBroadcast {
         ${actionFields}
-        ${campaignTopicFields}
+        topic {
+          ...textPostCampaign
+        }
       }
     }
   }
