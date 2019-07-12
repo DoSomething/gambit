@@ -11,13 +11,6 @@ const campaignFields = `
   }
 `;
 
-const campaignTopicFields = `
-  topic {
-    id
-    ${campaignFields}
-  }
-`;
-
 const campaignTransitionTypes = `
   ...autoReplyCampaignTransition
   ...photoPostCampaignTransition
