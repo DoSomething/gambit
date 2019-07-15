@@ -14,6 +14,15 @@ module.exports = {
     reply: '-',
     trigger: '+',
   },
+  // Used to determine how to transform defaultTrigger response contentTypes
+  // when fetching from GraphQl
+  response: {
+    types: {
+      askMultipleChoice: {
+        type: 'askMultipleChoice',
+      },
+    },
+  },
   separators: {
     command: ' ',
     line: '\n',
