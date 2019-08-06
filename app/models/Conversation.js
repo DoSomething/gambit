@@ -41,7 +41,7 @@ conversationSchema.index({ userId: 1, platform: 1 });
 
 /**
  * Sets the member conversation's platformUserId to null
- * @param {String} id
+ * @param {String} userId
  */
 conversationSchema.statics.anonymize = function (userId) {
   logger.info('Anonymizing member', { userId });
