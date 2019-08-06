@@ -43,9 +43,9 @@ conversationSchema.index({ userId: 1, platform: 1 });
  * Sets the member conversation's platformUserId to null
  * @param {String} id
  */
-conversationSchema.statics.anonymize = function (id) {
-  logger.info('Anonymizing member', { id });
-  return this.update({ useId: id }, { $set: { platformUserId: null } }).exec();
+conversationSchema.statics.anonymize = function (userId) {
+  logger.info('Anonymizing member', { userId });
+  return this.update({ userId }, { $set: { platformUserId: null } }).exec();
 };
 
 /**
