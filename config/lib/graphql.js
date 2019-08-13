@@ -107,12 +107,14 @@ const fetchBroadcastById = `
       ... on PhotoPostBroadcast {
         ${actionFields}
         topic {
+          id
           ...photoPostCampaign
         }
       }
       ... on TextPostBroadcast {
         ${actionFields}
         topic {
+          id
           ...textPostCampaign
         }
       }
