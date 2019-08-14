@@ -11,6 +11,7 @@ const underscore = require('underscore');
 const Promise = require('bluebird');
 
 const Conversation = require('../../../../app/models/Conversation');
+const DraftSubmission = require('../../../../app/models/DraftSubmission');
 const Message = require('../../../../app/models/Message');
 const helpers = require('../../../../lib/helpers');
 const front = require('../../../../lib/front');
@@ -209,23 +210,27 @@ test('setTopic calls save for new topic', async () => {
 });
 
 test('anonymizeByUserId sets platformUserId to null', async () => {
-  sandbox.stub(Conversation, 'update').returns({
+  const conversation = conversationFactory.getValidConversation();
+  sandbox.stub(Conversation, 'findOneAndUpdate').returns({
+    exec: () => Promise.resolve(conversation),
+  });
+  sandbox.stub(DraftSubmission, 'remove').returns({
     exec: () => Promise.resolve(true),
   });
-  const conversation = conversationFactory.getValidConversation();
   await Conversation.anonymizeByUserId(conversation.userId);
 
-  Conversation.update.should.have.been.called;
+  Conversation.findOneAndUpdate.should.have.been.called;
+  DraftSubmission.remove.should.have.been.called;
 });
 
-test('anonymizeByUserId should not call update if userId is undefined', async () => {
-  sandbox.stub(Conversation, 'update').returns({
-    exec: () => Promise.resolve(true),
-  });
+test('anonymizeByUserId should not call findOneAndUpdate if userId is undefined', async () => {
+  sandbox.spy(Conversation, 'findOneAndUpdate');
+  sandbox.spy(DraftSubmission, 'remove');
   try {
     await Conversation.anonymizeByUserId();
   } catch (error) {
     // just catching so it doesn't break the test
   }
-  Conversation.update.should.not.have.been.called;
+  Conversation.findOneAndUpdate.should.not.have.been.called;
+  DraftSubmission.remove.should.not.have.been.called;
 });

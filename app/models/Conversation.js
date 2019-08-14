@@ -43,9 +43,10 @@ conversationSchema.index({ userId: 1, platform: 1 });
 
 /**
  * Sets the member conversation's platformUserId to null
+ * Deletes Draft submissions belonging to the member's conversation
  * @param {String} userId
  */
-conversationSchema.statics.anonymizeByUserId = function (userId) {
+conversationSchema.statics.anonymizeByUserId = async function (userId) {
   if (!userId) {
     return Promise.reject('anonymizeByUserId: userId can\'t be undefined');
   }
@@ -57,7 +58,8 @@ conversationSchema.statics.anonymizeByUserId = function (userId) {
     },
   };
   logger.info('Anonymizing member', query);
-  return this.update(query, update).exec();
+  const conversation = await this.findOneAndUpdate(query, update, { new: true }).exec();
+  return DraftSubmission.remove({ conversationId: conversation._id }).exec();
 };
 
 /**
