@@ -16,6 +16,8 @@ const bertly = require('../../lib/bertly');
  * Schema.
  */
 const conversationSchema = new mongoose.Schema({
+  // Populated when a member has been anonymized
+  deletedAt: Date,
   userId: {
     type: String,
     index: true,
@@ -47,8 +49,15 @@ conversationSchema.statics.anonymizeByUserId = function (userId) {
   if (!userId) {
     return Promise.reject('anonymizeByUserId: userId can\'t be undefined');
   }
-  logger.info('Anonymizing member', { userId });
-  return this.update({ userId }, { $set: { platformUserId: null } }).exec();
+  const query = { userId };
+  const update = {
+    $set: {
+      platformUserId: null,
+      deletedAt: new Date(),
+    },
+  };
+  logger.info('Anonymizing member', query);
+  return this.update(query, update).exec();
 };
 
 /**

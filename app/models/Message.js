@@ -20,6 +20,8 @@ const messageSchema = new mongoose.Schema({
     enum: ['inbound', 'outbound-reply', 'outbound-api-send', 'outbound-api-import'],
     required: true,
   },
+  // Populated when a member has been anonymized
+  deletedAt: Date,
   userId: { type: String, index: true },
   platformMessageId: { type: String, index: true },
   campaignId: Number,
@@ -72,8 +74,18 @@ messageSchema.statics.anonymizeByUserId = function (userId) {
   if (!userId) {
     return Promise.reject('anonymizeByUserId: userId can\'t be undefined');
   }
-  logger.info('Anonymizing member messages', { userId });
-  return this.updateMany({ userId, direction: 'inbound' }, { $set: { text: null } }).exec();
+  const query = {
+    userId,
+    direction: 'inbound',
+  };
+  const update = {
+    $set: {
+      text: null,
+      deletedAt: new Date(),
+    },
+  };
+  logger.info('Anonymizing member\'s inbound messages', query);
+  return this.updateMany(query, update).exec();
 };
 
 /**
