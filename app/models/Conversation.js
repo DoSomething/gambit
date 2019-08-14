@@ -43,7 +43,10 @@ conversationSchema.index({ userId: 1, platform: 1 });
  * Sets the member conversation's platformUserId to null
  * @param {String} userId
  */
-conversationSchema.statics.anonymize = function (userId) {
+conversationSchema.statics.anonymizeByUserId = function (userId) {
+  if (!userId) {
+    return Promise.reject('anonymizeByUserId: userId can\'t be undefined');
+  }
   logger.info('Anonymizing member', { userId });
   return this.update({ userId }, { $set: { platformUserId: null } }).exec();
 };

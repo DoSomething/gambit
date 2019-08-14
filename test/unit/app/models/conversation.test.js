@@ -10,6 +10,7 @@ const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 const Promise = require('bluebird');
 
+const Conversation = require('../../../../app/models/Conversation');
 const Message = require('../../../../app/models/Message');
 const helpers = require('../../../../lib/helpers');
 const front = require('../../../../lib/front');
@@ -205,4 +206,26 @@ test('setTopic calls save for new topic', async () => {
   await mockConversation.setTopic(mockTopic);
   mockConversation.save.should.have.been.called;
   mockConversation.topic.should.equal(mockResult.topic);
+});
+
+test('anonymize sets platformUserId to null', async () => {
+  sandbox.stub(Conversation, 'update').returns({
+    exec: () => Promise.resolve(true),
+  });
+  const conversation = conversationFactory.getValidConversation();
+  await Conversation.anonymizeByUserId(conversation.userId);
+
+  Conversation.update.should.have.been.called;
+});
+
+test('anonymize should not call update if userId is undefined', async () => {
+  sandbox.stub(Conversation, 'update').returns({
+    exec: () => Promise.resolve(true),
+  });
+  try {
+    await Conversation.anonymizeByUserId();
+  } catch (error) {
+    // just catching so it doesn't break the test
+  }
+  Conversation.update.should.not.have.been.called;
 });

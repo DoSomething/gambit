@@ -24,6 +24,7 @@ module.exports = {
   db: {
     connect: url => mongooseConfig(url || appConfig.dbUri),
     disconnect: () => mongoose.disconnect(),
+    drop: () => mongoose.connection.dropDatabase(),
     messages: {
       removeAll: (query = {}) => Message.remove(query),
     },
