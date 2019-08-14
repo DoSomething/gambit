@@ -50,16 +50,18 @@ conversationSchema.statics.anonymizeByUserId = async function (userId) {
   if (!userId) {
     return Promise.reject('anonymizeByUserId: userId can\'t be undefined');
   }
-  const query = { userId };
+  const conversationQuery = { userId };
   const update = {
     $set: {
       platformUserId: null,
       deletedAt: new Date(),
     },
   };
-  logger.info('Anonymizing member', query);
-  const conversation = await this.findOneAndUpdate(query, update, { new: true }).exec();
-  return DraftSubmission.remove({ conversationId: conversation._id }).exec();
+  logger.info('Anonymizing member\'s conversation', conversationQuery);
+  const conversation = await this.findOneAndUpdate(conversationQuery, update, { new: true }).exec();
+  const draftSubmissionQuery = { conversationId: conversation._id };
+  logger.info('Anonymizing member\'s draft submissions', draftSubmissionQuery);
+  return DraftSubmission.remove(draftSubmissionQuery).exec();
 };
 
 /**
