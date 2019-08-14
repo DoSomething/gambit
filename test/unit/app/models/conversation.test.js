@@ -208,7 +208,7 @@ test('setTopic calls save for new topic', async () => {
   mockConversation.topic.should.equal(mockResult.topic);
 });
 
-test('anonymize sets platformUserId to null', async () => {
+test('anonymizeByUserId sets platformUserId to null', async () => {
   sandbox.stub(Conversation, 'update').returns({
     exec: () => Promise.resolve(true),
   });
@@ -218,7 +218,7 @@ test('anonymize sets platformUserId to null', async () => {
   Conversation.update.should.have.been.called;
 });
 
-test('anonymize should not call update if userId is undefined', async () => {
+test('anonymizeByUserId should not call update if userId is undefined', async () => {
   sandbox.stub(Conversation, 'update').returns({
     exec: () => Promise.resolve(true),
   });
