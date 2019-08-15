@@ -13,8 +13,9 @@ const mongooseConfig = require('../../../config/mongoose');
 const helpers = require('../../../lib/helpers');
 
 // Models
-const Message = require('../../../app/models/Message');
+const DraftSubmission = require('../../../app/models/DraftSubmission');
 const Conversation = require('../../../app/models/Conversation');
+const Message = require('../../../app/models/Message');
 
 module.exports = {
   app: (testContext) => {
@@ -30,6 +31,9 @@ module.exports = {
     },
     conversations: {
       removeAll: (query = {}) => Conversation.remove(query),
+    },
+    draftSubmissions: {
+      removeAll: (query = {}) => DraftSubmission.remove(query),
     },
   },
   interceptor: {
