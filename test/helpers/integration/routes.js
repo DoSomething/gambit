@@ -34,6 +34,7 @@ module.exports = {
   // TODO: nest inside a gambitConversations property to stay consistent
   v2: {
     messages: (id, query) => getFullPath('v2', 'messages', id, query),
+    users: (id, query) => getFullPath('v2', 'users', id, query),
   },
   northstar: {
     baseURI: northstarConfig.clientOptions.baseURI,

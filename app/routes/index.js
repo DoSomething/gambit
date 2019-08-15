@@ -35,5 +35,6 @@ module.exports = function init(app) {
     parseMessageMetadataMiddleware(),
     v2MessagesRoute);
   app.use('/api/v2/rivescript', rivescriptRoute);
+  // Route to anonymize a member's PII (Personally identifiable information) in Gambit
   app.use('/api/v2/users/:id', usersRoute);
 };
