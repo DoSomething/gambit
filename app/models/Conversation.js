@@ -59,8 +59,10 @@ conversationSchema.statics.anonymizeByUserId = async function (userId) {
   };
   logger.info('Anonymizing member\'s conversation', conversationQuery);
   const conversation = await this.findOneAndUpdate(conversationQuery, update, { new: true }).exec();
+
   const draftSubmissionQuery = { conversationId: conversation._id };
-  logger.info('Anonymizing member\'s draft submissions', draftSubmissionQuery);
+
+  logger.info('Deleting member\'s draft submissions', draftSubmissionQuery);
   return DraftSubmission.remove(draftSubmissionQuery).exec();
 };
 

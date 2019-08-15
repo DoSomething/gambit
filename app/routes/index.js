@@ -3,6 +3,7 @@
 const broadcastsSingleRoute = require('./broadcasts/single');
 const mongooseRoutes = require('./mongoose');
 const rivescriptRoute = require('./rivescript');
+const usersRoute = require('./users');
 const v2MessagesRoute = require('./messages');
 
 // middleware
@@ -34,4 +35,5 @@ module.exports = function init(app) {
     parseMessageMetadataMiddleware(),
     v2MessagesRoute);
   app.use('/api/v2/rivescript', rivescriptRoute);
+  app.use('/api/v2/users/:id', usersRoute);
 };
