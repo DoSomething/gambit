@@ -53,10 +53,11 @@ test('DELETE /api/v2/users/:id should anonymize a member\'s conversation and mes
     .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
     .send();
 
+  res.status.should.be.equal(200);
+
   const anonymizedConversation = await Conversation.findById(conversation._id);
   const anonymizedMessage = await Message.findById(inboundMessage._id);
 
-  res.status.should.be.equal(200);
   expect(anonymizedConversation.platformUserId).to.be.null;
   expect(anonymizedMessage.text).to.be.null;
 });
