@@ -63,7 +63,9 @@ test.serial('DELETE /api/v2/users/:id should anonymize a member\'s conversation 
   const anonymizedConversation = await Conversation.findById(conversation._id);
   const anonymizedMessage = await Message.findById(inboundMessage._id);
 
+  anonymizedConversation.deletedAt.should.be.an.instanceof(Date);
   expect(anonymizedConversation.platformUserId).to.be.null;
+  anonymizedMessage.deletedAt.should.be.an.instanceof(Date);
   expect(anonymizedMessage.text).to.be.null;
 });
 
@@ -87,7 +89,9 @@ test.serial('DELETE /api/v2/users/:id should delete a member\'s draft submission
   const anonymizedMessage = await Message.findById(inboundMessage._id);
   const draftSubmissions = await DraftSubmission.find({ conversationId: conversation._id });
 
+  anonymizedConversation.deletedAt.should.be.an.instanceof(Date);
   expect(anonymizedConversation.platformUserId).to.be.null;
+  anonymizedMessage.deletedAt.should.be.an.instanceof(Date);
   expect(anonymizedMessage.text).to.be.null;
   draftSubmissions.length.should.be.equal(0);
 });
