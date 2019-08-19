@@ -48,7 +48,7 @@ conversationSchema.index({ userId: 1, platform: 1 });
  */
 conversationSchema.statics.anonymizeByUserId = async function (userId) {
   if (!userId) {
-    return Promise.reject('anonymizeByUserId: userId can\'t be undefined');
+    throw new Error('anonymizeByUserId: userId can\'t be undefined');
   }
   const conversationQuery = { userId };
   const update = {
