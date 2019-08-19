@@ -236,3 +236,22 @@ test('anonymizeByUserId should not call findOneAndUpdate if userId is undefined'
   Conversation.findOneAndUpdate.should.not.have.been.called;
   DraftSubmission.remove.should.not.have.been.called;
 });
+
+test('anonymizeByUserId should not call findOneAndUpdate if userId is defined but no conversation is found', async () => {
+  let anonymizationError;
+  const mockConversationId = stubs.getRandomStringNumber();
+  sandbox.stub(Conversation, 'findOneAndUpdate').returns({
+    exec: () => Promise.resolve(null),
+  });
+  sandbox.spy(DraftSubmission, 'remove');
+  try {
+    await Conversation.anonymizeByUserId(mockConversationId);
+  } catch (error) {
+    anonymizationError = error;
+  }
+
+  anonymizationError.should.not.be.null;
+  anonymizationError.status.should.be.equal(404);
+  Conversation.findOneAndUpdate.should.have.been.called;
+  DraftSubmission.remove.should.not.have.been.called;
+});

@@ -6,11 +6,13 @@ const Promise = require('bluebird');
 const DraftSubmission = require('./DraftSubmission');
 const Message = require('./Message');
 
-const logger = require('../../lib/logger');
-const helpers = require('../../lib/helpers');
-const front = require('../../lib/front');
-const twilio = require('../../lib/twilio');
 const bertly = require('../../lib/bertly');
+const front = require('../../lib/front');
+const helpers = require('../../lib/helpers');
+const logger = require('../../lib/logger');
+const NotFoundError = require('../exceptions/NotFoundError');
+const twilio = require('../../lib/twilio');
+
 
 /**
  * Schema.
@@ -50,7 +52,8 @@ conversationSchema.statics.anonymizeByUserId = async function (userId) {
   if (!userId) {
     throw new Error('anonymizeByUserId: userId can\'t be undefined');
   }
-  const conversationQuery = { userId };
+  // Find the member's SMS conversation
+  const conversationQuery = { userId, platform: 'sms' };
   const update = {
     $set: {
       platformUserId: null,
@@ -60,6 +63,9 @@ conversationSchema.statics.anonymizeByUserId = async function (userId) {
   logger.info('Anonymizing member\'s conversation', conversationQuery);
   const conversation = await this.findOneAndUpdate(conversationQuery, update, { new: true }).exec();
 
+  if (!conversation) {
+    throw new NotFoundError(`Conversation for user: ${userId} was not found`);
+  }
   const draftSubmissionQuery = { conversationId: conversation._id };
 
   logger.info('Deleting member\'s draft submissions', draftSubmissionQuery);

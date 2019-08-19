@@ -49,6 +49,14 @@ test('DELETE /api/v2/users/:id without an id should return a 404', async (t) => 
   res.status.should.be.equal(404);
 });
 
+test('DELETE /api/v2/users/:id should return a 404 if no conversation is found', async (t) => {
+  const res = await t.context.request
+    .delete(integrationHelper.routes.v2.users(stubs.getRandomStringNumber()))
+    .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
+    .send();
+  res.status.should.be.equal(404);
+});
+
 test.serial('DELETE /api/v2/users/:id should anonymize a member\'s conversation and messages', async (t) => {
   const conversation = await conversationFactory.getValidConversation().save();
   const inboundMessage = await messageFactory.getValidMessage('inbound').save();
