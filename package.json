@@ -57,7 +57,7 @@
     "heroku-logger": "^0.3.3",
     "iso-3166-2": "^1.0.0",
     "linkify-it": "^2.1.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "moment": "^2.24.0",
     "mongoose": "^4.10.6",
     "mustache": "^2.3.0",
