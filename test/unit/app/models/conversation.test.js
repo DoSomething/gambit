@@ -224,13 +224,15 @@ test('anonymizeByUserId sets platformUserId to null', async () => {
 });
 
 test('anonymizeByUserId should not call findOneAndUpdate if userId is undefined', async () => {
+  let anonymizationError;
   sandbox.spy(Conversation, 'findOneAndUpdate');
   sandbox.spy(DraftSubmission, 'remove');
   try {
     await Conversation.anonymizeByUserId();
   } catch (error) {
-    // just catching so it doesn't break the test
+    anonymizationError = error;
   }
+  anonymizationError.should.not.be.null;
   Conversation.findOneAndUpdate.should.not.have.been.called;
   DraftSubmission.remove.should.not.have.been.called;
 });

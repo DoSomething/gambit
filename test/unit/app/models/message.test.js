@@ -38,13 +38,15 @@ test('anonymizeByUserId sets text to null', async () => {
 });
 
 test('anonymizeByUserId should not call updateMany if userId is undefined', async () => {
+  let anonymizationError;
   sandbox.stub(Message, 'updateMany').returns({
     exec: () => Promise.resolve(true),
   });
   try {
     await Message.anonymizeByUserId();
   } catch (error) {
-    // just catching so it doesn't break the test
+    anonymizationError = error;
   }
+  anonymizationError.should.not.be.null;
   Message.updateMany.should.not.have.been.called;
 });
