@@ -6,16 +6,20 @@ const Promise = require('bluebird');
 const DraftSubmission = require('./DraftSubmission');
 const Message = require('./Message');
 
-const logger = require('../../lib/logger');
-const helpers = require('../../lib/helpers');
-const front = require('../../lib/front');
-const twilio = require('../../lib/twilio');
 const bertly = require('../../lib/bertly');
+const front = require('../../lib/front');
+const helpers = require('../../lib/helpers');
+const logger = require('../../lib/logger');
+const NotFoundError = require('../exceptions/NotFoundError');
+const twilio = require('../../lib/twilio');
+
 
 /**
  * Schema.
  */
 const conversationSchema = new mongoose.Schema({
+  // Populated when a member has been anonymized
+  deletedAt: Date,
   userId: {
     type: String,
     index: true,
@@ -38,6 +42,35 @@ const conversationSchema = new mongoose.Schema({
 conversationSchema.index({ createdAt: 1 });
 conversationSchema.index({ updatedAt: 1 });
 conversationSchema.index({ userId: 1, platform: 1 });
+
+/**
+ * Sets the member conversation's platformUserId to null
+ * Deletes Draft submissions belonging to the member's conversation
+ * @param {String} userId
+ */
+conversationSchema.statics.anonymizeByUserId = async function (userId) {
+  if (!userId) {
+    throw new Error('anonymizeByUserId: userId can\'t be undefined');
+  }
+  // Find the member's SMS conversation
+  const conversationQuery = { userId, platform: 'sms' };
+  const update = {
+    $set: {
+      platformUserId: null,
+      deletedAt: new Date(),
+    },
+  };
+  logger.info('Anonymizing member\'s conversation', conversationQuery);
+  const conversation = await this.findOneAndUpdate(conversationQuery, update, { new: true }).exec();
+
+  if (!conversation) {
+    throw new NotFoundError(`Conversation for user: ${userId} was not found`);
+  }
+  const draftSubmissionQuery = { conversationId: conversation._id };
+
+  logger.info('Deleting member\'s draft submissions', draftSubmissionQuery);
+  return DraftSubmission.remove(draftSubmissionQuery).exec();
+};
 
 /**
  * @param {Object} req - Express request

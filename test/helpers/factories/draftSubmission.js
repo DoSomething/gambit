@@ -6,8 +6,9 @@ const stubs = require('../stubs');
 
 const photoPostValues = {
   caption: stubs.getRandomMessageText(),
-  quantitiy: 4,
-  url: 'https://placekitten.com/g/300/300',
+  quantity: 4,
+  // @see https://github.com/DoSomething/rogue/blob/master/docs/endpoints/posts.md#create-a-post
+  url: 'https://placekitten.com/g/400/400',
   whyParticipated: stubs.getRandomMessageText(),
 };
 
@@ -15,14 +16,14 @@ const photoPostValues = {
  * @param {Object} values
  * @return {Object}
  */
-function getRawDraftSubmissionData(values = {}) {
+function getRawDraftSubmissionData(values = {}, conversationId, topicId) {
   const id = new ObjectID();
   return {
     id,
     _id: id,
-    conversationId: new ObjectID(),
+    conversationId: conversationId || new ObjectID(),
     platformUserId: stubs.getMobileNumber(),
-    topicId: stubs.getContentfulId(),
+    topicId: topicId || stubs.getContentfulId(),
     values,
   };
 }
@@ -30,15 +31,15 @@ function getRawDraftSubmissionData(values = {}) {
 /**
  * @return {DraftSubmission}
  */
-function getValidCompletePhotoPostDraftSubmission() {
-  return DraftSubmission(getRawDraftSubmissionData(photoPostValues));
+function getValidCompletePhotoPostDraftSubmission(conversationId, topicId) {
+  return DraftSubmission(getRawDraftSubmissionData(photoPostValues, conversationId, topicId));
 }
 
 /**
  * @return {DraftSubmission}
  */
-function getValidNewDraftSubmission() {
-  return new DraftSubmission(getRawDraftSubmissionData());
+function getValidNewDraftSubmission(values = {}, conversationId, topicId) {
+  return new DraftSubmission(getRawDraftSubmissionData(values, conversationId, topicId));
 }
 
 module.exports = {

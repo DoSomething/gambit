@@ -14,6 +14,7 @@ See [Authentication](authentication.md) for details on authorizing your requests
 
 Endpoint | Functionality                                           
 -------- | -------------
+`DELETE /api/v2/users/:id` | [Removes member's Personal Identifiable Information](endpoints/users.md).
 `GET /api/v2/broadcasts/:id` | [Retrieve a broadcast](endpoints/broadcasts.md).
 `POST /api/v2/messages` | [Create a message](endpoints/messages.md).
 `PATCH /api/v2/messages/:messageId` | [Update a message](endpoints/messages.md).
