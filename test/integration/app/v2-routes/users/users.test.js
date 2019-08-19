@@ -72,7 +72,7 @@ test.serial('DELETE /api/v2/users/:id should anonymize a member\'s conversation 
 test.serial('DELETE /api/v2/users/:id should delete a member\'s draft submissions', async (t) => {
   const conversation = await conversationFactory.getValidConversation().save();
   const inboundMessage = await messageFactory.getValidMessage('inbound').save();
-  const times = [...Array(10).keys()];
+  const times = [...Array(2).keys()];
   // Save draft submissions
   await Promise.map(times,
     () => draftSubmissionFactory.getValidCompletePhotoPostDraftSubmission(
