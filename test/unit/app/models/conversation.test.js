@@ -10,6 +10,8 @@ const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 const Promise = require('bluebird');
 
+const Conversation = require('../../../../app/models/Conversation');
+const DraftSubmission = require('../../../../app/models/DraftSubmission');
 const Message = require('../../../../app/models/Message');
 const helpers = require('../../../../lib/helpers');
 const front = require('../../../../lib/front');
@@ -205,4 +207,51 @@ test('setTopic calls save for new topic', async () => {
   await mockConversation.setTopic(mockTopic);
   mockConversation.save.should.have.been.called;
   mockConversation.topic.should.equal(mockResult.topic);
+});
+
+test('anonymizeByUserId sets platformUserId to null', async () => {
+  const conversation = conversationFactory.getValidConversation();
+  sandbox.stub(Conversation, 'findOneAndUpdate').returns({
+    exec: () => Promise.resolve(conversation),
+  });
+  sandbox.stub(DraftSubmission, 'remove').returns({
+    exec: () => Promise.resolve(true),
+  });
+  await Conversation.anonymizeByUserId(conversation.userId);
+
+  Conversation.findOneAndUpdate.should.have.been.called;
+  DraftSubmission.remove.should.have.been.called;
+});
+
+test('anonymizeByUserId should not call findOneAndUpdate if userId is undefined', async () => {
+  let anonymizationError;
+  sandbox.spy(Conversation, 'findOneAndUpdate');
+  sandbox.spy(DraftSubmission, 'remove');
+  try {
+    await Conversation.anonymizeByUserId();
+  } catch (error) {
+    anonymizationError = error;
+  }
+  anonymizationError.should.not.be.null;
+  Conversation.findOneAndUpdate.should.not.have.been.called;
+  DraftSubmission.remove.should.not.have.been.called;
+});
+
+test('anonymizeByUserId should not call findOneAndUpdate if userId is defined but no conversation is found', async () => {
+  let anonymizationError;
+  const mockConversationId = stubs.getRandomStringNumber();
+  sandbox.stub(Conversation, 'findOneAndUpdate').returns({
+    exec: () => Promise.resolve(null),
+  });
+  sandbox.spy(DraftSubmission, 'remove');
+  try {
+    await Conversation.anonymizeByUserId(mockConversationId);
+  } catch (error) {
+    anonymizationError = error;
+  }
+
+  anonymizationError.should.not.be.null;
+  anonymizationError.status.should.be.equal(404);
+  Conversation.findOneAndUpdate.should.have.been.called;
+  DraftSubmission.remove.should.not.have.been.called;
 });
