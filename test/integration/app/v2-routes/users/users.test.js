@@ -59,7 +59,7 @@ test('DELETE /api/v2/users/:id should return a 404 if no conversation is found',
 
 test.serial('DELETE /api/v2/users/:id should anonymize a member\'s conversation and messages', async (t) => {
   const conversation = await conversationFactory.getValidConversation().save();
-  const inboundMessage = await messageFactory.getValidMessage('inbound').save();
+  const inboundMessage = await messageFactory.getValidMessage('inbound', conversation._id).save();
 
   const res = await t.context.request
     .delete(integrationHelper.routes.v2.users(conversation.userId))
@@ -79,7 +79,7 @@ test.serial('DELETE /api/v2/users/:id should anonymize a member\'s conversation 
 
 test.serial('DELETE /api/v2/users/:id should delete a member\'s draft submissions', async (t) => {
   const conversation = await conversationFactory.getValidConversation().save();
-  const inboundMessage = await messageFactory.getValidMessage('inbound').save();
+  const inboundMessage = await messageFactory.getValidMessage('inbound', conversation._id).save();
   const times = [...Array(2).keys()];
   // Save draft submissions
   await Promise.map(times,
