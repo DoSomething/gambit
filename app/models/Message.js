@@ -67,28 +67,6 @@ messageSchema.methods.updateMacro = function (macroName) {
  */
 
 /**
- * Sets the member inbound messages text to null
- * @param {String} userId
- */
-messageSchema.statics.anonymizeByUserId = function (userId) {
-  if (!userId) {
-    return Promise.reject('anonymizeByUserId: userId can\'t be undefined');
-  }
-  const query = {
-    userId,
-    direction: 'inbound',
-  };
-  const update = {
-    $set: {
-      text: null,
-      deletedAt: new Date(),
-    },
-  };
-  logger.info('Anonymizing member\'s inbound messages', query);
-  return this.updateMany(query, update).exec();
-};
-
-/**
  * Gets the message that matches this metadata.requestId and direction.
  * Updates it with the new properties passed in the update object.
  * @param {string} requestId

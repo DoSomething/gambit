@@ -44,32 +44,48 @@ conversationSchema.index({ updatedAt: 1 });
 conversationSchema.index({ userId: 1, platform: 1 });
 
 /**
- * Sets the member conversation's platformUserId to null
+ * Sets `platformUserId` to null in the member's conversation
+ * Sets `text` to null in member's inbound messages
  * Deletes Draft submissions belonging to the member's conversation
  * @param {String} userId
  */
-conversationSchema.statics.anonymizeByUserId = async function (userId) {
+conversationSchema.statics.anonymizePIIByUserId = async function (userId) {
   if (!userId) {
-    throw new Error('anonymizeByUserId: userId can\'t be undefined');
+    throw new Error('anonymizePIIByUserId: userId can\'t be undefined');
   }
   // Find the member's SMS conversation
-  const conversationQuery = { userId, platform: 'sms' };
-  const update = {
+  const anonymizeConversationQuery = { userId, platform: 'sms' };
+  // Set the conversation's platformUserId to null and populate deletedAt
+  const conversationUpdate = {
     $set: {
       platformUserId: null,
       deletedAt: new Date(),
     },
   };
-  logger.info('Anonymizing member\'s conversation', conversationQuery);
-  const conversation = await this.findOneAndUpdate(conversationQuery, update, { new: true }).exec();
+  logger.info('Anonymizing member\'s conversation', anonymizeConversationQuery);
+  const conversation = await this
+    .findOneAndUpdate(anonymizeConversationQuery, conversationUpdate, { new: true }).exec();
 
   if (!conversation) {
     throw new NotFoundError(`Conversation for user: ${userId} was not found`);
   }
-  const draftSubmissionQuery = { conversationId: conversation._id };
 
-  logger.info('Deleting member\'s draft submissions', draftSubmissionQuery);
-  return DraftSubmission.remove(draftSubmissionQuery).exec();
+  // Find all draft submissions belonging to the user's conversation
+  const deleteDraftSubmissionsQuery = { conversationId: conversation._id };
+  // Find all inbound messages belonging to the user's conversation
+  const anonymizeMessagesQuery = { conversationId: conversation._id, direction: 'inbound' };
+  // Set the inbound messages text to null and populate deletedAt
+  const messageUpdate = {
+    $set: {
+      text: null,
+      deletedAt: new Date(),
+    },
+  };
+  logger.info('Deleting member\'s draft submissions', deleteDraftSubmissionsQuery);
+  logger.info('Anonymizing member\'s inbound messages', anonymizeMessagesQuery);
+  return Promise.all([
+    DraftSubmission.remove(deleteDraftSubmissionsQuery).exec(),
+    Message.updateMany(anonymizeMessagesQuery, messageUpdate).exec()]);
 };
 
 /**
