@@ -209,7 +209,7 @@ test('setTopic calls save for new topic', async () => {
   mockConversation.topic.should.equal(mockResult.topic);
 });
 
-test('anonymizeByUserId sets platformUserId to null', async () => {
+test('anonymizePIIByUserId should call Conversation.findOneAndUpdate, DraftSubmission.remove, and Message.updateMany if a valid userId is provided', async () => {
   const conversation = conversationFactory.getValidConversation();
   sandbox.stub(Conversation, 'findOneAndUpdate').returns({
     exec: () => Promise.resolve(conversation),
@@ -217,18 +217,22 @@ test('anonymizeByUserId sets platformUserId to null', async () => {
   sandbox.stub(DraftSubmission, 'remove').returns({
     exec: () => Promise.resolve(true),
   });
-  await Conversation.anonymizeByUserId(conversation.userId);
+  sandbox.stub(Message, 'updateMany').returns({
+    exec: () => Promise.resolve(true),
+  });
+  await Conversation.anonymizePIIByUserId(conversation.userId);
 
   Conversation.findOneAndUpdate.should.have.been.called;
   DraftSubmission.remove.should.have.been.called;
+  Message.updateMany.should.have.been.called;
 });
 
-test('anonymizeByUserId should not call findOneAndUpdate if userId is undefined', async () => {
+test('anonymizePIIByUserId should not call findOneAndUpdate if userId is undefined', async () => {
   let anonymizationError;
   sandbox.spy(Conversation, 'findOneAndUpdate');
   sandbox.spy(DraftSubmission, 'remove');
   try {
-    await Conversation.anonymizeByUserId();
+    await Conversation.anonymizePIIByUserId();
   } catch (error) {
     anonymizationError = error;
   }
@@ -237,15 +241,17 @@ test('anonymizeByUserId should not call findOneAndUpdate if userId is undefined'
   DraftSubmission.remove.should.not.have.been.called;
 });
 
-test('anonymizeByUserId should not call findOneAndUpdate if userId is defined but no conversation is found', async () => {
+test('anonymizePIIByUserId should not call DraftSubmission.remove or Message.updateMany if userId is defined but no conversation is found', async () => {
   let anonymizationError;
   const mockConversationId = stubs.getRandomStringNumber();
   sandbox.stub(Conversation, 'findOneAndUpdate').returns({
     exec: () => Promise.resolve(null),
   });
   sandbox.spy(DraftSubmission, 'remove');
+  sandbox.spy(Message, 'updateMany');
+
   try {
-    await Conversation.anonymizeByUserId(mockConversationId);
+    await Conversation.anonymizePIIByUserId(mockConversationId);
   } catch (error) {
     anonymizationError = error;
   }
@@ -254,4 +260,5 @@ test('anonymizeByUserId should not call findOneAndUpdate if userId is defined bu
   anonymizationError.status.should.be.equal(404);
   Conversation.findOneAndUpdate.should.have.been.called;
   DraftSubmission.remove.should.not.have.been.called;
+  Message.updateMany.should.not.have.been.called;
 });
