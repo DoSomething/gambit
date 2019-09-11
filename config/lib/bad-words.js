@@ -226,7 +226,6 @@ const badWords = [
   'ragingboner',
   'rape',
   'raping',
-  'rapist',
   'rectum',
   'reversecowgirl',
   'rimjob',
