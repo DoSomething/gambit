@@ -124,15 +124,15 @@ test('sendReply(): responds with the inbound and outbound messages if member is 
 
   // test
   await repliesHelper.sendReply(req, t.context.res, 'text line', templates.campaignClosed);
-  // const responseMessages = t.context.res.send.getCall(0).args[0].data.messages;
+  const responseMessages = helpers.response.sendData.getCall(0).args[1].messages;
 
   // asserts
   helpers.response.sendData.should.have.been.called;
   helpers.user.updateByMemberMessageReq.should.have.been.calledWith(req);
   req.conversation.createAndSetLastOutboundMessage.should.have.been.called;
   req.conversation.postLastOutboundMessageToPlatform.should.have.been.called;
-  // responseMessages.inbound[0].should.be.equal(inboundMessage);
-  // responseMessages.outbound[0].should.be.equal(lastOutboundMessage);
+  responseMessages.inbound[0].should.be.equal(inboundMessage);
+  responseMessages.outbound[0].should.be.equal(lastOutboundMessage);
 });
 
 test('sendReply(): should not call createAndSetLastOutboundMessage if outbound message has been loaded', async (t) => {
