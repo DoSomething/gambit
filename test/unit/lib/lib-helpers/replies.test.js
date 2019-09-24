@@ -172,7 +172,6 @@ test('sendReply(): should call helpers.request.setSuppressOutbound if member is 
     user,
   });
   sandbox.spy(helpers.request, 'setSuppressOutbound');
-  // User will remain unsubscribed after the update
   sandbox.stub(helpers.user, 'updateByMemberMessageReq')
     .returns(Promise.resolve(user));
   sandbox.stub(req.conversation, 'createAndSetLastOutboundMessage')
@@ -189,6 +188,38 @@ test('sendReply(): should call helpers.request.setSuppressOutbound if member is 
   helpers.request.setSuppressOutbound.should.have.been.called;
   req.conversation.createAndSetLastOutboundMessage.should.have.been.called;
   req.conversation.postLastOutboundMessageToPlatform.should.not.have.been.called;
+});
+
+test('sendReply(): should not call helpers.request.setSuppressOutbound if member is unsubscribing', async (t) => {
+  // setup
+  const outboundMessage = messageFactory.getValidOutboundReplyMessage();
+  const user = userFactory.getValidUser();
+  const req = getReqWithProps({
+    lastOutboundMessage: outboundMessage,
+    outboundMessage,
+    user,
+  });
+
+  const isSubscriberStub = sandbox.stub(helpers.user, 'isSubscriber');
+  isSubscriberStub.onFirstCall().returns(true); // before calling updateByMemberMessageReq
+  isSubscriberStub.onSecondCall().returns(false); // after calling updateByMemberMessageReq
+  sandbox.spy(helpers.request, 'setSuppressOutbound');
+  sandbox.stub(helpers.user, 'updateByMemberMessageReq')
+    .returns(Promise.resolve(user));
+  sandbox.stub(req.conversation, 'createAndSetLastOutboundMessage')
+    .returns(resolvedPromise);
+  sandbox.stub(req.conversation, 'postLastOutboundMessageToPlatform')
+    .returns(resolvedPromise);
+  sandbox.stub(Message, 'updateMessageByRequestIdAndDirection')
+    .returns(resolvedPromise);
+
+  // test
+  await repliesHelper.sendReply(req, t.context.res, 'text line', templates.campaignClosed);
+
+  // asserts
+  helpers.request.setSuppressOutbound.should.not.have.been.called;
+  req.conversation.createAndSetLastOutboundMessage.should.have.been.called;
+  req.conversation.postLastOutboundMessageToPlatform.should.have.been.called;
 });
 
 test('sendReply(): should createAndSetLastOutboundMessage outbound message if no outboundMessage was loaded on a retry', async (t) => {
