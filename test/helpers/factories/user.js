@@ -8,11 +8,11 @@ const config = require('../../../config/lib/helpers/user');
 const userFields = config.fields;
 const chance = new Chance();
 
-module.exports.getValidUser = function getValidUser(phoneNumber) {
+module.exports.getValidUser = function getValidUser(phoneNumber = stubs.getMobileNumber(), smsStatus = 'active') {
   const user = {
     id: new ObjectID().toString(),
-    mobile: phoneNumber || stubs.getMobileNumber(),
-    sms_status: 'active',
+    mobile: phoneNumber,
+    sms_status: smsStatus,
     sms_paused: false,
   };
   user[userFields.votingPlanAttendingWith.name] = chance.syllable();
