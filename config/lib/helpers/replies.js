@@ -8,6 +8,7 @@ const commands = {
 
 const supportText = `Text ${commands.support} if you have a question.`;
 
+// Static Templates
 module.exports = {
   badWords: {
     name: 'badWords',

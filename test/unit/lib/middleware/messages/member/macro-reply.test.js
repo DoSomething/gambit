@@ -9,9 +9,9 @@ const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 
+const conversationFactory = require('../../../../../helpers/factories/conversation');
 const helpers = require('../../../../../../lib/helpers');
 const stubs = require('../../../../../helpers/stubs');
-const conversationFactory = require('../../../../../helpers/factories/conversation');
 
 chai.should();
 chai.use(sinonChai);
@@ -46,7 +46,7 @@ test.afterEach((t) => {
   t.context = {};
 });
 
-test('replyMacro calls next if macro text is not defined', async (t) => {
+test('replyMacro calls next middleware if the macro\'s text is empty and the macro name is not noReply ', async (t) => {
   const next = sinon.stub();
   const middleware = replyMacro();
   sandbox.stub(helpers.macro, 'getMacro')
@@ -57,7 +57,19 @@ test('replyMacro calls next if macro text is not defined', async (t) => {
   next.should.have.been.called;
 });
 
-test('replyMacro sends reply if macro text is set', async (t) => {
+test('replyMacro sends a noReply response if the macro\'s name is noReply ', async (t) => {
+  const next = sinon.stub();
+  const middleware = replyMacro();
+  t.context.req.macro = 'noReply';
+
+  sandbox.stub(helpers.replies, 'noReply').resolves(true);
+
+  // test
+  await middleware(t.context.req, t.context.res, next);
+  helpers.replies.noReply.should.have.been.called;
+});
+
+test('replyMacro sends reply if macro\'s text is set', async (t) => {
   const next = sinon.stub();
   const middleware = replyMacro();
   sandbox.stub(helpers.macro, 'getMacro')

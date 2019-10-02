@@ -79,49 +79,56 @@ function getReqWithProps(opts = {}) {
   req.conversation = opts.conversation || conversationFactory.getValidConversation();
   req.conversation.lastOutboundMessage = opts.lastOutboundMessage;
   req.outboundMessage = opts.outboundMessage;
+  req.user = opts.user;
   return req;
 }
 
 /**
  * Tests --------------------------------------------------
  */
+
 test('sendReply(): sends error if updateByMemberMessageReq fails', async (t) => {
   // setup
-  const error = { message: 'Epic fail' };
-  sandbox.stub(helpers.user, 'updateByMemberMessageReq')
-    .returns(Promise.reject(error));
+  const user = userFactory.getValidUser();
+  const req = getReqWithProps({
+    user,
+  });
+
+  sandbox.stub(helpers.user, 'updateByMemberMessageReq').throws('error updating user');
+
   // test
-  await repliesHelper.sendReply(t.context.req, t.context.res, 'text', templates.campaignClosed);
+  await repliesHelper.sendReply(req, t.context.res, 'text', templates.campaignClosed);
 
   // asserts
-  helpers.errorNoticeable.sendErrorResponse.should.have.been.calledWith(t.context.res, error);
+  helpers.errorNoticeable.sendErrorResponse.should.have.been.called;
 });
 
-test('sendReply(): responds with the inbound and outbound messages', async (t) => {
+test('sendReply(): responds with the inbound and outbound messages if member is subscribed', async (t) => {
   // setup
   const inboundMessage = messageFactory.getValidMessage();
   const lastOutboundMessage = messageFactory.getValidOutboundReplyMessage();
+  const user = userFactory.getValidUser();
   const req = getReqWithProps({
     inboundMessage,
     lastOutboundMessage,
+    user,
   });
-  const updatedUser = userFactory.getValidUser();
+
   sandbox.stub(helpers.user, 'updateByMemberMessageReq')
-    .returns(Promise.resolve(updatedUser));
+    .returns(Promise.resolve(user));
   sandbox.stub(req.conversation, 'createAndSetLastOutboundMessage')
     .returns(resolvedPromise);
   sandbox.stub(req.conversation, 'postLastOutboundMessageToPlatform')
     .returns(resolvedPromise);
-  sandbox.spy(t.context.res, 'send');
+  sandbox.spy(helpers.response, 'sendData');
 
   // test
   await repliesHelper.sendReply(req, t.context.res, 'text line', templates.campaignClosed);
-  const responseMessages = t.context.res.send.getCall(0).args[0].data.messages;
+  const responseMessages = helpers.response.sendData.getCall(0).args[1].messages;
 
   // asserts
-  t.context.res.send.should.have.been.called;
+  helpers.response.sendData.should.have.been.called;
   helpers.user.updateByMemberMessageReq.should.have.been.calledWith(req);
-  req.user.should.deep.equal(updatedUser);
   req.conversation.createAndSetLastOutboundMessage.should.have.been.called;
   req.conversation.postLastOutboundMessageToPlatform.should.have.been.called;
   responseMessages.inbound[0].should.be.equal(inboundMessage);
@@ -131,13 +138,15 @@ test('sendReply(): responds with the inbound and outbound messages', async (t) =
 test('sendReply(): should not call createAndSetLastOutboundMessage if outbound message has been loaded', async (t) => {
   // setup
   const outboundMessage = messageFactory.getValidOutboundReplyMessage();
+  const user = userFactory.getValidUser();
   const req = getReqWithProps({
     lastOutboundMessage: outboundMessage,
     outboundMessage,
     isARetryRequest: () => true,
+    user,
   });
   sandbox.stub(helpers.user, 'updateByMemberMessageReq')
-    .returns(Promise.resolve({}));
+    .returns(Promise.resolve(user));
   sandbox.stub(req.conversation, 'createAndSetLastOutboundMessage')
     .returns(resolvedPromise);
   sandbox.stub(req.conversation, 'postLastOutboundMessageToPlatform')
@@ -157,13 +166,15 @@ test('sendReply(): should createAndSetLastOutboundMessage outbound message if no
   // setup
   const inboundMessage = messageFactory.getValidMessage();
   const lastOutboundMessage = messageFactory.getValidOutboundReplyMessage();
+  const user = userFactory.getValidUser();
   const req = getReqWithProps({
     inboundMessage,
     lastOutboundMessage,
     isARetryRequest: () => true,
+    user,
   });
   sandbox.stub(helpers.user, 'updateByMemberMessageReq')
-    .returns(Promise.resolve({}));
+    .returns(Promise.resolve(user));
   sandbox.stub(req.conversation, 'createAndSetLastOutboundMessage')
     .returns(resolvedPromise);
   sandbox.stub(req.conversation, 'postLastOutboundMessageToPlatform')
@@ -179,9 +190,10 @@ test('sendReply(): should createAndSetLastOutboundMessage outbound message if no
 
 test('sendReply(): should call sendErrorResponse on failure', async (t) => {
   // setup
-  const req = getReqWithProps();
+  const user = userFactory.getValidUser();
+  const req = getReqWithProps({ user });
   sandbox.stub(helpers.user, 'updateByMemberMessageReq')
-    .returns(Promise.resolve({}));
+    .returns(Promise.resolve(user));
   sandbox.stub(req.conversation, 'createAndSetLastOutboundMessage')
     .returns(rejectedPromise);
 
