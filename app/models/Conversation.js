@@ -344,8 +344,9 @@ conversationSchema.methods.postLastOutboundMessageToPlatform = async function (r
   const messageText = this.lastOutboundMessage.text;
   /**
   * Don't send if text is empty or is not an SMS message.
-  * For "noReply" template replies (members in "support" topic). The text is empty in order to
-  * leverage this check here and stop Gambit from posting the reply to Twilio.
+  * For "noReply" template replies (members in support or unsubscribed topics).
+  * The text is empty in order to leverage this check and stop Gambit
+  * from posting the reply to Twilio.
   */
   if (!messageText || !this.isSms()) {
     return null;
