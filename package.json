@@ -33,7 +33,9 @@
     ]
   },
   "nodemonConfig": {
-    "ignore": ["test/*"]
+    "ignore": [
+      "test/*"
+    ]
   },
   "engines": {
     "node": "10.16.3",
