@@ -28,8 +28,9 @@ Gambit forwards support requests from users into a [Front](https://www.frontapp.
 Gambit is built with:
 * ❤️ + ☕
 * [Express](https://expressjs.com/)
-* [Redis](https://redis.io/)
+* [GraphQL](https://graphql.org/learn/)
 * [MongoDB](https://www.mongodb.com/)
+* [Redis](https://redis.io/)
 * [Rivescript](https://www.rivescript.com/)
 
 ### Installation
@@ -44,12 +45,12 @@ Local Node, redis, and MongoDB installations are required to run this applicatio
 * Your local Node.js and NPM versions should match the ones in `package.json`.
 * Install dependencies: `npm install`.
 * All tests should pass: `npm run test:full`.
-* Run Conversations locally: `npm start`.
-    * If the [heroku-cli](https://devcenter.heroku.com/articles/heroku-cli) is installed. Run `heroku local` instead.
+* Run Conversations locally: `npm start` (uses [nodemon](https://nodemon.io/)).
 
 ### Localhost
 
-With Gambit running locally, test Gambit replies by opening a new terminal window and running `node shell`.
+With Gambit running locally, test Gambit replies by opening a new terminal window and running:
+- `nvm use && node shell`.
 
 ```
 PuppetSloth-MacBook-Pro-2:gambit puppetsloth$ node shell

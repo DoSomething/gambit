@@ -7,7 +7,7 @@ const defaultTopic = rivescriptTopics.default;
 const invalidAnswerText = 'Sorry, I didn\'t get that.';
 
 // Subscription status.
-const activeSubscriptionStatusText = process.env.DS_GAMBIT_CONVERSATIONS_SUBSCRIPTION_STATUS_ACTIVE_TEXT || 'Hi I\'m Tej from DoSomething.org! Welcome to my weekly updates (up to 8msg/month). Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.';
+const activeSubscriptionStatusText = process.env.DS_GAMBIT_CONVERSATIONS_SUBSCRIPTION_STATUS_ACTIVE_TEXT || '👋 Hi I\'m Tej from DoSomething.org! I\'ll be txting you weekly, so get to know me! (Msg&DataRatesApply. Txt HELP for help, STOP to stop)\n\nhttps://www.dosomething.org/us/articles/6-things-you-should-know-about-me-tej?utm_source=content_fun&utm_medium=sms&utm_campaign=sms_compliance_message&user_id={{user.id}}';
 const lessSubscriptionStatusText = 'Great, you\'ll start to receive 1 monthly update from Tej at DoSomething.org! Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.';
 const stopSubscriptionStatusText = process.env.DS_GAMBIT_CONVERSATIONS_SUBSCRIPTION_STATUS_STOP_TEXT || "You're unsubscribed from DoSomething.org Alerts. No more msgs will be sent. Text JOIN to receive 4-8 msgs/mth.\n\nLeave your feedback: https://dosomething.typeform.com/to/DHWcen?user_id={{user.id}}";
 
