@@ -143,7 +143,7 @@ test('createVotingPlan passes user voting plan info to gateway.createPost', asyn
   const result = await userHelper
     .createVotingPlan(mockUser, source, t.context.req.platformUserStateISOCode);
   gateway.createPost.should.have.been.calledWith({
-    campaign_id: config.posts.votingPlan.campaignId,
+    action_id: config.posts.votingPlan.actionId,
     northstar_id: mockUser.id,
     source,
     text: details,
@@ -322,13 +322,12 @@ test('getFetchSignupsQuery should return object for querying by userId and campa
 
 // getFetchVotingPlanQuery
 test('getFetchVotingPlanQuery should return getFetchSignupsQuery result with type filter property', () => {
-  const mockQuery = { test: stubs.getRandomWord() };
-  sandbox.stub(userHelper, 'getFetchSignupsQuery')
-    .returns(mockQuery);
   const result = userHelper.getFetchVotingPlanQuery(mockUser.id);
-  result.should.deep.equal(Object.assign(mockQuery, {
+  result.should.deep.equal({
+    'filter[northstar_id]': mockUser.id,
+    'filter[action_id]': config.posts.votingPlan.actionId,
     'filter[type]': config.posts.votingPlan.type,
-  }));
+  });
 });
 
 // getVotingPlanValues
