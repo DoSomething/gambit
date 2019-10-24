@@ -58,7 +58,7 @@ module.exports = {
     },
     votingPlan: {
       type: 'text',
-      actionId: process.env.DS_GAMBIT_CONVERSATIONS_VOTING_PLAN_ACTION_ID || 936,
+      actionId: process.env.DS_GAMBIT_CONVERSATIONS_VOTING_PLAN_ACTION_ID || 938,
     },
   },
 };
