@@ -77,10 +77,10 @@ Input is posted to your localhost `api/v2/messages?origin=twilio` endpoint on be
 
 ### Contributing
 
-* Contributions to this repo must adhere to the steps in wunder.io's Git workflow:  **[Wunderflow](http://wunderflow.wunder.io/)**.
-
 * Run `npm test:full` to lint code and run automated tests.
 * Pull Requests are expected to contain reasonable test coverage.
+
+Note: Versions exist from when we used [Wunderflow](http://wunderflow.wunder.io/) for branching. We now adhere to a [Github flow](https://guides.github.com/introduction/flow/), keeping consistent with workflow for other current DoSomething repositories.
 
 ### Troubleshooting
 
