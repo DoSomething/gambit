@@ -74,7 +74,6 @@ You>
 
 Input is posted to your localhost `api/v2/messages?origin=twilio` endpoint on behalf of the Northstar User with mobile number matching your  `DS_CONSOLEBOT_USER_MOBILE` config variable. A new Northstar User is created for the mobile number if it doesn't exist.
 
-
 ### Contributing
 
 * Run `npm test:full` to lint code and run automated tests.
