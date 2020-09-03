@@ -250,11 +250,25 @@ const fetchWebSignupConfirmations = `
   ${campaignTopicTransitionFragments}
 `;
 
+const fetchVotingInformationByLocation = `
+  query getLocationVotingInformation($location: String!) {
+    locationVotingInformation(location: $location) {
+      absenteeBallotRequestDeadline
+      absenteeBallotReturnDeadline
+      absenteeBallotReturnDeadlineType
+      earlyVotingEnds
+      earlyVotingStarts
+      voterRegistrationDeadline
+    }
+  }
+`;
+
 module.exports = {
   queries: {
     fetchBroadcastById,
     fetchConversationTriggers,
     fetchTopicById,
+    fetchVotingInformationByLocation,
     fetchWebSignupConfirmations,
   },
   clientOptions: {
