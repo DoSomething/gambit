@@ -188,6 +188,18 @@ module.exports = {
         }],
       },
     }),
+    fetchVotingInformationByLocation: () => ({
+      data: {
+        locationVotingInformation: {
+          voterRegistrationDeadline: '10/24',
+          absenteeBallotRequestDeadline: '10/1',
+          absenteeBallotReturnDeadline: '10/15',
+          absenteeBallotReturnDeadlineType: 'postmarked by',
+          earlyVotingStarts: '8/15',
+          earlyVotingEnds: '9/26',
+        },
+      },
+    }),
   },
   getError,
   stubLogger,

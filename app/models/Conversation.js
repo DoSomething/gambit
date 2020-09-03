@@ -286,9 +286,11 @@ conversationSchema.methods.getMessagePayloadFromReq = function (req = {}, direct
  */
 conversationSchema.methods.createMessage = async function (direction, text, template, req) {
   logger.debug('createMessage', { direction }, req);
+
   let messageText;
+
   if (direction !== 'inbound') {
-    messageText = helpers.tags.render(text, req);
+    messageText = await helpers.tags.render(text, req);
 
     if (bertly.isEnabled() && bertly.textHasLinks(messageText)) {
       messageText = await bertly.parseLinksIntoRedirects(messageText);

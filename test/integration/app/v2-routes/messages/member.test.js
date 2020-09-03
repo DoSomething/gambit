@@ -55,6 +55,9 @@ function mockExternalCallsForUserInputMessage(message) {
   integrationHelper.routes.graphql
     .intercept(stubs.graphql.fetchConversationTriggers(), 1);
 
+  integrationHelper.routes.graphql
+    .intercept(stubs.graphql.fetchVotingInformationByLocation(), 1);
+
   // mock user fetch
   integrationHelper.routes.northstar
     .intercept.fetchUserByMobile(message.From, member, 1);
