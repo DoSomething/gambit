@@ -80,7 +80,8 @@ test.serial('POST /api/v2/messages?origin=subscriptionStatusActive should create
   const outboundMessage = await Message.findOne({ conversationId: conversation.id });
   should.exist(outboundMessage);
   outboundMessage.template.should.be.equal(subscriptionStatusActiveData.name);
-  const renderedText = await tagsHelper.render(subscriptionStatusActiveData.text, { user: user.data });
+  const renderedText = await tagsHelper
+    .render(subscriptionStatusActiveData.text, { user: user.data });
   outboundMessage.text.should.be.equal(renderedText);
 });
 
@@ -111,7 +112,8 @@ test.serial('POST /api/v2/messages?origin=subscriptionStatusActive should not cr
   messages.length.should.be.equal(1);
   const message = messages[0];
   message.template.should.be.equal(subscriptionStatusActiveData.name);
-  const renderedText = await tagsHelper.render(subscriptionStatusActiveData.text, { user: user.data });
+  const renderedText = await tagsHelper
+    .render(subscriptionStatusActiveData.text, { user: user.data });
   message.text.should.be.equal(renderedText);
 });
 
