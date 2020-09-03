@@ -197,9 +197,9 @@ module.exports = {
           absenteeBallotReturnDeadlineType: 'postmarked by',
           earlyVotingStarts: '8/15',
           earlyVotingEnds: '9/26',
-        }
-      }
-    })
+        },
+      },
+    }),
   },
   getError,
   stubLogger,
