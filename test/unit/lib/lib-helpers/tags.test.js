@@ -107,10 +107,11 @@ test('render should throw if mustache.render fails', () => {
   tagsHelper.render(mockText, mockTags).should.throw;
 });
 
-test('render should throw if getTags fails', () => {
+test('render should throw if getTags fails', async () => {
   sandbox.stub(tagsHelper, 'getTags')
-    .returns(new Error());
-  tagsHelper.render(mockText, mockTags).should.throw;
+    .returns(Promise.resolve(new Error()));
+
+  await tagsHelper.render(mockText, mockTags).should.throw;
 });
 
 test('render should replace user vars', async (t) => {
@@ -125,7 +126,7 @@ test('render should replace user vars', async (t) => {
 test('getTags should return an object', async (t) => {
   const broadcastTag = { id: stubs.getContentfulId() };
   const linksTag = { url: stubs.getRandomMessageText() };
-  const userId = '5480c950bffebc651c8b456f';
+  const userTag = { id: '5480c950bffebc651c8b456f', addr_state: 'NM' };
   const locationVotingInformation = { earlyVotingStarts: '10/23' };
 
   sandbox.stub(tagsHelper, 'getBroadcastTag')
@@ -133,27 +134,21 @@ test('getTags should return an object', async (t) => {
   sandbox.stub(tagsHelper, 'getLinksTag')
     .returns(linksTag);
   sandbox.stub(tagsHelper, 'getUserTag')
-    .returns({ id: '5480c950bffebc651c8b456f' });
+    .returns(userTag);
   sandbox.stub(graphql, 'fetchVotingInformationByLocation')
     .returns(Promise.resolve(locationVotingInformation));
 
   t.context.req.topic = mockTopic;
   t.context.req.user = mockUser;
-  try {
-    const result = await tagsHelper.getTags(t.context.req);
+
+  const result = await tagsHelper.getTags(t.context.req);
+
   result.should.deep.equal({
     broadcast: broadcastTag,
     links: linksTag,
     topic: mockTopic,
-    user: Object.assign({ id: '5480c950bffebc651c8b456f '}, locationVotingInformation),
+    user: Object.assign(userTag, locationVotingInformation),
   });
-  }
-  catch (error) {
-    console.log(error);
-  }
-  
-
-
 });
 
 test('getTags should return empty object for user and topic if undefined in req', async (t) => {
