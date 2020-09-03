@@ -9,17 +9,16 @@ const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
 const queryString = require('query-string');
 
-const logger = require('../../../../lib/logger');
 const graphql = require('../../../../lib/graphql');
 const config = require('../../../../config/lib/helpers/tags');
 const userConfig = require('../../../../config/lib/helpers/user');
 
+// stubs
 const stubs = require('../../../helpers/stubs');
+const userFactory = require('../../../helpers/factories/user');
+const topicFactory = require('../../../helpers/factories/topic');
 const broadcastFactory = require('../../../helpers/factories/broadcast');
 const conversationFactory = require('../../../helpers/factories/conversation');
-const topicFactory = require('../../../helpers/factories/topic');
-const userFactory = require('../../../helpers/factories/user');
-
 
 // setup "x.should.y" assertion style
 chai.should();
@@ -40,18 +39,16 @@ const mockText = stubs.getRandomMessageText();
 const mockTopic = topicFactory.getValidTopic();
 const mockUser = userFactory.getValidUserWithAddress();
 const mockTags = { season: 'winter' };
-const mockLocationVotingInformation = {  
-  voterRegistrationDeadline: "10/24",
-  absenteeBallotRequestDeadline: "10/1",
-  absenteeBallotReturnDeadline: "10/15",
-  absenteeBallotReturnDeadlineType: "postmarked by",
-  earlyVotingStarts: "8/15",
-  earlyVotingEnds: "9/26",
+const mockLocationVotingInformation = {
+  voterRegistrationDeadline: '10/24',
+  absenteeBallotRequestDeadline: '10/1',
+  absenteeBallotReturnDeadline: '10/15',
+  absenteeBallotReturnDeadlineType: 'postmarked by',
+  earlyVotingStarts: '8/15',
+  earlyVotingEnds: '9/26',
 };
 
 test.beforeEach((t) => {
-  // This test complains about attempting to wrap warn when errors occur (so you can't see the errors)
-  // stubs.stubLogger(sandbox, logger);
   t.context.req = httpMocks.createRequest();
 });
 
