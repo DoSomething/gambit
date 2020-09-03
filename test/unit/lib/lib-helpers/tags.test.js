@@ -39,14 +39,8 @@ const mockText = stubs.getRandomMessageText();
 const mockTopic = topicFactory.getValidTopic();
 const mockUser = userFactory.getValidUserWithAddress();
 const mockTags = { season: 'winter' };
-const mockLocationVotingInformation = {
-  voterRegistrationDeadline: '10/24',
-  absenteeBallotRequestDeadline: '10/1',
-  absenteeBallotReturnDeadline: '10/15',
-  absenteeBallotReturnDeadlineType: 'postmarked by',
-  earlyVotingStarts: '8/15',
-  earlyVotingEnds: '9/26',
-};
+const mockLocationVotingInformation = stubs.graphql.fetchVotingInformationByLocation()
+  .data.locationVotingInformation;
 
 test.beforeEach((t) => {
   t.context.req = httpMocks.createRequest();
