@@ -38,8 +38,16 @@ const sandbox = sinon.sandbox.create();
 const mockBroadcast = broadcastFactory.getValidAutoReplyBroadcast();
 const mockText = stubs.getRandomMessageText();
 const mockTopic = topicFactory.getValidTopic();
-const mockUser = userFactory.getValidUser();
+const mockUser = userFactory.getValidUserWithAddress();
 const mockTags = { season: 'winter' };
+const mockLocationVotingInformation = {  
+  voterRegistrationDeadline: "10/24",
+  absenteeBallotRequestDeadline: "10/1",
+  absenteeBallotReturnDeadline: "10/15",
+  absenteeBallotReturnDeadlineType: "postmarked by",
+  earlyVotingStarts: "8/15",
+  earlyVotingEnds: "9/26",
+};
 
 test.beforeEach((t) => {
   // This test complains about attempting to wrap warn when errors occur (so you can't see the errors)
@@ -99,12 +107,13 @@ test('render should return a string', async () => {
   result.should.equal(mockText);
 });
 
-test('render should throw if mustache.render fails', () => {
+test('render should throw if mustache.render fails', async () => {
   sandbox.stub(mustache, 'render')
     .returns(new Error());
   sandbox.stub(tagsHelper, 'getTags')
-    .returns(mockTags);
-  tagsHelper.render(mockText, mockTags).should.throw;
+    .returns(Promise.resolve(mockTags));
+
+  await tagsHelper.render(mockText, mockTags).should.throw;
 });
 
 test('render should throw if getTags fails', async () => {
@@ -116,10 +125,12 @@ test('render should throw if getTags fails', async () => {
 
 test('render should replace user vars', async (t) => {
   t.context.req.user = mockUser;
+  sandbox.stub(graphql, 'fetchVotingInformationByLocation')
+    .returns(Promise.resolve(mockLocationVotingInformation));
 
-  const result = await tagsHelper.render('{{user.id}}', t.context.req);
+  const result = await tagsHelper.render('Hello, {{user.id}}, early voting in {{user.addrState}} beings on {{user.earlyVotingStarts}} and ends on {{user.earlyVotingEnds}}.', t.context.req);
 
-  result.should.equal(mockUser.id);
+  result.should.equal(`Hello, ${mockUser.id}, early voting in ${mockUser.addr_state} beings on ${mockLocationVotingInformation.earlyVotingStarts} and ends on ${mockLocationVotingInformation.earlyVotingEnds}.`);
 });
 
 // getTags
@@ -127,7 +138,6 @@ test('getTags should return an object', async (t) => {
   const broadcastTag = { id: stubs.getContentfulId() };
   const linksTag = { url: stubs.getRandomMessageText() };
   const userTag = { id: '5480c950bffebc651c8b456f', addr_state: 'NM' };
-  const locationVotingInformation = { earlyVotingStarts: '10/23' };
 
   sandbox.stub(tagsHelper, 'getBroadcastTag')
     .returns(broadcastTag);
@@ -136,7 +146,7 @@ test('getTags should return an object', async (t) => {
   sandbox.stub(tagsHelper, 'getUserTag')
     .returns(userTag);
   sandbox.stub(graphql, 'fetchVotingInformationByLocation')
-    .returns(Promise.resolve(locationVotingInformation));
+    .returns(Promise.resolve(mockLocationVotingInformation));
 
   t.context.req.topic = mockTopic;
   t.context.req.user = mockUser;
@@ -147,10 +157,11 @@ test('getTags should return an object', async (t) => {
     broadcast: broadcastTag,
     links: linksTag,
     topic: mockTopic,
-    user: Object.assign(userTag, locationVotingInformation),
+    user: Object.assign(userTag, mockLocationVotingInformation),
   });
 });
 
+// TODO: Shouldn't things break if we have empty req.user or req.topic? This seems unnecessary.
 test('getTags should return empty object for user and topic if undefined in req', async (t) => {
   const result = await tagsHelper.getTags(t.context.req);
 
