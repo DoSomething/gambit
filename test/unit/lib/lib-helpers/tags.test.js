@@ -86,7 +86,7 @@ test('getLinksTag should return an object', (t) => {
 });
 
 // render
-test('render should return a string', async () => {
+test('render does not call getTags if open/closed brackets are not found', async () => {
   sandbox.stub(mustache, 'render')
     .returns(mockText);
   sandbox.stub(tagsHelper, 'getTags')
@@ -94,7 +94,7 @@ test('render should return a string', async () => {
 
   const result = await tagsHelper.render(mockText, {});
 
-  mustache.render.should.have.been.calledWith(mockText, mockTags);
+  mustache.render.should.not.have.been.called;
   result.should.equal(mockText);
 });
 
@@ -104,14 +104,14 @@ test('render should throw if mustache.render fails', async () => {
   sandbox.stub(tagsHelper, 'getTags')
     .returns(Promise.resolve(mockTags));
 
-  await tagsHelper.render(mockText, mockTags).should.throw;
+  await tagsHelper.render('Hello {{user.id}}', mockTags).should.throw;
 });
 
 test('render should throw if getTags fails', async () => {
   sandbox.stub(tagsHelper, 'getTags')
     .returns(Promise.resolve(new Error()));
 
-  await tagsHelper.render(mockText, mockTags).should.throw;
+  await tagsHelper.render('Hello {{user.id}}', mockTags).should.throw;
 });
 
 test('render should replace user vars', async (t) => {
