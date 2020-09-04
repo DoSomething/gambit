@@ -1,0 +1,7 @@
+// dev.rive
+
+/**
+ * These are convenience keywords to sanity check functionality (like voting info tags).
+ */
++ devtest
+- Voting in {{user.addrState}} starts on {{user.earlyVotingStarts}} and ends on {{user.earlyVotingEnds}}.
