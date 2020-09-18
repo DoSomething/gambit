@@ -69,6 +69,6 @@ test.serial('bertly.parseLinksIntoRedirects should get redirect for found links'
   bertly.__set__('restClient', { createRedirect: () => Promise.resolve(getRedirect()) });
   const textWithLink = stubs.getBroadcastMessageTextWithLink();
   const parsedText = await bertly.parseLinksIntoRedirects(textWithLink);
-  parsedText.should.include(getRedirect().url);
+  parsedText.should.include(getRedirect().url_short);
   bertly.__set__('restClient', bertlyRestClient);
 });
