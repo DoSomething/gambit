@@ -48,6 +48,9 @@ module.exports = {
    * loaded Rivescript topics.
    */
   rivescriptTopics: {
+    askVotingMethod: {
+      id: 'ask_voting_method',
+    },
     askVotingPlanAttendingWith: {
       id: 'ask_voting_plan_attending_with',
     },

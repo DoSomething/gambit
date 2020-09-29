@@ -11,11 +11,13 @@ const activeSubscriptionStatusText = process.env.DS_GAMBIT_CONVERSATIONS_SUBSCRI
 const lessSubscriptionStatusText = 'Great, you\'ll start to receive 1 monthly update from DoSomething.org! Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.';
 const stopSubscriptionStatusText = process.env.DS_GAMBIT_CONVERSATIONS_SUBSCRIPTION_STATUS_STOP_TEXT || "You're unsubscribed from DoSomething.org Alerts. No more msgs will be sent. Text JOIN to receive 4-8 msgs/mth.\n\nLeave your feedback: https://dosomething.typeform.com/to/DHWcen?user_id={{user.id}}";
 
-// Voting plan.
+// Voting method/plan.
+const askVotingMethodText = process.env.DS_GAMBIT_CONVERSATIONS_ASK_VOTING_METHOD_TEXT || 'How do you plan on voting? A) In person B) Vote By Mail C) Early Voting';
 const askVotingPlanAttendingWithText = process.env.DS_GAMBIT_CONVERSATIONS_ASK_VOTING_PLAN_ATTENDING_WITH_TEXT || 'Who are you planning on voting with? A) Alone B) Friends C) Family D) Co-workers';
 const askVotingPlanMethodOfTransportText = process.env.DS_GAMBIT_CONVERSATIONS_ASK_VOTING_PLAN_METHOD_OF_TRANSPORT_TEXT || 'How are you planning on getting to the polls? A) Drive B) Walk C) Bike D) Public transportation';
 const askVotingPlanStatusText = process.env.DS_GAMBIT_CONVERSATIONS_ASK_VOTING_PLAN_STATUS_TEXT || 'Are you planning on voting? A) Yes B) No C) Already voted D) Can\'t vote';
 const askVotingPlanTimeOfDayText = process.env.DS_GAMBIT_CONVERSATIONS_ASK_VOTING_PLAN_TIME_OF_DAY_TEXT || 'What time are you planning on voting? A) Morning B) Afternoon C) Evening';
+
 // The votingPlanStatusVoting macro begins collecting voting plan data via topic changes:
 // 1 - askVotingPlanTimeOfDay
 // 2 - askVotingPlanMethodOfTransport
@@ -42,6 +44,23 @@ function macroName(prefix, valueKey) {
  */
 function lowercaseFirstLetter(string) {
   return string.charAt(0).toLowerCase() + string.slice(1);
+}
+
+/**
+ * @param {String} valueKey
+ * @return {Object}
+ */
+function votingMethod(valueKey) {
+  return {
+    name: macroName('votingMethod', valueKey),
+    // After voting method, ask for time of day.
+    text: `Great! ${askVotingPlanMethodOfTransportText}`,
+    topic: rivescriptTopics.askVotingPlanMethodOfTransport,
+    profileUpdate: {
+      field: profile.votingPlanTimeOfDay.name,
+      value: profile.votingPlanTimeOfDay.values[valueKey],
+    },
+  };
 }
 
 /**
@@ -108,7 +127,7 @@ module.exports = {
     askVotingPlanStatus: {
       name: 'askVotingPlanStatus',
       text: askVotingPlanStatusText,
-      topic: rivescriptTopics.askVotingPlanStatus,
+      topic: rivescriptTopics.askVotingMethod,
     },
     catchAll: {
       name: 'catchAll',
