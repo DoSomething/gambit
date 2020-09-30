@@ -3,7 +3,7 @@
 // Bot variables
 ! var cmd_support = Q
 ! var member_count = 6 MILLION+
-! var name = Tej
+! var name = Ben
 ! var url  = DoSomething.org
 
 // Substitutions
