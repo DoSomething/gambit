@@ -237,7 +237,7 @@ module.exports = {
     },
     votingMethodMail: {
       name: 'votingMethodMail',
-      text: 'In {{addrState}},your ballot must be {{absenteeBallotReturnDeadlineType}} {{absenteeBallotRequestDeadline}}. Take 2 mins to request your ballot: https://vote-absentee.com/?utm_source=DST\n\nThen, use this tool to learn about your balllot: https://www.ballotready.org',
+      text: 'In {{user.addrState}}, your ballot must be {{user.absenteeBallotReturnDeadlineType}} {{user.absenteeBallotRequestDeadline}}. Take 2 mins to request your ballot: https://vote-absentee.com/?utm_source=DST\n\nThen, use this tool to learn about your balllot: https://www.ballotready.org',
       topic: rivescriptTopics.default,
       profileUpdate: {
         field: profile.votingMethod.name,
