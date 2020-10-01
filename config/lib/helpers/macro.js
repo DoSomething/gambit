@@ -226,7 +226,7 @@ module.exports = {
         value: profile.votingMethod.values.early,
       },
     },
-    votingMethodInPerson:{
+    votingMethodInPerson: {
       name: 'votingMethodInPerson',
       text: `Let's make a simple plan for how you'll vote (and we'll remind you on Election Day!) ${askVotingPlanTimeOfDayText}`,
       topic: rivescriptTopics.askVotingPlanTimeOfDay,
