@@ -10,6 +10,14 @@ const userFields = {
     name: 'sms_status',
     values: subscriptionStatusValues,
   },
+  votingMethod: {
+    name: 'voting_method',
+    values: {
+      early: 'early',
+      inPerson: 'in_person',
+      mail: 'mail',
+    },
+  },
   votingPlanAttendingWith: {
     name: 'voting_plan_attending_with',
     values: {

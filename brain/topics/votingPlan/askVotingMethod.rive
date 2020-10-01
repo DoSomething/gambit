@@ -15,7 +15,7 @@
 + c
 - votingMethodEarly
 
-+ [*] (mail|mail-in) [*]
++ [*] mail [*]
 - votingMethodMail
 
 + [*] early [*]
