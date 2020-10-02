@@ -13,6 +13,9 @@ module.exports = {
     askSubscriptionStatus: {
       type: 'askSubscriptionStatus',
     },
+    askVotingMethod: {
+      type: 'askVotingMethod',
+    },
     askVotingPlanStatus: {
       type: 'askVotingPlanStatus',
     },

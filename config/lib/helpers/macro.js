@@ -3,33 +3,19 @@
 const profile = require('./user').fields;
 const rivescriptTopics = require('./topic').rivescriptTopics;
 
+/**
+ * These constants are used within multiple macros.
+ */
 const defaultTopic = rivescriptTopics.default;
 const invalidAnswerText = 'Sorry, I didn\'t get that.';
-
-// Subscription status.
-const activeSubscriptionStatusText = process.env.DS_GAMBIT_CONVERSATIONS_SUBSCRIPTION_STATUS_ACTIVE_TEXT || '👋 Welcome to DoSomething.org! Meet the staffers who\'ll be texting you: https://www.dosomething.org/us/articles/meet-the-staff-sms?user_id={{user.id}}&utm_campaign=sms_compliance_message&utm_medium=sms&utm_source=content_fun\n\nMsg&DataRatesApply. Txt HELP for help, STOP to stop.';
+const activeSubscriptionStatusText = '👋 Welcome to DoSomething.org! Meet the staffers who\'ll be texting you: https://www.dosomething.org/us/articles/meet-the-staff-sms?user_id={{user.id}}&utm_campaign=sms_compliance_message&utm_medium=sms&utm_source=content_fun\n\nMsg&DataRatesApply. Txt HELP for help, STOP to stop.';
 const lessSubscriptionStatusText = 'Great, you\'ll start to receive 1 monthly update from DoSomething.org! Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.';
-const stopSubscriptionStatusText = process.env.DS_GAMBIT_CONVERSATIONS_SUBSCRIPTION_STATUS_STOP_TEXT || "You're unsubscribed from DoSomething.org Alerts. No more msgs will be sent. Text JOIN to receive 4-8 msgs/mth.\n\nLeave your feedback: https://dosomething.typeform.com/to/DHWcen?user_id={{user.id}}";
-
-// Voting method.
-const askVotingMethodText = process.env.DS_GAMBIT_CONVERSATIONS_ASK_VOTING_METHOD_TEXT || 'How do you plan on voting? A) In person B) Vote By Mail C) Early Voting';
-
-// Voting plan.
-const askVotingPlanAttendingWithText = process.env.DS_GAMBIT_CONVERSATIONS_ASK_VOTING_PLAN_ATTENDING_WITH_TEXT || 'Who are you planning on voting with? A) Alone B) Friends C) Family D) Co-workers';
-const askVotingPlanMethodOfTransportText = process.env.DS_GAMBIT_CONVERSATIONS_ASK_VOTING_PLAN_METHOD_OF_TRANSPORT_TEXT || 'How are you planning on getting to the polls? A) Drive B) Walk C) Bike D) Public transportation';
-const askVotingPlanStatusText = process.env.DS_GAMBIT_CONVERSATIONS_ASK_VOTING_PLAN_STATUS_TEXT || 'Are you planning on voting? A) Yes B) No C) Already voted D) Can\'t vote';
-const askVotingPlanTimeOfDayText = process.env.DS_GAMBIT_CONVERSATIONS_ASK_VOTING_PLAN_TIME_OF_DAY_TEXT || 'What time are you planning on voting? A) Morning B) Afternoon C) Evening';
-
-// The votingPlanStatusVoting macro begins collecting profile data via topic changes:
-// 1 - askVotingMethod
-// 2 - askVotingPlanTimeOfDay
-// 3 - askVotingPlanMethodOfTransport
-// 4 - askVotingPlanAttendingWith
-const votingStatusVotingText = process.DS_GAMBIT_CONVERSATIONS_VOTING_STATUS_VOTING_TEXT || ':eet\'s make a simple plan for how you\'ll vote (and we\'ll remind you on Election Day!).';
-const beginVotingPlanText = `${votingStatusVotingText}\n\n${askVotingPlanTimeOfDayText}`;
-const beginVotingPlanTopic = rivescriptTopics.askVotingPlanTimeOfDay;
-const completedVotingPlanMacro = 'votingPlanAttendingWith';
-const completedVotingPlanText = process.env.DS_GAMBIT_CONVERSATIONS_COMPLETED_VOTING_PLAN_TEXT || 'Thanks for making a plan! I\'ll remind you on Election Day to make sure you\'re ready to vote.\n\nCan\'t wait? Share this graphic to let people know you\'re voting: {{links.pollingLocator.share}}';
+const stopSubscriptionStatusText = 'You\'re unsubscribed from DoSomething.org Alerts. No more msgs will be sent. Text JOIN to receive 4-8 msgs/mth.\n\nLeave your feedback: https://dosomething.typeform.com/to/DHWcen?user_id={{user.id}}';
+const askVotingMethodText =  'How do you plan on voting? A) In person B) Vote By Mail C) Early Voting';
+const askVotingPlanAttendingWithText = 'Who are you planning on voting with? A) Alone B) Friends C) Family D) Co-workers';
+const askVotingPlanMethodOfTransportText = 'How are you planning on getting to the polls? A) Drive B) Walk C) Bike D) Public transportation';
+const askVotingPlanStatusText = 'Are you planning on voting? A) Yes B) No C) Already voted D) Can\'t vote';
+const askVotingPlanTimeOfDayText = 'What time are you planning on voting? A) Morning B) Afternoon C) Evening';
 
 /**
  * @param {String} prefix
@@ -73,7 +59,7 @@ function votingPlanAttendingWith(valueKey) {
   return {
     name: macroName('votingPlanAttendingWith', valueKey),
     // After saving attending with, the voting plan is complete.
-    text: completedVotingPlanText,
+    text: 'Thanks for making a plan! I\'ll remind you on Election Day to make sure you\'re ready to vote.',
     topic: defaultTopic,
     profileUpdate: {
       field: profile.votingPlanAttendingWith.name,
@@ -101,13 +87,14 @@ function votingPlanMethodOfTransport(valueKey) {
 
 /**
  * Macros are configured with the following properties:
+ *
  * name - Matches the Rivescript reply text used to execute the macro
- * text - If set, the outbound message text (may be defined/overridden on a topic)
- * topic - If set, the topic to change conversation topic to
- * profileUpdate - If set, the field name and value to update a user with
+ * text - (optional) the reply message to send. If not defined, set via GraphQL.
+ * topic - (optional) new conversation topic. If not defined, set via GraphQL (or no topic change).
+ * profileUpdate - (optional) field name and value to update a user with.
  */
 module.exports = {
-  completedVotingPlanMacro,
+  completedVotingPlanMacro: 'votingPlanAttendingWith',
   macros: {
     askVotingPlanStatus: {
       name: 'askVotingPlanStatus',
@@ -220,7 +207,7 @@ module.exports = {
     votingMethodEarly: {
       name: 'votingMethodEarly',
       text: 'In {{user.addrState}}, early voting takes place between {{user.earlyVotingStarts}} and {{user.earlyVotingEnds}}. Find your polling place: https://www.vote.org/polling-place-locator',
-      topic: rivescriptTopics.default,
+      topic: defaultTopic,
       profileUpdate: {
         field: profile.votingMethod.name,
         value: profile.votingMethod.values.early,
@@ -238,7 +225,7 @@ module.exports = {
     votingMethodMail: {
       name: 'votingMethodMail',
       text: 'In {{user.addrState}}, your ballot must be {{user.absenteeBallotReturnDeadlineType}} {{user.absenteeBallotRequestDeadline}}. Take 2 mins to request your ballot: https://vote-absentee.com/?utm_source=DST\n\nThen, use this tool to learn about your balllot: https://www.ballotready.org',
-      topic: rivescriptTopics.default,
+      topic: defaultTopic,
       profileUpdate: {
         field: profile.votingMethod.name,
         value: profile.votingMethod.values.mail,
@@ -275,8 +262,8 @@ module.exports = {
     },
     votingPlanStatusVoting: {
       name: 'votingPlanStatusVoting',
-      text: beginVotingPlanText,
-      topic: beginVotingPlanTopic,
+      text: askVotingMethodText,
+      topic: rivescriptTopics.askVotingMethod,
       profileUpdate: {
         field: profile.votingPlanStatus.name,
         value: profile.votingPlanStatus.values.voting,
