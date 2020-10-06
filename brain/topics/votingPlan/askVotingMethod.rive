@@ -1,0 +1,30 @@
+// Current options are A) In person B) Vote By mail C) Early voting
+// @see config/lib/helpers/macro
+
++ voting method
+- How do you plan on voting?{topic=ask_voting_method}
+
+> topic ask_voting_method includes random
+
++ a
+- votingMethodInPerson
+
++ b
+- votingMethodMail
+
++ c
+- votingMethodEarly
+
++ [*] mail [*]
+- votingMethodMail
+
++ [*] early [*]
+- votingMethodEarly
+
++ [*] person [*]
+- votingMethodInPerson
+
++ [*]
+- invalidVotingMethod
+
+< topic
