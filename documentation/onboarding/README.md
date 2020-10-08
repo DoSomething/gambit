@@ -25,3 +25,11 @@ Install [latest LTS version](https://nodejs.org/en/) via [NVM](https://github.co
 ### Redis
 
 - [Install via Homebrew](https://formulae.brew.sh/formula/redis)
+
+## Environment Variables
+
+Run `cp .env.example .env`
+
+- You can grab the values for the `DS_NORTHSTAR_API_OAUTH_...` variables from Aurora QA's [`gambit-dev` client](https://admin-qa.dosomething.org/clients/gambit-dev) and `DS_NORTHSTAR_API_...` variables from the [`gambit` client](DS_NORTHSTAR_API).
+- `TWILIO_TEST_...` variables can be copied over from our [Heroku staging application](https://dashboard.heroku.com/apps/gambit-conversations-staging/settings).
+- The `DS_BERTLY_API_KEY` value can be found in LastPass.
