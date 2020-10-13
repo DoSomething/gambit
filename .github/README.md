@@ -35,17 +35,15 @@ Gambit is built with:
 
 ### Installation
 
-Local Node, redis, and MongoDB installations are required to run this application.
+> Local Node, redis, and MongoDB installations are required to run this application. (_More detailed installation instructions [here](../documentation/onboarding/README.md#software-installation)_).
 
->We recommend using [Homebrew](https://brew.sh/) to install both [nvm](https://github.com/creationix/nvm) (A Node.js version manager) and [mongo](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/#install-mongodb-community-edition-with-homebrew).
-
-* Install Node and Mongo.
+* Install Node, Redis and MongoDB.
 * Clone this repo and navigate to it.
-* Create a `.env` file with required variables. See `.env.example` for guidance.
+* Create a `.env` file with required variables. See `.env.example` for guidance. (Some detailed instruction [here](../documentation/onboarding/README.md#environment-variables)).
 * Your local Node.js and NPM versions should match the ones in `package.json`.
 * Install dependencies: `npm install`.
 * All tests should pass: `npm run test:full`.
-* Run Conversations locally: `npm start` (uses [nodemon](https://nodemon.io/)).
+* Run Gambit Conversations locally: `npm start` (uses [nodemon](https://nodemon.io/)).
 
 ### Localhost
 
