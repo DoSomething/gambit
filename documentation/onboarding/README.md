@@ -1,35 +1,49 @@
 # Developer Environment Setup
 
-## Software Installation
+### Clone This Repository
 
-### Homebrew
+`git clone git@github.com:DoSomething/gambit.git && cd gambit`
 
-- [Documentation](https://brew.sh/)
-- [Video walkthrough](https://www.youtube.com/watch?v=SELYgZvAZbU) (first 5 minutes)
+### Software Installation
 
-### NVM (Node Version Manager)
+- Homebrew
 
-- [Install via Homebrew](https://formulae.brew.sh/formula/nvm) (recommended)
-- [General Installation Documentation](https://github.com/nvm-sh/nvm#installing-and-updating)
-- [Video walkthrough](https://www.youtube.com/watch?v=lGKf_7ugFUQ)
+	- [Documentation](https://brew.sh/)
+	- [Video walkthrough](https://www.youtube.com/watch?v=SELYgZvAZbU) (first 5 minutes)
 
-### Node
+- NVM (Node Version Manager)
 
-Install [latest LTS version](https://nodejs.org/en/) via [NVM](https://github.com/nvm-sh/nvm#usage) e.g. `npm install 12.19.0`.
+	- [Install via Homebrew](https://formulae.brew.sh/formula/nvm) (recommended)
+	- [General Installation Documentation](https://github.com/nvm-sh/nvm#installing-and-updating)
+	- [Video walkthrough](https://www.youtube.com/watch?v=lGKf_7ugFUQ)
 
-### MongoDB
+- Node
 
-- [Via Homebrew](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/#tap-the-mongodb-homebrew-tap)
-- [Standalone application installation](http://gcollazo.github.io/mongodbapp/) (If Homebrew installation is buggy)
+	-	 Install [latest LTS version](https://nodejs.org/en/) via [NVM](https://github.com/nvm-sh/nvm#usage) e.g. `npm install 12.19.0`.
 
-### Redis
+- MongoDB
 
-- [Install via Homebrew](https://formulae.brew.sh/formula/redis)
+	- [Via Homebrew](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/#tap-the-mongodb-homebrew-tap)
+	- [Standalone application installation](http://gcollazo.github.io/mongodbapp/) (If Homebrew installation is buggy)
 
-## Environment Variables
+- Redis
+
+	- [Install via Homebrew](https://formulae.brew.sh/formula/redis)
+
+
+### Environment Variables
 
 Run `cp .env.example .env`
 
 - You can grab the values for the `DS_NORTHSTAR_API_OAUTH_...` variables from Aurora QA's [`gambit-dev` client](https://admin-qa.dosomething.org/clients/gambit-dev) and `DS_NORTHSTAR_API_...` variables from the [`gambit` client](DS_NORTHSTAR_API).
 - `TWILIO_TEST_...` variables can be copied over from our [Heroku staging application](https://dashboard.heroku.com/apps/gambit-conversations-staging/settings).
 - The `DS_BERTLY_API_KEY` value can be found in LastPass.
+
+### Install Dependencies
+run `npm install`.
+
+### Testing
+Run `npm run test:full`. All tests should pass.
+
+### Run the Application
+Run Gambit Conversations locally: `npm start` (uses nodemon).
