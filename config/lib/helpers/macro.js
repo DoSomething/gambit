@@ -227,7 +227,7 @@ module.exports = {
     },
     votingMethodMail: {
       name: 'votingMethodMail',
-      text: 'In {{user.addrState}}, your ballot must be {{user.absenteeBallotReturnDeadlineType}} {{user.absenteeBallotRequestDeadline}}. Take 2 mins to request your ballot: https://www.dosomething.org/us/stories/absentee?utm_source=content_campaign&utm_medium=sms&utm_campaign=sms_make_a_plan_flow_2020&user_id={{user.id}}\n\nThen, use this tool to learn about your ballot: https://www.ballotready.org',
+      text: 'In {{user.addrState}}, your ballot must be {{user.absenteeBallotReturnDeadlineType}} {{user.absenteeBallotReturnDeadline}}. Return your ballot today: https://www.dosomething.org/us/stories/absentee?utm_campaign=sms_make_a_plan_flow_2020&utm_medium=sms&utm_source=content_campaign&user_id={{user.id}}',
       topic: defaultTopic,
       profileUpdate: {
         field: profile.votingMethod.name,
