@@ -1,4 +1,4 @@
-# Rivescript
+# RiveScript
 
 ```
 GET /api/v2/rivescript
@@ -10,7 +10,7 @@ We've modified the deparsed RiveScript output to append new Gambit-specific prop
 
 * `macro` - (string) If set, the raw RiveScript `reply` value corresponds to a hardcoded macro. The `reply` property will be set to the text rendered by the macro.
 
-* `hardcoded` - (boolean) Whether this trigger is defined in Contentful (only occurrs when in the default topic, `random`. (refs "Topics" section in [RiveScript docs](https://www.rivescript.com/docs/tutorial)).
+* `hardcoded` - (boolean) Whether this trigger is defined in Contentful (only occurrs when in the default topic, `random`. Refs "Topics" section in [RiveScript docs](https://www.rivescript.com/docs/tutorial)).
 
 ### Query parameters
 

@@ -18,7 +18,7 @@ Endpoint | Functionality
 `GET /api/v2/broadcasts/:id` | [Retrieve a broadcast](endpoints/broadcasts.md).
 `POST /api/v2/messages` | [Create a message](endpoints/messages.md).
 `PATCH /api/v2/messages/:messageId` | [Update a message](endpoints/messages.md).
-`GET /api/v2/rivescript` | [Retrieve loaded Rivescript](endpoints/rivescript.md).
+`GET /api/v2/rivescript` | [Retrieve loaded RiveScript](endpoints/rivescript.md).
 
 ### v1
 
