@@ -10,7 +10,7 @@ We've modified the deparsed RiveScript output to append new Gambit-specific prop
 
 * `macro` - (string) If set, the raw RiveScript `reply` value corresponds to a hardcoded macro. The `reply` property will be set to the text rendered by the macro.
 
-* `hardcoded` - (boolean) Whether this trigger is defined in Contentful (only occurrs when in the default topic, `random`. Refs "Topics" section in [RiveScript docs](https://www.rivescript.com/docs/tutorial)).
+* `contentfulId` - (string) If set, the Contentful entry that defines this trigger to be loaded in the default topic, `random` (refs "Topics" section in [RiveScript docs](https://www.rivescript.com/docs/tutorial)).
 
 ### Query parameters
 
@@ -49,7 +49,7 @@ curl -X "GET" "http://localhost:5100/api/v2/rivescript?cache=false" \
           "redirect": null,
           "previous": null,
           "macro": "sendInfoMessage",
-          "hardcoded": true
+          "contentfulId": null
         },
         {
           "trigger": "help",
@@ -62,7 +62,7 @@ curl -X "GET" "http://localhost:5100/api/v2/rivescript?cache=false" \
           "redirect": "info",
           "previous": null,
           "macro": null,
-          "hardcoded": true
+          "contentfulId": null
         },
         {
           "trigger": "subscribe",
@@ -75,7 +75,7 @@ curl -X "GET" "http://localhost:5100/api/v2/rivescript?cache=false" \
           "redirect": null,
           "previous": null,
           "macro": "subscriptionStatusActive",
-          "hardcoded": true
+          "contentfulId": null
         },
         {
           "trigger": "covid",
@@ -88,7 +88,7 @@ curl -X "GET" "http://localhost:5100/api/v2/rivescript?cache=false" \
           "redirect": null,
           "previous": null,
           "macro": null,
-          "hardcoded": false
+          "contentfulId": "3ZgJy8XztZjifs4jCEazph"
         },
         ...
       ]
