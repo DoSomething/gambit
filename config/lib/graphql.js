@@ -127,6 +127,7 @@ const fetchBroadcastById = `
 const fetchConversationTriggers = `
   query getConversationTriggers {
     conversationTriggers {
+      id
       trigger
       response {
         contentType

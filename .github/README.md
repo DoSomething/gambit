@@ -31,7 +31,7 @@ Gambit is built with:
 * [GraphQL](https://graphql.org/learn/)
 * [MongoDB](https://www.mongodb.com/)
 * [Redis](https://redis.io/)
-* [Rivescript](https://www.rivescript.com/)
+* [RiveScript](https://www.rivescript.com/)
 
 ### Installation
 
