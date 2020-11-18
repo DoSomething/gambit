@@ -3,6 +3,7 @@
 const broadcastsSingleRoute = require('./broadcasts/single');
 const mongooseRoutes = require('./mongoose');
 const rivescriptRoute = require('./rivescript');
+const studioRoute = require('./studio');
 const usersRoute = require('./users');
 const v2MessagesRoute = require('./messages');
 
@@ -35,6 +36,7 @@ module.exports = function init(app) {
     parseMessageMetadataMiddleware(),
     v2MessagesRoute);
   app.use('/api/v2/rivescript', rivescriptRoute);
+  app.use('/api/v2/studio', studioRoute),
   // Route to anonymize a member's PII (Personally identifiable information) in Gambit
   app.use('/api/v2/users/:id', usersRoute);
 };
