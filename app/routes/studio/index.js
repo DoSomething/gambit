@@ -7,6 +7,6 @@ const router = express.Router();
 // Middleware
 const indexMiddleware = require('../../../lib/middleware/studio');
 
-router.get('/', indexMiddleware());
+router.post('/', indexMiddleware());
 
 module.exports = router;
