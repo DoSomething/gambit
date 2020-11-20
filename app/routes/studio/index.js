@@ -4,11 +4,10 @@ const express = require('express');
 
 const router = express.Router();
 
-// Middleware
-const inboundMiddleware = require('../../../lib/middleware/studio/inbound');
-const outboundMiddleware = require('../../../lib/middleware/studio/outbound');
+const repliesMiddleware = require('../../../lib/middleware/studio/inbound');
+const broadcastsMiddleware= require('../../../lib/middleware/studio/outbound');
 
-router.post('/replies', inboundMiddleware());
-router.post('/broadcasts', outboundMiddleware());
+router.post('/replies', repliesMiddleware());
+router.post('/broadcasts', broadcastsMiddleware());
 
 module.exports = router;
