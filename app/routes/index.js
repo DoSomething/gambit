@@ -25,6 +25,7 @@ module.exports = function init(app) {
   // v1
   // Restified routes.
   app.use(mongooseRoutes);
+
   // v2
   app.use('/api/v2/broadcasts/:broadcastId', broadcastsSingleRoute);
   app.use('/api/v2/messages',
@@ -36,7 +37,9 @@ module.exports = function init(app) {
     parseMessageMetadataMiddleware(),
     v2MessagesRoute);
   app.use('/api/v2/rivescript', rivescriptRoute);
-  app.use('/api/v2/studio', studioRoute),
   // Route to anonymize a member's PII (Personally identifiable information) in Gambit
   app.use('/api/v2/users/:id', usersRoute);
+
+  // v3 - Prototyping with Twilio Studio
+  app.use('/api/v3/', studioRoute);
 };

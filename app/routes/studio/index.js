@@ -8,9 +8,7 @@ const router = express.Router();
 const inboundMiddleware = require('../../../lib/middleware/studio/inbound');
 const outboundMiddleware = require('../../../lib/middleware/studio/outbound');
 
-router.post('/', 
-    inboundMiddleware(),
-    outboundMiddleware(),
-);
+router.post('/replies', inboundMiddleware());
+router.post('/broadcasts', outboundMiddleware());
 
 module.exports = router;
