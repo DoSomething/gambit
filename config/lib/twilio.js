@@ -27,6 +27,7 @@ const testFromNumber = process.env.TWILIO_TEST_FROM_NUMBER || '+15005550006';
 module.exports = {
   accountSid,
   authToken,
+  flowSid: process.env.TWILIO_STUDIO_FLOW_SID,
   fromNumber: process.env.TWILIO_FROM_NUMBER,
   testFromNumber,
   useTwilioTestCreds,
