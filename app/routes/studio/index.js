@@ -9,9 +9,9 @@ const createExecutionMiddleware = require('../../../lib/middleware/studio/execut
 const getExecutionMiddleware = require('../../../lib/middleware/studio/execution-get');
 const getExecutionsMiddleware = require('../../../lib/middleware/studio/executions-get');
 
-router.post('/replies', repliesMiddleware());
-router.post('/broadcasts', createExecutionMiddleware());
 router.get('/executions', getExecutionsMiddleware());
 router.get('/executions/:executionId', getExecutionMiddleware());
+router.post('/executions', createExecutionMiddleware());
+router.post('/replies', repliesMiddleware());
 
 module.exports = router;
