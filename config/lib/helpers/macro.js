@@ -209,7 +209,7 @@ module.exports = {
     },
     votingMethodEarly: {
       name: 'votingMethodEarly',
-      text: 'In {{user.addrState}}, early voting takes place between {{user.earlyVotingStarts}} and {{user.earlyVotingEnds}}. Find your polling place: https://www.vote.org/polling-place-locator',
+      text: 'In {{user.addrState}}, early voting takes place between {{user.earlyVotingStarts}} and {{user.earlyVotingEnds}}. Find your polling place: https://www.mvp.sos.ga.gov/MVP/mvp.do',
       topic: defaultTopic,
       profileUpdate: {
         field: profile.votingMethod.name,
@@ -227,7 +227,7 @@ module.exports = {
     },
     votingMethodMail: {
       name: 'votingMethodMail',
-      text: 'In {{user.addrState}}, your ballot must be {{user.absenteeBallotReturnDeadlineType}} {{user.absenteeBallotReturnDeadline}}. Return your ballot today: https://www.dosomething.org/us/stories/absentee?utm_campaign=sms_make_a_plan_flow_2020&utm_medium=sms&utm_source=content_campaign&user_id={{user.id}}',
+      text: 'In {{user.addrState}}, your ballot must be {{user.absenteeBallotReturnDeadlineType}} {{user.absenteeBallotReturnDeadline}}. Take 2 mins to request your ballot: https://ballotrequest.sos.ga.gov/ Then, use this tool to learn about your ballot: https://www.ballotready.org',
       topic: defaultTopic,
       profileUpdate: {
         field: profile.votingMethod.name,
