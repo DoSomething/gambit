@@ -34,6 +34,7 @@ const createDraftPhotoPostMiddleware = require('../../../lib/middleware/messages
 const draftQuantityPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/draft-quantity');
 const draftPhotoPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/draft-photo');
 const draftCaptionPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/draft-caption');
+const draftHoursSpentPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/draft-hours-spent');
 const draftWhyParticipatedPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/draft-why-participated');
 const createPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/post-create');
 const createTextPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/text/post-create');
@@ -105,6 +106,7 @@ router.use(createDraftPhotoPostMiddleware());
 router.use(draftQuantityPhotoPostMiddleware());
 router.use(draftPhotoPhotoPostMiddleware());
 router.use(draftCaptionPhotoPostMiddleware());
+router.use(draftHoursSpentPhotoPostMiddleware());
 router.use(draftWhyParticipatedPhotoPostMiddleware());
 router.use(createPhotoPostMiddleware());
 
