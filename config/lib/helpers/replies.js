@@ -12,7 +12,7 @@ const supportText = `Text ${commands.support} if you have a question.`;
 module.exports = {
   askHoursSpent: {
     name: 'askHoursSpent',
-    text: 'How many hours did this action take?'
+    text: 'How many hours did this action take?',
   },
   badWords: {
     name: 'badWords',
@@ -24,7 +24,7 @@ module.exports = {
   },
   invalidHoursSpent: {
     name: 'invalidHoursSpent',
-    text: `Whoops, I didn't understand that. How many hours did this action take? Be sure to text in a number, not a word (i.e. “4”, not “four”)`
+    text: 'Whoops, I didn\'t understand that. How many hours did this action take? Be sure to text in a number, not a word (i.e. “4”, not “four”)',
   },
   noCampaign: {
     name: 'noCampaign',
