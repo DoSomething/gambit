@@ -1,5 +1,14 @@
 'use strict';
 
+const actionFields = `
+  action {
+    id
+    name
+    campaignId
+    volunteerCredit
+  }
+`;
+
 const campaignFields = `
   legacyCampaign {
     campaignId
@@ -55,19 +64,12 @@ const campaignTopicFragments = `
   }
   fragment photoPostCampaign on PhotoPostTopic {
     actionId
+    ${actionFields}
     ${campaignFields}
   }
   fragment textPostCampaign on TextPostTopic {
     actionId
     ${campaignFields}
-  }
-`;
-
-const actionFields = `
-  action {
-    id
-    name
-    campaignId
   }
 `;
 
