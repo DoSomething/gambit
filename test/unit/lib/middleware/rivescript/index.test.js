@@ -9,6 +9,7 @@ const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
 const underscore = require('underscore');
 
+const graphql = require('../../../../../lib/graphql');
 const helpers = require('../../../../../lib/helpers');
 const logger = require('../../../../../lib/logger');
 const stubs = require('../../../../helpers/stubs');
@@ -25,6 +26,8 @@ const deparsedRivescript = { topics: { random: [] } };
 
 test.beforeEach((t) => {
   stubs.stubLogger(sandbox, logger);
+  sandbox.stub(graphql, 'fetchConversationTriggers')
+    .returns(Promise.resolve(true));
   sandbox.stub(helpers, 'sendErrorResponse')
     .returns(underscore.noop);
   t.context.req = httpMocks.createRequest();
@@ -50,7 +53,7 @@ test('getRivescript should call loadBot with true if cache query is set to false
   await middleware(t.context.req, t.context.res);
 
   helpers.rivescript.loadBot.should.have.been.calledWith(true);
-  t.context.res.send.should.have.been.called;
+  t.context.res.send.should.have.been.calledWith({ data: deparsedRivescript });
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 
@@ -67,7 +70,7 @@ test('getRivescript should call loadBot if bot is not ready', async (t) => {
   await middleware(t.context.req, t.context.res);
 
   helpers.rivescript.loadBot.should.have.been.called;
-  t.context.res.send.should.have.been.called;
+  t.context.res.send.should.have.been.calledWith({ data: deparsedRivescript });
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 
