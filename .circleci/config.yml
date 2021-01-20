@@ -10,4 +10,4 @@ jobs:
     steps:
       - checkout
       - run: npm install
-      - run: npm run test:full
+      - run: npm run test:unit
