@@ -1,6 +1,3 @@
-
-[![wercker status](https://app.wercker.com/status/88e7574ecfa61c969df7bee4e035a7ad/s/master "wercker status")](https://app.wercker.com/project/byKey/88e7574ecfa61c969df7bee4e035a7ad) [![codecov](https://codecov.io/gh/DoSomething/gambit/branch/master/graph/badge.svg)](https://codecov.io/gh/DoSomething/gambit)
-
 # Gambit
 
 Gambit is the DoSomething.org [API](/documentation/README.md) for SMS conversations:
