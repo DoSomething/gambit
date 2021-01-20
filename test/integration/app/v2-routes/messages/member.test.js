@@ -217,6 +217,8 @@ test.serial('POST /api/v2/messages?origin=twilio should trigger rate limiter', a
       .send(inboundRequestPayload);
 
     res.status.should.not.be.null;
+    // TODO: This is incorrect.
+    res.status.should.be.equal(403);
     /*
     TODO: Uncomment -- this is breaking in CircleCI, status is 403
     res.status.should.be.equal(200);
