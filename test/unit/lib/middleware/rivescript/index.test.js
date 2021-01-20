@@ -50,7 +50,7 @@ test('getRivescript should call loadBot with true if cache query is set to false
   await middleware(t.context.req, t.context.res);
 
   helpers.rivescript.loadBot.should.have.been.calledWith(true);
-  t.context.res.send.should.have.been.called; //With({ data: deparsedRivescript });
+  t.context.res.send.should.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 
@@ -67,7 +67,7 @@ test('getRivescript should call loadBot if bot is not ready', async (t) => {
   await middleware(t.context.req, t.context.res);
 
   helpers.rivescript.loadBot.should.have.been.called;
-  t.context.res.send.should.have.been.called; //With({ data: deparsedRivescript });
+  t.context.res.send.should.have.been.called;
   helpers.sendErrorResponse.should.not.have.been.called;
 });
 
