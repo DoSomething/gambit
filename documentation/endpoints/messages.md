@@ -39,7 +39,6 @@ POST /v2/messages
 The v2 POST Messages resource requires an `origin` query parameter, with possible values:
 * [Broadcast](#broadcast)
 * [Front](#front)
-* [Signup](#signup)
 * [Subscription status active](#subscription-status-active)
 * [Twilio](#twilio)
 * [A custom messaging platform](#custom)
