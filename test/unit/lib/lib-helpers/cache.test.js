@@ -34,7 +34,6 @@ test.afterEach(() => {
   cacheHelper.__set__('broadcastsCache', undefined);
   cacheHelper.__set__('rivescriptCache', undefined);
   cacheHelper.__set__('topicsCache', undefined);
-  cacheHelper.__set__('webSignupConfirmationsCache', undefined);
 });
 
 /**
@@ -144,39 +143,4 @@ test('topics.set should return an object', async () => {
   });
   const result = await cacheHelper.topics.set(contentfulEntryId);
   result.should.deep.equal(contentfulEntry);
-});
-
-/**
- * WebSignupConfirmations cache
- */
-test('webSignupConfirmations.get should return object when cache exists', async () => {
-  cacheHelper.__set__('webSignupConfirmationsCache', {
-    get: () => Promise.resolve(contentfulEntry),
-  });
-  const result = await cacheHelper.webSignupConfirmations.get();
-  result.should.deep.equal(contentfulEntry);
-});
-
-test('webSignupConfirmations.get should return falsy when cache undefined', async (t) => {
-  cacheHelper.__set__('webSignupConfirmationsCache', {
-    get: () => Promise.resolve(null),
-  });
-  const result = await cacheHelper.webSignupConfirmations.get();
-  t.falsy(result);
-});
-
-test('webSignupConfirmations.get should throw when cache set fails', async (t) => {
-  cacheHelper.__set__('webSignupConfirmationsCache', {
-    get: () => Promise.reject(stubs.getError()),
-  });
-  await t.throwsAsync(() => cacheHelper.webSignupConfirmations.get());
-});
-
-test('webSignupConfirmations.set should return an array', async () => {
-  const data = [contentfulEntry];
-  cacheHelper.__set__('webSignupConfirmationsCache', {
-    set: () => Promise.resolve(JSON.stringify(data)),
-  });
-  const result = await cacheHelper.webSignupConfirmations.set(data);
-  result.should.deep.equal(data);
 });

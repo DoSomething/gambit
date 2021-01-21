@@ -237,22 +237,6 @@ const fetchTopicById = `
   ${campaignTopicTransitionFragments}
 `;
 
-const fetchWebSignupConfirmations = `
-  query getWebSignupConfirmations {
-    webSignupConfirmations {
-      campaign {
-        id
-        endDate
-      }
-      topic {
-        ${campaignTransitionTypes}
-      }
-    }
-  }
-  ${campaignTopicFragments}
-  ${campaignTopicTransitionFragments}
-`;
-
 const fetchVotingInformationByLocation = `
   query getLocationVotingInformation($location: String!) {
     locationVotingInformation(location: $location) {
@@ -272,7 +256,6 @@ module.exports = {
     fetchConversationTriggers,
     fetchTopicById,
     fetchVotingInformationByLocation,
-    fetchWebSignupConfirmations,
   },
   clientOptions: {
     baseURI: process.env.DS_GRAPHQL_API_BASEURI,
