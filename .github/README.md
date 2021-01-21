@@ -1,6 +1,3 @@
-
-[![wercker status](https://app.wercker.com/status/88e7574ecfa61c969df7bee4e035a7ad/s/master "wercker status")](https://app.wercker.com/project/byKey/88e7574ecfa61c969df7bee4e035a7ad) [![codecov](https://codecov.io/gh/DoSomething/gambit/branch/master/graph/badge.svg)](https://codecov.io/gh/DoSomething/gambit)
-
 # Gambit
 
 Gambit is the DoSomething.org [API](/documentation/README.md) for SMS conversations:
@@ -75,7 +72,7 @@ Input is posted to your localhost `api/v2/messages?origin=twilio` endpoint on be
 ### Contributing
 
 * Run `npm test:full` to lint code and run automated tests.
-* Pull Requests are expected to contain reasonable test coverage.
+* Pull requests are expected to contain reasonable test coverage.
 
 Note: [Git tags](https://github.com/DoSomething/gambit/tags) exist from when we used [Wunderflow](http://wunderflow.wunder.io/) for branching. We now adhere to a [Github flow](https://guides.github.com/introduction/flow/), keeping consistent with workflow for other current DoSomething repositories, and no longer create tags for each deployment.
 

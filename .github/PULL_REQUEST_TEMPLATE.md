@@ -1,15 +1,18 @@
-#### What's this PR do?
-tell us, what have you changed?
+### What's this PR do?
 
-#### How should this be reviewed?
-tell us, how can we review, to test that this works
+This pull request...
 
-#### Any background context you want to provide?
-what else?
+### How should this be reviewed?
 
-#### Relevant tickets
-Fixes #
-Fixes Pivotal [Card#]()
+...
+
+### Any background context you want to provide?
+
+...
+
+### Relevant tickets
+
+References [Pivotal #]().
 
 #### Checklist
 - [ ] Documentation added for new features/changed endpoints.

@@ -19,7 +19,6 @@ const seederHelper = require('../../../../helpers/integration/seeder');
 
 const origin = 'subscriptionStatusActive';
 
-
 const should = chai.should();
 
 test.before(async () => {
