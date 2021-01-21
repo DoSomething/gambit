@@ -9,7 +9,6 @@ const analyticsHelper = require('../../../lib/helpers/analytics');
 const broadcastMessagesRoute = require('./broadcast');
 const frontMessagesRoute = require('./front');
 const memberMessagesRoute = require('./member');
-const signupMessagesRoute = require('./signup');
 const subscriptionStatusActiveRoute = require('./subscription-status-active');
 const updateMessageRoute = require('./update');
 
@@ -19,7 +18,8 @@ const updateMessageRoute = require('./update');
 router.patch('/:messageId', updateMessageRoute);
 
 router.post('/', (req, res, next) => {
-  const origin = req.query.origin;
+  const { origin } = req.query;
+
   logger.debug('Origin', { origin }, req);
   analyticsHelper.addCustomAttributes({ origin });
 
@@ -27,15 +27,15 @@ router.post('/', (req, res, next) => {
     case 'broadcast':
       broadcastMessagesRoute(req, res, next);
       break;
+
     case 'front':
       frontMessagesRoute(req, res, next);
       break;
-    case 'signup':
-      signupMessagesRoute(req, res, next);
-      break;
+
     case 'subscriptionStatusActive':
       subscriptionStatusActiveRoute(req, res, next);
       break;
+
     default:
       memberMessagesRoute(req, res, next);
       break;
