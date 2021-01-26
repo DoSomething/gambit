@@ -11,6 +11,7 @@ mongoose.Promise = Promise;
  * @see https://mongoosejs.com/docs/index.html
  */
 module.exports = url => mongoose.connect(url, {
+  useCreateIndex: true,
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).catch((error) => {
