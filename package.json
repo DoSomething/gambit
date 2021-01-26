@@ -64,7 +64,7 @@
     "linkify-it": "^2.2.0",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",
-    "mongoose": "^4.13.21",
+    "mongoose": "^5.11.13",
     "mustache": "^2.3.0",
     "newrelic": "^5.13.1",
     "query-string": "^6.13.8",
