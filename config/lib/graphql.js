@@ -4,8 +4,14 @@ const actionFields = `
   action {
     id
     name
-    campaignId
     volunteerCredit
+
+    campaignId
+    campaign {
+      id
+      endDate
+      internalTitle
+    }
   }
 `;
 
@@ -65,11 +71,10 @@ const campaignTopicFragments = `
   fragment photoPostCampaign on PhotoPostTopic {
     actionId
     ${actionFields}
-    ${campaignFields}
   }
   fragment textPostCampaign on TextPostTopic {
     actionId
-    ${campaignFields}
+    ${actionFields}
   }
 `;
 
