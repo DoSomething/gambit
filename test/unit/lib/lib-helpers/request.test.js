@@ -611,16 +611,7 @@ test('setTopic should inject a topic property to req and call setCampaign if top
   requestHelper.setCampaign.should.have.been.calledWith(t.context.req, topic.campaign);
 });
 
-test('setTopic should not call setCampaign if topic.campaign undefined', (t) => {
-  sandbox.spy(requestHelper, 'setCampaign');
-  const campaignlessTopic = topicFactory.getValidTopic();
-  campaignlessTopic.campaign = null;
-  requestHelper.setTopic(t.context.req, campaignlessTopic);
-  t.context.req.topic.should.equal(campaignlessTopic);
-  helpers.analytics.addCustomAttributes
-    .should.have.been.calledWith({ topicId: campaignlessTopic.id });
-  requestHelper.setCampaign.should.not.have.been.called;
-});
+// TODO: Add test for topic.action and setting campaign.
 
 // setUserId
 test('setUserId should inject a userId property to req', (t) => {
