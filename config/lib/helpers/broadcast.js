@@ -20,5 +20,4 @@ module.exports = {
   blink: {
     webhookUrl: process.env.DS_BLINK_GAMBIT_BROADCAST_WEBHOOK_URL || 'http://localhost:5050/api/v1',
   },
-  isNorthstarless: process.env.DS_GAMBIT_BROADCAST_NORTHSTARLESS || false,
 };

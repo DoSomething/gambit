@@ -3,7 +3,7 @@
 ```
 GET /api/v2/broadcasts/:broadcastId
 ```
-Fetches a broadcast from [Gambit Content API](https://github.com/DoSomething/gambit-content/tree/master/documentation), and returns additional data properties for send configuration and message stats. 
+Fetches a broadcast from GraphQL, and returns additional data properties for send configuration and message stats. 
 
 
 ## Examples
@@ -40,10 +40,13 @@ curl -X "GET" "http://localhost:5100/api/v2/broadcasts/1S4pnWcZ3qeK0IyU6u4gYE" \
       "headers": {
         "Content-Type": "application/json"
       },
-      "url": "http://<secret>:<secret>@localhost:5050/api/v1/webhooks/customerio-gambit-broadcast",
+      "url": "http://<secret>:<secret>@localhost:5050/api/v1/webhooks/customerio-gambit-broadcast?origin=broadcastLite",
       "body": {
-        "northstarId": "{{customer.id}}",
-        "broadcastId": "257eBFFXnay6QoUOCuuiS0"
+        "broadcastId": "2IkRmKYUqySjPTEEHDS8q1",
+        "userId": "{{customer.id}}",
+        "addrState": "{{customer.addr_state}}",
+        "mobile": "{{customer.phone}}",
+        "smsStatus": "{{customer.sms_status}}"
       }
     },
     "stats": {

@@ -49,7 +49,7 @@ The v2 POST Messages resource requires an `origin` query parameter, with possibl
 POST /v2/messages?origin=broadcast
 ```
 
-Sends a Broadcast message to a Member.
+Sends a Broadcast message to a Member (queries Northstar first to fetch all user properties).
 
 ### Input
 
@@ -107,6 +107,68 @@ curl -X "POST" "http://localhost:5100/api/v2/messages?origin=broadcast" \
       }
     ]
   }
+}
+```
+
+</details>
+
+## Broadcast Lite
+
+```
+POST /v2/messages?origin=broadcastLite
+```
+
+Sends a Broadcast message to a Member (does not query Northstar to fetch all user properties).
+
+<details>
+<summary><strong>Example Request</strong></summary>
+
+```
+curl --location --request POST 'http://localhost:5100/api/v2/messages?origin=broadcastLite' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Basic cHVwcGV0OnRvdGFsbHlzZWNyZXQ=' \
+--data-raw '{
+    "addrState": "CA",
+    "userId": "5547be89469c64ec7d8b518d",
+    "broadcastId": "2IkRmKYUqySjPTEEHDS8q1",
+    "mobile": "+5555555555",
+    "smsStatus": "active"
+}'
+```
+
+</details>
+
+<details>
+<summary><strong>Example Response</strong></summary>
+
+```
+{
+    "data": {
+        "messages": [
+            {
+                "metadata": {
+                    "delivery": {
+                        "queuedAt": "2021-03-16T22:39:52.000Z",
+                        "totalSegments": 3
+                    },
+                    "requestId": "8436e982-6ed5-469c-8506-6d8591c99747"
+                },
+                "attachments": [],
+                "_id": "605133b6ff01cabc70fb9aae",
+                "text": "Jackie here! Spring break might not be the same this year, but you can still enjoy a vacation at home! Plan your perfect staycation: https://www.dosomething.org/us/articles/how-to-plan-a-covid-19-staycation?utm_source=content_campaign&utm_medium=sms&utm_campaign=sms_pending_2021_03_16&user_id=5547be89469c64ec7d8b518d&broadcast_id=2IkRmKYUqySjPTEEHDS8q1",
+                "direction": "outbound-api-send",
+                "template": "autoReplyBroadcast",
+                "conversationId": "6050ec27b507033e05e7ef01",
+                "topic": "61RPZx8atiGyeoeaqsckOE",
+                "userId": "5547be89469c64ec7d8b518d",
+                "broadcastId": "2IkRmKYUqySjPTEEHDS8q1",
+                "createdAt": "2021-03-16T22:39:50.973Z",
+                "updatedAt": "2021-03-16T22:39:52.388Z",
+                "__v": 0,
+                "platformMessageId": "SMc984aa9c58414ab29b3b8c4e36f78c8c"
+            }
+        ]
+    }
 }
 ```
 

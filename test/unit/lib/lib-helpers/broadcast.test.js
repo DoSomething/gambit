@@ -124,7 +124,7 @@ test('getById should return fetchById if cached broadcasts undefined', async () 
 });
 
 // getWebhook
-test('getWebhook should return an object with body of a POST Broadcast Message request with falsy Northstarless param', () => {
+test('getWebhook should return an object with body of a POST Broadcast Message request with falsy isNorthstarless', () => {
   const mockRequest = {
     broadcastId,
   };
@@ -137,10 +137,10 @@ test('getWebhook should return an object with body of a POST Broadcast Message r
   result.body.userId.should.equal(config.customerIo.userIdField);
   result.body.should.not.have.property('addrState');
   result.body.should.not.have.property('mobile');
-  result.body.should.not.have.property('smsStatus')
+  result.body.should.not.have.property('smsStatus');
 });
 
-test('getWebhook should return an object with body of a POST BroadcastLite Message request with truthy Northstarless param', () => {
+test('getWebhook should return an object with body of a POST BroadcastLite Message request with truthy isNorthstarless', () => {
   const mockRequest = {
     broadcastId,
   };
