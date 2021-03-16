@@ -12,9 +12,13 @@ module.exports = {
     legacy: 'broadcast',
   },
   customerIo: {
+    addrStateField: '{{customer.addr_state}}',
+    mobileField: '{{customer.phone}}',
+    smsStatusField: '{{customer.sms_status}}',
     userIdField: '{{customer.id}}',
   },
   blink: {
     webhookUrl: process.env.DS_BLINK_GAMBIT_BROADCAST_WEBHOOK_URL || 'http://localhost:5050/api/v1',
   },
+  isNorthstarless: process.env.DS_GAMBIT_BROADCAST_NORTHSTARLESS || false,
 };

@@ -128,9 +128,11 @@ test('getWebhook should return an object with body of a POST Broadcast Message r
   const mockRequest = {
     broadcastId,
   };
+
   const result = broadcastHelper.getWebhook(mockRequest);
+
   result.headers['Content-Type'].should.equal(webhookContentTypeHeader);
-  result.body.northstarId.should.equal(config.customerIo.userIdField);
+  result.body.userId.should.equal(config.customerIo.userIdField);
   result.body.broadcastId.should.equal(broadcastId);
   result.should.have.property('url');
 });
