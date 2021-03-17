@@ -12,6 +12,9 @@ module.exports = {
     legacy: 'broadcast',
   },
   customerIo: {
+    addrStateField: '{{customer.addr_state}}',
+    mobileField: '{{customer.phone}}',
+    smsStatusField: '{{customer.sms_status}}',
     userIdField: '{{customer.id}}',
   },
   blink: {

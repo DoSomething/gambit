@@ -124,15 +124,35 @@ test('getById should return fetchById if cached broadcasts undefined', async () 
 });
 
 // getWebhook
-test('getWebhook should return an object with body of a POST Broadcast Message request', () => {
+test('getWebhook should return an object with body of a POST Broadcast Message request with falsy isNorthstarless', () => {
   const mockRequest = {
     broadcastId,
   };
+
   const result = broadcastHelper.getWebhook(mockRequest);
+
   result.headers['Content-Type'].should.equal(webhookContentTypeHeader);
-  result.body.northstarId.should.equal(config.customerIo.userIdField);
+  result.url.should.equal(config.blink.webhookUrl);
   result.body.broadcastId.should.equal(broadcastId);
-  result.should.have.property('url');
+  result.body.userId.should.equal(config.customerIo.userIdField);
+  result.body.should.not.have.property('addrState');
+  result.body.should.not.have.property('mobile');
+  result.body.should.not.have.property('smsStatus');
+});
+
+test('getWebhook should return an object with body of a POST BroadcastLite Message request with truthy isNorthstarless', () => {
+  const mockRequest = {
+    broadcastId,
+  };
+
+  const result = broadcastHelper.getWebhook(mockRequest, 'true');
+
+  result.headers['Content-Type'].should.equal(webhookContentTypeHeader);
+  result.url.should.equal(`${config.blink.webhookUrl}?origin=broadcastLite`);
+  result.body.broadcastId.should.equal(broadcastId);
+  result.body.addrState.should.equal(config.customerIo.addrStateField);
+  result.body.smsStatus.should.equal(config.customerIo.smsStatusField);
+  result.body.userId.should.equal(config.customerIo.userIdField);
 });
 
 // isAskSubscriptionStatus
