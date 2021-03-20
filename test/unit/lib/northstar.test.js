@@ -8,7 +8,7 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const rewire = require('rewire');
 const underscore = require('underscore');
-const Northstar = require('@dosomething/northstar-js');
+const Northstar = require('@dosomething/gateway/server');
 const config = require('../../../config/lib/northstar');
 
 chai.should();
