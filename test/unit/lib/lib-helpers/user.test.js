@@ -7,7 +7,6 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const underscore = require('underscore');
 const httpMocks = require('node-mocks-http');
-const northstar = require('../../../../lib/northstar');
 const gateway = require('../../../../lib/gateway');
 const helpers = require('../../../../lib/helpers');
 const config = require('../../../../config/lib/helpers/user');
@@ -204,22 +203,22 @@ test('fetchOrCreateVotingPlan returns fetchVotingPlan result if exists', async (
 });
 
 // fetchById
-test('fetchById calls northstar.fetchUserById', async () => {
-  sandbox.stub(northstar, 'fetchUserById')
+test('fetchById calls gateway.fetchUserById', async () => {
+  sandbox.stub(gateway, 'fetchUserById')
     .returns(userLookupStub);
 
   const result = await userHelper.fetchById(mockUser.id);
-  northstar.fetchUserById.should.have.been.called;
+  gateway.fetchUserById.should.have.been.called;
   result.should.deep.equal(userLookupStub);
 });
 
 // fetchByMobile
 test('fetchByMobile calls northstar.fetchUserById', async () => {
-  sandbox.stub(northstar, 'fetchUserByMobile')
+  sandbox.stub(gateway, 'fetchUserByMobile')
     .returns(userLookupStub);
 
   const result = await userHelper.fetchByMobile(mockUser.mobile);
-  northstar.fetchUserByMobile.should.have.been.called;
+  gateway.fetchUserByMobile.should.have.been.called;
   result.should.deep.equal(userLookupStub);
 });
 
@@ -382,20 +381,20 @@ test('updateByMemberMessageReq should return rejected error if getProfileUpdate 
   result.should.deep.equal(error);
 });
 
-test('updateByMemberMessageReq should return northstar.updateUser', async (t) => {
+test('updateByMemberMessageReq should return gateway.updateUser', async (t) => {
   t.context.req.user = mockUser;
   sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
     .returns({ abc: 1 });
   sandbox.stub(helpers.macro, 'getProfileUpdate')
     .returns({ def: 2 });
-  sandbox.stub(northstar, 'updateUser')
+  sandbox.stub(gateway, 'updateUser')
     .returns(Promise.resolve(mockUser));
   sandbox.stub(userHelper, 'hasAddress')
     .returns(false);
   t.context.req.macro = stubs.getMacro();
 
   const result = await userHelper.updateByMemberMessageReq(t.context.req);
-  northstar.updateUser.should.have.been.calledWith(mockUser.id, { abc: 1, def: 2 });
+  gateway.updateUser.should.have.been.calledWith(mockUser.id, { abc: 1, def: 2 });
   userHelper.hasAddress.should.not.have.been.called;
   result.should.deep.equal(mockUser);
 });
@@ -406,7 +405,7 @@ test('updateByMemberMessageReq should not send req.platformUserAddress if user h
     .returns({ abc: 1 });
   sandbox.stub(helpers.macro, 'getProfileUpdate')
     .returns({ def: 2 });
-  sandbox.stub(northstar, 'updateUser')
+  sandbox.stub(gateway, 'updateUser')
     .returns(Promise.resolve(mockUser));
   t.context.req.platformUserAddress = { ghi: 3 };
   sandbox.stub(userHelper, 'hasAddress')
@@ -414,7 +413,7 @@ test('updateByMemberMessageReq should not send req.platformUserAddress if user h
   t.context.req.macro = stubs.getMacro();
 
   const result = await userHelper.updateByMemberMessageReq(t.context.req);
-  northstar.updateUser.should.have.been.calledWith(mockUser.id, { abc: 1, def: 2 });
+  gateway.updateUser.should.have.been.calledWith(mockUser.id, { abc: 1, def: 2 });
   userHelper.hasAddress.should.have.been.calledWith(t.context.req.user);
   result.should.deep.equal(mockUser);
 });
@@ -425,7 +424,7 @@ test('updateByMemberMessageReq should not send req.platformUserAddress if user d
     .returns({ abc: 1 });
   sandbox.stub(helpers.macro, 'getProfileUpdate')
     .returns({ def: 2 });
-  sandbox.stub(northstar, 'updateUser')
+  sandbox.stub(gateway, 'updateUser')
     .returns(Promise.resolve(mockUser));
   t.context.req.platformUserAddress = { ghi: 3 };
   sandbox.stub(userHelper, 'hasAddress')
@@ -433,7 +432,8 @@ test('updateByMemberMessageReq should not send req.platformUserAddress if user d
   t.context.req.macro = stubs.getMacro();
 
   const result = await userHelper.updateByMemberMessageReq(t.context.req);
-  northstar.updateUser.should.have.been.calledWith(mockUser.id, { abc: 1, def: 2, ghi: 3 });
+
+  gateway.updateUser.should.have.been.calledWith(mockUser.id, { abc: 1, def: 2, ghi: 3 });
   userHelper.hasAddress.should.have.been.calledWith(t.context.req.user);
   result.should.deep.equal(mockUser);
 });
@@ -444,7 +444,7 @@ test('updateByMemberMessageReq should call createVotingPlan if macro isCompleted
     .returns({ abc: 1 });
   sandbox.stub(helpers.macro, 'getProfileUpdate')
     .returns({ def: 2 });
-  sandbox.stub(northstar, 'updateUser')
+  sandbox.stub(gateway, 'updateUser')
     .returns(Promise.resolve(mockUser));
   t.context.req.platformUserAddress = { ghi: 3 };
   sandbox.stub(userHelper, 'hasAddress')
@@ -456,7 +456,8 @@ test('updateByMemberMessageReq should call createVotingPlan if macro isCompleted
     .returns(Promise.resolve(mockPost));
 
   const result = await userHelper.updateByMemberMessageReq(t.context.req);
-  northstar.updateUser.should.have.been.calledWith(mockUser.id, { abc: 1, def: 2, ghi: 3 });
+
+  gateway.updateUser.should.have.been.calledWith(mockUser.id, { abc: 1, def: 2, ghi: 3 });
   userHelper.hasAddress.should.have.been.calledWith(t.context.req.user);
   helpers.user.fetchOrCreateVotingPlan.should.have.been.calledWith(t.context.req.user);
   result.should.deep.equal(mockUser);
