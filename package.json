@@ -41,7 +41,7 @@
     "node": "12.x"
   },
   "dependencies": {
-    "@dosomething/gateway": "^2.0.1",
+    "@dosomething/gateway": "git://github.com/DoSomething/gateway-js.git#bug/user-update",
     "@dosomething/northstar-js": "git://github.com/DoSomething/northstar-js.git",
     "bad-words": "3.0.3",
     "basic-auth": "^2.0.1",
