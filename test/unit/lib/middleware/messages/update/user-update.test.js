@@ -11,7 +11,7 @@ const Promise = require('bluebird');
 const underscore = require('underscore');
 
 const logger = require('../../../../../../lib/logger');
-const northstar = require('../../../../../../lib/northstar');
+const northstar = require('../../../../../../lib/gateway');
 const helpers = require('../../../../../../lib/helpers');
 const stubs = require('../../../../../helpers/stubs');
 const userFactory = require('../../../../../helpers/factories/user');
