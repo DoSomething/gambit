@@ -41,7 +41,7 @@
     "node": "12.x"
   },
   "dependencies": {
-    "@dosomething/gateway": "git://github.com/DoSomething/gateway-js.git#bug/user-update",
+    "@dosomething/gateway": "^3.1.1",
     "bad-words": "3.0.3",
     "basic-auth": "^2.0.1",
     "bluebird": "^3.7.2",
