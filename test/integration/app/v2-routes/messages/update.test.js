@@ -61,27 +61,11 @@ test('PATCH /api/v2/messages/:id should update the message failedAt and failureD
   const { outboundMessage } = await seederHelper.seed.conversationMessages();
   const updateBody = stubs.twilio.getFailedMessageUpdate(true);
 
-
+  integrationHelper.routes.northstar.intercept.createOAuthToken();
   integrationHelper.routes.northstar
     .intercept.fetchUserById(stubs.getUserId(), stubs.northstar.getUser());
-
-  /**
-   * intercept request to update Northstar user with new undeliverable sms_status
-   * TODO: Should be using routes integration helper
-   */
-  nock(integrationHelper.routes.northstar.baseURI)
-    .put(`/users/_id/${stubs.getUserId()}`)
-    .reply((uri, requestBody) => {
-      // Assert that the payload includes the undeliverable sms_status
-      expect(requestBody.sms_status)
-        .to.be.eql(subscriptionHelper.subscriptionStatuses.undeliverable);
-      return [
-        200,
-        stubs.northstar.getUser({
-          subscription: 'undeliverable',
-        }),
-      ];
-    });
+  integrationHelper.routes.northstar
+    .intercept.updateUserById(stubs.getUserId(), stubs.northstar.getUser());
 
   // test
   const res = await t.context.request.patch(
