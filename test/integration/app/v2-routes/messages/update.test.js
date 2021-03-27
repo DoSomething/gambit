@@ -65,13 +65,18 @@ test('PATCH /api/v2/messages/:id should update the message failedAt and failureD
   integrationHelper.routes.northstar
     .intercept.fetchUserById(stubs.getUserId(), stubs.northstar.getUser());
   integrationHelper.routes.northstar
-    .intercept.updateUserById(stubs.getUserId(), stubs.northstar.getUser());
+    .intercept.updateUserById(stubs.getUserId(), stubs.northstar.getUser({
+      subscription: 'undeliverable',
+    }));
 
   // test
   const res = await t.context.request.patch(
     integrationHelper.routes.v2.messages(outboundMessage.id))
     .set('Authorization', `Basic ${integrationHelper.getAuthKey()}`)
     .send(updateBody);
+
+  // Error message here is "Cannot read property \'access_token\' of undefined".
+  t.log(res.body);
 
   res.status.should.be.equal(204);
 

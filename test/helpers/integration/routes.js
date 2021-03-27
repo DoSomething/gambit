@@ -39,14 +39,15 @@ module.exports = {
   northstar: {
     baseURI: northstarConfig.clientOptions.baseURI,
     intercept: {
-      createOAuthToken: (status = 200) => 
+      createOAuthToken: (times = 1, status = 200) => 
         nock(module.exports.northstar.baseURI)
-          .get(northstarConfig.clientOptions.oauth.path)
+          .post('/v2/auth/token')
+          .times(times)
           .reply(status, {
-            id_token: "eyJ0eXAiOiJKV1QizI1NiI.eyJ0eXAiOiJKV1QizI1NiI.t4-kORoBrdLBLFTsgVaFIEJUKKHOWZeN4S3v25HIiZgduXpaifm4IyksF5xPy3tU_D3cniRfV9HzNrH2KEEnNXF22-tlWD0iay2bXRlT0GIwVuJz87f_DogYYwWA0Sw0jg3mwREePueMkN_bXDRAv3jRj4BHNF1EbSf-FHYAVBPF3XX-e6XJJxN_jArE1KMgwqJobcqvj9TI9yRRATGL0C6i7sHkSxVoG84_Sa8rk6bC8BzA6124WADzYv0S1irzY1As0mLHVnEIQUn4nEQR8398c1LAnNaVw2FXPKruBxmYphOVDVwKCOE6KFjhgZdPAank5O611kRw5wot1jUMDdlnB-I7kpL2_R-K_f1-x_PSVNUScYsghWEyi4vFCHsnw598IVvbgVMxBnBxc3LHHyGXx16XCCXQAWDrcFmxNq6nnK-59RasRpO5Q-BXJ40k_d38xejYcSKvmTzUoF0YxOns1_vYizWmnEg1g50A4nuU0WnOkN579qaihzsej6TtVdFHDiczPjcdnFKMG07tbBsjnSAxQohcf44R94GDeoC-XQZxF-qqpC-Km_2GCmcjBokk-r8NLqsg3TeDPVKOq_nWKiT98LuJzLACLxS2jWWsCDcxDw_u_Y4yAVB97v_M7VHoC7RhCjvN3kn5y8Jhz69MLxbM_TKG7GIm3KKTWfE",
+            id_token: "eyJ0eXAiOiJKV1QizI1NiI.eyJ0eXAiOiJKV1QizI1NiI.t4-kORoBrdLBLFTsgVaFIEJUKKHOWZeN4S3v25HIi4IyksF5xPy3tU_D3cniRfV9HzNrH2KEEnNXF22-tlWD0iay2bXRlT0GIwVuJz87f_DogYYwWA0Sw0jg3mwREePueMkN_bXDRAv3jRj4BHNF1EbSf-FHYAVBPF3XX-e6XJJxN_jArE1KMgwqJobcqvj9TI9yRRATGL0C6i7sHkSxVoG84_Sa8rk6bC8BzA6124WADzYv0S1irzY1As0mLHVnEIQUn4nEQR8398c1LAnNaVw2FXPKruBxmYphOVDVwKCOE6KFjhgZdPAank5O611kRw5wot1jUMDdlnB-I7kpL2_R-K_f1-x_PSVNUScYsghWEyi4vFCHsnw598IVvbgVMxBnBxc3LHHyGXx16XCCXQAWDrcFmxNq6nnK-59RasRpO5Q-BXJ40k_d38xejYcSKvmTzUoF0YxOns1_vYizWmnEg1g50A4nuU0WnOkN579qaihzsej6TtVdFHDiczPjcdnFKMG07tbBsjnSAxQohcf44R94GDeoC-XQZxF-qqpC-Km_2GCmcjBokk-r8NLqsg3TeDPVKOq_nWKiT98LuJzLACLxS2jWWsCDcxDw_u_Y4yAVB97v_M7VHoC7RhCjvN3kn5y8Jhz69MLxbM_TKG7GIm3KKTWfE",
             token_type: "Bearer",
             expires_in: 3600,
-            access_token: "eyJ0eXAiOiJKV1QizI1NiI.eyJ0eXAiOiJKV1QizI1NiI.t4-kORoBrdLBLFTsgVaFIEJUKKHOWZeN4S3v25HIiZgduXpaifm4IyksF5xPy3tU_D3cniRfV9HzNrH2KEEnNXF22-tlWD0iay2bXRlT0GIwVuJz87f_DogYYwWA0Sw0jg3mwREePueMkN_bXDRAv3jRj4BHNF1EbSf-FHYAVBPF3XX-e6XJJxN_jArE1KMgwqJobcqvj9TI9yRRATGL0C6i7sHkSxVoG84_Sa8rk6bC8BzA6124WADzYv0S1irzY1As0mLHVnEIQUn4nEQR8398c1LAnNaVw2FXPKruBxmYphOVDVwKCOE6KFjhgZdPAank5O611kRw5wot1jUMDdlnB-I7kpL2_R-K_f1-x_PSVNUScYsghWEyi4vFCHsnw598IVvbgVMxBnBxc3LHHyGXx16XCCXQAWDrcFmxNq6nnK-59RasRpO5Q-BXJ40k_d38xejYcSKvmTzUoF0YxOns1_vYizWmnEg1g50A4nuU0WnOkN579qaihzsej6TtVdFHDiczPjcdnFKMG07tbBsjnSAxQohcf44R94GDeoC-XQZxF-qqpC-Km_2GCmcjBokk-r8NLqsg3TeDPVKOq_nWKiT98LuJzLACLxS2jWWsCDcxDw_u_Y4yAVB97v_M7VHoC7RhCjvN3kn5y8Jhz69MLxbM_TKG7GIm3KKTWfE",
+            access_token: "eyJ0eXAiOiJKV1QizI1NiI.eyJ0eXAiOiJKV1QizI1NiI.t4-kORoBrdLBLFTsgVaFIEJUV9HzNrH2KEEnNXF22-tlWD0iay2bXRlT0GIwVuJz87f_DogYYwWA0Sw0jg3mwREePueMkN_bXDRAv3jRj4BHNF1EbSf-FHYAVBPF3XX-e6XJJxN_jArE1KMgwqJobcqvj9TI9yRRATGL0C6i7sHkSxVoG84_Sa8rk6bC8BzA6124WADzYv0S1irzY1As0mLHVnEIQUn4nEQR8398c1LAnNaVw2FXPKruBxmYphOVDVwKCOE6KFjhgZdPAank5O611kRw5wot1jUMDdlnB-I7kpL2_R-K_f1-x_PSVNUScYsghWEyi4vFCHsnw598IVvbgVMxBnBxc3LHHyGXx16XCCXQAWDrcFmxNq6nnK-59RasRpO5Q-BXJ40k_d38xejYcSKvmTzUoF0YxOns1_vYizWmnEg1g50A4nuU0WnOkN579qaihzsej6TtVdFHDiczPjcdnFKMG07tbBsjnSAxQohcf44R94GDeoC-XQZxF-qqpC-Km_2GCmcjBokk-r8NLqsg3TeDPVKOq_nWKiT98LuJzLACLxS2jWWsCDcxDw_u_Y4yAVB97v_M7VHoC7RhCjvN3kn5y8Jhz69MLxbM_TKG7GIm3KKTWfE",
           }),
       fetchUserById: (id, reply = {}, times = 1, status = 200) =>
         nock(module.exports.northstar.baseURI)
