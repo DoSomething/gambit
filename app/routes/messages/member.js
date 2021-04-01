@@ -105,7 +105,6 @@ router.use(createTextPostMiddleware());
 router.use(createDraftPhotoPostMiddleware());
 router.use(draftQuantityPhotoPostMiddleware());
 router.use(draftPhotoPhotoPostMiddleware());
-router.use(draftCaptionPhotoPostMiddleware());
 router.use(draftHoursSpentPhotoPostMiddleware());
 router.use(draftWhyParticipatedPhotoPostMiddleware());
 router.use(createPhotoPostMiddleware());
