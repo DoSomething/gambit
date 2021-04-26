@@ -116,7 +116,7 @@ test('draftPhoto should call save draft value if request does not have draft val
   sandbox.stub(helpers.request, 'saveDraftSubmissionValue')
     .returns(Promise.resolve(true));
 
-  t.context.req.mediaUrl  = mockInboundMediaUrl;
+  t.context.req.mediaUrl = mockInboundMediaUrl;
 
   // test
   await middleware(t.context.req, t.context.res, next);
@@ -132,15 +132,14 @@ test('draftPhoto should call save draft value if request does not have draft val
   helpers.replies.invalidPhoto.should.not.have.been.called;
 });
 
-test('draftPhoto should not call save draft value if request does not have draft value and does not valid text field value, and send invalidPhoto', async (t) => {
+test('draftPhoto should not call save draft value if request does not have draft value, and send invalidPhoto', async (t) => {
   const next = sinon.stub();
   const middleware = draftPhoto();
   sandbox.stub(helpers.topic, 'isPhotoPostConfig')
     .returns(true);
   sandbox.stub(helpers.request, 'hasDraftSubmissionValue')
     .returns(false);
-  sandbox.stub(helpers.util, 'isValidTextFieldValue')
-    .returns(false);
+
   sandbox.stub(helpers.request, 'saveDraftSubmissionValue')
     .returns(Promise.resolve(true));
 
@@ -150,7 +149,6 @@ test('draftPhoto should not call save draft value if request does not have draft
   helpers.topic.isPhotoPostConfig.should.have.been.calledWith(t.context.req.topic);
   helpers.request.hasDraftSubmissionValue
     .should.have.been.calledWith(t.context.req, urlKey);
-  helpers.util.isValidTextFieldValue.should.have.been.calledWith(mockInboundMessageText);
   helpers.request.saveDraftSubmissionValue.should.not.have.been.called;
   next.should.not.have.been.called;
   helpers.replies.askWhyParticipated.should.not.have.been.called;
