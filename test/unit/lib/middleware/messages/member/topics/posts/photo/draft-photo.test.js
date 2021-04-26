@@ -104,7 +104,7 @@ test('draftPhoto should call save draft value if request does not have draft val
   helpers.replies.invalidPhoto.should.not.have.been.called;
 });
 
-test.only('draftPhoto should call save draft value if request does not have draft value and the request has a mediaUrl value, and send askWhyParticipated if not hasSignupWithWhyParticipated', async (t) => {
+test('draftPhoto should call save draft value if request does not have draft value and the request has a mediaUrl value, and send askWhyParticipated if not hasSignupWithWhyParticipated', async (t) => {
   const next = sinon.stub();
   const middleware = draftPhoto();
   sandbox.stub(helpers.topic, 'isPhotoPostConfig')
