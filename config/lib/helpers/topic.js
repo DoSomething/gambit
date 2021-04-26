@@ -27,7 +27,6 @@ module.exports = {
       type: 'photoPostConfig',
       transitionTemplate: topicTemplates.startPhotoPost,
       draftSubmissionValuesMap: {
-        caption: 'caption',
         hoursSpent: 'hoursSpent',
         quantity: 'quantity',
         url: 'url',
