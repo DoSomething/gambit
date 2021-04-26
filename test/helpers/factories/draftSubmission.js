@@ -5,7 +5,6 @@ const DraftSubmission = require('../../../app/models/DraftSubmission');
 const stubs = require('../stubs');
 
 const photoPostValues = {
-  caption: stubs.getRandomMessageText(),
   quantity: 4,
   // @see https://github.com/DoSomething/rogue/blob/master/docs/endpoints/posts.md#create-a-post
   url: 'https://placekitten.com/g/400/400',
@@ -32,14 +31,18 @@ function getRawDraftSubmissionData(values = {}, conversationId, topicId) {
  * @return {DraftSubmission}
  */
 function getValidCompletePhotoPostDraftSubmission(conversationId, topicId) {
-  return DraftSubmission(getRawDraftSubmissionData(photoPostValues, conversationId, topicId));
+  return DraftSubmission(
+    getRawDraftSubmissionData(photoPostValues, conversationId, topicId)
+  );
 }
 
 /**
  * @return {DraftSubmission}
  */
 function getValidNewDraftSubmission(values = {}, conversationId, topicId) {
-  return new DraftSubmission(getRawDraftSubmissionData(values, conversationId, topicId));
+  return new DraftSubmission(
+    getRawDraftSubmissionData(values, conversationId, topicId)
+  );
 }
 
 module.exports = {
