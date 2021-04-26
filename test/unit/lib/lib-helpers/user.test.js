@@ -49,7 +49,9 @@ const source = stubs.getPlatform();
 test.beforeEach((t) => {
   t.context.req = httpMocks.createRequest();
   // US-NY
-  t.context.req.platformUserStateISOCode = helpers.twilio.getMemberStateISOCode('NY');
+  t.context.req.platformUserStateISOCode = helpers.twilio.getMemberStateISOCode(
+    'NY'
+  );
 });
 
 test.afterEach((t) => {
@@ -62,11 +64,14 @@ test('createPhotoPost passes user.id, campaignId, file, quantity, source, text, 
   const file = stubs.getRandomMessageText();
   const draftSubmission = draftSubmissionFactory.getValidCompletePhotoPostDraftSubmission();
   const values = draftSubmission.values;
-  sandbox.stub(gateway, 'createPost')
+  sandbox
+    .stub(gateway, 'createPost')
     .returns(Promise.resolve(mockGatewayPhotoPostResponse));
-  sandbox.stub(gateway, 'getClient')
+  sandbox
+    .stub(gateway, 'getClient')
     .returns({ photoPostCreation: { fileProperty: 'file' } });
-  sandbox.stub(helpers.util, 'fetchImageFileFromUrl')
+  sandbox
+    .stub(helpers.util, 'fetchImageFileFromUrl')
     .returns(Promise.resolve(file));
 
   const result = await userHelper.createPhotoPost({
@@ -82,7 +87,6 @@ test('createPhotoPost passes user.id, campaignId, file, quantity, source, text, 
     quantity: values.quantity,
     northstar_id: mockUser.id,
     source,
-    text: values.caption,
     type: config.posts.photo.type,
     why_participated: values.whyParticipated,
     location: t.context.req.platformUserStateISOCode,
@@ -94,10 +98,16 @@ test('createPhotoPost passes user.id, campaignId, file, quantity, source, text, 
 // createSignup
 test('createSignup passes user.id, campaignId, source args to gateway.createSignup', async () => {
   const details = 'test';
-  sandbox.stub(gateway, 'createSignup')
+  sandbox
+    .stub(gateway, 'createSignup')
     .returns(Promise.resolve(mockGatewaySignupResponse));
 
-  const result = await userHelper.createSignup(mockUser, campaign, source, details);
+  const result = await userHelper.createSignup(
+    mockUser,
+    campaign,
+    source,
+    details
+  );
   gateway.createSignup.should.have.been.calledWith({
     campaign_id: campaign.id,
     northstar_id: mockUser.id,
@@ -110,7 +120,8 @@ test('createSignup passes user.id, campaignId, source args to gateway.createSign
 // createTextPost
 test('createTextPost passes user.id, campaignId, source, and text fields to gateway.createSignup', async (t) => {
   const text = 'test';
-  sandbox.stub(gateway, 'createPost')
+  sandbox
+    .stub(gateway, 'createPost')
     .returns(Promise.resolve(mockGatewayTextPostResponse));
 
   const result = await userHelper.createTextPost({
@@ -134,14 +145,15 @@ test('createTextPost passes user.id, campaignId, source, and text fields to gate
 // createVotingPlan
 test('createVotingPlan passes user voting plan info to gateway.createPost', async (t) => {
   const mockValues = { test: stubs.getRandomWord() };
-  sandbox.stub(gateway, 'createPost')
-    .returns(Promise.resolve(mockPost));
-  sandbox.stub(userHelper, 'getVotingPlanValues')
-    .returns(mockValues);
+  sandbox.stub(gateway, 'createPost').returns(Promise.resolve(mockPost));
+  sandbox.stub(userHelper, 'getVotingPlanValues').returns(mockValues);
   const details = JSON.stringify(mockValues);
 
-  const result = await userHelper
-    .createVotingPlan(mockUser, source, t.context.req.platformUserStateISOCode);
+  const result = await userHelper.createVotingPlan(
+    mockUser,
+    source,
+    t.context.req.platformUserStateISOCode
+  );
   gateway.createPost.should.have.been.calledWith({
     action_id: config.posts.votingPlan.actionId,
     northstar_id: mockUser.id,
@@ -155,9 +167,9 @@ test('createVotingPlan passes user voting plan info to gateway.createPost', asyn
 
 // fetchOrCreateSignup
 test('fetchOrCreateSignup returns createSignup result if fetchSignup result is null', async () => {
-  sandbox.stub(userHelper, 'fetchSignup')
-    .returns(Promise.resolve(null));
-  sandbox.stub(userHelper, 'createSignup')
+  sandbox.stub(userHelper, 'fetchSignup').returns(Promise.resolve(null));
+  sandbox
+    .stub(userHelper, 'createSignup')
     .returns(Promise.resolve(mockGatewaySignupResponse));
 
   const result = await userHelper.fetchOrCreateSignup(mockUser, campaign);
@@ -167,9 +179,11 @@ test('fetchOrCreateSignup returns createSignup result if fetchSignup result is n
 });
 
 test('fetchOrCreateSignup returns fetchSignup result if exists', async () => {
-  sandbox.stub(userHelper, 'fetchSignup')
+  sandbox
+    .stub(userHelper, 'fetchSignup')
     .returns(Promise.resolve(mockGatewaySignupResponse));
-  sandbox.stub(userHelper, 'createSignup')
+  sandbox
+    .stub(userHelper, 'createSignup')
     .returns(Promise.resolve(mockGatewaySignupResponse));
 
   const result = await userHelper.fetchOrCreateSignup(mockUser, campaign);
@@ -180,9 +194,9 @@ test('fetchOrCreateSignup returns fetchSignup result if exists', async () => {
 
 // fetchOrCreateVotingPlan
 test('fetchOrCreateVotingPlan returns createVotingPlan result if fetchVotingPlan result is null', async () => {
-  sandbox.stub(userHelper, 'fetchVotingPlan')
-    .returns(Promise.resolve(null));
-  sandbox.stub(userHelper, 'createVotingPlan')
+  sandbox.stub(userHelper, 'fetchVotingPlan').returns(Promise.resolve(null));
+  sandbox
+    .stub(userHelper, 'createVotingPlan')
     .returns(Promise.resolve(mockPost));
 
   const result = await userHelper.fetchOrCreateVotingPlan(mockUser, source);
@@ -192,9 +206,11 @@ test('fetchOrCreateVotingPlan returns createVotingPlan result if fetchVotingPlan
 });
 
 test('fetchOrCreateVotingPlan returns fetchVotingPlan result if exists', async () => {
-  sandbox.stub(userHelper, 'fetchVotingPlan')
+  sandbox
+    .stub(userHelper, 'fetchVotingPlan')
     .returns(Promise.resolve(mockPost));
-  sandbox.stub(userHelper, 'createVotingPlan')
+  sandbox
+    .stub(userHelper, 'createVotingPlan')
     .returns(Promise.resolve({ id: stubs.getRandomWord() }));
 
   const result = await userHelper.fetchOrCreateVotingPlan(mockUser, source);
@@ -205,8 +221,7 @@ test('fetchOrCreateVotingPlan returns fetchVotingPlan result if exists', async (
 
 // fetchById
 test('fetchById calls northstar.fetchUserById', async () => {
-  sandbox.stub(northstar, 'fetchUserById')
-    .returns(userLookupStub);
+  sandbox.stub(northstar, 'fetchUserById').returns(userLookupStub);
 
   const result = await userHelper.fetchById(mockUser.id);
   northstar.fetchUserById.should.have.been.called;
@@ -215,8 +230,7 @@ test('fetchById calls northstar.fetchUserById', async () => {
 
 // fetchByMobile
 test('fetchByMobile calls northstar.fetchUserById', async () => {
-  sandbox.stub(northstar, 'fetchUserByMobile')
-    .returns(userLookupStub);
+  sandbox.stub(northstar, 'fetchUserByMobile').returns(userLookupStub);
 
   const result = await userHelper.fetchByMobile(mockUser.mobile);
   northstar.fetchUserByMobile.should.have.been.called;
@@ -225,22 +239,21 @@ test('fetchByMobile calls northstar.fetchUserById', async () => {
 
 // fetchFromReq
 test('fetchFromReq calls fetchById if !req.platformUserId', async (t) => {
-  sandbox.stub(userHelper, 'fetchById')
-    .returns(userLookupStub);
-  sandbox.stub(userHelper, 'fetchByMobile')
-    .returns(userLookupStub);
+  sandbox.stub(userHelper, 'fetchById').returns(userLookupStub);
+  sandbox.stub(userHelper, 'fetchByMobile').returns(userLookupStub);
   t.context.req.userId = stubs.getUserId();
 
   await userHelper.fetchFromReq(t.context.req);
-  userHelper.fetchById.should.not.have.been.calledWith(t.context.req, t.context.req.userId);
+  userHelper.fetchById.should.not.have.been.calledWith(
+    t.context.req,
+    t.context.req.userId
+  );
   userHelper.fetchByMobile.should.not.have.been.called;
 });
 
 test('fetchFromReq calls fetchByMobile if req.platformUserId', async (t) => {
-  sandbox.stub(userHelper, 'fetchById')
-    .returns(userLookupStub);
-  sandbox.stub(userHelper, 'fetchByMobile')
-    .returns(userLookupStub);
+  sandbox.stub(userHelper, 'fetchById').returns(userLookupStub);
+  sandbox.stub(userHelper, 'fetchByMobile').returns(userLookupStub);
   t.context.req.platformUserId = stubs.getMobileNumber();
 
   await userHelper.fetchFromReq(t.context.req);
@@ -251,19 +264,23 @@ test('fetchFromReq calls fetchByMobile if req.platformUserId', async (t) => {
 // fetchSignup
 test('fetchSignup should call gateway.fetchSignups with getFetchSignupsQuery result and return first result', async () => {
   sandbox.spy(userHelper, 'getFetchSignupsQuery');
-  sandbox.stub(gateway, 'fetchSignups')
+  sandbox
+    .stub(gateway, 'fetchSignups')
     .returns(Promise.resolve(mockGatewaySignupsIndexResponse));
 
   const result = await userHelper.fetchSignup(mockUser, campaign);
-  userHelper.getFetchSignupsQuery.should.have.been.calledWith(mockUser.id, campaign.id);
-  gateway.fetchSignups
-    .should.have.been.calledWith(userHelper.getFetchSignupsQuery(mockUser.id, campaign.id));
+  userHelper.getFetchSignupsQuery.should.have.been.calledWith(
+    mockUser.id,
+    campaign.id
+  );
+  gateway.fetchSignups.should.have.been.calledWith(
+    userHelper.getFetchSignupsQuery(mockUser.id, campaign.id)
+  );
   result.should.deep.equal(mockGatewaySignupsIndexResponse.data[0]);
 });
 
 test('fetchSignup should return null if fetchSignup result is empty array', async (t) => {
-  sandbox.stub(gateway, 'fetchSignups')
-    .returns(Promise.resolve({ data: [] }));
+  sandbox.stub(gateway, 'fetchSignups').returns(Promise.resolve({ data: [] }));
 
   const result = await userHelper.fetchSignup(mockUser, campaign);
   t.is(result, null);
@@ -272,9 +289,9 @@ test('fetchSignup should return null if fetchSignup result is empty array', asyn
 // fetchVotingPlan
 test('fetchVotingPlan should call gateway.getPosts with query for user voting plan', async () => {
   const mockQuery = { test: '123' };
-  sandbox.stub(userHelper, 'getFetchVotingPlanQuery')
-    .returns(mockQuery);
-  sandbox.stub(gateway, 'fetchPosts')
+  sandbox.stub(userHelper, 'getFetchVotingPlanQuery').returns(mockQuery);
+  sandbox
+    .stub(gateway, 'fetchPosts')
     .returns(Promise.resolve({ data: [mockPost] }));
 
   const result = await userHelper.fetchVotingPlan(mockUser);
@@ -289,8 +306,7 @@ test('getCreatePayloadFromReq should return object', () => {
     platformUserAddress: platformUserAddressStub,
     platformUserId: stubs.getMobileNumber(),
   };
-  sandbox.stub(underscore, 'extend')
-    .returns(platformUserAddressStub);
+  sandbox.stub(underscore, 'extend').returns(platformUserAddressStub);
   const result = userHelper.getCreatePayloadFromReq(req);
   result.source.should.equal(req.platform);
   result.mobile.should.equal(req.platformUserId);
@@ -301,8 +317,7 @@ test('getDefaultUpdatePayloadFromReq should return object', () => {
   const inboundMessage = messageFactory.getValidMessage();
   const conversation = conversationFactory.getValidConversation();
   const isSupportTopic = true;
-  sandbox.stub(conversation, 'isSupportTopic')
-    .returns(isSupportTopic);
+  sandbox.stub(conversation, 'isSupportTopic').returns(isSupportTopic);
   const result = userHelper.getDefaultUpdatePayloadFromReq({
     inboundMessage,
     conversation,
@@ -334,7 +349,8 @@ test('getFetchVotingPlanQuery should return getFetchSignupsQuery result with typ
 test('getVotingPlanValues should return object with voting plan field values', () => {
   const votingPlan = {
     attending_with: mockUser[config.fields.votingPlanAttendingWith.name],
-    method_of_transport: mockUser[config.fields.votingPlanMethodOfTransport.name],
+    method_of_transport:
+      mockUser[config.fields.votingPlanMethodOfTransport.name],
     time_of_day: mockUser[config.fields.votingPlanTimeOfDay.name],
   };
   const result = userHelper.getVotingPlanValues(mockUser);
@@ -362,102 +378,111 @@ test('isPaused should return user.sms_paused', (t) => {
 // updateByMemberMessageReq
 test('updateByMemberMessageReq should return rejected error if getDefaultUpdatePayloadFromReq throws', async (t) => {
   const error = stubs.getError();
-  sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
-    .throws(error);
+  sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq').throws(error);
   t.context.req.macro = stubs.getMacro();
 
-  const result = await t.throwsAsync(() => userHelper.updateByMemberMessageReq(t.context.req));
+  const result = await t.throwsAsync(() =>
+    userHelper.updateByMemberMessageReq(t.context.req)
+  );
   result.should.deep.equal(error);
 });
 
 test('updateByMemberMessageReq should return rejected error if getProfileUpdate throws', async (t) => {
   const error = stubs.getError();
-  sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
-    .returns({});
-  sandbox.stub(helpers.macro, 'getProfileUpdate')
-    .throws(error);
+  sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq').returns({});
+  sandbox.stub(helpers.macro, 'getProfileUpdate').throws(error);
   t.context.req.macro = stubs.getMacro();
 
-  const result = await t.throwsAsync(() => userHelper.updateByMemberMessageReq(t.context.req));
+  const result = await t.throwsAsync(() =>
+    userHelper.updateByMemberMessageReq(t.context.req)
+  );
   result.should.deep.equal(error);
 });
 
 test('updateByMemberMessageReq should return northstar.updateUser', async (t) => {
   t.context.req.user = mockUser;
-  sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
+  sandbox
+    .stub(userHelper, 'getDefaultUpdatePayloadFromReq')
     .returns({ abc: 1 });
-  sandbox.stub(helpers.macro, 'getProfileUpdate')
-    .returns({ def: 2 });
-  sandbox.stub(northstar, 'updateUser')
-    .returns(Promise.resolve(mockUser));
-  sandbox.stub(userHelper, 'hasAddress')
-    .returns(false);
+  sandbox.stub(helpers.macro, 'getProfileUpdate').returns({ def: 2 });
+  sandbox.stub(northstar, 'updateUser').returns(Promise.resolve(mockUser));
+  sandbox.stub(userHelper, 'hasAddress').returns(false);
   t.context.req.macro = stubs.getMacro();
 
   const result = await userHelper.updateByMemberMessageReq(t.context.req);
-  northstar.updateUser.should.have.been.calledWith(mockUser.id, { abc: 1, def: 2 });
+  northstar.updateUser.should.have.been.calledWith(mockUser.id, {
+    abc: 1,
+    def: 2,
+  });
   userHelper.hasAddress.should.not.have.been.called;
   result.should.deep.equal(mockUser);
 });
 
 test('updateByMemberMessageReq should not send req.platformUserAddress if user has address', async (t) => {
   t.context.req.user = mockUser;
-  sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
+  sandbox
+    .stub(userHelper, 'getDefaultUpdatePayloadFromReq')
     .returns({ abc: 1 });
-  sandbox.stub(helpers.macro, 'getProfileUpdate')
-    .returns({ def: 2 });
-  sandbox.stub(northstar, 'updateUser')
-    .returns(Promise.resolve(mockUser));
+  sandbox.stub(helpers.macro, 'getProfileUpdate').returns({ def: 2 });
+  sandbox.stub(northstar, 'updateUser').returns(Promise.resolve(mockUser));
   t.context.req.platformUserAddress = { ghi: 3 };
-  sandbox.stub(userHelper, 'hasAddress')
-    .returns(true);
+  sandbox.stub(userHelper, 'hasAddress').returns(true);
   t.context.req.macro = stubs.getMacro();
 
   const result = await userHelper.updateByMemberMessageReq(t.context.req);
-  northstar.updateUser.should.have.been.calledWith(mockUser.id, { abc: 1, def: 2 });
+  northstar.updateUser.should.have.been.calledWith(mockUser.id, {
+    abc: 1,
+    def: 2,
+  });
   userHelper.hasAddress.should.have.been.calledWith(t.context.req.user);
   result.should.deep.equal(mockUser);
 });
 
 test('updateByMemberMessageReq should not send req.platformUserAddress if user does not have address', async (t) => {
   t.context.req.user = mockUser;
-  sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
+  sandbox
+    .stub(userHelper, 'getDefaultUpdatePayloadFromReq')
     .returns({ abc: 1 });
-  sandbox.stub(helpers.macro, 'getProfileUpdate')
-    .returns({ def: 2 });
-  sandbox.stub(northstar, 'updateUser')
-    .returns(Promise.resolve(mockUser));
+  sandbox.stub(helpers.macro, 'getProfileUpdate').returns({ def: 2 });
+  sandbox.stub(northstar, 'updateUser').returns(Promise.resolve(mockUser));
   t.context.req.platformUserAddress = { ghi: 3 };
-  sandbox.stub(userHelper, 'hasAddress')
-    .returns(false);
+  sandbox.stub(userHelper, 'hasAddress').returns(false);
   t.context.req.macro = stubs.getMacro();
 
   const result = await userHelper.updateByMemberMessageReq(t.context.req);
-  northstar.updateUser.should.have.been.calledWith(mockUser.id, { abc: 1, def: 2, ghi: 3 });
+  northstar.updateUser.should.have.been.calledWith(mockUser.id, {
+    abc: 1,
+    def: 2,
+    ghi: 3,
+  });
   userHelper.hasAddress.should.have.been.calledWith(t.context.req.user);
   result.should.deep.equal(mockUser);
 });
 
 test('updateByMemberMessageReq should call createVotingPlan if macro isCompletedVotingPlan', async (t) => {
   t.context.req.user = mockUser;
-  sandbox.stub(userHelper, 'getDefaultUpdatePayloadFromReq')
+  sandbox
+    .stub(userHelper, 'getDefaultUpdatePayloadFromReq')
     .returns({ abc: 1 });
-  sandbox.stub(helpers.macro, 'getProfileUpdate')
-    .returns({ def: 2 });
-  sandbox.stub(northstar, 'updateUser')
-    .returns(Promise.resolve(mockUser));
+  sandbox.stub(helpers.macro, 'getProfileUpdate').returns({ def: 2 });
+  sandbox.stub(northstar, 'updateUser').returns(Promise.resolve(mockUser));
   t.context.req.platformUserAddress = { ghi: 3 };
-  sandbox.stub(userHelper, 'hasAddress')
-    .returns(false);
+  sandbox.stub(userHelper, 'hasAddress').returns(false);
   t.context.req.macro = stubs.getMacro();
-  sandbox.stub(helpers.macro, 'isCompletedVotingPlan')
-    .returns(true);
-  sandbox.stub(helpers.user, 'fetchOrCreateVotingPlan')
+  sandbox.stub(helpers.macro, 'isCompletedVotingPlan').returns(true);
+  sandbox
+    .stub(helpers.user, 'fetchOrCreateVotingPlan')
     .returns(Promise.resolve(mockPost));
 
   const result = await userHelper.updateByMemberMessageReq(t.context.req);
-  northstar.updateUser.should.have.been.calledWith(mockUser.id, { abc: 1, def: 2, ghi: 3 });
+  northstar.updateUser.should.have.been.calledWith(mockUser.id, {
+    abc: 1,
+    def: 2,
+    ghi: 3,
+  });
   userHelper.hasAddress.should.have.been.calledWith(t.context.req.user);
-  helpers.user.fetchOrCreateVotingPlan.should.have.been.calledWith(t.context.req.user);
+  helpers.user.fetchOrCreateVotingPlan.should.have.been.calledWith(
+    t.context.req.user
+  );
   result.should.deep.equal(mockUser);
 });
