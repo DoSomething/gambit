@@ -214,11 +214,9 @@ const fetchTopicById = `
       }
       ... on PhotoPostTopic {
         ...photoPostCampaign
-        askCaption
         askPhoto
         askQuantity
         askWhyParticipated
-        invalidCaption
         invalidPhoto
         invalidQuantity
         invalidWhyParticipated
