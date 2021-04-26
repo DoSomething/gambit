@@ -50,7 +50,7 @@ test.beforeEach((t) => {
   t.context.req = httpMocks.createRequest();
   // US-NY
   t.context.req.platformUserStateISOCode = helpers.twilio.getMemberStateISOCode(
-    'NY'
+    'NY',
   );
 });
 
@@ -106,7 +106,7 @@ test('createSignup passes user.id, campaignId, source args to gateway.createSign
     mockUser,
     campaign,
     source,
-    details
+    details,
   );
   gateway.createSignup.should.have.been.calledWith({
     campaign_id: campaign.id,
@@ -152,7 +152,7 @@ test('createVotingPlan passes user voting plan info to gateway.createPost', asyn
   const result = await userHelper.createVotingPlan(
     mockUser,
     source,
-    t.context.req.platformUserStateISOCode
+    t.context.req.platformUserStateISOCode,
   );
   gateway.createPost.should.have.been.calledWith({
     action_id: config.posts.votingPlan.actionId,
@@ -246,7 +246,7 @@ test('fetchFromReq calls fetchById if !req.platformUserId', async (t) => {
   await userHelper.fetchFromReq(t.context.req);
   userHelper.fetchById.should.not.have.been.calledWith(
     t.context.req,
-    t.context.req.userId
+    t.context.req.userId,
   );
   userHelper.fetchByMobile.should.not.have.been.called;
 });
@@ -271,10 +271,10 @@ test('fetchSignup should call gateway.fetchSignups with getFetchSignupsQuery res
   const result = await userHelper.fetchSignup(mockUser, campaign);
   userHelper.getFetchSignupsQuery.should.have.been.calledWith(
     mockUser.id,
-    campaign.id
+    campaign.id,
   );
   gateway.fetchSignups.should.have.been.calledWith(
-    userHelper.getFetchSignupsQuery(mockUser.id, campaign.id)
+    userHelper.getFetchSignupsQuery(mockUser.id, campaign.id),
   );
   result.should.deep.equal(mockGatewaySignupsIndexResponse.data[0]);
 });
@@ -382,7 +382,7 @@ test('updateByMemberMessageReq should return rejected error if getDefaultUpdateP
   t.context.req.macro = stubs.getMacro();
 
   const result = await t.throwsAsync(() =>
-    userHelper.updateByMemberMessageReq(t.context.req)
+    userHelper.updateByMemberMessageReq(t.context.req),
   );
   result.should.deep.equal(error);
 });
@@ -394,7 +394,7 @@ test('updateByMemberMessageReq should return rejected error if getProfileUpdate 
   t.context.req.macro = stubs.getMacro();
 
   const result = await t.throwsAsync(() =>
-    userHelper.updateByMemberMessageReq(t.context.req)
+    userHelper.updateByMemberMessageReq(t.context.req),
   );
   result.should.deep.equal(error);
 });
@@ -482,7 +482,7 @@ test('updateByMemberMessageReq should call createVotingPlan if macro isCompleted
   });
   userHelper.hasAddress.should.have.been.calledWith(t.context.req.user);
   helpers.user.fetchOrCreateVotingPlan.should.have.been.calledWith(
-    t.context.req.user
+    t.context.req.user,
   );
   result.should.deep.equal(mockUser);
 });

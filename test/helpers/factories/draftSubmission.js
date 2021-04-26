@@ -32,7 +32,7 @@ function getRawDraftSubmissionData(values = {}, conversationId, topicId) {
  */
 function getValidCompletePhotoPostDraftSubmission(conversationId, topicId) {
   return DraftSubmission(
-    getRawDraftSubmissionData(photoPostValues, conversationId, topicId)
+    getRawDraftSubmissionData(photoPostValues, conversationId, topicId),
   );
 }
 
@@ -41,7 +41,7 @@ function getValidCompletePhotoPostDraftSubmission(conversationId, topicId) {
  */
 function getValidNewDraftSubmission(values = {}, conversationId, topicId) {
   return new DraftSubmission(
-    getRawDraftSubmissionData(values, conversationId, topicId)
+    getRawDraftSubmissionData(values, conversationId, topicId),
   );
 }
 
