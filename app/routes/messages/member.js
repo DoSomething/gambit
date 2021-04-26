@@ -33,7 +33,6 @@ const validateCampaignMiddleware = require('../../../lib/middleware/messages/mem
 const createDraftPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/draft-create');
 const draftQuantityPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/draft-quantity');
 const draftPhotoPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/draft-photo');
-const draftCaptionPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/draft-caption');
 const draftHoursSpentPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/draft-hours-spent');
 const draftWhyParticipatedPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/draft-why-participated');
 const createPhotoPostMiddleware = require('../../../lib/middleware/messages/member/topics/posts/photo/post-create');
