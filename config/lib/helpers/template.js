@@ -19,7 +19,6 @@ const templatesMap = {
     invalidAskSignupResponse: 'invalidAskSignupResponse',
   },
   topicTemplates: {
-    askCaption: 'askCaption',
     askPhoto: 'askPhoto',
     askQuantity: 'askQuantity',
     askText: 'askText',
@@ -31,7 +30,6 @@ const templatesMap = {
     completedPhotoPostAutoReply: 'completedPhotoPostAutoReply',
     completedTextPost: 'completedTextPost',
     invalidAskYesNoResponse: 'invalidAskYesNoResponse',
-    invalidCaption: 'invalidCaption',
     invalidPhoto: 'invalidPhoto',
     invalidQuantity: 'invalidQuantity',
     invalidText: 'invalidText',
