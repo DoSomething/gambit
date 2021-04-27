@@ -56,7 +56,7 @@ async function assertSendingReplyWithTopicTemplate(
   req,
   res,
   template,
-  replyName
+  replyName,
 ) {
   sandbox
     .stub(repliesHelper, 'sendReplyWithTopicTemplate')
@@ -66,7 +66,7 @@ async function assertSendingReplyWithTopicTemplate(
   repliesHelper.sendReplyWithTopicTemplate.should.have.been.calledWith(
     req,
     res,
-    template
+    template,
   );
 }
 
@@ -79,7 +79,7 @@ async function assertSendingStaticTemplate(req, res, template) {
   repliesHelper.sendReplyWithStaticTemplate.should.have.been.calledWith(
     req,
     res,
-    template
+    template,
   );
 }
 
@@ -120,7 +120,7 @@ test('sendReply(): sends error if updateByMemberMessageReq fails', async (t) => 
     req,
     t.context.res,
     'text',
-    templates.campaignClosed
+    templates.campaignClosed,
   );
 
   // asserts
@@ -154,7 +154,7 @@ test('sendReply(): responds with the inbound and outbound messages if member is 
     req,
     t.context.res,
     'text line',
-    templates.campaignClosed
+    templates.campaignClosed,
   );
   const responseMessages = helpers.response.sendData.getCall(0).args[1]
     .messages;
@@ -196,7 +196,7 @@ test('sendReply(): should not call createAndSetLastOutboundMessage if outbound m
     req,
     t.context.res,
     'text line',
-    templates.campaignClosed
+    templates.campaignClosed,
   );
 
   // asserts
@@ -230,7 +230,7 @@ test('sendReply(): should createAndSetLastOutboundMessage outbound message if no
     req,
     t.context.res,
     'text line',
-    templates.campaignClosed
+    templates.campaignClosed,
   );
 
   // asserts
@@ -254,7 +254,7 @@ test('sendReply(): should call sendErrorResponse on failure', async (t) => {
     req,
     t.context.res,
     'text line',
-    templates.campaignClosed
+    templates.campaignClosed,
   );
 
   // asserts
@@ -266,7 +266,7 @@ test('askPhoto(): should call sendReplyWithTopicTemplate', async (t) => {
   await assertSendingReplyWithTopicTemplate(
     t.context.req,
     t.context.res,
-    template
+    template,
   );
 });
 
@@ -275,7 +275,7 @@ test('askQuantity(): should call sendReplyWithTopicTemplate', async (t) => {
   await assertSendingReplyWithTopicTemplate(
     t.context.req,
     t.context.res,
-    template
+    template,
   );
 });
 
@@ -284,7 +284,7 @@ test('askWhyParticipated(): should call sendReplyWithTopicTemplate', async (t) =
   await assertSendingReplyWithTopicTemplate(
     t.context.req,
     t.context.res,
-    template
+    template,
   );
 });
 
@@ -293,7 +293,7 @@ test('autoReply(): should call sendReplyWithTopicTemplate', async (t) => {
   await assertSendingReplyWithTopicTemplate(
     t.context.req,
     t.context.res,
-    template
+    template,
   );
 });
 
@@ -307,7 +307,7 @@ test('completedPhotoPost(): should call sendReplyWithTopicTemplate', async (t) =
   await assertSendingReplyWithTopicTemplate(
     t.context.req,
     t.context.res,
-    template
+    template,
   );
 });
 
@@ -316,7 +316,7 @@ test('completedTextPost(): should call sendReplyWithTopicTemplate', async (t) =>
   await assertSendingReplyWithTopicTemplate(
     t.context.req,
     t.context.res,
-    template
+    template,
   );
 });
 
@@ -325,7 +325,7 @@ test('invalidAskYesNoResponse(): should call sendReplyWithTopicTemplate', async 
   await assertSendingReplyWithTopicTemplate(
     t.context.req,
     t.context.res,
-    template
+    template,
   );
 });
 
@@ -334,7 +334,7 @@ test('invalidPhoto(): should call sendReplyWithTopicTemplate', async (t) => {
   await assertSendingReplyWithTopicTemplate(
     t.context.req,
     t.context.res,
-    template
+    template,
   );
 });
 
@@ -343,7 +343,7 @@ test('invalidQuantity(): should call sendReplyWithTopicTemplate', async (t) => {
   await assertSendingReplyWithTopicTemplate(
     t.context.req,
     t.context.res,
-    template
+    template,
   );
 });
 
@@ -352,7 +352,7 @@ test('invalidText(): should call sendReplyWithTopicTemplate', async (t) => {
   await assertSendingReplyWithTopicTemplate(
     t.context.req,
     t.context.res,
-    template
+    template,
   );
 });
 
@@ -361,7 +361,7 @@ test('invalidWhyParticipated(): should call sendReplyWithTopicTemplate', async (
   await assertSendingReplyWithTopicTemplate(
     t.context.req,
     t.context.res,
-    template
+    template,
   );
 });
 
@@ -370,7 +370,7 @@ test('startPhotoPostAutoReply(): should call sendReplyWithTopicTemplate', async 
   await assertSendingReplyWithTopicTemplate(
     t.context.req,
     t.context.res,
-    template
+    template,
   );
 });
 
@@ -409,7 +409,7 @@ test('rivescriptReply(): should call sendReply', async (t) => {
     t.context.req,
     t.context.res,
     text,
-    template
+    template,
   );
 });
 
@@ -423,7 +423,7 @@ test('saidNo(): should call sendReply', async (t) => {
     t.context.req,
     t.context.res,
     text,
-    template
+    template,
   );
 });
 
@@ -437,6 +437,6 @@ test('saidYes(): should call sendReply', async (t) => {
     t.context.req,
     t.context.res,
     text,
-    template
+    template,
   );
 });
