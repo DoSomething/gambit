@@ -74,7 +74,7 @@
     "rivescript": "2.0.0-alpha.6",
     "superagent": "^3.8.3",
     "twilio": "^3.55.0",
-    "underscore": "^1.12.0",
+    "underscore": "^1.12.1",
     "uuid": "^3.4.0"
   },
   "devDependencies": {
