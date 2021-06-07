@@ -9,7 +9,7 @@ const rivescriptTopics = require('./topic').rivescriptTopics;
 const defaultTopic = rivescriptTopics.default;
 const invalidAnswerText = 'Sorry, I didn\'t get that.';
 // Subscription status confirmations.
-const activeSubscriptionStatusText = '👋 Welcome to DoSomething.org! Meet the staffers who\'ll be texting you: https://www.dosomething.org/us/articles/meet-the-staff-sms?user_id={{user.id}}&utm_campaign=sms_compliance_message&utm_medium=sms&utm_source=content_fun\n\nMsg&DataRatesApply. Txt HELP for help, STOP to stop.';
+const activeSubscriptionStatusText = '👋 Hi it\'s DoSomething.org! We\'ll send you updates about social actions & scholarship opps. Things to know: Msg&DataRatesApply. Txt HELP for help, txt STOP to stop';
 const lessSubscriptionStatusText = 'Great, you\'ll start to receive 1 monthly update from DoSomething.org! Things to know: Msg&DataRatesApply. Text HELP for help, text STOP to stop.';
 const stopSubscriptionStatusText = 'You\'re unsubscribed from DoSomething.org Alerts. No more msgs will be sent. Text JOIN to receive 4-8 msgs/mth.\n\nLeave your feedback: https://dosomething.typeform.com/to/DHWcen?user_id={{user.id}}';
 // Prompt for voting method field value.
