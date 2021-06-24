@@ -8,7 +8,7 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const httpMocks = require('node-mocks-http');
 
-const UnprocessableEntityError = require('../../../app/exceptions/UnprocessableEntityError.js');
+const UnprocessableEntityError = require('../../../app/exceptions/UnprocessableEntityError');
 
 chai.should();
 chai.use(sinonChai);
